@@ -44,6 +44,22 @@
 
 *Observe a seção 2 e verifique que ali é possível trazer mais detalhes, portanto seja objetivo aqui. Atualize esta descrição até a entrega final, conforme desenvolvimento.*
 
+### V1
+O município de Santo André enfrenta desafios críticos na gestão de populações em áreas de risco. Com mapa de risco estratificado em zonas amarelas (monitoramento), laranja (área de risco) e vermelho (área de muito risco), o município identifica constantemente famílias vulneráveis que necessitam de proteção. Contudo, o processo de coleta de dados em campo é lento, descentralizado e sem registro geolocalizado integrado. Quando desastres ou eventos extremos ocorrem, agentes da Defesa Civil precisam evacuar famílias rapidamente, mas enfrentam dificuldades: não há rastreamento unificado de retiradas, entrada em abrigos ou quantidade de pessoas por território. Isso compromete a resposta ágil, gera perda de informação entre etapas e dificulta o suporte da sede em tempo real.
+
+Como resposta, foi desenvolvido o GeoRisco Santo André: aplicação web offline-first focada no cadastro georreferenciado rápido de casas e pessoas em áreas de risco. O MVP permite que agentes em campo preencham formulários concisos via mobile, com sistema híbrido de geolocalização (CEP, coordenadas, referências e fotos de imóvel), funcionando mesmo sem GPS preciso. Dados sincronizam automaticamente quando conectado. O sistema registra retiradas de famílias e entrada em abrigos no momento do incidente, e um painel desktop oferece visualização geolocalizada para a sede monitorar densidade de pessoas por território.
+
+Os aspectos essenciais para criação de valor incluem: redução do tempo crítico de coleta em cenários de desastre, eliminação de gaps operacionais entre retirada e abrigo, visão estratégica em tempo real para alocação de recursos, e arquivamento de cadastros para manter integridade da base. A solução substitui sistemas desatualizados e fortalece a capacidade de resposta e resiliência urbana de Santo André.
+
+Este projeto será desenvolvido em parceria com a Defesa Civil de Santo André, incorporando sua experiência operacional e validação contínua das funcionalidades entregues.
+
+### V2
+Muitas famílias em Santo André vivem em áreas de risco geográfico—encostas, regiões sujeitas a alagamentos, áreas informais. Frequentemente, essas casas não têm formalização legal (invasões, ocupações), o que dificulta ainda mais o acesso a informações sobre quem mora onde. Quando chuvas intensas ou desastres ameaçam, a Defesa Civil precisa saber rapidamente: quantas pessoas estão em risco? Quem são os idosos, crianças, gestantes que precisam de prioridade? Onde exatamente as casas ficam? Atualmente, essas informações estão espalhadas em documentos de papel, planilhas desorganizadas ou sistemas antigos. O tempo é crítico em uma emergência, e essas falhas custam vidas.
+
+Como resposta, foi desenvolvido o GeoRisco Santo André: uma aplicação web que permite à Defesa Civil coletar, organizar e visualizar dados de famílias em áreas de risco de forma rápida e geolocalizada. Agentes em campo preenchem formulários digitais completos (nome, CPF, vulnerabilidades, composição da família) diretamente no celular ou tablet. O sistema captura automaticamente a localização (latitude, longitude, referências) e registra fotos das casas. Todos esses dados aparecem no mapa da cidade, integrados com as áreas de risco conhecidas, permitindo à sede ver em tempo real onde estão as pessoas em perigo e quem precisa de ajuda prioritária.
+
+Os principais ganhos são: (1) formulários digitais e estruturados substituem anotações em papel e inconsistências; (2) visualização geolocalizada permite entender exatamente quem está onde em relação às áreas de risco; (3) respostas rápidas em desastres porque a informação já está organizada; (4) registro automático de evacuações e abrigos integra todo o ciclo de emergência. A solução torna possível que a Defesa Civil realmente saiba quem precisa de proteção.
+
 # <a name="c2"></a>2. Visão Geral da Aplicação Web (sprint 1)
 
 ## 2.1. Escopo do Projeto (sprints 1 e 4)
@@ -64,11 +80,28 @@
 
 *Explique detalhadamente os seguintes aspectos (até 60 palavras por item):*
 1. Problema a ser resolvido
+
+A Defesa Civil de Santo André enfrenta desafios na gestão ágil de populações em áreas de risco. Coleta de dados em campo é lenta e descentralizada. Não há registro geolocalizado integrado de evacuações, retiradas de famílias ou entrada em abrigos. Agentes precisam identificar imóveis com segurança em cenários de risco, e a Defesa Civil necessita visualizar geograficamente onde as pessoas foram realocadas.
+
 2. Dados disponíveis (mencionar fonte e conteúdo; se não houver, indicar “não se aplica”)
+
+Ficha SDUH, Formulário SUAS, Fichas de Resgate de Animais e Aves, Formulário de Bens sob Guarda, mapas de risco municipal (amarelo, laranja ou vermelho conforme critérios de terreno, disponível no SIGA), referências geográficas e estudos de vulnerabilidade. Dados fictícios coerentes serão utilizados para testes, garantindo conformidade com LGPD e Termo de Confidencialidade.
+
 3. Solução proposta
+
+GeoRisco Santo André: aplicação web offline-first com geolocalização multimodal usando CEP, coordenadas, referências geográficas e fotos de imóvel. MVP focado em cadastro rápido por casa com múltiplas pessoas por registro. Inclui captura de nome, CPF, idade e vulnerabilidades; registro integrado de retirada e entrada em abrigos; sincronização automática; painel geolocalizado para visualizar densidade de pessoas por território.
+
 4. Forma de utilização da solução
+
+Agentes preenchem formulário mobile conciso em campo com funcionalidade offline. Sistema salva localmente e sincroniza quando conectado. Registram: localização por CEP, coordenadas, referências e fotos de imóvel, composição da casa, vulnerabilidades, retirada e abrigo. Painel desktop exibe mapa geolocalizado com cadastros, filtros por setor de risco, densidade de pessoas e gera relatórios georreferenciados para análise de contingência.
+
 5. Benefícios esperados
+
+Reduz tempo crítico de coleta permitindo cadastro rápido em campo. Geolocalização multimodal funciona sem GPS preciso. Registro integrado de retirada e abrigo elimina gaps operacionais. Painel geolocalizado oferece visão estratégica em tempo real à Defesa Civil e sede. Arquivamento de cadastros mantém base íntegra. Substitui sistemas desatualizados, fortalecendo resiliência urbana.
+
 6. Critério de sucesso e como será avaliado
+
+Sucesso medido por KPIs nas sprints iniciais: tempo de preenchimento inferior a cinco minutos por casa, sincronização offline e online, precisão de localização, taxa de conclusão sem erros, usabilidade com agentes de tecnologia média. Validação com operadores em campo, testes de visualização de sede, exportação de relatórios. Métricas finalizadas com parceiro durante o projeto.
 
 ### 2.1.4. Value Proposition Canvas (sprint 1): 
 *Sem limite de palavras – usar template do curso*
