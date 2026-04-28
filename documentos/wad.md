@@ -50,15 +50,43 @@
 
 ### 2.1.1. Modelo de 5 Forças de Porter (sprint 1)
 
-*Preencha com até 400 palavras*
+<h2 align="center" id="strengths">Rivalidade Entre Concorrentes</h2>
 
-*Posicione aqui o modelo de 5 Forças de Porter para sustentar o contexto da indústria.*
+
+
+<h2 align="center" id="strengths">Poder de Barganha: Fornecedores</h2>
+
+
+
+<h2 align="center" id="strengths">Poder de Barganha: Clientes</h2>
+
+
+
+<h2 align="center" id="strengths">Ameaça de Novos Entrantes</h2>
+
+
+
+<h2 align="center" id="strengths">Ameaça de Substitutos</h2>
 
 ### 2.1.2. Análise SWOT da Instituição Parceira (sprint 1)
 
-*Preencha com até 100 palavras – sem necessidade de fonte*
+<div align="center">
+    <p>Figura 1: Análise Swot</p>
+    <img src="outros/swot.png" width="500">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
 
-*Apresente uma visão geral da situação do parceiro com base na matriz SWOT (forças, fraquezas, oportunidades e ameaças). Foque na relação com os concorrentes e o posicionamento da instituição.*
+<h2 align="center" id="strengths">Strengths</h2>
+
+
+<h2 align="center" id="weaknesses">Weaknesses</h2>
+
+
+<h2 align="center" id="opportunities">Opportunities</h2>
+
+
+<h2 align="center" id="threats">Threats</h2>
+
 
 ### 2.1.3. Solução (sprints 1 a 5)
 
