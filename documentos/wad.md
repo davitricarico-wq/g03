@@ -53,6 +53,8 @@
 <img src="outros/porter.png">
 
 #### Rivalidade Entre Concorrentes
+Existem órgãos que atuam em cenários semelhantes aos da Defesa Civil, como Corpo de Bombeiros, SAMU, Forças Armadas, Polícia Militar e defesas civis de outros municípios. No entanto, a rivalidade é considerada baixa pois cada instituição possui atribuições legais e mandatos distintos, com atuação geralmente complementar e protocolos de cooperação estabelecidos.
+
 
 #### Poder de Barganha: Fornecedores
 
