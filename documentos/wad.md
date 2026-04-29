@@ -140,7 +140,11 @@ Sucesso medido por KPIs nas sprints iniciais: tempo de preenchimento inferior a 
 
 ## 2.2. Personas (sprint 1)
 
-*Posicione aqui suas Personas em forma de texto markdown com imagens, ou como imagem de template preenchido. Atualize esta seção ao longo do módulo se necessário.*
+As personas apresentadas abaixo caracterizam-se como proto-personas, construídas a partir de inferências sobre o contexto institucional e os fluxos operacionais da Defesa Civil, visando representar os principais perfis de usuários e orientar o desenvolvimento da solução.
+
+<img src="../assets/persona2.png" width =520, lenght =520> <img src="../assets/persona1.png" width =520, lenght =520> 
+
+*Observação: Fotos extraídas de um site produtor de imagens de pessoas inexistentes* : 
 
 ## 2.3. User Stories (sprints 1 a 5)
 
