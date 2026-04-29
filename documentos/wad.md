@@ -82,6 +82,10 @@ Além disso, o funcionamento eficaz do sistema proposto depende diretamente da c
 
 <h2 align="center" id="strengths">Ameaça de Substitutos</h2>
 
+No contexto da Proteção e Defesa Civil, a análise da ameaça de produtos substitutos, conforme o modelo de Michael Porter, deve ser adaptada, pois se trata de um serviço público de competência estatal exclusiva, sem concorrentes diretos. Ainda assim, existem alternativas que atendem à mesma necessidade da população por segurança e resposta a emergências, como aplicativos de monitoramento climático, redes comunitárias, ONGs e seguros privados. Esses substitutos apresentam alta acessibilidade e baixo custo, podendo ser acionados de forma mais imediata, o que confere à força uma intensidade baixa a moderada. Estratégicamente, isso exige que a Defesa Civil mantenha eficiência operacional e comunicação ágil, a fim de preservar a confiança da população e reduzir a dependência dessas alternativas. 
+
+
+
 ### 2.1.2. Análise SWOT da Instituição Parceira (sprint 1)
 
 <div align="center">
