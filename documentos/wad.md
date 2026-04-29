@@ -157,7 +157,7 @@ As personas apresentadas abaixo caracterizam-se como proto-personas, construída
 
 <img src="../assets/persona2.png" width =520, lenght =520> <img src="../assets/persona1.png" width =520, lenght =520> 
 
-*Observação: Fotos extraídas de um site produtor de imagens de pessoas inexistentes* : 
+*Observação: Fotos extraídas de um site produtor de imagens de pessoas inexistentes* : [This Person Does Not Exist](https://thispersondoesnotexist.com/)
 
 ## 2.3. User Stories (sprints 1 a 5)
 
