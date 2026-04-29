@@ -50,6 +50,12 @@
 
 ### 2.1.1. Modelo de 5 Forças de Porter (sprint 1)
 
+<div align="center">
+    <p>Figura 1: 5 Forças de Porter</p>
+    <img src="outros/porter.png" width="500">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
 <h2 align="center" id="strengths">Rivalidade Entre Concorrentes</h2>
 
 
@@ -60,6 +66,13 @@
 
 <h2 align="center" id="strengths">Poder de Barganha: Clientes</h2>
 
+O Poder de Barganha dos Clientes, seguindo o modelo das Cinco Forças de Porter, analisa a influência que os consumidores possuem sobre as empresas do setor, especialmente em relação a preços, qualidade, variedade e condições de compra. Quanto maior a oferta de alternativas disponíveis no mercado, maior tende a ser o poder de negociação dos clientes. 
+
+Aplicando a força de barganha dos clientes do modelo de Cinco Forças de Porter ao contexto apresentado, os moradores de Santo André exercem um poder de barganha moderado a alto sobre a Defesa Civil, mesmo sem uma relação comercial direta envolvendo valores.
+
+Por um lado, esse poder é limitado, pois a população depende fortemente dos serviços prestados em situações de risco, como enchentes e deslizamentos, não havendo alternativas viáveis. Por outro lado, esse poder se fortalece devido à capacidade de pressão social e política que os cidadãos possuem, podendo cobrar melhorias por meio de reclamações, mídia ou mobilização junto ao poder público.
+
+Além disso, o funcionamento eficaz do sistema proposto depende diretamente da colaboração dos moradores na coleta de dados, o que amplia ainda mais sua influência: caso haja resistência, desconfiança ou insatisfação com o uso das informações, a qualidade e a efetividade do sistema podem ser comprometidas. Dessa forma, mesmo sem poder econômico direto, os moradores exercem influência significativa sobre o sucesso da solução.
 
 
 <h2 align="center" id="strengths">Ameaça de Novos Entrantes</h2>
@@ -71,7 +84,7 @@
 ### 2.1.2. Análise SWOT da Instituição Parceira (sprint 1)
 
 <div align="center">
-    <p>Figura 1: Análise Swot</p>
+    <p>Figura 2: Análise Swot</p>
     <img src="outros/swot.png" width="500">
     <p>Feito pela própria equipe (2026)</p>
 </div>
