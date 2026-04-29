@@ -90,10 +90,10 @@ Além disso, o funcionamento eficaz do sistema proposto depende diretamente da c
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
-<h2 align="center" id="strengths">Strengths</h2>
+#### Strengths
 
 
-<h2 align="center" id="weaknesses">Weaknesses</h2>
+#### Weaknesses
 
 A **base histórica de dados** apresenta limitações importantes, pois pode conter informações incompletas, inconsistentes ou desatualizadas, especialmente quando oriunda de registros físicos ou sistemas legados. Isso compromete a confiabilidade inicial do georreferenciamento e pode impactar a qualidade das análises e decisões tomadas a partir desses dados.
 
@@ -101,10 +101,9 @@ Além disso, a **dependência de conectividade** é um fator crítico, já que a
 
 Por fim, há riscos relacionados à **manutenção e atualização contínua**. A ausência de processos estruturados pode levar à obsolescência dos dados, enquanto a **dependência de uma equipe técnica** reduzida pode gerar sobrecarga e atrasos em correções ou melhorias.
 
-<h2 align="center" id="opportunities">Opportunities</h2>
+#### Opportunities
 
-
-<h2 align="center" id="threats">Threats</h2>
+#### Threats
 
 Entre as ameaças, destaca-se a **descontinuidade administrativa**, que pode comprometer o projeto em caso de mudanças políticas ou redução de investimentos e impactar diretamente a sustentabilidade e evolução da solução ao longo do tempo.
 
