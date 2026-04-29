@@ -78,6 +78,8 @@ Além disso, o funcionamento eficaz do sistema proposto depende diretamente da c
 <h2 align="center" id="strengths">Ameaça de Novos Entrantes</h2>
 
 
+A ameaça de novos entrantes é baixa, pois o GeoRisco Santo André não é uma solução genérica. O projeto exige conhecimento específico sobre Defesa Civil, áreas de risco, dados georreferenciados e atendimento a populações vulneráveis. Além disso, precisa seguir a LGPD e se adaptar aos processos internos da Prefeitura, o que dificulta a entrada de concorrentes sem experiência no setor público.
+
 
 <h2 align="center" id="strengths">Ameaça de Substitutos</h2>
 
@@ -92,6 +94,7 @@ Além disso, o funcionamento eficaz do sistema proposto depende diretamente da c
 <h2 align="center" id="strengths">Strengths</h2>
 
 
+
 <h2 align="center" id="weaknesses">Weaknesses</h2>
 
 A **base histórica de dados** apresenta limitações importantes, pois pode conter informações incompletas, inconsistentes ou desatualizadas, especialmente quando oriunda de registros físicos ou sistemas legados. Isso compromete a confiabilidade inicial do georreferenciamento e pode impactar a qualidade das análises e decisões tomadas a partir desses dados.
@@ -101,6 +104,7 @@ Além disso, a **dependência de conectividade** é um fator crítico, já que a
 Por fim, há riscos relacionados à **manutenção e atualização contínua**. A ausência de processos estruturados pode levar à obsolescência dos dados, enquanto a **dependência de uma equipe técnica** reduzida pode gerar sobrecarga e atrasos em correções ou melhorias.
 
 <h2 align="center" id="opportunities">Opportunities</h2>
+
 
 
 <h2 align="center" id="threats">Threats</h2>
