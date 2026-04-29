@@ -50,15 +50,54 @@
 
 ### 2.1.1. Modelo de 5 Forças de Porter (sprint 1)
 
-*Preencha com até 400 palavras*
+<h2 align="center" id="strengths">Rivalidade Entre Concorrentes</h2>
 
-*Posicione aqui o modelo de 5 Forças de Porter para sustentar o contexto da indústria.*
+
+
+<h2 align="center" id="strengths">Poder de Barganha: Fornecedores</h2>
+
+
+
+<h2 align="center" id="strengths">Poder de Barganha: Clientes</h2>
+
+
+
+<h2 align="center" id="strengths">Ameaça de Novos Entrantes</h2>
+
+
+
+<h2 align="center" id="strengths">Ameaça de Substitutos</h2>
 
 ### 2.1.2. Análise SWOT da Instituição Parceira (sprint 1)
 
-*Preencha com até 100 palavras – sem necessidade de fonte*
+<div align="center">
+    <p>Figura 1: Análise Swot</p>
+    <img src="outros/swot.png" width="500">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
 
-*Apresente uma visão geral da situação do parceiro com base na matriz SWOT (forças, fraquezas, oportunidades e ameaças). Foque na relação com os concorrentes e o posicionamento da instituição.*
+<h2 align="center" id="strengths">Strengths</h2>
+
+
+<h2 align="center" id="weaknesses">Weaknesses</h2>
+
+A **base histórica de dados** apresenta limitações importantes, pois pode conter informações incompletas, inconsistentes ou desatualizadas, especialmente quando oriunda de registros físicos ou sistemas legados. Isso compromete a confiabilidade inicial do georreferenciamento e pode impactar a qualidade das análises e decisões tomadas a partir desses dados.
+
+Além disso, a **dependência de conectividade** é um fator crítico, já que a aplicação web pode ter seu desempenho reduzido em áreas com baixa cobertura de internet, comuns em regiões de risco. Soma-se a isso a **curva de aprendizado das equipes de campo**, que podem enfrentar dificuldades na adoção do sistema.
+
+Por fim, há riscos relacionados à **manutenção e atualização contínua**. A ausência de processos estruturados pode levar à obsolescência dos dados, enquanto a **dependência de uma equipe técnica** reduzida pode gerar sobrecarga e atrasos em correções ou melhorias.
+
+<h2 align="center" id="opportunities">Opportunities</h2>
+
+
+<h2 align="center" id="threats">Threats</h2>
+
+Entre as ameaças, destaca-se a **descontinuidade administrativa**, que pode comprometer o projeto em caso de mudanças políticas ou redução de investimentos e impactar diretamente a sustentabilidade e evolução da solução ao longo do tempo.
+
+Outro ponto crítico envolve questões legais, especialmente no que se refere à **proteção de dados sensíveis**. A não conformidade com a Lei Geral de Proteção de Dados pode resultar em restrições operacionais ou até a interrupção do sistema, além de afetar a confiança dos usuários.
+
+Riscos como a **baixa adesão da comunidade** também dificultam a coleta de dados, além da ocorrência de **eventos extremos**, comprometendo toda a infraestrutura. Por fim, **ameaças de cibersegurança** podem expor informações estratégicas, gerando impactos significativos.
+
 
 ### 2.1.3. Solução (sprints 1 a 5)
 
