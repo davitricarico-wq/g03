@@ -77,6 +77,11 @@ Além disso, o funcionamento eficaz do sistema proposto depende diretamente da c
 
 <h2 align="center" id="strengths">Ameaça de Novos Entrantes</h2>
 
+A ameaça de novos entrantes para a Defesa Civil de Santo André é baixa, porque sua atuação não funciona como um mercado comum, em que qualquer empresa pode entrar e competir diretamente. A Defesa Civil é um órgão público ligado à Prefeitura, com responsabilidade oficial sobre prevenção, preparação, resposta e recuperação em situações de risco e desastre no município.
+
+Além disso, sua atuação exige conhecimento técnico, autorização institucional, integração com outras secretarias e experiência em situações emergenciais. Mesmo que empresas privadas possam oferecer tecnologias, consultorias ou sistemas de apoio, elas não substituem o papel da Defesa Civil, pois não possuem a mesma autoridade pública para coordenar evacuações, abrigos, vistorias e ações de resposta.
+
+Por isso, a entrada de novos concorrentes diretos é difícil. A principal ameaça não vem de novos órgãos substituindo a Defesa Civil, mas sim de soluções externas que podem disputar espaço como ferramentas de apoio à gestão de riscos.
 
 
 <h2 align="center" id="strengths">Ameaça de Substitutos</h2>
