@@ -138,7 +138,9 @@ Critérios INVEST | *(Por que é Independente? Por que é Negociável? Por que �
 | RF015 | Exportação dos dados                        | Extração de bases em formatos abertos (CSV/PDF) para integração com órgãos externos.                  | 2       | 3          | A02,A03 | Planejado |
 | RF016 | Aviso anual de atualização dos dados        | Notificação automática via sistema/e-mail para revisão periódica das informações cadastrais.          | 6       | 3          | A02     | Planejado |
 
-Legenda \- Tipo: 1 - cadastro (entrada), 2 - relatório (saída), 3 - consulta (leitura), 4 - atualização (edição), 5 - exclusão (remoção), 6 - outros.
+*Legenda* 
+Tipo: 1 - cadastro (entrada), 2 - relatório (saída), 3 - consulta (leitura), 4 - atualização (edição), 5 - exclusão (remoção), 6 - outros.
+Prioridade: 1 - muito importante, 2 - importante, 3 - descartável.
 
 ### 3.1.3. Regras de Negócio (sprint 1, refinar até sprint 5)
 
