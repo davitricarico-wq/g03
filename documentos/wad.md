@@ -249,6 +249,8 @@ Apresenta-se a seguir a lista de User Stories levantadas para o projeto GeoRisco
 | Critério de aceite 2 | CR2: Dado que existem equipes cadastradas, quando acessadas, então devem ser exibidas corretamente |
 | Critérios INVEST | Independente: Pode ser implementada isoladamente; Negociável: Os dados da equipe podem variar; Valiosa: Melhora a organização operacional; Estimável: Baseada em cadastro simples; Pequena: Escopo limitado; Testável: Cadastro pode ser validado |
 
+Ressaltamos que nosso quadro do backlog no Kanban está preenchido com as User Stories, apresentando as descrições com os critérios de aceite e servindo como base para nossas futuras tasks.
+
 
 
 # <a name="c3"></a>3. Projeto da Aplicação Web (sprints 1 a 5)
