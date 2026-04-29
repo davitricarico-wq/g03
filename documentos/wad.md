@@ -66,15 +66,54 @@ Os principais ganhos são: (1) formulários digitais e estruturados substituem a
 
 ### 2.1.1. Modelo de 5 Forças de Porter (sprint 1)
 
-*Preencha com até 400 palavras*
+<img src="outros/porter.png">
 
-*Posicione aqui o modelo de 5 Forças de Porter para sustentar o contexto da indústria.*
+#### Rivalidade Entre Concorrentes
+Existem órgãos que atuam em cenários semelhantes aos da Defesa Civil, como Corpo de Bombeiros, SAMU, Forças Armadas, Polícia Militar e defesas civis de outros municípios. No entanto, a rivalidade é considerada baixa pois cada instituição possui atribuições legais e mandatos distintos, com atuação geralmente complementar e protocolos de cooperação estabelecidos.
+
+
+#### Poder de Barganha: Fornecedores
+
+#### Poder de Barganha: Clientes
+
+O Poder de Barganha dos Clientes, seguindo o modelo das Cinco Forças de Porter, analisa a influência que os consumidores possuem sobre as empresas do setor, especialmente em relação a preços, qualidade, variedade e condições de compra. Quanto maior a oferta de alternativas disponíveis no mercado, maior tende a ser o poder de negociação dos clientes. 
+
+Aplicando a força de barganha dos clientes do modelo de Cinco Forças de Porter ao contexto apresentado, os moradores de Santo André exercem um poder de barganha moderado a alto sobre a Defesa Civil, mesmo sem uma relação comercial direta envolvendo valores.
+
+Por um lado, esse poder é limitado, pois a população depende fortemente dos serviços prestados em situações de risco, como enchentes e deslizamentos, não havendo alternativas viáveis. Por outro lado, esse poder se fortalece devido à capacidade de pressão social e política que os cidadãos possuem, podendo cobrar melhorias por meio de reclamações, mídia ou mobilização junto ao poder público.
+
+Além disso, o funcionamento eficaz do sistema proposto depende diretamente da colaboração dos moradores na coleta de dados, o que amplia ainda mais sua influência: caso haja resistência, desconfiança ou insatisfação com o uso das informações, a qualidade e a efetividade do sistema podem ser comprometidas. Dessa forma, mesmo sem poder econômico direto, os moradores exercem influência significativa sobre o sucesso da solução.
+
+#### Ameaça de Novos Entrantes
+
+#### Ameaça de Substitutos
 
 ### 2.1.2. Análise SWOT da Instituição Parceira (sprint 1)
 
-*Preencha com até 100 palavras – sem necessidade de fonte*
+<img src="outros/swot.png">
 
-*Apresente uma visão geral da situação do parceiro com base na matriz SWOT (forças, fraquezas, oportunidades e ameaças). Foque na relação com os concorrentes e o posicionamento da instituição.*
+<h2 align="center" id="strengths">Strengths</h2>
+
+
+<h2 align="center" id="weaknesses">Weaknesses</h2>
+
+A **base histórica de dados** apresenta limitações importantes, pois pode conter informações incompletas, inconsistentes ou desatualizadas, especialmente quando oriunda de registros físicos ou sistemas legados. Isso compromete a confiabilidade inicial do georreferenciamento e pode impactar a qualidade das análises e decisões tomadas a partir desses dados.
+
+Além disso, a **dependência de conectividade** é um fator crítico, já que a aplicação web pode ter seu desempenho reduzido em áreas com baixa cobertura de internet, comuns em regiões de risco. Soma-se a isso a **curva de aprendizado das equipes de campo**, que podem enfrentar dificuldades na adoção do sistema.
+
+Por fim, há riscos relacionados à **manutenção e atualização contínua**. A ausência de processos estruturados pode levar à obsolescência dos dados, enquanto a **dependência de uma equipe técnica** reduzida pode gerar sobrecarga e atrasos em correções ou melhorias.
+
+<h2 align="center" id="opportunities">Opportunities</h2>
+
+
+<h2 align="center" id="threats">Threats</h2>
+
+Entre as ameaças, destaca-se a **descontinuidade administrativa**, que pode comprometer o projeto em caso de mudanças políticas ou redução de investimentos e impactar diretamente a sustentabilidade e evolução da solução ao longo do tempo.
+
+Outro ponto crítico envolve questões legais, especialmente no que se refere à **proteção de dados sensíveis**. A não conformidade com a Lei Geral de Proteção de Dados pode resultar em restrições operacionais ou até a interrupção do sistema, além de afetar a confiança dos usuários.
+
+Riscos como a **baixa adesão da comunidade** também dificultam a coleta de dados, além da ocorrência de **eventos extremos**, comprometendo toda a infraestrutura. Por fim, **ameaças de cibersegurança** podem expor informações estratégicas, gerando impactos significativos.
+
 
 ### 2.1.3. Solução (sprints 1 a 5)
 
