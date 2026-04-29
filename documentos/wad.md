@@ -36,13 +36,14 @@
 
 # <a name="c1"></a>1. Introdução (sprints 1 a 5)
 
-*Preencha com até 300 palavras – sem necessidade de fonte*
+O município de Santo André enfrenta desafios críticos na gestão de populações em áreas de risco. Com mapa de risco estratificado em zonas amarelas (monitoramento), laranja (área de risco) e vermelho (área de muito risco), o município identifica constantemente famílias vulneráveis que necessitam de proteção. Contudo, o processo de coleta de dados em campo é lento, descentralizado e sem registro geolocalizado integrado. Quando desastres ou eventos extremos ocorrem, agentes da Defesa Civil precisam evacuar famílias rapidamente, mas enfrentam dificuldades: não há rastreamento unificado de retiradas, entrada em abrigos ou quantidade de pessoas por território. Isso compromete a resposta ágil, gera perda de informação entre etapas e dificulta o suporte da sede em tempo real.
 
-*Contextualize aqui a problemática trazida pelo parceiro de projeto.*
+Como resposta, foi desenvolvido o GeoRisco Santo André: aplicação web offline-first focada no cadastro georreferenciado rápido de casas e pessoas em áreas de risco. O MVP permite que agentes em campo preencham formulários concisos via mobile, com sistema híbrido de geolocalização (CEP, coordenadas, referências e fotos de imóvel), funcionando mesmo sem GPS preciso. Dados sincronizam automaticamente quando conectado. O sistema registra retiradas de famílias e entrada em abrigos no momento do incidente, e um painel desktop oferece visualização geolocalizada para a sede monitorar densidade de pessoas por território.
 
-*Descreva brevemente a solução desenvolvida para o parceiro de negócios. Descreva os aspectos essenciais para a criação de valor do produto, com o objetivo de ajudar a entender melhor a realidade do cliente e entregar uma solução que está alinhado com o que ele espera.*
+Os aspectos essenciais para criação de valor incluem: redução do tempo crítico de coleta em cenários de desastre, eliminação de gaps operacionais entre retirada e abrigo, visão estratégica em tempo real para alocação de recursos, e arquivamento de cadastros para manter integridade da base. A solução substitui sistemas desatualizados e fortalece a capacidade de resposta e resiliência urbana de Santo André.
 
-*Observe a seção 2 e verifique que ali é possível trazer mais detalhes, portanto seja objetivo aqui. Atualize esta descrição até a entrega final, conforme desenvolvimento.*
+Este projeto será desenvolvido em parceria com a Defesa Civil de Santo André, incorporando sua experiência operacional e validação contínua das funcionalidades entregues.
+
 
 # <a name="c2"></a>2. Visão Geral da Aplicação Web (sprint 1)
 
@@ -89,11 +90,11 @@ Além disso, o funcionamento eficaz do sistema proposto depende diretamente da c
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
-<h2 align="center" id="strengths">Strengths</h2>
+#### Strengths
 
 A Defesa Civil de Santo André tem como uma de suas principais forças o fato de atuar em uma área essencial para a cidade: a prevenção, preparação, resposta e recuperação diante de desastres naturais e tecnológicos. Por estar ligada à Prefeitura e à Secretaria de Meio Ambiente e Mudanças Climáticas, a organização possui legitimidade institucional e capacidade de articulação com outras áreas públicas. Além disso, tem conhecimento técnico sobre áreas de risco, protocolos de evacuação, acolhimento emergencial e atendimento a populações vulneráveis, como idosos, crianças, gestantes e pessoas com deficiência.
 
-<h2 align="center" id="weaknesses">Weaknesses</h2>
+#### Weaknesses
 
 A **base histórica de dados** apresenta limitações importantes, pois pode conter informações incompletas, inconsistentes ou desatualizadas, especialmente quando oriunda de registros físicos ou sistemas legados. Isso compromete a confiabilidade inicial do georreferenciamento e pode impactar a qualidade das análises e decisões tomadas a partir desses dados.
 
@@ -101,7 +102,7 @@ Além disso, a **dependência de conectividade** é um fator crítico, já que a
 
 Por fim, há riscos relacionados à **manutenção e atualização contínua**. A ausência de processos estruturados pode levar à obsolescência dos dados, enquanto a **dependência de uma equipe técnica** reduzida pode gerar sobrecarga e atrasos em correções ou melhorias.
 
-<h2 align="center" id="opportunities">Opportunities</h2>
+#### Opportunities
 
 Entre as oportunidades, destaca-se o uso de tecnologia para modernizar a gestão pública de riscos e desastres. Ferramentas digitais podem ajudar a organizar dados, acelerar atendimentos, melhorar a comunicação entre secretarias e apoiar decisões mais rápidas. Além disso, o aumento da preocupação com eventos climáticos extremos torna o trabalho da Defesa Civil ainda mais relevante, abrindo espaço para investimentos, parcerias com instituições de ensino e soluções inovadoras. A atuação preventiva também pode fortalecer a confiança da população no serviço público.
 
@@ -116,13 +117,41 @@ Riscos como a **baixa adesão da comunidade** também dificultam a coleta de dad
 
 ### 2.1.3. Solução (sprints 1 a 5)
 
-*Explique detalhadamente os seguintes aspectos (até 60 palavras por item):*
 1. Problema a ser resolvido
+
+A Defesa Civil de Santo André enfrenta desafios na gestão ágil de populações em áreas de risco. Coleta de dados em campo é lenta e descentralizada. Não há registro geolocalizado integrado de evacuações, retiradas de famílias ou entrada em abrigos. Agentes precisam identificar imóveis com segurança em cenários de risco, e a Defesa Civil necessita visualizar geograficamente onde as pessoas foram realocadas.
+
 2. Dados disponíveis (mencionar fonte e conteúdo; se não houver, indicar “não se aplica”)
+
+| Documento | Fonte / Órgão Responsável | Acesso | Link / Explicação |
+| :--- | :--- | :--- | :--- |
+| **Ficha SDUH** | Secretaria de Desenvolvimento Urbano e Habitação (SP) | **Privada** | Portal SDUH (Acesso restrito via login Gov.br/Senha) |
+| **Formulário SUAS** | Ministério da Cidadania / Rede SUAS | **Pública** | [Blog Rede SUAS (Modelos)](http://blog.mds.gov.br/redesuas/) |
+| **Fichas de Resgate de Animais** | Polícia Ambiental / Secretarias de Meio Ambiente | **Privada** | Sistema Interno de Ocorrências (Documento Administrativo) |
+| **Formulário de Bens sob Guarda** | Defesa Civil Municipal / Estadual | **Privada** | [Sistema S2ID](https://s2id.mi.gov.br/) (Exige cadastro de gestor público) |
+| **Mapas de Risco Municipal** | SIGA (Sistema Integrado de Gestão Ambiental) | **Pública** | [Portal SIGA - Infraestrutura e Meio Ambiente](https://sigamapa.santoandre.sp.gov.br/) |
+| **Referências Geográficas** | IBGE / IGC-SP (DataGEO) | **Pública** | [IBGE Mapas](https://mapas.ibge.gov.br/) ou [DataGEO SP](http://datageo.ambiente.sp.gov.br/) |
+| **Estudos de Vulnerabilidade** | CEMADEN / Defesa Civil Nacional | **Pública** | [Painel de Monitoramento CEMADEN](http://www.cemaden.gov.br/) |
+
+
+(Dados fictícios coerentes serão utilizados para testes, garantindo conformidade com LGPD e Termo de Confidencialidade.)
+
 3. Solução proposta
+
+GeoRisco Santo André: aplicação web offline-first com geolocalização multimodal usando CEP, coordenadas, referências geográficas e fotos de imóvel. A solução MVP gira em torno do cadastro rápido de pessoas assistidas por casa, podendo haver múltiplas pessoas no registro daquela residência. Englobando a captura de dados como: nome, CPF, idade e vulnerabilidade. Além de funcionalidades como: sincronização automática com a internet (para uso do cadastro em regiões sem sinal); painel geolocalizado para visualizar densidade de pessoas por território; localização de assistidos e residências. Para além do MVP, tem-se: gráficos ou KPIs sobre as áreas de maior risco e áreas de priorização baseado nas necessidades das pessoas.
+
 4. Forma de utilização da solução
+
+Agentes preenchem formulário mobile conciso em campo com funcionalidade offline. Sistema salva localmente e sincroniza quando conectado. Registram: localização por CEP, coordenadas, referências e fotos de imóvel, composição da casa, vulnerabilidades, retirada e abrigo. Painel desktop exibe mapa geolocalizado com cadastros, filtros por setor de risco, densidade de pessoas e gera relatórios georreferenciados para análise de contingência.
+
 5. Benefícios esperados
+
+Reduz tempo crítico de coleta permitindo cadastro rápido em campo. Geolocalização multimodal funciona sem GPS preciso. Registro integrado de retirada e abrigo elimina gaps operacionais. Painel geolocalizado oferece visão estratégica em tempo real à Defesa Civil e sede. Arquivamento de cadastros mantém base íntegra. Substitui sistemas desatualizados, fortalecendo resiliência urbana.
+
 6. Critério de sucesso e como será avaliado
+
+Sucesso medido por KPIs nas sprints iniciais: tempo de preenchimento inferior a cinco minutos por casa, sincronização offline e online, precisão de localização, taxa de conclusão sem erros, usabilidade com agentes de tecnologia média. Validação com operadores em campo, testes de visualização de sede, exportação de relatórios. Métricas finalizadas com parceiro durante o projeto.
+
 
 ### 2.1.4. Value Proposition Canvas (sprint 1): 
 *Sem limite de palavras – usar template do curso*
@@ -161,16 +190,42 @@ Critérios INVEST | *(Por que é Independente? Por que é Negociável? Por que �
 
 *Esta seção formaliza o que o sistema deve fazer, sob quais regras e com quais qualidades. Atualize a cada sprint conforme os requisitos evoluem.*
 
-### 3.1.1. Requisitos Funcionais (sprint 1, refinar até sprint 5)
+### 3.1.1 Lista de Atores
+
+| ID  | Nome do Ator                           | Descrição                                                                                                                                                                                                                                                                                                          | Frequência de Uso | Proficiência Tecnológica |
+|-----|----------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------|--------------------------|
+| A01 | Agente de Defesa Civil (Campo)         | Responsável por coletar dados georreferenciados in loco, realizar vistorias em áreas de risco e alimentar o sistema com informações de interdições ou rotas obstruídas.                                                                                                                                            | Diária            | Média/Alta               |
+| A02 | Agente de Defesa Civil (Visualização)  | Responsável por visualizar todas as informações coletadas e gerar relatórios a partir delas.                                                                                                                                                                                                                       | Diário            | Média/Alta               |
+| A03 | Agente de Defesa Civil (Administração) | Responsável por gerenciar os parâmetros de monitoramento e extrair relatórios, análises e mapas de calor gerados automaticamente pela plataforma. Sua função é interpretar essas visões consolidadas de risco e vulnerabilidade para subsidiar a tomada de decisão e o planejamento de contingência da prefeitura. | Diária            | Média/Alta               |
+
+### 3.1.2. Requisitos Funcionais (sprint 1, refinar até sprint 5)
 
 *Liste os RF numerados de forma objetiva e verificável. Cada RF deve poder ser convertido em caso de teste.*
 
-| ID    | Descrição | Prioridade | Status       |
-|-------|-----------|------------|--------------|
-| RF001 | ...       | Alta       | Implementado |
-| RF002 | ...       | Média      | Planejado    |
+| ID    | Nome                                        | Descrição                                                                                             | Tipo    | Prioridade | Atores  | Status    |
+|-------|---------------------------------------------|-------------------------------------------------------------------------------------------------------|---------|------------|---------|-----------|
+| RF001 | Cadastro Georreferenciado de Moradias       | Registro de edificações com coordenadas geográficas e classificação de risco (R1 a R4).               | 1       | 1          | A01,A03 | Planejado |
+| RF002 | Cadastro de chefe de família                | Registro do responsável principal pelo núcleo familiar para fins de contato e auxílio.                | 1       | 1          | A01,A03 | Planejado |
+| RF003 | Cadastro de membros do núcleo familiar      | Registro de todos os residentes do imóvel para cálculo de densidade populacional por área.            | 1       | 1          | A01,A03 | Planejado |
+| RF004 | Cadastro de necessidades especiais          | Identificação de perfis prioritários (idosos, PCDs, gestantes) para o plano de evacuação.             | 1       | 1          | A01,A03 | Planejado |
+| RF005 | Cadastro de abrigos                         | Registro de unidades de acolhimento, incluindo endereço, infraestrutura e capacidade total de leitos. | 1       | 3          | A03     | Planejado |
+| RF006 | Gerenciamento de moradias                   | Interface para edição, suspensão ou exclusão de registros de imóveis no sistema.                      | 4, 5    | 1          | A01,A03 | Planejado |
+| RF007 | Gerenciamento de familias                   | Controle e histórico de vínculos familiares vinculados a uma ou mais moradias.                        | 4, 5    | 1          | A01,A03 | Planejado |
+| RF008 | Gerenciamento de membros do núcleo familiar | Edição de dados individuais dos dependentes e histórico de saúde/vulnerabilidade.                     | 4, 5    | 1          | A01,A03 | Planejado |
+| RF009 | Gerenciamento de chefe de família           | Atualização de dados de contato e substituição do responsável pelo núcleo familiar.                   | 4, 5    | 1          | A01,A03 | Planejado |
+| RF010 | Gerenciamento de abrigos                    | Interface CRUD para edição de dados cadastrais, inativação ou atualização estrutural dos abrigos.     | 4, 5    | 3          | A02     | Planejado |
+| RF011 | Controle de ocupação de abrigos             | Monitoramento em tempo real de vagas, leitos disponíveis e triagem de entrada (SUAS).                 | 4       | 3          | A02     | Planejado |
+| RF012 | Gestão de estoque humanitário               | Registro e baixa de doações, cestas básicas e materiais de primeira necessidade.                      | 1, 4, 5 | 3          | A02     | Planejado |
+| RF013 | Geração de mapas de calor                   | Processamento automático de densidade de riscos e vulnerabilidades sobre o mapa da cidade.            | 2       | 2          | A02,A03 | Planejado |
+| RF014 | Geração de relatórios                       | Consolidação de dados estatísticos em documentos (PDF) para análise de gestão.                        | 2       | 2          | A02,A03 | Planejado |
+| RF015 | Exportação dos dados                        | Extração de bases em formatos abertos (CSV/PDF) para integração com órgãos externos.                  | 2       | 3          | A02,A03 | Planejado |
+| RF016 | Aviso anual de atualização dos dados        | Notificação automática via sistema/e-mail para revisão periódica das informações cadastrais.          | 6       | 3          | A02     | Planejado |
 
-### 3.1.2. Regras de Negócio (sprint 1, refinar até sprint 5)
+*Legenda* 
+Tipo: 1 - cadastro (entrada), 2 - relatório (saída), 3 - consulta (leitura), 4 - atualização (edição), 5 - exclusão (remoção), 6 - outros.
+Prioridade: 1 - muito importante, 2 - importante, 3 - descartável.
+
+### 3.1.3. Regras de Negócio (sprint 1, refinar até sprint 5)
 
 *Numere e redija as RN de forma implementável e testável. Toda RN deve ter pelo menos um teste automatizado associado a partir da sprint 3.*
 
@@ -179,7 +234,7 @@ Critérios INVEST | *(Por que é Independente? Por que é Negociável? Por que �
 | RN01 | ...       | RF001        |
 | RN02 | ...       | RF001        |
 
-### 3.1.3. Requisitos Não Funcionais — 8 Eixos ISO/IEC 25010 (sprints 1 a 5)
+### 3.1.4. Requisitos Não Funcionais — 8 Eixos ISO/IEC 25010 (sprints 1 a 5)
 
 *Preencha os 8 eixos. Cada eixo deve ter ao menos um RNF verificável (com métrica, limite ou critério concreto) ou justificativa explícita de ausência. Evolua do conceitual (sprint 1) ao técnico mensurável (sprint 5).*
 
@@ -194,7 +249,7 @@ Critérios INVEST | *(Por que é Independente? Por que é Negociável? Por que �
 | REST — Restrições Design | ...       | ...                | ...           |
 | ORG — Organizacionais    | ...       | ...                | ...           |
 
-### 3.1.4. Matriz RF → RN → Endpoint (sprints 3 a 5)
+### 3.1.5. Matriz RF → RN → Endpoint (sprints 3 a 5)
 
 *Matriz de cobertura mostrando quais RN e endpoints implementam cada RF.*
 
