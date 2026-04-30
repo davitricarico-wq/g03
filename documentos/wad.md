@@ -74,39 +74,21 @@ Existem órgãos que atuam em cenários semelhantes aos da Defesa Civil, como Co
 
 #### Poder de Barganha: Fornecedores
 
-Na Defesa Civil de Santo André, o poder de barganha dos fornecedores varia conforme o tipo de recurso necessário e o momento da operação. Em situações normais, o poder tende a ser baixo para insumos básicos, como lonas, colchões, cestas, água e materiais de apoio, pois há maior quantidade de fornecedores e possibilidade de compra por processos públicos.
-
-Por outro lado, em situações de emergência, esse poder pode aumentar, já que a rapidez na entrega e a disponibilidade imediata dos itens se tornam mais importantes que o preço. Nesse contexto, fornecedores com estoque disponível ou capacidade de entrega rápida ganham mais influência.
-
-Além disso, fornecedores de serviços especializados, como tecnologia, georreferenciamento, geotecnia, mapeamento de risco e análises técnicas, possuem maior poder de barganha, pois há menos alternativas no mercado e maior dependência de conhecimento técnico.
-
-Assim, o poder dos fornecedores pode ser considerado médio: baixo para materiais comuns, mas mais alto em emergências e em serviços técnicos especializados.
-
+Na Defesa Civil de Santo André, o poder de barganha dos fornecedores varia conforme o recurso e o contexto. Em situações normais, é baixo para insumos básicos, como lonas, colchões e água, devido à ampla oferta e compras públicas. Em emergências, esse poder aumenta, pois rapidez e disponibilidade se tornam mais importantes que o preço, favorecendo fornecedores com pronta entrega. Já serviços especializados, como tecnologia, georreferenciamento e análises técnicas, apresentam maior poder, pela escassez de alternativas e dependência de expertise. Assim, o poder dos fornecedores é médio: baixo para itens comuns, mas elevado em emergências e serviços técnicos.
 
 #### Poder de Barganha: Clientes
 
-O Poder de Barganha dos Clientes, seguindo o modelo das Cinco Forças de Porter, analisa a influência que os consumidores possuem sobre as empresas do setor, especialmente em relação a preços, qualidade, variedade e condições de compra. Quanto maior a oferta de alternativas disponíveis no mercado, maior tende a ser o poder de negociação dos clientes. 
-
-Aplicando a força de barganha dos clientes do modelo de Cinco Forças de Porter ao contexto apresentado, os moradores de Santo André exercem um poder de barganha moderado a alto sobre a Defesa Civil, mesmo sem uma relação comercial direta envolvendo valores.
-
-Por um lado, esse poder é limitado, pois a população depende fortemente dos serviços prestados em situações de risco, como enchentes e deslizamentos, não havendo alternativas viáveis. Por outro lado, esse poder se fortalece devido à capacidade de pressão social e política que os cidadãos possuem, podendo cobrar melhorias por meio de reclamações, mídia ou mobilização junto ao poder público.
-
-Além disso, o funcionamento eficaz do sistema proposto depende diretamente da colaboração dos moradores na coleta de dados, o que amplia ainda mais sua influência: caso haja resistência, desconfiança ou insatisfação com o uso das informações, a qualidade e a efetividade do sistema podem ser comprometidas. Dessa forma, mesmo sem poder econômico direto, os moradores exercem influência significativa sobre o sucesso da solução.
+O Poder de Barganha dos Clientes, no modelo das Cinco Forças de Porter, avalia a influência dos consumidores sobre preços, qualidade e condições. Quanto mais alternativas, maior o poder de negociação. No contexto apresentado, os moradores de Santo André exercem poder moderado a alto sobre a Defesa Civil, mesmo sem relação comercial direta. Esse poder é limitado pela dependência dos serviços em situações de risco, sem alternativas viáveis. Porém, se fortalece pela pressão social e política, via reclamações e mobilização. Além disso, a eficácia do sistema depende da colaboração dos moradores na coleta de dados, o que amplia sua influência, podendo impactar diretamente a qualidade e o sucesso da solução.
 
 #### Ameaça de Novos Entrantes
 
-A ameaça de novos entrantes para a Defesa Civil de Santo André é baixa, porque sua atuação não funciona como um mercado comum, em que qualquer empresa pode entrar e competir diretamente. A Defesa Civil é um órgão público ligado à Prefeitura, com responsabilidade oficial sobre prevenção, preparação, resposta e recuperação em situações de risco e desastre no município.
-
-Além disso, sua atuação exige conhecimento técnico, autorização institucional, integração com outras secretarias e experiência em situações emergenciais. Mesmo que empresas privadas possam oferecer tecnologias, consultorias ou sistemas de apoio, elas não substituem o papel da Defesa Civil, pois não possuem a mesma autoridade pública para coordenar evacuações, abrigos, vistorias e ações de resposta.
-
-Por isso, a entrada de novos concorrentes diretos é difícil. A principal ameaça não vem de novos órgãos substituindo a Defesa Civil, mas sim de soluções externas que podem disputar espaço como ferramentas de apoio à gestão de riscos.
+A ameaça de novos entrantes para a Defesa Civil de Santo André é baixa, pois não se trata de um mercado competitivo. Trata-se de um órgão público ligado à Prefeitura, responsável por prevenção, resposta e recuperação em desastres. Sua atuação exige conhecimento técnico, autorização institucional, integração com outras áreas e experiência prática. Embora empresas privadas possam oferecer tecnologias e consultorias, não substituem a autoridade da Defesa Civil em ações como evacuações e vistorias. Assim, a entrada de concorrentes diretos é difícil, sendo a principal ameaça limitada a soluções externas que atuam como apoio à gestão de riscos.
 
 #### Ameaça de Substitutos
 
 No contexto da Proteção e Defesa Civil, a análise da ameaça de produtos substitutos, conforme o modelo de Michael Porter, deve ser adaptada, pois se trata de um serviço público de competência estatal exclusiva, sem concorrentes diretos. Ainda assim, existem alternativas que atendem à mesma necessidade da população por segurança e resposta a emergências, como aplicativos de monitoramento climático, redes comunitárias, ONGs e seguros privados. 
 
 Esses substitutos apresentam alta acessibilidade e baixo custo, podendo ser acionados de forma mais imediata, o que confere à força uma intensidade baixa a moderada. Estratégicamente, isso exige que a Defesa Civil mantenha eficiência operacional e comunicação ágil, a fim de preservar a confiança da população e a relevância municipal e reduzir a dependência dessas alternativas.
-
 
 
 ### 2.1.2. Análise SWOT da Instituição Parceira (sprint 1)
@@ -624,6 +606,8 @@ Descreva os principais segmentos de mercado a serem atendidos pela aplicação. 
 # <a name="c8"></a>8. Referências (sprints 1 a 5)
 
 PORTER, Michael E. *Estratégia Competitiva: Técnicas para Análise de Indústrias e da Concorrência*. 2. ed. Rio de Janeiro: Campus, 2004.
+
+JOHNSON, G.; SCHOLES, K.; WHITTINGTON, R. *Exploring Corporate Strategy*. Harlow: Pearson Education, 2008.
 
 PREFEITURA DE SANTO ANDRÉ. Departamento de Proteção e Defesa Civil: Ações e Programas. Disponível em: <https://portais.santoandre.sp.gov.br/defesacivil/>. Acesso em: 27 abr. 2026.
 
