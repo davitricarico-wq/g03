@@ -9,6 +9,18 @@
 
 #### Nomes dos integrantes do grupo
 
+Ali Abdallah  
+Arthur Davi  
+Davi Tricarico  
+Eduardo Totti  
+Enzo Kojian  
+Gabriel Andreott  
+Julio Quevedo  
+Lucas Bianchezzi
+
+
+
+
 
 
 ## Sumário
@@ -49,6 +61,8 @@ Este projeto será desenvolvido em parceria com a Defesa Civil de Santo André, 
 # <a name="c2"></a>2. Visão Geral da Aplicação Web (sprint 1)
 
 ## 2.1. Escopo do Projeto (sprints 1 e 4)
+
+Esta seção apresenta o escopo do projeto, contemplando as análises estratégicas e conceituais realizadas ao longo das sprints iniciais. São abordados o Modelo das 5 Forças de Porter, a análise SWOT da instituição parceira, a definição da solução proposta, bem como ferramentas de apoio à tomada de decisão, como o Value Proposition Canvas e a matriz de riscos, as personas e as user stories. O objetivo é contextualizar o problema, compreender o ambiente de atuação e orientar o desenvolvimento da solução.
 
 ### 2.1.1. Modelo de 5 Forças de Porter (sprint 1)
 
