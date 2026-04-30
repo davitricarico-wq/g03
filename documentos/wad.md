@@ -3,11 +3,21 @@
 
 # WAD - Web Application Document - Módulo 2 - Inteli
 
-**_Os trechos em itálico servem apenas como guia para o preenchimento da seção. Por esse motivo, não devem fazer parte da documentação final_**
 
 ## Nome do Grupo
 
 #### Nomes dos integrantes do grupo
+
+Ali Abdallah  
+Arthur Davi  
+Davi Tricarico  
+Eduardo Totti  
+Enzo Kojian  
+Gabriel Andreott  
+Julio Quevedo  
+Lucas Bianchezzi
+
+
 
 
 
@@ -50,7 +60,11 @@ Este projeto será desenvolvido em parceria com a Defesa Civil de Santo André, 
 
 ## 2.1. Escopo do Projeto (sprints 1 e 4)
 
+Esta seção apresenta o escopo do projeto, contemplando as análises estratégicas e conceituais realizadas ao longo das sprints iniciais. São abordados o Modelo das 5 Forças de Porter, a análise SWOT da instituição parceira, a definição da solução proposta, bem como ferramentas de apoio à tomada de decisão, como o Value Proposition Canvas e a matriz de riscos. Além disso, há as personas e as user stories que servem para entendermos melhor sobre o usuário real. O objetivo é contextualizar o problema, compreender o ambiente de atuação e orientar o desenvolvimento da solução.
+
 ### 2.1.1. Modelo de 5 Forças de Porter (sprint 1)
+
+O modelo das 5 Forças de Porter foi utilizado para analisar o ambiente competitivo e estratégico no qual a instituição está inserida. A partir dessa abordagem, são avaliadas forças como rivalidade, poder de barganha, ameaça de novos entrantes e de substitutos, permitindo compreender fatores externos que podem impactar a atuação da Defesa Civil e orientar o desenvolvimento da solução proposta.
 
 <img src="outros/porter.png">
 
@@ -67,19 +81,6 @@ Por outro lado, em situações de emergência, esse poder pode aumentar, já que
 Além disso, fornecedores de serviços especializados, como tecnologia, georreferenciamento, geotecnia, mapeamento de risco e análises técnicas, possuem maior poder de barganha, pois há menos alternativas no mercado e maior dependência de conhecimento técnico.
 
 Assim, o poder dos fornecedores pode ser considerado médio: baixo para materiais comuns, mas mais alto em emergências e em serviços técnicos especializados.
-
-
-
-#### Poder de Barganha: Clientes
-
-
-#### Poder de Barganha: Fornecedores
-
-Na Defesa Civil de Santo André, o poder de barganha dos fornecedores varia conforme o tipo de insumo e o contexto operacional, sendo classificados em diretos (contrato com o órgão) e indiretos (via outros órgãos públicos).
-Em condições normais, o poder é baixo, especialmente para insumos básicos (ex: lonas, colchões), devido à alta concorrência e ao uso do Sistema de Registro de Preços (SRP), que favorece menor custo e substituição de fornecedores.
-Em situações de emergência, o poder torna-se alto, pois a dispensa de licitação prioriza a rapidez na entrega, permitindo que fornecedores com estoque disponível influenciem preços.
-Já em serviços e tecnologias especializadas, como o IPT (ex: análises geológicas), o poder é muito alto, devido à baixa concorrência e à dependência técnica.
-Assim, há uma dualidade: maior controle na prevenção e maior dependência dos fornecedores na resposta a desastres.
 
 
 #### Poder de Barganha: Clientes
@@ -110,8 +111,13 @@ Esses substitutos apresentam alta acessibilidade e baixo custo, podendo ser acio
 
 ### 2.1.2. Análise SWOT da Instituição Parceira (sprint 1)
 
+A análise SWOT foi realizada com o objetivo de compreender o cenário interno e externo da instituição parceira, identificando suas forças, fraquezas, oportunidades e ameaças. Essa análise permite avaliar aspectos que impactam diretamente o desenvolvimento e a implementação da solução proposta, contribuindo para decisões mais estratégicas e alinhadas ao contexto da Defesa Civil.
 
-<img src="outros/swot.png">
+<div align="center">
+    <p>Figura 2: Análise Swot</p>
+    <img src="outros/swot.png" width="800">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
 
 #### Strengths
 
@@ -149,6 +155,8 @@ Além disso, a **expansão urbana desordenada** e a **concentração em áreas d
 
 
 ### 2.1.3. Solução (sprints 1 a 5)
+
+Nesta seção, apresenta-se a solução proposta para o problema identificado, detalhando suas principais funcionalidades, forma de utilização, dados envolvidos e benefícios esperados. O objetivo é demonstrar como a aplicação web contribuirá para a centralização das informações, melhoria dos processos operacionais e apoio à tomada de decisão no contexto da Defesa Civil.
 
 1. Problema a ser resolvido
 
