@@ -54,7 +54,7 @@ Este projeto será desenvolvido em parceria com a Defesa Civil de Santo André, 
 
 <div align="center">
     <p>Figura 1: 5 Forças de Porter</p>
-    <img src="outros/porter.png" width="500">
+    <img src="outros/porter.png" width="800">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
@@ -97,7 +97,7 @@ Esses substitutos apresentam alta acessibilidade e baixo custo, podendo ser acio
 
 <div align="center">
     <p>Figura 2: Análise Swot</p>
-    <img src="outros/swot.png" width="500">
+    <img src="outros/swot.png" width="800">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
@@ -105,25 +105,29 @@ Esses substitutos apresentam alta acessibilidade e baixo custo, podendo ser acio
 
 A Defesa Civil de Santo André tem como uma de suas principais forças o fato de atuar em uma área essencial para a cidade: a prevenção, preparação, resposta e recuperação diante de desastres naturais e tecnológicos. Por estar ligada à Prefeitura e à Secretaria de Meio Ambiente e Mudanças Climáticas, a organização possui legitimidade institucional e capacidade de articulação com outras áreas públicas. Além disso, tem conhecimento técnico sobre áreas de risco, protocolos de evacuação, acolhimento emergencial e atendimento a populações vulneráveis, como idosos, crianças, gestantes e pessoas com deficiência.
 
+
 #### Weaknesses
 
-A **base histórica de dados** apresenta limitações importantes, pois pode conter informações incompletas, inconsistentes ou desatualizadas, especialmente quando oriunda de registros físicos ou sistemas legados. Isso compromete a confiabilidade inicial do georreferenciamento e pode impactar a qualidade das análises e decisões tomadas a partir desses dados.
+A Defesa Civil de Santo André possui alta **dependência de processos analógicos** e do **conhecimento de agentes veteranos**. A falta de um repositório digital centralizado fragmenta as informações e compromete a memória técnica da instituição.
 
-Além disso, a **dependência de conectividade** é um fator crítico, já que a aplicação web pode ter seu desempenho reduzido em áreas com baixa cobertura de internet, comuns em regiões de risco. Soma-se a isso a **curva de aprendizado das equipes de campo**, que podem enfrentar dificuldades na adoção do sistema.
+Além disso, a **comunicação fragmentada** entre setores impede o fluxo ágil de informações com as pastas de Saúde e Assistência Social. Essa lacuna inviabiliza o acesso a um perfil socioeconômico atualizado das populações em áreas de risco.
 
-Por fim, há riscos relacionados à **manutenção e atualização contínua**. A ausência de processos estruturados pode levar à obsolescência dos dados, enquanto a **dependência de uma equipe técnica** reduzida pode gerar sobrecarga e atrasos em correções ou melhorias.
+
+O uso de ferramentas como planilhas físicas gera **barreiras operacionais críticas**. Essa limitação reduz a velocidade de resposta e a eficiência na gestão de abrigos e logística durante crises severas.
 
 #### Opportunities
 
 Entre as oportunidades, destaca-se o uso de tecnologia para modernizar a gestão pública de riscos e desastres. Ferramentas digitais podem ajudar a organizar dados, acelerar atendimentos, melhorar a comunicação entre secretarias e apoiar decisões mais rápidas. Além disso, o aumento da preocupação com eventos climáticos extremos torna o trabalho da Defesa Civil ainda mais relevante, abrindo espaço para investimentos, parcerias com instituições de ensino e soluções inovadoras. A atuação preventiva também pode fortalecer a confiança da população no serviço público.
 
-<h2 align="center" id="threats">Threats</h2>
+#### Threats
 
-Entre as ameaças, destaca-se a **descontinuidade administrativa**, que pode comprometer o projeto em caso de mudanças políticas ou redução de investimentos e impactar diretamente a sustentabilidade e evolução da solução ao longo do tempo.
+**Eventos climáticos extremos e imprevisíveis** desafiam a capacidade instalada de resposta do município. O aumento da intensidade das chuvas pode saturar os planos de contingência atuais, superando os limites operacionais da instituição.
 
-Outro ponto crítico envolve questões legais, especialmente no que se refere à **proteção de dados sensíveis**. A não conformidade com a Lei Geral de Proteção de Dados pode resultar em restrições operacionais ou até a interrupção do sistema, além de afetar a confiança dos usuários.
 
-Riscos como a **baixa adesão da comunidade** também dificultam a coleta de dados, além da ocorrência de **eventos extremos**, comprometendo toda a infraestrutura. Por fim, **ameaças de cibersegurança** podem expor informações estratégicas, gerando impactos significativos.
+Além disso, a **expansão urbana desordenada** e a **concentração em áreas de encosta** tornam o mapeamento de riscos rapidamente obsoleto. A dinâmica social dessas ocupações dificulta a manutenção de dados precisos para ações preventivas.
+
+
+**Instabilidades orçamentárias** e a **baixa adesão comunitária aos protocolos de evacuação** também representam riscos. Tais fatores comprometem a continuidade de investimentos e a eficácia das salvaguardas em momentos de desastre.
 
 
 ### 2.1.3. Solução (sprints 1 a 5)
