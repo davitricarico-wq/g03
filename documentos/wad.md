@@ -60,6 +60,26 @@ Existem órgãos que atuam em cenários semelhantes aos da Defesa Civil, como Co
 
 #### Poder de Barganha: Fornecedores
 
+Na Defesa Civil de Santo André, o poder de barganha dos fornecedores varia conforme o tipo de insumo e o contexto operacional, sendo classificados em diretos (contrato com o órgão) e indiretos (via outros órgãos públicos).
+Em condições normais, o poder é baixo, especialmente para insumos básicos (ex: lonas, colchões), devido à alta concorrência e ao uso do Sistema de Registro de Preços (SRP), que favorece menor custo e substituição de fornecedores.
+Em situações de emergência, o poder torna-se alto, pois a dispensa de licitação prioriza a rapidez na entrega, permitindo que fornecedores com estoque disponível influenciem preços.
+Já em serviços e tecnologias especializadas, como o IPT (ex: análises geológicas), o poder é muito alto, devido à baixa concorrência e à dependência técnica.
+Assim, há uma dualidade: maior controle na prevenção e maior dependência dos fornecedores na resposta a desastres.
+
+
+
+#### Poder de Barganha: Clientes
+
+
+#### Poder de Barganha: Fornecedores
+
+Na Defesa Civil de Santo André, o poder de barganha dos fornecedores varia conforme o tipo de insumo e o contexto operacional, sendo classificados em diretos (contrato com o órgão) e indiretos (via outros órgãos públicos).
+Em condições normais, o poder é baixo, especialmente para insumos básicos (ex: lonas, colchões), devido à alta concorrência e ao uso do Sistema de Registro de Preços (SRP), que favorece menor custo e substituição de fornecedores.
+Em situações de emergência, o poder torna-se alto, pois a dispensa de licitação prioriza a rapidez na entrega, permitindo que fornecedores com estoque disponível influenciem preços.
+Já em serviços e tecnologias especializadas, como o IPT (ex: análises geológicas), o poder é muito alto, devido à baixa concorrência e à dependência técnica.
+Assim, há uma dualidade: maior controle na prevenção e maior dependência dos fornecedores na resposta a desastres.
+
+
 #### Poder de Barganha: Clientes
 
 O Poder de Barganha dos Clientes, seguindo o modelo das Cinco Forças de Porter, analisa a influência que os consumidores possuem sobre as empresas do setor, especialmente em relação a preços, qualidade, variedade e condições de compra. Quanto maior a oferta de alternativas disponíveis no mercado, maior tende a ser o poder de negociação dos clientes. 
@@ -93,7 +113,11 @@ Esses substitutos apresentam alta acessibilidade e baixo custo, podendo ser acio
 
 #### Strengths
 
-A Defesa Civil de Santo André tem como uma de suas principais forças o fato de atuar em uma área essencial para a cidade: a prevenção, preparação, resposta e recuperação diante de desastres naturais e tecnológicos. Por estar ligada à Prefeitura e à Secretaria de Meio Ambiente e Mudanças Climáticas, a organização possui legitimidade institucional e capacidade de articulação com outras áreas públicas. Além disso, tem conhecimento técnico sobre áreas de risco, protocolos de evacuação, acolhimento emergencial e atendimento a populações vulneráveis, como idosos, crianças, gestantes e pessoas com deficiência.
+A Defesa Civil de Santo André tem como uma de suas principais forças o fato de **atuar em uma área essencial** para a cidade: a **prevenção, preparação, resposta e recuperação diante de desastres naturais e tecnológicos.**
+
+Por estar ligada à Prefeitura e à Secretaria de Meio Ambiente e Mudanças Climáticas, a organização possui **legitimidade institucional** e **capacidade de articulação com outras áreas públicas.**
+
+Além disso, tem conhecimento técnico sobre **áreas de risco**, protocolos de evacuação, acolhimento emergencial e atendimento a populações vulneráveis, como idosos, crianças, gestantes e pessoas com deficiência.
 
 
 #### Weaknesses
@@ -107,7 +131,9 @@ O uso de ferramentas como planilhas físicas gera **barreiras operacionais crít
 
 #### Opportunities
 
-Entre as oportunidades, destaca-se o uso de tecnologia para modernizar a gestão pública de riscos e desastres. Ferramentas digitais podem ajudar a organizar dados, acelerar atendimentos, melhorar a comunicação entre secretarias e apoiar decisões mais rápidas. Além disso, o aumento da preocupação com eventos climáticos extremos torna o trabalho da Defesa Civil ainda mais relevante, abrindo espaço para investimentos, parcerias com instituições de ensino e soluções inovadoras. A atuação preventiva também pode fortalecer a confiança da população no serviço público.
+Entre as oportunidades, destaca-se o uso de **tecnologia para modernizar a gestão pública de riscos e desastres.** Ferramentas digitais podem ajudar a organizar dados, acelerar atendimentos, melhorar a comunicação entre secretarias e apoiar decisões mais rápidas. 
+
+Além disso, o aumento da **preocupação com eventos climáticos extremos** torna o trabalho da Defesa Civil ainda mais relevante, abrindo espaço para investimentos, parcerias com instituições de ensino e soluções inovadoras. A **atuação preventiva** também pode fortalecer a confiança da população no serviço público.
 
 #### Threats
 
@@ -333,10 +359,11 @@ Prioridade: 1 - muito importante, 2 - importante, 3 - descartável.
 
 *Numere e redija as RN de forma implementável e testável. Toda RN deve ter pelo menos um teste automatizado associado a partir da sprint 3.*
 
-| ID   | Descrição | RF associado |
-|------|-----------|--------------|
-| RN01 | ...       | RF001        |
-| RN02 | ...       | RF001        |
+| ID | Descrição | RF associado | 
+|------|-----------|--------------| 
+| RN01 | A priorização de evacuação deve considerar critérios de vulnerabilidade, com base em classificação hierárquica. No nível mais alto estão indivíduos com mobilidade reduzida, acamados, deficiência severa ou dependência total. Em seguida, gestantes, idosos e pessoas com deficiência moderada. Por fim, os demais indivíduos. | RF008, RF003, RF004| 
+| RN02 | O sistema deve emitir alertas para o recadastro (ou atualização) de assistidos a cada 12 meses(1 ano) desde o cadastro. | RF002, RF003, RF004, RF007, RF016 | 
+| RN03 | As moradias cujos moradores faleceram, devem ter seu registro arquivado. Não participando de operações ativas, mas preservando os dados para fins históricos, auditoria e rastreabilidade, estando também conforme a LGPD. | RF001, RF006, RF007 |
 
 ### 3.1.4. Requisitos Não Funcionais — 8 Eixos ISO/IEC 25010 (sprints 1 a 5)
 
