@@ -216,10 +216,11 @@ Prioridade: 1 - muito importante, 2 - importante, 3 - descartável.
 
 *Numere e redija as RN de forma implementável e testável. Toda RN deve ter pelo menos um teste automatizado associado a partir da sprint 3.*
 
-| ID   | Descrição | RF associado |
-|------|-----------|--------------|
-| RN01 | ...       | RF001        |
-| RN02 | ...       | RF001        |
+| ID | Descrição | RF associado | 
+|------|-----------|--------------| 
+| RN01 | A priorização de evacuação deve considerar critérios de vulnerabilidade, com base em classificação hierárquica. No nível mais alto estão indivíduos com mobilidade reduzida, acamados, deficiência severa ou dependência total. Em seguida, gestantes, idosos e pessoas com deficiência moderada. Por fim, os demais indivíduos. | RF008, RF003, RF004| 
+| RN02 | O sistema deve emitir alertas para o recadastro (ou atualização) de assistidos a cada 12 meses(1 ano) desde o cadastro. | RF002, RF003, RF004, RF007, RF016 | 
+| RN03 | As moradias cujos moradores faleceram, devem ter seu registro arquivado. Não participando de operações ativas, mas preservando os dados para fins históricos, auditoria e rastreabilidade, estando também conforme a LGPD. | RF001, RF006, RF007 |
 
 ### 3.1.4. Requisitos Não Funcionais — 8 Eixos ISO/IEC 25010 (sprints 1 a 5)
 
