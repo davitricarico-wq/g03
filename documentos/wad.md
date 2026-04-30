@@ -77,6 +77,11 @@ Esta seção apresenta o escopo do projeto, contemplando as análises estratégi
 
 <h2 align="center" id="strengths">Poder de Barganha: Fornecedores</h2>
 
+Na Defesa Civil de Santo André, o poder de barganha dos fornecedores varia conforme o tipo de insumo e o contexto operacional, sendo classificados em diretos (contrato com o órgão) e indiretos (via outros órgãos públicos).
+Em condições normais, o poder é baixo, especialmente para insumos básicos (ex: lonas, colchões), devido à alta concorrência e ao uso do Sistema de Registro de Preços (SRP), que favorece menor custo e substituição de fornecedores.
+Em situações de emergência, o poder torna-se alto, pois a dispensa de licitação prioriza a rapidez na entrega, permitindo que fornecedores com estoque disponível influenciem preços.
+Já em serviços e tecnologias especializadas, como o IPT (ex: análises geológicas), o poder é muito alto, devido à baixa concorrência e à dependência técnica.
+Assim, há uma dualidade: maior controle na prevenção e maior dependência dos fornecedores na resposta a desastres.
 
 
 <h2 align="center" id="strengths">Poder de Barganha: Clientes</h2>
@@ -116,7 +121,11 @@ Esses substitutos apresentam alta acessibilidade e baixo custo, podendo ser acio
 
 #### Strengths
 
-A Defesa Civil de Santo André tem como uma de suas principais forças o fato de atuar em uma área essencial para a cidade: a prevenção, preparação, resposta e recuperação diante de desastres naturais e tecnológicos. Por estar ligada à Prefeitura e à Secretaria de Meio Ambiente e Mudanças Climáticas, a organização possui legitimidade institucional e capacidade de articulação com outras áreas públicas. Além disso, tem conhecimento técnico sobre áreas de risco, protocolos de evacuação, acolhimento emergencial e atendimento a populações vulneráveis, como idosos, crianças, gestantes e pessoas com deficiência.
+A Defesa Civil de Santo André tem como uma de suas principais forças o fato de **atuar em uma área essencial** para a cidade: a **prevenção, preparação, resposta e recuperação diante de desastres naturais e tecnológicos.**
+
+Por estar ligada à Prefeitura e à Secretaria de Meio Ambiente e Mudanças Climáticas, a organização possui **legitimidade institucional** e **capacidade de articulação com outras áreas públicas.**
+
+Além disso, tem conhecimento técnico sobre **áreas de risco**, protocolos de evacuação, acolhimento emergencial e atendimento a populações vulneráveis, como idosos, crianças, gestantes e pessoas com deficiência.
 
 
 #### Weaknesses
@@ -130,7 +139,9 @@ O uso de ferramentas como planilhas físicas gera **barreiras operacionais crít
 
 #### Opportunities
 
-Entre as oportunidades, destaca-se o uso de tecnologia para modernizar a gestão pública de riscos e desastres. Ferramentas digitais podem ajudar a organizar dados, acelerar atendimentos, melhorar a comunicação entre secretarias e apoiar decisões mais rápidas. Além disso, o aumento da preocupação com eventos climáticos extremos torna o trabalho da Defesa Civil ainda mais relevante, abrindo espaço para investimentos, parcerias com instituições de ensino e soluções inovadoras. A atuação preventiva também pode fortalecer a confiança da população no serviço público.
+Entre as oportunidades, destaca-se o uso de **tecnologia para modernizar a gestão pública de riscos e desastres.** Ferramentas digitais podem ajudar a organizar dados, acelerar atendimentos, melhorar a comunicação entre secretarias e apoiar decisões mais rápidas. 
+
+Além disso, o aumento da **preocupação com eventos climáticos extremos** torna o trabalho da Defesa Civil ainda mais relevante, abrindo espaço para investimentos, parcerias com instituições de ensino e soluções inovadoras. A **atuação preventiva** também pode fortalecer a confiança da população no serviço público.
 
 #### Threats
 
