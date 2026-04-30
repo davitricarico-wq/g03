@@ -54,7 +54,7 @@ Este projeto será desenvolvido em parceria com a Defesa Civil de Santo André, 
 
 <div align="center">
     <p>Figura 1: 5 Forças de Porter</p>
-    <img src="outros/porter.png" width="500">
+    <img src="outros/porter.png" width="800">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
@@ -97,7 +97,7 @@ Esses substitutos apresentam alta acessibilidade e baixo custo, podendo ser acio
 
 <div align="center">
     <p>Figura 2: Análise Swot</p>
-    <img src="outros/swot.png" width="500">
+    <img src="outros/swot.png" width="800">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
@@ -109,8 +109,6 @@ A Defesa Civil de Santo André tem como uma de suas principais forças o fato de
 #### Weaknesses
 
 A Defesa Civil de Santo André possui alta **dependência de processos analógicos** e do **conhecimento de agentes veteranos**. A falta de um repositório digital centralizado fragmenta as informações e compromete a memória técnica da instituição.
-
-Entre as oportunidades, destaca-se o uso de tecnologia para modernizar a gestão pública de riscos e desastres. Ferramentas digitais podem ajudar a organizar dados, acelerar atendimentos, melhorar a comunicação entre secretarias e apoiar decisões mais rápidas. Além disso, o aumento da preocupação com eventos climáticos extremos torna o trabalho da Defesa Civil ainda mais relevante, abrindo espaço para investimentos, parcerias com instituições de ensino e soluções inovadoras. A atuação preventiva também pode fortalecer a confiança da população no serviço público.
 
 Além disso, a **comunicação fragmentada** entre setores impede o fluxo ágil de informações com as pastas de Saúde e Assistência Social. Essa lacuna inviabiliza o acesso a um perfil socioeconômico atualizado das populações em áreas de risco.
 
