@@ -3,7 +3,6 @@
 
 # WAD - Web Application Document - Módulo 2 - Inteli
 
-**_Os trechos em itálico servem apenas como guia para o preenchimento da seção. Por esse motivo, não devem fazer parte da documentação final_**
 
 ## Nome do Grupo
 
@@ -113,6 +112,8 @@ Esses substitutos apresentam alta acessibilidade e baixo custo, podendo ser acio
 
 ### 2.1.2. Análise SWOT da Instituição Parceira (sprint 1)
 
+A análise SWOT foi realizada com o objetivo de compreender o cenário interno e externo da instituição parceira, identificando suas forças, fraquezas, oportunidades e ameaças. Essa análise permite avaliar aspectos que impactam diretamente o desenvolvimento e a implementação da solução proposta, contribuindo para decisões mais estratégicas e alinhadas ao contexto da Defesa Civil.
+
 <div align="center">
     <p>Figura 2: Análise Swot</p>
     <img src="outros/swot.png" width="800">
@@ -155,6 +156,8 @@ Além disso, a **expansão urbana desordenada** e a **concentração em áreas d
 
 
 ### 2.1.3. Solução (sprints 1 a 5)
+
+Nesta seção, apresenta-se a solução proposta para o problema identificado, detalhando suas principais funcionalidades, forma de utilização, dados envolvidos e benefícios esperados. O objetivo é demonstrar como a aplicação web contribuirá para a centralização das informações, melhoria dos processos operacionais e apoio à tomada de decisão no contexto da Defesa Civil.
 
 1. Problema a ser resolvido
 
