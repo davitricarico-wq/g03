@@ -309,7 +309,20 @@ Apresenta-se a seguir a lista de User Stories levantadas para o projeto GeoRisco
 
 ## 3.1. Requisitos do Sistema (sprints 1 a 5)
 
-*Esta seção formaliza o que o sistema deve fazer, sob quais regras e com quais qualidades. Atualize a cada sprint conforme os requisitos evoluem.*
+Esta seção formaliza o que o sistema deve fazer, sob quais regras e com quais qualidades. O sistema tem como propósito central permitir a compreensão precisa da quantidade de pessoas em territórios de risco, operando de forma georreferenciada para identificar residências mesmo em locais sem endereçamento oficial (como barracos ou vielas), utilizando coordenadas ou CEP Digital.
+
+O sistema atende primordialmente ao João Silva (Agente de Campo) no que tange à operatividade e coleta de dados em tempo real. Como João atua diretamente em áreas de risco e sob pressão, as funcionalidades de cadastro georreferenciado de edificações e a classificação de risco (R1 a R4) suprem sua necessidade de um sistema integrado e acessível em campo. O foco no registro de moradias, chefes de família e membros residentes permite que João cumpra seu objetivo de registrar informações com precisão, enquanto a identificação de perfis com necessidades especiais (idosos, PCDs, gestantes) resolve sua "dor" de comunicação falha entre equipes, garantindo que o plano de evacuação seja assertivo. Além disso, a gestão de unidades de acolhimento e estoque humanitário em tempo real reduz o retrabalho e a duplicidade de registros que ele atualmente enfrenta.
+
+Para Wesley Souza (Diretor da Defesa Civil), o sistema atua como uma ferramenta estratégica de tomada de decisão. As funcionalidades de processamento automático de mapas de calor de riscos e a geração de relatórios estatísticos em PDF atendem diretamente ao seu objetivo de definir estratégias de mitigação e sua necessidade por indicadores estratégicos e visão macro. A capacidade de exportar dados em formatos abertos (CSV) e o monitoramento da ocupação de leitos resolvem sua principal "dor": a ausência de relatórios confiáveis e a dificuldade em prever riscos. Por fim, a emissão de notificações automáticas via e-mail para a revisão anual garante a integridade dos dados a longo prazo, permitindo que Wesley mantenha a transparência na gestão e o planejamento de ações preventivas de forma contínua e eficiente.
+
+O funcionamento do sistema é regido, primeiramente, pela RN01 (Priorização de Evacuação), que estabelece os critérios de vulnerabilidade para o resgate: pessoas com mobilidade reduzida, acamados e com deficiência severa possuem prioridade absoluta, seguidos por gestantes, idosos e pessoas com deficiência moderada na escala hierárquica.
+
+Para garantir a eficácia operacional, o cadastro deve ser mantido atualizado conforme a RN02 (Alertas para Recadastro), que determina a emissão de alertas para a atualização dos dados dos assistidos a cada 12 meses.
+
+Por fim, o ciclo de vida dos dados é gerido pela RN03 (Arquivamento de Registros), que prevê o arquivamento de registros de moradores falecidos, removendo-os de operações ativas, mas preservando as informações para fins históricos, auditoria e conformidade com a LGPD.
+
+Para garantir a eficiência em campo, o sistema deve possuir capacidade de operação offline, permitindo o salvamento local dos dados com sincronização automática assim que houver cobertura de rede. O tempo de resposta para operações de salvamento e carregamento de mapas deve ser de, no máximo, 3 segundos. A interface mobile deve ser concisa e intuitiva, otimizada para o preenchimento de um cadastro completo em menos de 5 minutos, sendo adaptada para o uso do agente de campo em situações de estresse. O sistema permite a captura de fotos das fachadas dos imóveis para facilitar a identificação visual pelas equipes, mas permanece estritamente proibido o registro fotográfico das pessoas cadastradas. Além disso, a solução deve oferecer suporte à geolocalização multimodal (CEP, coordenadas e referências) e, durante esta fase de desenvolvimento, operar exclusivamente com dados hipotéticos e mascarados, garantindo total conformidade com a LGPD e o Termo de Confidencialidade. 
+
 
 ### 3.1.1 Lista de Atores
 
