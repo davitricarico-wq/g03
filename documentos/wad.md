@@ -201,15 +201,17 @@ Apresenta-se a seguir a lista de User Stories levantadas para o projeto GeoRisco
 | Critério de aceite 2 | CR2: Dado que um cadastro foi concluído, quando acessado posteriormente, então as informações devem estar disponíveis para consulta |
 | Critérios INVEST | Independente: Pode ser implementada isoladamente; Negociável: Os campos do cadastro podem variar; Valiosa: Permite a organização das informações; Estimável: Baseada em operações CRUD; Pequena: Escopo bem definido; Testável: Cadastro pode ser validado por registro e consulta |
 
+---
 
 | Identificação | US02 |
 |---|---|
-| Persona | Juliana Rocha (Gestora Operacional) |
-| User Story | "como gestora operacional, posso visualizar ocorrências em um mapa georreferenciado, para obter uma visão geral da situação" |
+| Persona | Wesley Souza (Diretor) |
+| User Story | "como diretor, posso visualizar ocorrências em um mapa georreferenciado, para obter uma visão geral da situação" |
 | Critério de aceite 1 | CR1: Dado que existem ocorrências cadastradas, quando o mapa for acessado, então os pontos devem ser exibidos corretamente |
 | Critério de aceite 2 | CR2: Dado que uma ocorrência possui localização, quando selecionada, então suas informações devem ser apresentadas |
 | Critérios INVEST | Independente: Pode ser implementada separadamente da criação de ocorrências; Negociável: O nível de detalhamento do mapa pode variar; Valiosa: Facilita a tomada de decisão; Estimável: Baseia-se em integração com APIs de mapas; Pequena: Escopo restrito à visualização; Testável: A exibição pode ser validada visualmente |
 
+---
 
 | Identificação | US03 |
 |---|---|
@@ -219,15 +221,17 @@ Apresenta-se a seguir a lista de User Stories levantadas para o projeto GeoRisco
 | Critério de aceite 2 | CR2: Dado que uma área é selecionada, quando visualizada, então seu nível de risco deve ser apresentado |
 | Critérios INVEST | Independente: Não depende do registro de ocorrências; Negociável: Tipos de dados podem ser ajustados; Valiosa: Reduz riscos operacionais; Estimável: Baseado em consultas ao banco de dados; Pequena: Função direta; Testável: Resultado verificável |
 
+---
 
 | Identificação | US04 |
 |---|---|
-| Persona | Juliana Rocha (Gestora Operacional) |
-| User Story | "como gestora operacional, posso gerenciar abrigos, para organizar o atendimento à população" |
+| Persona | Wesley Souza (Diretor) |
+| User Story | "como diretor, posso gerenciar abrigos, para organizar o atendimento à população" |
 | Critério de aceite 1 | CR1: Dado que existem abrigos cadastrados, quando acessados, então devem ser exibidos com capacidade e ocupação |
 | Critério de aceite 2 | CR2: Dado que um abrigo é atualizado, quando salvo, então os dados devem ser refletidos no sistema |
 | Critérios INVEST | Independente: Funcionalidade isolada; Negociável: Campos podem ser ajustados; Valiosa: Melhora a gestão de crises; Estimável: CRUD simples; Pequena: Escopo limitado; Testável: Atualizações verificáveis |
 
+---
 
 | Identificação | US05 |
 |---|---|
@@ -235,8 +239,9 @@ Apresenta-se a seguir a lista de User Stories levantadas para o projeto GeoRisco
 | User Story | "como diretor, posso gerar relatórios consolidados, para apoiar decisões estratégicas" |
 | Critério de aceite 1 | CR1: Dado que existem dados registrados, quando solicitado, então o relatório deve ser gerado automaticamente |
 | Critério de aceite 2 | CR2: Dado que o relatório foi gerado, quando acessado, então deve apresentar dados consolidados |
-| Critérios INVEST | Independente: Pode ser implementado separadamente; Negociável: Formato pode variar; Valiosa: Suporte estratégico; Estimável: Agregação de dados conhecida; Pequna: Escopo delimitado; Testável: Resultado validável |
+| Critérios INVEST | Independente: Pode ser implementado separadamente; Negociável: Formato pode variar; Valiosa: Suporte estratégico; Estimável: Agregação de dados conhecida; Pequena: Escopo delimitado; Testável: Resultado validável |
 
+---
 
 | Identificação | US06 |
 |---|---|
@@ -244,18 +249,19 @@ Apresenta-se a seguir a lista de User Stories levantadas para o projeto GeoRisco
 | User Story | "como agente de campo, posso atualizar ocorrências, para manter as informações corretas" |
 | Critério de aceite 1 | CR1: Dado que uma ocorrência já está registrada, quando editada, então os dados devem ser atualizados no sistema |
 | Critério de aceite 2 | CR2: Dado que a atualização foi realizada, quando a ocorrência for acessada, então as novas informações devem ser exibidas |
-| Critério de aceite ... | CR... |
 | Critérios INVEST | Independente: Pode ser implementada separadamente; Negociável: Os campos de edição podem variar; Valiosa: Garante a atualização dos dados; Estimável: Baseada em operações CRUD; Pequena: Escopo específico; Testável: Alterações podem ser verificadas |
 
+---
 
 | Identificação | US07 |
 |---|---|
-| Persona | Juliana Rocha (Gestora Operacional) |
-| User Story | "como gestora operacional, posso filtrar ocorrências, para priorizar atendimentos" |
+| Persona | Wesley Souza (Diretor) |
+| User Story | "como diretor, posso filtrar ocorrências, para priorizar atendimentos" |
 | Critério de aceite 1 | CR1: Dado que existem ocorrências registradas, quando filtros são aplicados, então apenas os resultados correspondentes devem ser exibidos |
 | Critério de aceite 2 | CR2: Dado que os filtros são removidos, quando o sistema é atualizado, então todas as ocorrências devem ser exibidas novamente |
 | Critérios INVEST | Independente: Funciona de forma isolada; Negociável: Os filtros podem variar; Valiosa: Facilita a priorização de ações; Estimável: Baseada em consultas ao sistema; Pequena: Escopo limitado; Testável: Resultados podem ser validados |
 
+---
 
 | Identificação | US08 |
 |---|---|
@@ -265,6 +271,8 @@ Apresenta-se a seguir a lista de User Stories levantadas para o projeto GeoRisco
 | Critério de aceite 2 | CR2: Dado que novos dados são inseridos, quando o sistema é atualizado, então os indicadores devem refletir essas mudanças |
 | Critérios INVEST | Independente: Pode ser desenvolvida separadamente; Negociável: Os indicadores podem variar; Valiosa: Apoia decisões estratégicas; Estimável: Baseada em agregação de dados; Pequena: Escopo definido; Testável: Dados exibidos podem ser verificados |
 
+---
+
 | Identificação | US09 |
 |---|---|
 | Persona | João Silva (Agente de Campo) |
@@ -273,15 +281,15 @@ Apresenta-se a seguir a lista de User Stories levantadas para o projeto GeoRisco
 | Critério de aceite 2 | CR2: Dado que o agente utiliza o sistema em campo, quando acessa funcionalidades principais, então elas devem funcionar corretamente |
 | Critérios INVEST | Independente: Não depende de outras histórias; Negociável: Nível de adaptação pode variar; Valiosa: Permite uso em campo; Estimável: Baseada em responsividade; Pequena: Escopo técnico definido; Testável: Interface pode ser validada |
 
+---
+
 | Identificação | US10 |
 |---|---|
-| Persona | Juliana Rocha (Gestora Operacional) |
-| User Story | "como gestora operacional, posso cadastrar equipes, para organizar operações" |
+| Persona | Wesley Souza (Diretor) |
+| User Story | "como diretor, posso cadastrar equipes, para organizar operações" |
 | Critério de aceite 1 | CR1: Dado que uma equipe é cadastrada, quando salva, então os dados devem ser armazenados no sistema |
 | Critério de aceite 2 | CR2: Dado que existem equipes cadastradas, quando acessadas, então devem ser exibidas corretamente |
 | Critérios INVEST | Independente: Pode ser implementada isoladamente; Negociável: Os dados da equipe podem variar; Valiosa: Melhora a organização operacional; Estimável: Baseada em cadastro simples; Pequena: Escopo limitado; Testável: Cadastro pode ser validado |
-
-Ressaltamos que nosso quadro do backlog no Kanban está preenchido com as User Stories, apresentando as descrições com os critérios de aceite e servindo como base para nossas futuras tasks.
 
 
 
