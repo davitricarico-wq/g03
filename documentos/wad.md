@@ -1,4 +1,4 @@
-<img src="../assets/logointeli.png">
+<img src="../assets/logointeli.png" alt="Logo Inteli" width="300">
 
 
 # WAD - Web Application Document - Módulo 2 - Inteli
@@ -27,7 +27,7 @@
 
 [7. Conclusões e trabalhos futuros](#c7)
 
-[8. Referências](c#8)
+[8. Referências](#c8)
 
 [Anexos](#c9)
 
@@ -44,22 +44,7 @@ Os aspectos essenciais para criação de valor incluem: redução do tempo crít
 
 Este projeto será desenvolvido em parceria com a Defesa Civil de Santo André, incorporando sua experiência operacional e validação contínua das funcionalidades entregues.
 
-
-### V1
-O município de Santo André enfrenta desafios críticos na gestão de populações em áreas de risco. Com mapa de risco estratificado em zonas amarelas (monitoramento), laranja (área de risco) e vermelho (área de muito risco), o município identifica constantemente famílias vulneráveis que necessitam de proteção. Contudo, o processo de coleta de dados em campo é lento, descentralizado e sem registro geolocalizado integrado. Quando desastres ou eventos extremos ocorrem, agentes da Defesa Civil precisam evacuar famílias rapidamente, mas enfrentam dificuldades: não há rastreamento unificado de retiradas, entrada em abrigos ou quantidade de pessoas por território. Isso compromete a resposta ágil, gera perda de informação entre etapas e dificulta o suporte da sede em tempo real.
-
-Como resposta, foi desenvolvido o GeoRisco Santo André: aplicação web offline-first focada no cadastro georreferenciado rápido de casas e pessoas em áreas de risco. O MVP permite que agentes em campo preencham formulários concisos via mobile, com sistema híbrido de geolocalização (CEP, coordenadas, referências e fotos de imóvel), funcionando mesmo sem GPS preciso. Dados sincronizam automaticamente quando conectado. O sistema registra retiradas de famílias e entrada em abrigos no momento do incidente, e um painel desktop oferece visualização geolocalizada para a sede monitorar densidade de pessoas por território.
-
-Os aspectos essenciais para criação de valor incluem: redução do tempo crítico de coleta em cenários de desastre, eliminação de gaps operacionais entre retirada e abrigo, visão estratégica em tempo real para alocação de recursos, e arquivamento de cadastros para manter integridade da base. A solução substitui sistemas desatualizados e fortalece a capacidade de resposta e resiliência urbana de Santo André.
-
-Este projeto será desenvolvido em parceria com a Defesa Civil de Santo André, incorporando sua experiência operacional e validação contínua das funcionalidades entregues.
-
-### V2
-Muitas famílias em Santo André vivem em áreas de risco geográfico—encostas, regiões sujeitas a alagamentos, áreas informais. Frequentemente, essas casas não têm formalização legal (invasões, ocupações), o que dificulta ainda mais o acesso a informações sobre quem mora onde. Quando chuvas intensas ou desastres ameaçam, a Defesa Civil precisa saber rapidamente: quantas pessoas estão em risco? Quem são os idosos, crianças, gestantes que precisam de prioridade? Onde exatamente as casas ficam? Atualmente, essas informações estão espalhadas em documentos de papel, planilhas desorganizadas ou sistemas antigos. O tempo é crítico em uma emergência, e essas falhas custam vidas.
-
-Como resposta, foi desenvolvido o GeoRisco Santo André: uma aplicação web que permite à Defesa Civil coletar, organizar e visualizar dados de famílias em áreas de risco de forma rápida e geolocalizada. Agentes em campo preenchem formulários digitais completos (nome, CPF, vulnerabilidades, composição da família) diretamente no celular ou tablet. O sistema captura automaticamente a localização (latitude, longitude, referências) e registra fotos das casas. Todos esses dados aparecem no mapa da cidade, integrados com as áreas de risco conhecidas, permitindo à sede ver em tempo real onde estão as pessoas em perigo e quem precisa de ajuda prioritária.
-
-Os principais ganhos são: (1) formulários digitais e estruturados substituem anotações em papel e inconsistências; (2) visualização geolocalizada permite entender exatamente quem está onde em relação às áreas de risco; (3) respostas rápidas em desastres porque a informação já está organizada; (4) registro automático de evacuações e abrigos integra todo o ciclo de emergência. A solução torna possível que a Defesa Civil realmente saiba quem precisa de proteção.
+*Observe a seção 2 e verifique que ali é possível trazer mais detalhes, portanto seja objetivo aqui. Atualize esta descrição até a entrega final, conforme desenvolvimento.*
 
 # <a name="c2"></a>2. Visão Geral da Aplicação Web (sprint 1)
 
@@ -69,7 +54,7 @@ Os principais ganhos são: (1) formulários digitais e estruturados substituem a
 
 <div align="center">
     <p>Figura 1: 5 Forças de Porter</p>
-    <img src="outros/porter.png" width="500">
+    <img src="outros/porter.png" width="800">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
@@ -94,39 +79,55 @@ Além disso, o funcionamento eficaz do sistema proposto depende diretamente da c
 
 <h2 align="center" id="strengths">Ameaça de Novos Entrantes</h2>
 
+A ameaça de novos entrantes para a Defesa Civil de Santo André é baixa, porque sua atuação não funciona como um mercado comum, em que qualquer empresa pode entrar e competir diretamente. A Defesa Civil é um órgão público ligado à Prefeitura, com responsabilidade oficial sobre prevenção, preparação, resposta e recuperação em situações de risco e desastre no município.
 
+Além disso, sua atuação exige conhecimento técnico, autorização institucional, integração com outras secretarias e experiência em situações emergenciais. Mesmo que empresas privadas possam oferecer tecnologias, consultorias ou sistemas de apoio, elas não substituem o papel da Defesa Civil, pois não possuem a mesma autoridade pública para coordenar evacuações, abrigos, vistorias e ações de resposta.
+
+Por isso, a entrada de novos concorrentes diretos é difícil. A principal ameaça não vem de novos órgãos substituindo a Defesa Civil, mas sim de soluções externas que podem disputar espaço como ferramentas de apoio à gestão de riscos.
 
 <h2 align="center" id="strengths">Ameaça de Substitutos</h2>
+
+No contexto da Proteção e Defesa Civil, a análise da ameaça de produtos substitutos, conforme o modelo de Michael Porter, deve ser adaptada, pois se trata de um serviço público de competência estatal exclusiva, sem concorrentes diretos. Ainda assim, existem alternativas que atendem à mesma necessidade da população por segurança e resposta a emergências, como aplicativos de monitoramento climático, redes comunitárias, ONGs e seguros privados. 
+
+Esses substitutos apresentam alta acessibilidade e baixo custo, podendo ser acionados de forma mais imediata, o que confere à força uma intensidade baixa a moderada. Estratégicamente, isso exige que a Defesa Civil mantenha eficiência operacional e comunicação ágil, a fim de preservar a confiança da população e a relevância municipal e reduzir a dependência dessas alternativas.
+
+
 
 ### 2.1.2. Análise SWOT da Instituição Parceira (sprint 1)
 
 <div align="center">
     <p>Figura 2: Análise Swot</p>
-    <img src="outros/swot.png" width="500">
+    <img src="outros/swot.png" width="800">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
-<h2 align="center" id="strengths">Strengths</h2>
+#### Strengths
+
+A Defesa Civil de Santo André tem como uma de suas principais forças o fato de atuar em uma área essencial para a cidade: a prevenção, preparação, resposta e recuperação diante de desastres naturais e tecnológicos. Por estar ligada à Prefeitura e à Secretaria de Meio Ambiente e Mudanças Climáticas, a organização possui legitimidade institucional e capacidade de articulação com outras áreas públicas. Além disso, tem conhecimento técnico sobre áreas de risco, protocolos de evacuação, acolhimento emergencial e atendimento a populações vulneráveis, como idosos, crianças, gestantes e pessoas com deficiência.
 
 
-<h2 align="center" id="weaknesses">Weaknesses</h2>
+#### Weaknesses
 
-A **base histórica de dados** apresenta limitações importantes, pois pode conter informações incompletas, inconsistentes ou desatualizadas, especialmente quando oriunda de registros físicos ou sistemas legados. Isso compromete a confiabilidade inicial do georreferenciamento e pode impactar a qualidade das análises e decisões tomadas a partir desses dados.
+A Defesa Civil de Santo André possui alta **dependência de processos analógicos** e do **conhecimento de agentes veteranos**. A falta de um repositório digital centralizado fragmenta as informações e compromete a memória técnica da instituição.
 
-Além disso, a **dependência de conectividade** é um fator crítico, já que a aplicação web pode ter seu desempenho reduzido em áreas com baixa cobertura de internet, comuns em regiões de risco. Soma-se a isso a **curva de aprendizado das equipes de campo**, que podem enfrentar dificuldades na adoção do sistema.
-
-Por fim, há riscos relacionados à **manutenção e atualização contínua**. A ausência de processos estruturados pode levar à obsolescência dos dados, enquanto a **dependência de uma equipe técnica** reduzida pode gerar sobrecarga e atrasos em correções ou melhorias.
-
-<h2 align="center" id="opportunities">Opportunities</h2>
+Além disso, a **comunicação fragmentada** entre setores impede o fluxo ágil de informações com as pastas de Saúde e Assistência Social. Essa lacuna inviabiliza o acesso a um perfil socioeconômico atualizado das populações em áreas de risco.
 
 
-<h2 align="center" id="threats">Threats</h2>
+O uso de ferramentas como planilhas físicas gera **barreiras operacionais críticas**. Essa limitação reduz a velocidade de resposta e a eficiência na gestão de abrigos e logística durante crises severas.
 
-Entre as ameaças, destaca-se a **descontinuidade administrativa**, que pode comprometer o projeto em caso de mudanças políticas ou redução de investimentos e impactar diretamente a sustentabilidade e evolução da solução ao longo do tempo.
+#### Opportunities
 
-Outro ponto crítico envolve questões legais, especialmente no que se refere à **proteção de dados sensíveis**. A não conformidade com a Lei Geral de Proteção de Dados pode resultar em restrições operacionais ou até a interrupção do sistema, além de afetar a confiança dos usuários.
+Entre as oportunidades, destaca-se o uso de tecnologia para modernizar a gestão pública de riscos e desastres. Ferramentas digitais podem ajudar a organizar dados, acelerar atendimentos, melhorar a comunicação entre secretarias e apoiar decisões mais rápidas. Além disso, o aumento da preocupação com eventos climáticos extremos torna o trabalho da Defesa Civil ainda mais relevante, abrindo espaço para investimentos, parcerias com instituições de ensino e soluções inovadoras. A atuação preventiva também pode fortalecer a confiança da população no serviço público.
 
-Riscos como a **baixa adesão da comunidade** também dificultam a coleta de dados, além da ocorrência de **eventos extremos**, comprometendo toda a infraestrutura. Por fim, **ameaças de cibersegurança** podem expor informações estratégicas, gerando impactos significativos.
+#### Threats
+
+**Eventos climáticos extremos e imprevisíveis** desafiam a capacidade instalada de resposta do município. O aumento da intensidade das chuvas pode saturar os planos de contingência atuais, superando os limites operacionais da instituição.
+
+
+Além disso, a **expansão urbana desordenada** e a **concentração em áreas de encosta** tornam o mapeamento de riscos rapidamente obsoleto. A dinâmica social dessas ocupações dificulta a manutenção de dados precisos para ações preventivas.
+
+
+**Instabilidades orçamentárias** e a **baixa adesão comunitária aos protocolos de evacuação** também representam riscos. Tais fatores comprometem a continuidade de investimentos e a eficácia das salvaguardas em momentos de desastre.
 
 
 ### 2.1.3. Solução (sprints 1 a 5)
@@ -137,11 +138,22 @@ A Defesa Civil de Santo André enfrenta desafios na gestão ágil de populaçõe
 
 2. Dados disponíveis (mencionar fonte e conteúdo; se não houver, indicar “não se aplica”)
 
-Ficha SDUH, Formulário SUAS, Fichas de Resgate de Animais e Aves, Formulário de Bens sob Guarda, mapas de risco municipal (amarelo, laranja ou vermelho conforme critérios de terreno, disponível no SIGA), referências geográficas e estudos de vulnerabilidade. Dados fictícios coerentes serão utilizados para testes, garantindo conformidade com LGPD e Termo de Confidencialidade.
+| Documento | Fonte / Órgão Responsável | Acesso | Link / Explicação |
+| :--- | :--- | :--- | :--- |
+| **Ficha SDUH** | Secretaria de Desenvolvimento Urbano e Habitação (SP) | **Privada** | Portal SDUH (Acesso restrito via login Gov.br/Senha) |
+| **Formulário SUAS** | Ministério da Cidadania / Rede SUAS | **Pública** | [Blog Rede SUAS (Modelos)](http://blog.mds.gov.br/redesuas/) |
+| **Fichas de Resgate de Animais** | Polícia Ambiental / Secretarias de Meio Ambiente | **Privada** | Sistema Interno de Ocorrências (Documento Administrativo) |
+| **Formulário de Bens sob Guarda** | Defesa Civil Municipal / Estadual | **Privada** | [Sistema S2ID](https://s2id.mi.gov.br/) (Exige cadastro de gestor público) |
+| **Mapas de Risco Municipal** | SIGA (Sistema Integrado de Gestão Ambiental) | **Pública** | [Portal SIGA - Infraestrutura e Meio Ambiente](https://sigamapa.santoandre.sp.gov.br/) |
+| **Referências Geográficas** | IBGE / IGC-SP (DataGEO) | **Pública** | [IBGE Mapas](https://mapas.ibge.gov.br/) ou [DataGEO SP](http://datageo.ambiente.sp.gov.br/) |
+| **Estudos de Vulnerabilidade** | CEMADEN / Defesa Civil Nacional | **Pública** | [Painel de Monitoramento CEMADEN](http://www.cemaden.gov.br/) |
+
+
+(Dados fictícios coerentes serão utilizados para testes, garantindo conformidade com LGPD e Termo de Confidencialidade.)
 
 3. Solução proposta
 
-GeoRisco Santo André: aplicação web offline-first com geolocalização multimodal usando CEP, coordenadas, referências geográficas e fotos de imóvel. MVP focado em cadastro rápido por casa com múltiplas pessoas por registro. Inclui captura de nome, CPF, idade e vulnerabilidades; registro integrado de retirada e entrada em abrigos; sincronização automática; painel geolocalizado para visualizar densidade de pessoas por território.
+GeoRisco Santo André: aplicação web offline-first com geolocalização multimodal usando CEP, coordenadas, referências geográficas e fotos de imóvel. A solução MVP gira em torno do cadastro rápido de pessoas assistidas por casa, podendo haver múltiplas pessoas no registro daquela residência. Englobando a captura de dados como: nome, CPF, idade e vulnerabilidade. Além de funcionalidades como: sincronização automática com a internet (para uso do cadastro em regiões sem sinal); painel geolocalizado para visualizar densidade de pessoas por território; localização de assistidos e residências. Para além do MVP, tem-se: gráficos ou KPIs sobre as áreas de maior risco e áreas de priorização baseado nas necessidades das pessoas.
 
 4. Forma de utilização da solução
 
@@ -155,10 +167,7 @@ Reduz tempo crítico de coleta permitindo cadastro rápido em campo. Geolocaliza
 
 Sucesso medido por KPIs nas sprints iniciais: tempo de preenchimento inferior a cinco minutos por casa, sincronização offline e online, precisão de localização, taxa de conclusão sem erros, usabilidade com agentes de tecnologia média. Validação com operadores em campo, testes de visualização de sede, exportação de relatórios. Métricas finalizadas com parceiro durante o projeto.
 
-<<<<<<< HEAD
-=======
 
->>>>>>> c4152fd2f69304e8e2da823f0b4cfa4611fd8ec1
 ### 2.1.4. Value Proposition Canvas (sprint 1): 
 *Sem limite de palavras – usar template do curso*
 
@@ -172,23 +181,121 @@ Sucesso medido por KPIs nas sprints iniciais: tempo de preenchimento inferior a 
 
 ## 2.2. Personas (sprint 1)
 
-*Posicione aqui suas Personas em forma de texto markdown com imagens, ou como imagem de template preenchido. Atualize esta seção ao longo do módulo se necessário.*
+As personas apresentadas abaixo caracterizam-se como proto-personas, construídas a partir de inferências sobre o contexto institucional e os fluxos operacionais da Defesa Civil, visando representar os principais perfis de usuários e orientar o desenvolvimento da solução.
+
+<img src="../assets/persona2.png" width="520" height="520"> <img src="../assets/persona1.png" width="520" height="520"> 
+
+Identificamos dois tipos de proto-personas possíveis para o âmbito em questão: agente de campo e diretor da Defesa Civil. Primeiro, o agente de campo, que no caso é o indivíduo que se responsabiliza pelas conduções das operações nos atendimentos emergencial, como apontado acima com o João, em que dados demográficos, comportamentos e solução para o perfil de João representam um quadro hipotético que nos evidencia um jeito de humanizar o público-alvo para adotar estratégias mais assertivas e centradas no usuário real. 
+
+Além disso, tem-se o diretor da Defesa Civil, que atua no nível estratégico da operação, sendo responsável pela análise de dados consolidados, definição de prioridades e tomada de decisões em cenários de risco. Nesse contexto, observa-se que a persona atribuída a esse perfil, representada de forma hipotética, permite compreender suas principais necessidades, como acesso rápido a informações confiáveis, visualização de indicadores e geração de relatórios. Dessa forma, assim como no caso do agente de campo, a construção dessa proto-persona contribui para orientar o desenvolvimento de funcionalidades alinhadas às demandas reais do usuário, promovendo uma solução mais eficiente, integrada e centrada no processo decisório.
+
+*Observação: Fotos extraídas de um site produtor de imagens de pessoas inexistentes*: [This Person Does Not Exist](https://thispersondoesnotexist.com/)
 
 ## 2.3. User Stories (sprints 1 a 5)
 
-*Posicione aqui a lista de User Stories levantadas para o projeto. Siga o template de User Stories e utilize a mesma referência USXX no roadmap de seu quadro Kanban. Indique todas as User Stories mapeadas, mesmo aquelas que não forem implementadas ao longo do projeto. Não se esqueça de explicar o INVEST das 5 User Stories prioritárias*
+Apresenta-se a seguir a lista de User Stories levantadas para o projeto GeoRisco Santo André. Dividimos os User Stories no baseados no seu nível de prioridade, logo quanto mais no topo estiver a User Stories, mais prioritária será. As 5 primeiras User Stories são prioritárias, e User Stories de prioridade mais baixa seguirão na sequência desta lista, com códigos como US06, US07, e assim por diante.
 
-*ATUALIZE ESTA SEÇÃO SEMPRE QUE ALGUMA DEMANDA MUDAR EM SEU PROJETO*
+---
 
-*Template de User Story*
-Identificação | USXX (troque XX por numeração ordenada das User Stories)
---- | ---
-Persona | nome da Persona
-User Story | "como (papel/perfil), posso (ação/meta), para (benefício/razão)"
-Critério de aceite 1 | CR1: descrever cenário + testes de aceite
-Critério de aceite 2 | CR2: descrever cenário + testes de aceite
-Critério de aceite ... | CR...
-Critérios INVEST | *(Por que é Independente? Por que é Negociável? Por que é Valorosa? Por que é Estimável? Por que é Pequena? Por que é Testável?)*
+| Identificação | US01 |
+|---|---|
+| Persona | João Silva (Agente de Campo) |
+| User Story | "como agente de campo, posso cadastrar moradores e dados socioestruturais, para manter informações organizadas e disponíveis no sistema" |
+| Critério de aceite 1 | CR1: Dado que o agente está em campo, quando um novo cadastro é realizado, então os dados devem ser armazenados corretamente no sistema |
+| Critério de aceite 2 | CR2: Dado que um cadastro foi concluído, quando acessado posteriormente, então as informações devem estar disponíveis para consulta |
+| Critérios INVEST | Independente: Pode ser implementada isoladamente; Negociável: Os campos do cadastro podem variar; Valiosa: Permite a organização das informações; Estimável: Baseada em operações CRUD; Pequena: Escopo bem definido; Testável: Cadastro pode ser validado por registro e consulta |
+
+---
+
+| Identificação | US02 |
+|---|---|
+| Persona | Wesley Souza (Diretor) |
+| User Story | "como diretor, posso visualizar ocorrências em um mapa georreferenciado, para obter uma visão geral da situação" |
+| Critério de aceite 1 | CR1: Dado que existem ocorrências cadastradas, quando o mapa for acessado, então os pontos devem ser exibidos corretamente |
+| Critério de aceite 2 | CR2: Dado que uma ocorrência possui localização, quando selecionada, então suas informações devem ser apresentadas |
+| Critérios INVEST | Independente: Pode ser implementada separadamente da criação de ocorrências; Negociável: O nível de detalhamento do mapa pode variar; Valiosa: Facilita a tomada de decisão; Estimável: Baseia-se em integração com APIs de mapas; Pequena: Escopo restrito à visualização; Testável: A exibição pode ser validada visualmente |
+
+---
+
+| Identificação | US03 |
+|---|---|
+| Persona | João Silva (Agente de Campo) |
+| User Story | "como agente de campo, posso consultar áreas de risco, para atuar com maior segurança" |
+| Critério de aceite 1 | CR1: Dado que existem áreas cadastradas, quando o agente consulta o sistema, então os dados devem ser exibidos |
+| Critério de aceite 2 | CR2: Dado que uma área é selecionada, quando visualizada, então seu nível de risco deve ser apresentado |
+| Critérios INVEST | Independente: Não depende do registro de ocorrências; Negociável: Tipos de dados podem ser ajustados; Valiosa: Reduz riscos operacionais; Estimável: Baseado em consultas ao banco de dados; Pequena: Função direta; Testável: Resultado verificável |
+
+---
+
+| Identificação | US04 |
+|---|---|
+| Persona | Wesley Souza (Diretor) |
+| User Story | "como diretor, posso gerenciar abrigos, para organizar o atendimento à população" |
+| Critério de aceite 1 | CR1: Dado que existem abrigos cadastrados, quando acessados, então devem ser exibidos com capacidade e ocupação |
+| Critério de aceite 2 | CR2: Dado que um abrigo é atualizado, quando salvo, então os dados devem ser refletidos no sistema |
+| Critérios INVEST | Independente: Funcionalidade isolada; Negociável: Campos podem ser ajustados; Valiosa: Melhora a gestão de crises; Estimável: CRUD simples; Pequena: Escopo limitado; Testável: Atualizações verificáveis |
+
+---
+
+| Identificação | US05 |
+|---|---|
+| Persona | Wesley Souza (Diretor) |
+| User Story | "como diretor, posso gerar relatórios consolidados, para apoiar decisões estratégicas" |
+| Critério de aceite 1 | CR1: Dado que existem dados registrados, quando solicitado, então o relatório deve ser gerado automaticamente |
+| Critério de aceite 2 | CR2: Dado que o relatório foi gerado, quando acessado, então deve apresentar dados consolidados |
+| Critérios INVEST | Independente: Pode ser implementado separadamente; Negociável: Formato pode variar; Valiosa: Suporte estratégico; Estimável: Agregação de dados conhecida; Pequena: Escopo delimitado; Testável: Resultado validável |
+
+---
+
+| Identificação | US06 |
+|---|---|
+| Persona | João Silva (Agente de Campo) |
+| User Story | "como agente de campo, posso atualizar ocorrências, para manter as informações corretas" |
+| Critério de aceite 1 | CR1: Dado que uma ocorrência já está registrada, quando editada, então os dados devem ser atualizados no sistema |
+| Critério de aceite 2 | CR2: Dado que a atualização foi realizada, quando a ocorrência for acessada, então as novas informações devem ser exibidas |
+| Critérios INVEST | Independente: Pode ser implementada separadamente; Negociável: Os campos de edição podem variar; Valiosa: Garante a atualização dos dados; Estimável: Baseada em operações CRUD; Pequena: Escopo específico; Testável: Alterações podem ser verificadas |
+
+---
+
+| Identificação | US07 |
+|---|---|
+| Persona | Wesley Souza (Diretor) |
+| User Story | "como diretor, posso filtrar ocorrências, para priorizar atendimentos" |
+| Critério de aceite 1 | CR1: Dado que existem ocorrências registradas, quando filtros são aplicados, então apenas os resultados correspondentes devem ser exibidos |
+| Critério de aceite 2 | CR2: Dado que os filtros são removidos, quando o sistema é atualizado, então todas as ocorrências devem ser exibidas novamente |
+| Critérios INVEST | Independente: Funciona de forma isolada; Negociável: Os filtros podem variar; Valiosa: Facilita a priorização de ações; Estimável: Baseada em consultas ao sistema; Pequena: Escopo limitado; Testável: Resultados podem ser validados |
+
+---
+
+| Identificação | US08 |
+|---|---|
+| Persona | Wesley Souza (Diretor) |
+| User Story | "como diretor, posso visualizar indicadores, para análise estratégica" |
+| Critério de aceite 1 | CR1: Dado que existem dados no sistema, quando o painel é acessado, então os indicadores devem ser exibidos |
+| Critério de aceite 2 | CR2: Dado que novos dados são inseridos, quando o sistema é atualizado, então os indicadores devem refletir essas mudanças |
+| Critérios INVEST | Independente: Pode ser desenvolvida separadamente; Negociável: Os indicadores podem variar; Valiosa: Apoia decisões estratégicas; Estimável: Baseada em agregação de dados; Pequena: Escopo definido; Testável: Dados exibidos podem ser verificados |
+
+---
+
+| Identificação | US09 |
+|---|---|
+| Persona | João Silva (Agente de Campo) |
+| User Story | "como agente de campo, posso acessar o sistema via dispositivo móvel, para atuar em campo" |
+| Critério de aceite 1 | CR1: Dado que o sistema é acessado por dispositivo móvel, quando carregado, então a interface deve ser responsiva |
+| Critério de aceite 2 | CR2: Dado que o agente utiliza o sistema em campo, quando acessa funcionalidades principais, então elas devem funcionar corretamente |
+| Critérios INVEST | Independente: Não depende de outras histórias; Negociável: Nível de adaptação pode variar; Valiosa: Permite uso em campo; Estimável: Baseada em responsividade; Pequena: Escopo técnico definido; Testável: Interface pode ser validada |
+
+---
+
+| Identificação | US10 |
+|---|---|
+| Persona | Wesley Souza (Diretor) |
+| User Story | "como diretor, posso cadastrar equipes, para organizar operações" |
+| Critério de aceite 1 | CR1: Dado que uma equipe é cadastrada, quando salva, então os dados devem ser armazenados no sistema |
+| Critério de aceite 2 | CR2: Dado que existem equipes cadastradas, quando acessadas, então devem ser exibidas corretamente |
+| Critérios INVEST | Independente: Pode ser implementada isoladamente; Negociável: Os dados da equipe podem variar; Valiosa: Melhora a organização operacional; Estimável: Baseada em cadastro simples; Pequena: Escopo limitado; Testável: Cadastro pode ser validado |
+
+
 
 # <a name="c3"></a>3. Projeto da Aplicação Web (sprints 1 a 5)
 
@@ -235,10 +342,11 @@ Prioridade: 1 - muito importante, 2 - importante, 3 - descartável.
 
 *Numere e redija as RN de forma implementável e testável. Toda RN deve ter pelo menos um teste automatizado associado a partir da sprint 3.*
 
-| ID   | Descrição | RF associado |
-|------|-----------|--------------|
-| RN01 | ...       | RF001        |
-| RN02 | ...       | RF001        |
+| ID | Descrição | RF associado | 
+|------|-----------|--------------| 
+| RN01 | A priorização de evacuação deve considerar critérios de vulnerabilidade, com base em classificação hierárquica. No nível mais alto estão indivíduos com mobilidade reduzida, acamados, deficiência severa ou dependência total. Em seguida, gestantes, idosos e pessoas com deficiência moderada. Por fim, os demais indivíduos. | RF008, RF003, RF004| 
+| RN02 | O sistema deve emitir alertas para o recadastro (ou atualização) de assistidos a cada 12 meses(1 ano) desde o cadastro. | RF002, RF003, RF004, RF007, RF016 | 
+| RN03 | As moradias cujos moradores faleceram, devem ter seu registro arquivado. Não participando de operações ativas, mas preservando os dados para fins históricos, auditoria e rastreabilidade, estando também conforme a LGPD. | RF001, RF006, RF007 |
 
 ### 3.1.4. Requisitos Não Funcionais — 8 Eixos ISO/IEC 25010 (sprints 1 a 5)
 
@@ -315,7 +423,7 @@ Prioridade: 1 - muito importante, 2 - importante, 3 - descartável.
 
 *posicione aqui imagens e textos contendo exemplos padronizados de ícones e imagens, com seus respectivos atributos de aplicação, utilizadas na solução*
 
-## 3.5 Protótipo de alta fidelidade (sprint 3)
+## 3.5. Protótipo de alta fidelidade (sprint 3)
 
 *posicione aqui algumas imagens demonstrativas de seu protótipo de alta fidelidade e o link para acesso ao protótipo completo (mantenha o link sempre público para visualização)*
 
@@ -416,13 +524,13 @@ Prioridade: 1 - muito importante, 2 - importante, 3 - descartável.
 
 # <a name="c6"></a>6. Estudo de Mercado e Plano de Marketing (sprint 4)
 
-## 6.1 Resumo Executivo
+## 6.1. Resumo Executivo
 
 *Preencher com até 300 palavras, sem necessidade de fonte*
 
 *Apresente de forma clara e objetiva os principais destaques do projeto: oportunidades de mercado, diferenciais competitivos da aplicação web e os objetivos estratégicos pretendidos.*
 
-## 6.2 Análise de Mercado
+## 6.2. Análise de Mercado
 
 *a) Visão Geral do Setor (até 250 palavras)*
 *Contextualize o setor no qual a aplicação está inserida, considerando aspectos econômicos, tecnológicos e regulatórios. Utilize fontes confiáveis.*
@@ -433,7 +541,7 @@ Prioridade: 1 - muito importante, 2 - importante, 3 - descartável.
 *c) Tendências de Mercado (até 300 palavras)*
 *Identifique e analise tendências relevantes (tecnológicas, comportamentais e mercadológicas) que influenciam o setor. Utilize fontes confiáveis.*
 
-## 6.3 Análise da Concorrência
+## 6.3. Análise da Concorrência
 
 *a) Principais Concorrentes (até 250 palavras)*
 *Liste os concorrentes diretos e indiretos, destacando suas principais características e posicionamento no mercado.*
@@ -442,7 +550,7 @@ Prioridade: 1 - muito importante, 2 - importante, 3 - descartável.
 *Descreva os diferenciais da sua aplicação em relação aos concorrentes, sem necessidade de citação de fontes.*
 
 
-## 6.4 Público-Alvo
+## 6.4. Público-Alvo
 
 *a) Segmentação de Mercado (até 250 palavras)*
 Descreva os principais segmentos de mercado a serem atendidos pela aplicação. Utilize bases de dados e fontes confiáveis.*
@@ -451,7 +559,7 @@ Descreva os principais segmentos de mercado a serem atendidos pela aplicação. 
 *Caracterize o público-alvo com dados demográficos, psicográficos e comportamentais, incluindo necessidades específicas. Utilize fontes obrigatórias.*
 
 
-## 6.5 Posicionamento
+## 6.5. Posicionamento
 
 *a) Proposta de Valor Única (até 250 palavras)*
 *Defina de maneira clara o que torna a sua aplicação única e valiosa para o mercado.*
@@ -459,7 +567,7 @@ Descreva os principais segmentos de mercado a serem atendidos pela aplicação. 
 *b) Estratégia de Diferenciação (até 250 palavras)*
 *Explique como sua aplicação se destacará da concorrência, evidenciando a lógica por trás do posicionamento.*
 
-## 6.6 Estratégia de Marketing 
+## 6.6. Estratégia de Marketing 
 
 *a) Produto/Serviço (até 200 palavras)*
 *Descreva as funcionalidades, benefícios e diferenciais da aplicação*
@@ -483,13 +591,11 @@ Descreva os principais segmentos de mercado a serem atendidos pela aplicação. 
 
 # <a name="c8"></a>8. Referências (sprints 1 a 5)
 
-_Incluir as principais referências de seu projeto, para que seu parceiro possa consultar caso ele se interessar em aprofundar. Um exemplo de referência de livro e de site:_<br>
+PORTER, Michael E. *Estratégia Competitiva: Técnicas para Análise de Indústrias e da Concorrência*. 2. ed. Rio de Janeiro: Campus, 2004.
 
-LUCK, Heloisa. Liderança em gestão escolar. 4. ed. Petrópolis: Vozes, 2010. <br>
-SOBRENOME, Nome. Título do livro: subtítulo do livro. Edição. Cidade de publicação: Nome da editora, Ano de publicação. <br>
+PREFEITURA DE SANTO ANDRÉ. Departamento de Proteção e Defesa Civil: Ações e Programas. Disponível em: <https://portais.santoandre.sp.gov.br/defesacivil/>. Acesso em: 27 abr. 2026.
 
-INTELI. Adalove. Disponível em: https://adalove.inteli.edu.br/feed. Acesso em: 1 out. 2023 <br>
-SOBRENOME, Nome. Título do site. Disponível em: link do site. Acesso em: Dia Mês Ano
+BRASIL. Lei nº 12.608, de 10 de abril de 2012. Institui a Política Nacional de Proteção e Defesa Civil (PNPDEC). *Diário Oficial da União*, Brasília, DF, 11 abr. 2012.
 
 # <a name="c9"></a>Anexos
 
