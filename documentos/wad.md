@@ -64,11 +64,13 @@ Este projeto será desenvolvido em parceria com a Defesa Civil de Santo André, 
 
 <h2 align="center" id="strengths">Poder de Barganha: Fornecedores</h2>
 
-Na Defesa Civil de Santo André, o poder de barganha dos fornecedores varia conforme o tipo de insumo e o contexto operacional, sendo classificados em diretos (contrato com o órgão) e indiretos (via outros órgãos públicos).
-Em condições normais, o poder é baixo, especialmente para insumos básicos (ex: lonas, colchões), devido à alta concorrência e ao uso do Sistema de Registro de Preços (SRP), que favorece menor custo e substituição de fornecedores.
-Em situações de emergência, o poder torna-se alto, pois a dispensa de licitação prioriza a rapidez na entrega, permitindo que fornecedores com estoque disponível influenciem preços.
-Já em serviços e tecnologias especializadas, como o IPT (ex: análises geológicas), o poder é muito alto, devido à baixa concorrência e à dependência técnica.
-Assim, há uma dualidade: maior controle na prevenção e maior dependência dos fornecedores na resposta a desastres.
+Na Defesa Civil de Santo André, o poder de barganha dos fornecedores varia conforme o tipo de recurso necessário e o momento da operação. Em situações normais, o poder tende a ser baixo para insumos básicos, como lonas, colchões, cestas, água e materiais de apoio, pois há maior quantidade de fornecedores e possibilidade de compra por processos públicos.
+
+Por outro lado, em situações de emergência, esse poder pode aumentar, já que a rapidez na entrega e a disponibilidade imediata dos itens se tornam mais importantes que o preço. Nesse contexto, fornecedores com estoque disponível ou capacidade de entrega rápida ganham mais influência.
+
+Além disso, fornecedores de serviços especializados, como tecnologia, georreferenciamento, geotecnia, mapeamento de risco e análises técnicas, possuem maior poder de barganha, pois há menos alternativas no mercado e maior dependência de conhecimento técnico.
+
+Assim, o poder dos fornecedores pode ser considerado médio: baixo para materiais comuns, mas mais alto em emergências e em serviços técnicos especializados.
 
 
 <h2 align="center" id="strengths">Poder de Barganha: Clientes</h2>
