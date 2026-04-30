@@ -185,7 +185,7 @@ Identificamos dois tipos de proto-personas possíveis para o âmbito em questão
 
 Além disso, tem-se o diretor da Defesa Civil, que atua no nível estratégico da operação, sendo responsável pela análise de dados consolidados, definição de prioridades e tomada de decisões em cenários de risco. Nesse contexto, observa-se que a persona atribuída a esse perfil, representada de forma hipotética, permite compreender suas principais necessidades, como acesso rápido a informações confiáveis, visualização de indicadores e geração de relatórios. Dessa forma, assim como no caso do agente de campo, a construção dessa proto-persona contribui para orientar o desenvolvimento de funcionalidades alinhadas às demandas reais do usuário, promovendo uma solução mais eficiente, integrada e centrada no processo decisório.
 
-*Observação: Fotos extraídas de um site produtor de imagens de pessoas inexistentes* : [This Person Does Not Exist](https://thispersondoesnotexist.com/)
+*Observação: Fotos extraídas de um site produtor de imagens de pessoas inexistentes*: [This Person Does Not Exist](https://thispersondoesnotexist.com/)
 
 ## 2.3. User Stories (sprints 1 a 5)
 
