@@ -105,7 +105,7 @@ Por isso, a entrada de novos concorrentes diretos é difícil. A principal amea�
 
 A análise da ameaça de produtos substitutos, deve ser adaptada, pois se trata de um serviço público de competência estatal exclusiva, sem concorrentes diretos. Ainda assim, existem alternativas que atendem à mesma necessidade da população por segurança e resposta a emergências, como aplicativos de monitoramento climático, redes comunitárias, ONGs e seguros privados. (REF.1)
 
-Esses substitutos apresentam alta acessibilidade e baixo custo, podendo ser acionados de forma mais imediata, o que confere à força uma intensidade baixa a moderada. Estratégicamente, isso exige que a Defesa Civil mantenha eficiência operacional e comunicação ágil, a fim de preservar a confiança populacional e a relevância municipal e reduzir a dependência dessas alternativas. (REF.2 e REF.3)
+Esses substitutos apresentam alta acessibilidade e baixo custo, podendo ser acionados de forma mais imediata, o que confere à força uma intensidade baixa a moderada. Estratégicamente, isso exige que a Defesa Civil mantenha eficiência operacional e comunicação ágil, a fim de preservar a confiança populacional e a relevância municipal e reduzir a dependência dessas alternativas. (REF.3 e REF.4)
 
 
 
