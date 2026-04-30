@@ -1,4 +1,4 @@
-<img src="../assets/logointeli.png">
+<img src="../assets/logointeli.png" alt="Logo Inteli" width="300">
 
 
 # WAD - Web Application Document - Módulo 2 - Inteli
@@ -27,7 +27,7 @@
 
 [7. Conclusões e trabalhos futuros](#c7)
 
-[8. Referências](c#8)
+[8. Referências](#c8)
 
 [Anexos](#c9)
 
@@ -36,15 +36,6 @@
 
 # <a name="c1"></a>1. Introdução (sprints 1 a 5)
 
-*Preencha com até 300 palavras – sem necessidade de fonte*
-
-*Contextualize aqui a problemática trazida pelo parceiro de projeto.*
-
-*Descreva brevemente a solução desenvolvida para o parceiro de negócios. Descreva os aspectos essenciais para a criação de valor do produto, com o objetivo de ajudar a entender melhor a realidade do cliente e entregar uma solução que está alinhado com o que ele espera.*
-
-*Observe a seção 2 e verifique que ali é possível trazer mais detalhes, portanto seja objetivo aqui. Atualize esta descrição até a entrega final, conforme desenvolvimento.*
-
-### V1
 O município de Santo André enfrenta desafios críticos na gestão de populações em áreas de risco. Com mapa de risco estratificado em zonas amarelas (monitoramento), laranja (área de risco) e vermelho (área de muito risco), o município identifica constantemente famílias vulneráveis que necessitam de proteção. Contudo, o processo de coleta de dados em campo é lento, descentralizado e sem registro geolocalizado integrado. Quando desastres ou eventos extremos ocorrem, agentes da Defesa Civil precisam evacuar famílias rapidamente, mas enfrentam dificuldades: não há rastreamento unificado de retiradas, entrada em abrigos ou quantidade de pessoas por território. Isso compromete a resposta ágil, gera perda de informação entre etapas e dificulta o suporte da sede em tempo real.
 
 Como resposta, foi desenvolvido o GeoRisco Santo André: aplicação web offline-first focada no cadastro georreferenciado rápido de casas e pessoas em áreas de risco. O MVP permite que agentes em campo preencham formulários concisos via mobile, com sistema híbrido de geolocalização (CEP, coordenadas, referências e fotos de imóvel), funcionando mesmo sem GPS preciso. Dados sincronizam automaticamente quando conectado. O sistema registra retiradas de famílias e entrada em abrigos no momento do incidente, e um painel desktop oferece visualização geolocalizada para a sede monitorar densidade de pessoas por território.
@@ -53,12 +44,7 @@ Os aspectos essenciais para criação de valor incluem: redução do tempo crít
 
 Este projeto será desenvolvido em parceria com a Defesa Civil de Santo André, incorporando sua experiência operacional e validação contínua das funcionalidades entregues.
 
-### V2
-Muitas famílias em Santo André vivem em áreas de risco geográfico—encostas, regiões sujeitas a alagamentos, áreas informais. Frequentemente, essas casas não têm formalização legal (invasões, ocupações), o que dificulta ainda mais o acesso a informações sobre quem mora onde. Quando chuvas intensas ou desastres ameaçam, a Defesa Civil precisa saber rapidamente: quantas pessoas estão em risco? Quem são os idosos, crianças, gestantes que precisam de prioridade? Onde exatamente as casas ficam? Atualmente, essas informações estão espalhadas em documentos de papel, planilhas desorganizadas ou sistemas antigos. O tempo é crítico em uma emergência, e essas falhas custam vidas.
-
-Como resposta, foi desenvolvido o GeoRisco Santo André: uma aplicação web que permite à Defesa Civil coletar, organizar e visualizar dados de famílias em áreas de risco de forma rápida e geolocalizada. Agentes em campo preenchem formulários digitais completos (nome, CPF, vulnerabilidades, composição da família) diretamente no celular ou tablet. O sistema captura automaticamente a localização (latitude, longitude, referências) e registra fotos das casas. Todos esses dados aparecem no mapa da cidade, integrados com as áreas de risco conhecidas, permitindo à sede ver em tempo real onde estão as pessoas em perigo e quem precisa de ajuda prioritária.
-
-Os principais ganhos são: (1) formulários digitais e estruturados substituem anotações em papel e inconsistências; (2) visualização geolocalizada permite entender exatamente quem está onde em relação às áreas de risco; (3) respostas rápidas em desastres porque a informação já está organizada; (4) registro automático de evacuações e abrigos integra todo o ciclo de emergência. A solução torna possível que a Defesa Civil realmente saiba quem precisa de proteção.
+*Observe a seção 2 e verifique que ali é possível trazer mais detalhes, portanto seja objetivo aqui. Atualize esta descrição até a entrega final, conforme desenvolvimento.*
 
 # <a name="c2"></a>2. Visão Geral da Aplicação Web (sprint 1)
 
@@ -66,15 +52,21 @@ Os principais ganhos são: (1) formulários digitais e estruturados substituem a
 
 ### 2.1.1. Modelo de 5 Forças de Porter (sprint 1)
 
-<img src="outros/porter.png">
+<div align="center">
+    <p>Figura 1: 5 Forças de Porter</p>
+    <img src="outros/porter.png" width="500">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
 
-#### Rivalidade Entre Concorrentes
-Existem órgãos que atuam em cenários semelhantes aos da Defesa Civil, como Corpo de Bombeiros, SAMU, Forças Armadas, Polícia Militar e defesas civis de outros municípios. No entanto, a rivalidade é considerada baixa pois cada instituição possui atribuições legais e mandatos distintos, com atuação geralmente complementar e protocolos de cooperação estabelecidos.
+<h2 align="center" id="strengths">Rivalidade Entre Concorrentes</h2>
 
 
-#### Poder de Barganha: Fornecedores
 
-#### Poder de Barganha: Clientes
+<h2 align="center" id="strengths">Poder de Barganha: Fornecedores</h2>
+
+
+
+<h2 align="center" id="strengths">Poder de Barganha: Clientes</h2>
 
 O Poder de Barganha dos Clientes, seguindo o modelo das Cinco Forças de Porter, analisa a influência que os consumidores possuem sobre as empresas do setor, especialmente em relação a preços, qualidade, variedade e condições de compra. Quanto maior a oferta de alternativas disponíveis no mercado, maior tende a ser o poder de negociação dos clientes. 
 
@@ -84,18 +76,34 @@ Por um lado, esse poder é limitado, pois a população depende fortemente dos s
 
 Além disso, o funcionamento eficaz do sistema proposto depende diretamente da colaboração dos moradores na coleta de dados, o que amplia ainda mais sua influência: caso haja resistência, desconfiança ou insatisfação com o uso das informações, a qualidade e a efetividade do sistema podem ser comprometidas. Dessa forma, mesmo sem poder econômico direto, os moradores exercem influência significativa sobre o sucesso da solução.
 
-#### Ameaça de Novos Entrantes
 
-#### Ameaça de Substitutos
+<h2 align="center" id="strengths">Ameaça de Novos Entrantes</h2>
+
+A ameaça de novos entrantes para a Defesa Civil de Santo André é baixa, porque sua atuação não funciona como um mercado comum, em que qualquer empresa pode entrar e competir diretamente. A Defesa Civil é um órgão público ligado à Prefeitura, com responsabilidade oficial sobre prevenção, preparação, resposta e recuperação em situações de risco e desastre no município.
+
+Além disso, sua atuação exige conhecimento técnico, autorização institucional, integração com outras secretarias e experiência em situações emergenciais. Mesmo que empresas privadas possam oferecer tecnologias, consultorias ou sistemas de apoio, elas não substituem o papel da Defesa Civil, pois não possuem a mesma autoridade pública para coordenar evacuações, abrigos, vistorias e ações de resposta.
+
+Por isso, a entrada de novos concorrentes diretos é difícil. A principal ameaça não vem de novos órgãos substituindo a Defesa Civil, mas sim de soluções externas que podem disputar espaço como ferramentas de apoio à gestão de riscos.
+
+<h2 align="center" id="strengths">Ameaça de Substitutos</h2>
+
+No contexto da Proteção e Defesa Civil, a análise da ameaça de produtos substitutos, conforme o modelo de Michael Porter, deve ser adaptada, pois se trata de um serviço público de competência estatal exclusiva, sem concorrentes diretos. Ainda assim, existem alternativas que atendem à mesma necessidade da população por segurança e resposta a emergências, como aplicativos de monitoramento climático, redes comunitárias, ONGs e seguros privados. Esses substitutos apresentam alta acessibilidade e baixo custo, podendo ser acionados de forma mais imediata, o que confere à força uma intensidade baixa a moderada. Estratégicamente, isso exige que a Defesa Civil mantenha eficiência operacional e comunicação ágil, a fim de preservar a confiança da população e a relevância municipal e reduzir a dependência dessas alternativas.
+
+
 
 ### 2.1.2. Análise SWOT da Instituição Parceira (sprint 1)
 
-<img src="outros/swot.png">
+<div align="center">
+    <p>Figura 2: Análise Swot</p>
+    <img src="outros/swot.png" width="500">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
 
-<h2 align="center" id="strengths">Strengths</h2>
+#### Strengths
 
+A Defesa Civil de Santo André tem como uma de suas principais forças o fato de atuar em uma área essencial para a cidade: a prevenção, preparação, resposta e recuperação diante de desastres naturais e tecnológicos. Por estar ligada à Prefeitura e à Secretaria de Meio Ambiente e Mudanças Climáticas, a organização possui legitimidade institucional e capacidade de articulação com outras áreas públicas. Além disso, tem conhecimento técnico sobre áreas de risco, protocolos de evacuação, acolhimento emergencial e atendimento a populações vulneráveis, como idosos, crianças, gestantes e pessoas com deficiência.
 
-<h2 align="center" id="weaknesses">Weaknesses</h2>
+#### Weaknesses
 
 A **base histórica de dados** apresenta limitações importantes, pois pode conter informações incompletas, inconsistentes ou desatualizadas, especialmente quando oriunda de registros físicos ou sistemas legados. Isso compromete a confiabilidade inicial do georreferenciamento e pode impactar a qualidade das análises e decisões tomadas a partir desses dados.
 
@@ -103,8 +111,9 @@ Além disso, a **dependência de conectividade** é um fator crítico, já que a
 
 Por fim, há riscos relacionados à **manutenção e atualização contínua**. A ausência de processos estruturados pode levar à obsolescência dos dados, enquanto a **dependência de uma equipe técnica** reduzida pode gerar sobrecarga e atrasos em correções ou melhorias.
 
-<h2 align="center" id="opportunities">Opportunities</h2>
+#### Opportunities
 
+Entre as oportunidades, destaca-se o uso de tecnologia para modernizar a gestão pública de riscos e desastres. Ferramentas digitais podem ajudar a organizar dados, acelerar atendimentos, melhorar a comunicação entre secretarias e apoiar decisões mais rápidas. Além disso, o aumento da preocupação com eventos climáticos extremos torna o trabalho da Defesa Civil ainda mais relevante, abrindo espaço para investimentos, parcerias com instituições de ensino e soluções inovadoras. A atuação preventiva também pode fortalecer a confiança da população no serviço público.
 
 <h2 align="center" id="threats">Threats</h2>
 
@@ -117,18 +126,28 @@ Riscos como a **baixa adesão da comunidade** também dificultam a coleta de dad
 
 ### 2.1.3. Solução (sprints 1 a 5)
 
-*Explique detalhadamente os seguintes aspectos (até 60 palavras por item):*
 1. Problema a ser resolvido
 
 A Defesa Civil de Santo André enfrenta desafios na gestão ágil de populações em áreas de risco. Coleta de dados em campo é lenta e descentralizada. Não há registro geolocalizado integrado de evacuações, retiradas de famílias ou entrada em abrigos. Agentes precisam identificar imóveis com segurança em cenários de risco, e a Defesa Civil necessita visualizar geograficamente onde as pessoas foram realocadas.
 
 2. Dados disponíveis (mencionar fonte e conteúdo; se não houver, indicar “não se aplica”)
 
-Ficha SDUH, Formulário SUAS, Fichas de Resgate de Animais e Aves, Formulário de Bens sob Guarda, mapas de risco municipal (amarelo, laranja ou vermelho conforme critérios de terreno, disponível no SIGA), referências geográficas e estudos de vulnerabilidade. Dados fictícios coerentes serão utilizados para testes, garantindo conformidade com LGPD e Termo de Confidencialidade.
+| Documento | Fonte / Órgão Responsável | Acesso | Link / Explicação |
+| :--- | :--- | :--- | :--- |
+| **Ficha SDUH** | Secretaria de Desenvolvimento Urbano e Habitação (SP) | **Privada** | Portal SDUH (Acesso restrito via login Gov.br/Senha) |
+| **Formulário SUAS** | Ministério da Cidadania / Rede SUAS | **Pública** | [Blog Rede SUAS (Modelos)](http://blog.mds.gov.br/redesuas/) |
+| **Fichas de Resgate de Animais** | Polícia Ambiental / Secretarias de Meio Ambiente | **Privada** | Sistema Interno de Ocorrências (Documento Administrativo) |
+| **Formulário de Bens sob Guarda** | Defesa Civil Municipal / Estadual | **Privada** | [Sistema S2ID](https://s2id.mi.gov.br/) (Exige cadastro de gestor público) |
+| **Mapas de Risco Municipal** | SIGA (Sistema Integrado de Gestão Ambiental) | **Pública** | [Portal SIGA - Infraestrutura e Meio Ambiente](https://sigamapa.santoandre.sp.gov.br/) |
+| **Referências Geográficas** | IBGE / IGC-SP (DataGEO) | **Pública** | [IBGE Mapas](https://mapas.ibge.gov.br/) ou [DataGEO SP](http://datageo.ambiente.sp.gov.br/) |
+| **Estudos de Vulnerabilidade** | CEMADEN / Defesa Civil Nacional | **Pública** | [Painel de Monitoramento CEMADEN](http://www.cemaden.gov.br/) |
+
+
+(Dados fictícios coerentes serão utilizados para testes, garantindo conformidade com LGPD e Termo de Confidencialidade.)
 
 3. Solução proposta
 
-GeoRisco Santo André: aplicação web offline-first com geolocalização multimodal usando CEP, coordenadas, referências geográficas e fotos de imóvel. MVP focado em cadastro rápido por casa com múltiplas pessoas por registro. Inclui captura de nome, CPF, idade e vulnerabilidades; registro integrado de retirada e entrada em abrigos; sincronização automática; painel geolocalizado para visualizar densidade de pessoas por território.
+GeoRisco Santo André: aplicação web offline-first com geolocalização multimodal usando CEP, coordenadas, referências geográficas e fotos de imóvel. A solução MVP gira em torno do cadastro rápido de pessoas assistidas por casa, podendo haver múltiplas pessoas no registro daquela residência. Englobando a captura de dados como: nome, CPF, idade e vulnerabilidade. Além de funcionalidades como: sincronização automática com a internet (para uso do cadastro em regiões sem sinal); painel geolocalizado para visualizar densidade de pessoas por território; localização de assistidos e residências. Para além do MVP, tem-se: gráficos ou KPIs sobre as áreas de maior risco e áreas de priorização baseado nas necessidades das pessoas.
 
 4. Forma de utilização da solução
 
@@ -141,6 +160,7 @@ Reduz tempo crítico de coleta permitindo cadastro rápido em campo. Geolocaliza
 6. Critério de sucesso e como será avaliado
 
 Sucesso medido por KPIs nas sprints iniciais: tempo de preenchimento inferior a cinco minutos por casa, sincronização offline e online, precisão de localização, taxa de conclusão sem erros, usabilidade com agentes de tecnologia média. Validação com operadores em campo, testes de visualização de sede, exportação de relatórios. Métricas finalizadas com parceiro durante o projeto.
+
 
 ### 2.1.4. Value Proposition Canvas (sprint 1): 
 *Sem limite de palavras – usar template do curso*
@@ -155,7 +175,15 @@ Sucesso medido por KPIs nas sprints iniciais: tempo de preenchimento inferior a 
 
 ## 2.2. Personas (sprint 1)
 
-*Posicione aqui suas Personas em forma de texto markdown com imagens, ou como imagem de template preenchido. Atualize esta seção ao longo do módulo se necessário.*
+As personas apresentadas abaixo caracterizam-se como proto-personas, construídas a partir de inferências sobre o contexto institucional e os fluxos operacionais da Defesa Civil, visando representar os principais perfis de usuários e orientar o desenvolvimento da solução.
+
+<img src="../assets/persona2.png" width="520" height="520"> <img src="../assets/persona1.png" width="520" height="520"> 
+
+Identificamos dois tipos de proto-personas possíveis para o âmbito em questão: agente de campo e diretor da Defesa Civil. Primeiro, o agente de campo, que no caso é o indivíduo que se responsabiliza pelas conduções das operações nos atendimentos emergencial, como apontado acima com o João, em que dados demográficos, comportamentos e solução para o perfil de João representam um quadro hipotético que nos evidencia um jeito de humanizar o público-alvo para adotar estratégias mais assertivas e centradas no usuário real. 
+
+Além disso, tem-se o diretor da Defesa Civil, que atua no nível estratégico da operação, sendo responsável pela análise de dados consolidados, definição de prioridades e tomada de decisões em cenários de risco. Nesse contexto, observa-se que a persona atribuída a esse perfil, representada de forma hipotética, permite compreender suas principais necessidades, como acesso rápido a informações confiáveis, visualização de indicadores e geração de relatórios. Dessa forma, assim como no caso do agente de campo, a construção dessa proto-persona contribui para orientar o desenvolvimento de funcionalidades alinhadas às demandas reais do usuário, promovendo uma solução mais eficiente, integrada e centrada no processo decisório.
+
+*Observação: Fotos extraídas de um site produtor de imagens de pessoas inexistentes* : [This Person Does Not Exist](https://thispersondoesnotexist.com/)
 
 ## 2.3. User Stories (sprints 1 a 5)
 
@@ -179,16 +207,42 @@ Critérios INVEST | *(Por que é Independente? Por que é Negociável? Por que �
 
 *Esta seção formaliza o que o sistema deve fazer, sob quais regras e com quais qualidades. Atualize a cada sprint conforme os requisitos evoluem.*
 
-### 3.1.1. Requisitos Funcionais (sprint 1, refinar até sprint 5)
+### 3.1.1 Lista de Atores
+
+| ID  | Nome do Ator                           | Descrição                                                                                                                                                                                                                                                                                                          | Frequência de Uso | Proficiência Tecnológica |
+|-----|----------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------|--------------------------|
+| A01 | Agente de Defesa Civil (Campo)         | Responsável por coletar dados georreferenciados in loco, realizar vistorias em áreas de risco e alimentar o sistema com informações de interdições ou rotas obstruídas.                                                                                                                                            | Diária            | Média/Alta               |
+| A02 | Agente de Defesa Civil (Visualização)  | Responsável por visualizar todas as informações coletadas e gerar relatórios a partir delas.                                                                                                                                                                                                                       | Diário            | Média/Alta               |
+| A03 | Agente de Defesa Civil (Administração) | Responsável por gerenciar os parâmetros de monitoramento e extrair relatórios, análises e mapas de calor gerados automaticamente pela plataforma. Sua função é interpretar essas visões consolidadas de risco e vulnerabilidade para subsidiar a tomada de decisão e o planejamento de contingência da prefeitura. | Diária            | Média/Alta               |
+
+### 3.1.2. Requisitos Funcionais (sprint 1, refinar até sprint 5)
 
 *Liste os RF numerados de forma objetiva e verificável. Cada RF deve poder ser convertido em caso de teste.*
 
-| ID    | Descrição | Prioridade | Status       |
-|-------|-----------|------------|--------------|
-| RF001 | ...       | Alta       | Implementado |
-| RF002 | ...       | Média      | Planejado    |
+| ID    | Nome                                        | Descrição                                                                                             | Tipo    | Prioridade | Atores  | Status    |
+|-------|---------------------------------------------|-------------------------------------------------------------------------------------------------------|---------|------------|---------|-----------|
+| RF001 | Cadastro Georreferenciado de Moradias       | Registro de edificações com coordenadas geográficas e classificação de risco (R1 a R4).               | 1       | 1          | A01,A03 | Planejado |
+| RF002 | Cadastro de chefe de família                | Registro do responsável principal pelo núcleo familiar para fins de contato e auxílio.                | 1       | 1          | A01,A03 | Planejado |
+| RF003 | Cadastro de membros do núcleo familiar      | Registro de todos os residentes do imóvel para cálculo de densidade populacional por área.            | 1       | 1          | A01,A03 | Planejado |
+| RF004 | Cadastro de necessidades especiais          | Identificação de perfis prioritários (idosos, PCDs, gestantes) para o plano de evacuação.             | 1       | 1          | A01,A03 | Planejado |
+| RF005 | Cadastro de abrigos                         | Registro de unidades de acolhimento, incluindo endereço, infraestrutura e capacidade total de leitos. | 1       | 3          | A03     | Planejado |
+| RF006 | Gerenciamento de moradias                   | Interface para edição, suspensão ou exclusão de registros de imóveis no sistema.                      | 4, 5    | 1          | A01,A03 | Planejado |
+| RF007 | Gerenciamento de familias                   | Controle e histórico de vínculos familiares vinculados a uma ou mais moradias.                        | 4, 5    | 1          | A01,A03 | Planejado |
+| RF008 | Gerenciamento de membros do núcleo familiar | Edição de dados individuais dos dependentes e histórico de saúde/vulnerabilidade.                     | 4, 5    | 1          | A01,A03 | Planejado |
+| RF009 | Gerenciamento de chefe de família           | Atualização de dados de contato e substituição do responsável pelo núcleo familiar.                   | 4, 5    | 1          | A01,A03 | Planejado |
+| RF010 | Gerenciamento de abrigos                    | Interface CRUD para edição de dados cadastrais, inativação ou atualização estrutural dos abrigos.     | 4, 5    | 3          | A02     | Planejado |
+| RF011 | Controle de ocupação de abrigos             | Monitoramento em tempo real de vagas, leitos disponíveis e triagem de entrada (SUAS).                 | 4       | 3          | A02     | Planejado |
+| RF012 | Gestão de estoque humanitário               | Registro e baixa de doações, cestas básicas e materiais de primeira necessidade.                      | 1, 4, 5 | 3          | A02     | Planejado |
+| RF013 | Geração de mapas de calor                   | Processamento automático de densidade de riscos e vulnerabilidades sobre o mapa da cidade.            | 2       | 2          | A02,A03 | Planejado |
+| RF014 | Geração de relatórios                       | Consolidação de dados estatísticos em documentos (PDF) para análise de gestão.                        | 2       | 2          | A02,A03 | Planejado |
+| RF015 | Exportação dos dados                        | Extração de bases em formatos abertos (CSV/PDF) para integração com órgãos externos.                  | 2       | 3          | A02,A03 | Planejado |
+| RF016 | Aviso anual de atualização dos dados        | Notificação automática via sistema/e-mail para revisão periódica das informações cadastrais.          | 6       | 3          | A02     | Planejado |
 
-### 3.1.2. Regras de Negócio (sprint 1, refinar até sprint 5)
+*Legenda* 
+Tipo: 1 - cadastro (entrada), 2 - relatório (saída), 3 - consulta (leitura), 4 - atualização (edição), 5 - exclusão (remoção), 6 - outros.
+Prioridade: 1 - muito importante, 2 - importante, 3 - descartável.
+
+### 3.1.3. Regras de Negócio (sprint 1, refinar até sprint 5)
 
 *Numere e redija as RN de forma implementável e testável. Toda RN deve ter pelo menos um teste automatizado associado a partir da sprint 3.*
 
@@ -197,7 +251,7 @@ Critérios INVEST | *(Por que é Independente? Por que é Negociável? Por que �
 | RN01 | ...       | RF001        |
 | RN02 | ...       | RF001        |
 
-### 3.1.3. Requisitos Não Funcionais — 8 Eixos ISO/IEC 25010 (sprints 1 a 5)
+### 3.1.4. Requisitos Não Funcionais — 8 Eixos ISO/IEC 25010 (sprints 1 a 5)
 
 *Preencha os 8 eixos. Cada eixo deve ter ao menos um RNF verificável (com métrica, limite ou critério concreto) ou justificativa explícita de ausência. Evolua do conceitual (sprint 1) ao técnico mensurável (sprint 5).*
 
@@ -212,7 +266,7 @@ Critérios INVEST | *(Por que é Independente? Por que é Negociável? Por que �
 | REST — Restrições Design | ...       | ...                | ...           |
 | ORG — Organizacionais    | ...       | ...                | ...           |
 
-### 3.1.4. Matriz RF → RN → Endpoint (sprints 3 a 5)
+### 3.1.5. Matriz RF → RN → Endpoint (sprints 3 a 5)
 
 *Matriz de cobertura mostrando quais RN e endpoints implementam cada RF.*
 
@@ -272,7 +326,7 @@ Critérios INVEST | *(Por que é Independente? Por que é Negociável? Por que �
 
 *posicione aqui imagens e textos contendo exemplos padronizados de ícones e imagens, com seus respectivos atributos de aplicação, utilizadas na solução*
 
-## 3.5 Protótipo de alta fidelidade (sprint 3)
+## 3.5. Protótipo de alta fidelidade (sprint 3)
 
 *posicione aqui algumas imagens demonstrativas de seu protótipo de alta fidelidade e o link para acesso ao protótipo completo (mantenha o link sempre público para visualização)*
 
@@ -373,13 +427,13 @@ Critérios INVEST | *(Por que é Independente? Por que é Negociável? Por que �
 
 # <a name="c6"></a>6. Estudo de Mercado e Plano de Marketing (sprint 4)
 
-## 6.1 Resumo Executivo
+## 6.1. Resumo Executivo
 
 *Preencher com até 300 palavras, sem necessidade de fonte*
 
 *Apresente de forma clara e objetiva os principais destaques do projeto: oportunidades de mercado, diferenciais competitivos da aplicação web e os objetivos estratégicos pretendidos.*
 
-## 6.2 Análise de Mercado
+## 6.2. Análise de Mercado
 
 *a) Visão Geral do Setor (até 250 palavras)*
 *Contextualize o setor no qual a aplicação está inserida, considerando aspectos econômicos, tecnológicos e regulatórios. Utilize fontes confiáveis.*
@@ -390,7 +444,7 @@ Critérios INVEST | *(Por que é Independente? Por que é Negociável? Por que �
 *c) Tendências de Mercado (até 300 palavras)*
 *Identifique e analise tendências relevantes (tecnológicas, comportamentais e mercadológicas) que influenciam o setor. Utilize fontes confiáveis.*
 
-## 6.3 Análise da Concorrência
+## 6.3. Análise da Concorrência
 
 *a) Principais Concorrentes (até 250 palavras)*
 *Liste os concorrentes diretos e indiretos, destacando suas principais características e posicionamento no mercado.*
@@ -399,7 +453,7 @@ Critérios INVEST | *(Por que é Independente? Por que é Negociável? Por que �
 *Descreva os diferenciais da sua aplicação em relação aos concorrentes, sem necessidade de citação de fontes.*
 
 
-## 6.4 Público-Alvo
+## 6.4. Público-Alvo
 
 *a) Segmentação de Mercado (até 250 palavras)*
 Descreva os principais segmentos de mercado a serem atendidos pela aplicação. Utilize bases de dados e fontes confiáveis.*
@@ -408,7 +462,7 @@ Descreva os principais segmentos de mercado a serem atendidos pela aplicação. 
 *Caracterize o público-alvo com dados demográficos, psicográficos e comportamentais, incluindo necessidades específicas. Utilize fontes obrigatórias.*
 
 
-## 6.5 Posicionamento
+## 6.5. Posicionamento
 
 *a) Proposta de Valor Única (até 250 palavras)*
 *Defina de maneira clara o que torna a sua aplicação única e valiosa para o mercado.*
@@ -416,7 +470,7 @@ Descreva os principais segmentos de mercado a serem atendidos pela aplicação. 
 *b) Estratégia de Diferenciação (até 250 palavras)*
 *Explique como sua aplicação se destacará da concorrência, evidenciando a lógica por trás do posicionamento.*
 
-## 6.6 Estratégia de Marketing 
+## 6.6. Estratégia de Marketing 
 
 *a) Produto/Serviço (até 200 palavras)*
 *Descreva as funcionalidades, benefícios e diferenciais da aplicação*
