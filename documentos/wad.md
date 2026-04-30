@@ -34,7 +34,7 @@
 <br>
 
 
-# <a name="c1"></a>1. Introdução (sprints 1 a 5)
+# 1. Introdução (sprints 1 a 5)
 
 O município de Santo André enfrenta desafios críticos na gestão de populações em áreas de risco. Com mapa de risco estratificado em zonas amarelas (monitoramento), laranja (área de risco) e vermelho (área de muito risco), o município identifica constantemente famílias vulneráveis que necessitam de proteção. Contudo, o processo de coleta de dados em campo é lento, descentralizado e sem registro geolocalizado integrado. Quando desastres ou eventos extremos ocorrem, agentes da Defesa Civil precisam evacuar famílias rapidamente, mas enfrentam dificuldades: não há rastreamento unificado de retiradas, entrada em abrigos ou quantidade de pessoas por território. Isso compromete a resposta ágil, gera perda de informação entre etapas e dificulta o suporte da sede em tempo real.
 
@@ -46,23 +46,19 @@ Este projeto será desenvolvido em parceria com a Defesa Civil de Santo André, 
 
 *Observe a seção 2 e verifique que ali é possível trazer mais detalhes, portanto seja objetivo aqui. Atualize esta descrição até a entrega final, conforme desenvolvimento.*
 
-# <a name="c2"></a>2. Visão Geral da Aplicação Web (sprint 1)
+# 2. Visão Geral da Aplicação Web (sprint 1)
 
 ## 2.1. Escopo do Projeto (sprints 1 e 4)
 
 ### 2.1.1. Modelo de 5 Forças de Porter (sprint 1)
 
-<div align="center">
-    <p>Figura 1: 5 Forças de Porter</p>
-    <img src="outros/porter.png" width="800">
-    <p>Feito pela própria equipe (2026)</p>
-</div>
+<img src="outros/porter.png">
 
-<h2 align="center" id="strengths">Rivalidade Entre Concorrentes</h2>
+#### Rivalidade Entre Concorrentes
 
+Existem órgãos que atuam em cenários semelhantes aos da Defesa Civil, como Corpo de Bombeiros, SAMU, Forças Armadas, Polícia Militar e defesas civis de outros municípios. No entanto, a rivalidade é considerada baixa pois cada instituição possui atribuições legais e mandatos distintos, com atuação geralmente complementar e protocolos de cooperação estabelecidos.
 
-
-<h2 align="center" id="strengths">Poder de Barganha: Fornecedores</h2>
+#### Poder de Barganha: Fornecedores
 
 Na Defesa Civil de Santo André, o poder de barganha dos fornecedores varia conforme o tipo de recurso necessário e o momento da operação. Em situações normais, o poder tende a ser baixo para insumos básicos, como lonas, colchões, cestas, água e materiais de apoio, pois há maior quantidade de fornecedores e possibilidade de compra por processos públicos.
 
@@ -73,7 +69,20 @@ Além disso, fornecedores de serviços especializados, como tecnologia, georrefe
 Assim, o poder dos fornecedores pode ser considerado médio: baixo para materiais comuns, mas mais alto em emergências e em serviços técnicos especializados.
 
 
-<h2 align="center" id="strengths">Poder de Barganha: Clientes</h2>
+
+#### Poder de Barganha: Clientes
+
+
+#### Poder de Barganha: Fornecedores
+
+Na Defesa Civil de Santo André, o poder de barganha dos fornecedores varia conforme o tipo de insumo e o contexto operacional, sendo classificados em diretos (contrato com o órgão) e indiretos (via outros órgãos públicos).
+Em condições normais, o poder é baixo, especialmente para insumos básicos (ex: lonas, colchões), devido à alta concorrência e ao uso do Sistema de Registro de Preços (SRP), que favorece menor custo e substituição de fornecedores.
+Em situações de emergência, o poder torna-se alto, pois a dispensa de licitação prioriza a rapidez na entrega, permitindo que fornecedores com estoque disponível influenciem preços.
+Já em serviços e tecnologias especializadas, como o IPT (ex: análises geológicas), o poder é muito alto, devido à baixa concorrência e à dependência técnica.
+Assim, há uma dualidade: maior controle na prevenção e maior dependência dos fornecedores na resposta a desastres.
+
+
+#### Poder de Barganha: Clientes
 
 O Poder de Barganha dos Clientes, seguindo o modelo das Cinco Forças de Porter, analisa a influência que os consumidores possuem sobre as empresas do setor, especialmente em relação a preços, qualidade, variedade e condições de compra. Quanto maior a oferta de alternativas disponíveis no mercado, maior tende a ser o poder de negociação dos clientes. 
 
@@ -83,8 +92,7 @@ Por um lado, esse poder é limitado, pois a população depende fortemente dos s
 
 Além disso, o funcionamento eficaz do sistema proposto depende diretamente da colaboração dos moradores na coleta de dados, o que amplia ainda mais sua influência: caso haja resistência, desconfiança ou insatisfação com o uso das informações, a qualidade e a efetividade do sistema podem ser comprometidas. Dessa forma, mesmo sem poder econômico direto, os moradores exercem influência significativa sobre o sucesso da solução.
 
-
-<h2 align="center" id="strengths">Ameaça de Novos Entrantes</h2>
+#### Ameaça de Novos Entrantes
 
 A ameaça de novos entrantes para a Defesa Civil de Santo André é baixa, porque sua atuação não funciona como um mercado comum, em que qualquer empresa pode entrar e competir diretamente. A Defesa Civil é um órgão público ligado à Prefeitura, com responsabilidade oficial sobre prevenção, preparação, resposta e recuperação em situações de risco e desastre no município.
 
@@ -92,7 +100,7 @@ Além disso, sua atuação exige conhecimento técnico, autorização institucio
 
 Por isso, a entrada de novos concorrentes diretos é difícil. A principal ameaça não vem de novos órgãos substituindo a Defesa Civil, mas sim de soluções externas que podem disputar espaço como ferramentas de apoio à gestão de riscos.
 
-<h2 align="center" id="strengths">Ameaça de Substitutos</h2>
+#### Ameaça de Substitutos
 
 No contexto da Proteção e Defesa Civil, a análise da ameaça de produtos substitutos, conforme o modelo de Michael Porter, deve ser adaptada, pois se trata de um serviço público de competência estatal exclusiva, sem concorrentes diretos. Ainda assim, existem alternativas que atendem à mesma necessidade da população por segurança e resposta a emergências, como aplicativos de monitoramento climático, redes comunitárias, ONGs e seguros privados. 
 
@@ -102,11 +110,8 @@ Esses substitutos apresentam alta acessibilidade e baixo custo, podendo ser acio
 
 ### 2.1.2. Análise SWOT da Instituição Parceira (sprint 1)
 
-<div align="center">
-    <p>Figura 2: Análise Swot</p>
-    <img src="outros/swot.png" width="800">
-    <p>Feito pela própria equipe (2026)</p>
-</div>
+
+<img src="outros/swot.png">
 
 #### Strengths
 
@@ -346,6 +351,7 @@ Apresenta-se a seguir a lista de User Stories levantadas para o projeto GeoRisco
 | RF014 | Geração de relatórios                       | Consolidação de dados estatísticos em documentos (PDF) para análise de gestão.                        | 2       | 2          | A02,A03 | Planejado |
 | RF015 | Exportação dos dados                        | Extração de bases em formatos abertos (CSV/PDF) para integração com órgãos externos.                  | 2       | 3          | A02,A03 | Planejado |
 | RF016 | Aviso anual de atualização dos dados        | Notificação automática via sistema/e-mail para revisão periódica das informações cadastrais.          | 6       | 3          | A02     | Planejado |
+| RF017 | Visualização de utilização pelos atores do sistema        | Lista de logs referenciados pelo respectivo ator sobre a utilização dentro do sistema.          | 2       | 3          | A03     | Planejado |
 
 *Legenda* 
 Tipo: 1 - cadastro (entrada), 2 - relatório (saída), 3 - consulta (leitura), 4 - atualização (edição), 5 - exclusão (remoção), 6 - outros.
@@ -392,7 +398,12 @@ Prioridade: 1 - muito importante, 2 - importante, 3 - descartável.
 
 ### 3.2.2. Diagrama de Casos de Uso (sprint 1)
 
-*Apresente o diagrama de casos de uso com atores (boneco), casos (elipse) e as relações `<<include>>` / `<<extend>>` com semântica correta. Consulte a notação de referência em `in02/suporte/use-case_3.0_v1.0.pdf`.*
+O diagrama de casos de uso é uma ilustração visual que representa as funcionalidades de um sistema sob a perspectiva de seus usuários, mapeando quais atores interagem com quais casos de uso. Nele, é possível visualizar como os requisitos funcionais se relacionam por meio de dois tipos de relação: `<<include>>`, que indica uma etapa obrigatória dentro de um fluxo, assim, sempre que o caso de uso base for executado, o caso de uso incluído também será; e `<<extend>>`, que indica uma etapa condicional, presente no fluxo apenas em situações específicas, sem ser obrigatória.
+
+
+<img src="outros/diagrama_de_casos_de_uso.png">
+
+O diagrama mapeia dois atores e três perfis de uso distintos. O **Agente de Campo** representa o perfil **cadastrador**, sendo responsável por registrar e gerenciar dados em campo, interagindo com os casos de uso de cadastro (RF001 a RF004) e gerenciamento (RF006 a RF009). O **Diretor da Defesa Civil** acumula os perfis de **visualizador** e **administrador**: como visualizador, acompanha informações estratégicas por meio dos mapas de calor (RF013); como administrador, é o único ator com acesso à geração de relatórios (RF014) e à exportação de dados (RF015). No fluxo de cadastro, as relações `<<include>>` evidenciam a obrigatoriedade em cadeia, como por exemplo: cadastrar uma moradia (RF001) sempre exige cadastrar o chefe de família (RF002), que por sua vez inclui o cadastro dos membros (RF003). Já o `<<extend>>` aparece nos dois pontos condicionais do diagrama: o cadastro de membros pode, opcionalmente, registrar necessidades especiais (RF004), e a exportação de dados (RF015) estende a geração de relatórios (RF014), ocorrendo apenas quando necessário.
 
 ### 3.2.3. Diagrama de Classes do Domínio (sprint 2)
 
