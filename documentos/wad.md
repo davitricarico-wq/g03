@@ -76,7 +76,6 @@ Por um lado, esse poder é limitado, pois a população depende fortemente dos s
 
 Além disso, o funcionamento eficaz do sistema proposto depende diretamente da colaboração dos moradores na coleta de dados, o que amplia ainda mais sua influência: caso haja resistência, desconfiança ou insatisfação com o uso das informações, a qualidade e a efetividade do sistema podem ser comprometidas. Dessa forma, mesmo sem poder econômico direto, os moradores exercem influência significativa sobre o sucesso da solução.
 
-#### Ameaça de Novos Entrantes
 
 <h2 align="center" id="strengths">Ameaça de Novos Entrantes</h2>
 
