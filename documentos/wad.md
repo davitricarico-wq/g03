@@ -22,7 +22,6 @@ Lucas Bianchezzi
 
 
 
-
 ## Sumário
 
 [1. Introdução](#c1)
@@ -62,7 +61,7 @@ Este projeto será desenvolvido em parceria com a Defesa Civil de Santo André, 
 
 ## 2.1. Escopo do Projeto (sprints 1 e 4)
 
-Esta seção apresenta o escopo do projeto, contemplando as análises estratégicas e conceituais realizadas ao longo das sprints iniciais. São abordados o Modelo das 5 Forças de Porter, a análise SWOT da instituição parceira, a definição da solução proposta, bem como ferramentas de apoio à tomada de decisão, como o Value Proposition Canvas e a matriz de riscos, as personas e as user stories. O objetivo é contextualizar o problema, compreender o ambiente de atuação e orientar o desenvolvimento da solução.
+Esta seção apresenta o escopo do projeto, contemplando as análises estratégicas e conceituais realizadas ao longo das sprints iniciais. São abordados o Modelo das 5 Forças de Porter, a análise SWOT da instituição parceira, a definição da solução proposta, bem como ferramentas de apoio à tomada de decisão, como o Value Proposition Canvas e a matriz de riscos. Além disso, há as personas e as user stories que servem para entendermos melhor sobre o usuário real. O objetivo é contextualizar o problema, compreender o ambiente de atuação e orientar o desenvolvimento da solução.
 
 ### 2.1.1. Modelo de 5 Forças de Porter (sprint 1)
 
