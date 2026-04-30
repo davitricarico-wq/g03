@@ -103,7 +103,11 @@ Esses substitutos apresentam alta acessibilidade e baixo custo, podendo ser acio
 
 #### Strengths
 
-A Defesa Civil de Santo André tem como uma de suas principais forças o fato de atuar em uma área essencial para a cidade: a prevenção, preparação, resposta e recuperação diante de desastres naturais e tecnológicos. Por estar ligada à Prefeitura e à Secretaria de Meio Ambiente e Mudanças Climáticas, a organização possui legitimidade institucional e capacidade de articulação com outras áreas públicas. Além disso, tem conhecimento técnico sobre áreas de risco, protocolos de evacuação, acolhimento emergencial e atendimento a populações vulneráveis, como idosos, crianças, gestantes e pessoas com deficiência.
+A Defesa Civil de Santo André tem como uma de suas principais forças o fato de **atuar em uma área essencial** para a cidade: a **prevenção, preparação, resposta e recuperação diante de desastres naturais e tecnológicos.**
+
+Por estar ligada à Prefeitura e à Secretaria de Meio Ambiente e Mudanças Climáticas, a organização possui **legitimidade institucional** e **capacidade de articulação com outras áreas públicas.**
+
+Além disso, tem conhecimento técnico sobre **áreas de risco**, protocolos de evacuação, acolhimento emergencial e atendimento a populações vulneráveis, como idosos, crianças, gestantes e pessoas com deficiência.
 
 
 #### Weaknesses
@@ -117,7 +121,9 @@ O uso de ferramentas como planilhas físicas gera **barreiras operacionais crít
 
 #### Opportunities
 
-Entre as oportunidades, destaca-se o uso de tecnologia para modernizar a gestão pública de riscos e desastres. Ferramentas digitais podem ajudar a organizar dados, acelerar atendimentos, melhorar a comunicação entre secretarias e apoiar decisões mais rápidas. Além disso, o aumento da preocupação com eventos climáticos extremos torna o trabalho da Defesa Civil ainda mais relevante, abrindo espaço para investimentos, parcerias com instituições de ensino e soluções inovadoras. A atuação preventiva também pode fortalecer a confiança da população no serviço público.
+Entre as oportunidades, destaca-se o uso de **tecnologia para modernizar a gestão pública de riscos e desastres.** Ferramentas digitais podem ajudar a organizar dados, acelerar atendimentos, melhorar a comunicação entre secretarias e apoiar decisões mais rápidas. 
+
+Além disso, o aumento da **preocupação com eventos climáticos extremos** torna o trabalho da Defesa Civil ainda mais relevante, abrindo espaço para investimentos, parcerias com instituições de ensino e soluções inovadoras. A **atuação preventiva** também pode fortalecer a confiança da população no serviço público.
 
 #### Threats
 
