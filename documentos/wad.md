@@ -418,14 +418,14 @@ Prioridade: 1 - muito importante, 2 - importante, 3 - descartável.
 
 | Eixo                     | Requisito | Métrica / Critério | Como atendido |
 |--------------------------|-----------|--------------------|---------------|
-| USAB — Usabilidade       | ...       | ...                | ...           |
-| CONF — Confiabilidade    | ...       | ...                | ...           |
-| DES — Desempenho         | ...       | p95 < X ms         | ...           |
-| SUP — Suportabilidade    | ...       | ...                | ...           |
-| SEG — Segurança          | ...       | ...                | ...           |
-| CAP — Capacidade         | ...       | ...                | ...           |
-| REST — Restrições Design | ...       | ...                | ...           |
-| ORG — Organizacionais    | ...       | ...                | ...           |
+| USAB — Usabilidade       | Interface mobile concisa e intuitiva com fluxos simplificados para o perfil do agente de campo em cenários de risco.       |Tempo de preenchimento completo de um cadastro por casa em < 5 minutos.                | Através de botões de fácil acionamento e foco em dados essenciais (nome, CPF, idade)          |
+| CONF — Confiabilidade    | Operação em regime offline-first para garantir o funcionamento em áreas de sombra de sinal.       | 100% de integridade dos dados salvos localmente com sincronização automática ao detetar rede.                | Através de mecanismo de persistência local (Cache/Storage) que evita perda de dados durante a recolha.          |
+| DES — Desempenho         |Resposta ágil do sistema durante o uso do formulário, captura de registos e carregamento de mapas.      | Tempo de resposta para salvar dados locais e carregar camadas de mapas de risco em < 3 segundos (ex: p95 < 3s).        | Utilizando sincronização em segundo plano (background) para não travar a interface do agente.          |
+| SUP — Suportabilidade    |Compatibilidade com diversos dispositivos móveis e operação multimodal para localização.      | Suporte a 3 métodos de entrada de localização (GPS, CEP ou referências geográficas manuais).               | Com design responsivo que se adapta a diferentes tamanhos de ecrã/tela dos telemóveis da Defesa Civil.           |
+| SEG — Segurança          |Proteção de dados sensíveis em conformidade com a LGPD e restrição rigorosa de acessos.       | Criptografia de dados durante o tráfego e 100% de controlo de acesso baseado no perfil do utilizador.               | Apenas agentes e diretores autorizados visualizam dados de vulnerabilidade e nomes.           |
+| CAP — Capacidade         | Armazenamento robusto e processamento ágil para histórico de evacuações e mapas de calor/densidade.       | Suporte a milhares de registos geolocalizados e múltiplas entradas por moradia sem degradação de performance.                | Através de uma base de dados escalável e otimização de queries para suportar a agregação de dados em tempo real.          |
+| REST — Restrições Design | Obrigatoriedade de captura de evidências visuais e disponibilização de interface desktop para a sede.       | Exigência de permissão no sistema operativo para uso da câmara e integração de visualização cartográfica no painel web.                | Funcionalidade de foto integrada no formulário de campo e painel web otimizado para monitores (desktop) para o Diretor.          |
+| ORG — Organizacionais    | Garantia de conformidade ética, jurídica e alinhamento da estrutura de dados com fontes oficiais (SDUH, SUAS, SIGA).       | 100% de uso de dados fictícios nos testes de stress/usabilidade ao longo das sprints 1 a 5.                | Isolamento dos ambientes de teste e modelação da base de dados espelhando os formulários oficiais do governo.           |
 
 ### 3.1.5. Matriz RF → RN → Endpoint (sprints 3 a 5)
 
