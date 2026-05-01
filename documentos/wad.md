@@ -178,6 +178,7 @@ Sucesso medido por KPIs nas sprints iniciais: tempo de preenchimento inferior a 
 O Value Proposition Canvas é uma ferramenta visual que auxilia na definição clara da proposta de valor de um produto ou serviço, alinhando as necessidades e desejos dos clientes com as soluções oferecidas. 
 Nele estão identificados o perfil do cliente, suas dores, ganhos e tarefas, bem como a proposta de valor, com os produtos e serviços, aliviadores de dores e criadores de ganhos.
 Dessa forma, o Canvas de Proposta de Valor traz de maneira sintetizada diferentes aspectos relacionados ao parceiro e à solução proposta, ajudando também no alinhamento das prioridades do projeto.
+
 <div align="center">
     <p>Figura 2: Value Proposition Canvas</p>
     <img src="outros/value-proposition-canvas.png" width="800">
