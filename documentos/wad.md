@@ -54,8 +54,6 @@ Os aspectos essenciais para criação de valor incluem: redução do tempo crít
 
 Este projeto será desenvolvido em parceria com a Defesa Civil de Santo André, incorporando sua experiência operacional e validação contínua das funcionalidades entregues.
 
-*Observe a seção 2 e verifique que ali é possível trazer mais detalhes, portanto seja objetivo aqui. Atualize esta descrição até a entrega final, conforme desenvolvimento.*
-
 # 2. Visão Geral da Aplicação Web (sprint 1)
 
 ## 2.1. Escopo do Projeto (sprints 1 e 4)
@@ -177,6 +175,15 @@ Sucesso medido por KPIs nas sprints iniciais: tempo de preenchimento inferior a 
 
 
 ### 2.1.4. Value Proposition Canvas (sprint 1): 
+O Value Proposition Canvas é uma ferramenta visual que auxilia na definição clara da proposta de valor de um produto ou serviço, alinhando as necessidades e desejos dos clientes com as soluções oferecidas. 
+Nele estão identificados o perfil do cliente, suas dores, ganhos e tarefas, bem como a proposta de valor, com os produtos e serviços, aliviadores de dores e criadores de ganhos.
+Dessa forma, o Canvas de Proposta de Valor traz de maneira sintetizada diferentes aspectos relacionados ao parceiro e à solução proposta, ajudando também no alinhamento das prioridades do projeto.
+<div align="center">
+    <p>Figura 2: Value Proposition Canvas</p>
+    <img src="outros/value-proposition-canvas.png" width="800">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
 
 
 ### 2.1.5. Matriz de Riscos do Projeto (sprint 1)
