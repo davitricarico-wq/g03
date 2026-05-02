@@ -189,9 +189,45 @@ Dessa forma, o Canvas de Proposta de Valor traz de maneira sintetizada diferente
 
 ### 2.1.5. Matriz de Riscos do Projeto (sprint 1)
 
-*Sem limite de palavras – usar template do curso*
+<div align="center">
+    <p>Figura 3: Matriz de Riscos</p>
+    <img src="outros/matriz-risco.jpg" width="800">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
 
-*Registre na matriz os riscos identificados no projeto.*
+<div align="center">
+    <img src="outros/legenda-matriz-risco.jpg" width="800">
+    <p>Legenda da matriz de riscos.    Feito pela própria equipe (2026)</p>
+</div>
+
+A Matriz de Riscos, também conhecida como Matriz de Probabilidade e Impacto, é uma ferramenta fundamental para o gerenciamento de riscos no projeto, pois permite identificar, classificar e priorizar os eventos que podem impactar seu desenvolvimento. Essa ferramenta auxilia na tomada de decisões estratégicas, direcionando esforços para mitigação de ameaças e aproveitamento de oportunidades no contexto da gestão de áreas de risco, acolhimento emergencial e logística humanitária. O conceito de risco está diretamente relacionado à combinação entre a probabilidade de ocorrência de um evento e o impacto que ele pode causar ao projeto. Dessa forma, riscos com alta probabilidade e alto impacto demandam maior atenção da equipe e dos stakeholders da Secretaria de Meio Ambiente e Defesa Civil, enquanto aqueles com menor criticidade podem ser monitorados com menor prioridade. Para este projeto, os riscos foram classificados em duas categorias principais: Riscos (ameaças) e Oportunidades (eventos positivos). O nível de criticidade foi definido a partir do cruzamento entre probabilidade e impacto, conforme os critérios apresentados a seguir.
+
+Escala de Probabilidade
+
+A probabilidade de ocorrência é definida em cinco níveis: entre 1% a 10% o evento é considerado muito improvável de ocorrer; de 11% a 30% há uma baixa chance de ocorrência; de 31% a 50% o evento pode ocorrer ocasionalmente; de 51% a 70% trata-se de uma provável ocorrência; e de 71% a 90% indica uma alta probabilidade de ocorrência.
+
+Escala de Impacto
+
+O impacto é classificado conforme a gravidade das consequências: Baixo para consequências leves e facilmente reversíveis; Moderado para impacto perceptível com custos ou prazos controláveis; Alto para impacto significativo no cronograma ou qualidade do projeto; e Muito Alto para impacto crítico, inviabilizador ou que compromete a segurança física dos usuários.
+Plano de Ação contra Ameaças
+
+O risco R01 refere-se aos conflitos de sincronização de dados coletados offline, descrevendo a divergência de informações quando agentes sincronizam dados cadastrados simultaneamente sem conexão. Apresenta probabilidade de 71% a 90%, impacto alto e nível de risco alto. A mitigação consiste em implementar IDs únicos (UUID) e lógica de resolução de conflitos, com a resposta de realizar merge manual em registros críticos, sob responsabilidade do Líder Técnico.
+
+O R02 trata do vazamento de dados sensíveis (LGPD), focado no acesso indevido a dados de pessoas vulneráveis. Com probabilidade de 11% a 30% e impacto muito alto, o nível de risco é alto. A mitigação envolve criptografia e controle de acesso (RBAC), enquanto a resposta prevê bloqueio de credenciais, auditoria e notificação ao DPO, sob responsabilidade da Segurança.
+
+O R03 aborda a baixa adesão dos agentes de Defesa Civil por resistência na transição para a interface digital. Com probabilidade de 51% a 70% e impacto alto, o nível de risco é alto. A mitigação foca no envolvimento dos usuários no design (UX) e treinamentos, e a resposta é adaptar funcionalidades para reduzir a carga cognitiva, sob responsabilidade do UX Designer.
+
+O R04 detalha o erro na precisão da geolocalização de vulneráveis, indicando locais incorretos para resgate. Tem probabilidade de 31% a 50% e impacto muito alto, resultando em risco alto. A mitigação ocorre via APIs precisas e validação visual, com resposta de cruzamento de dados históricos, sob responsabilidade da Geolocalização.
+
+O R05 refere-se à indisponibilidade do sistema durante eventos climáticos, como queda de servidor ou lentidão. Com probabilidade de 11% a 30% e impacto muito alto, o nível de risco é alto. A mitigação utiliza infraestrutura escalável e cache local, com resposta de ativação automática de failover e priorização de funções de salvamento, sob responsabilidade do DevOps.
+Interdependência dos Riscos
+
+Durante a análise, foi possível identificar relações entre alguns riscos: o sucesso no tratamento da sincronização offline (R01) reduz diretamente o impacto da indisponibilidade do sistema (R05), pois permite que o trabalho continue sem rede. A baixa adesão dos usuários (R03) pode gerar falhas no mapeamento (R04), caso os dados sejam inseridos de forma apressada ou incorreta por falta de familiaridade. Além disso, a segurança contra vazamentos (R02) é o que garante a viabilidade jurídica para a replicação em outros municípios (Oportunidade R10).
+
+Oportunidades Encontradas
+
+A oportunidade R10 foca na replicação para outros municípios do ABC para expandir a solução para cidades vizinhas. Com probabilidade de 71% a 90% e impacto alto, o aproveitamento será feito estruturando o sistema como plataforma modular para facilitar a parametrização. O R11 prevê a integração com Corpo de Bombeiros e PM para compartilhamento de dados em tempo real. Possui probabilidade de 51% a 70% e impacto alto, visando o desenvolvimento de módulos de exportação e APIs de consulta rápida para forças de segurança. O R12 trata da melhoria contínua via feedback operacional para otimizar a logística humanitária. Com probabilidade de 71% a 90% e impacto moderado, será aproveitado através de ciclos curtos de feedback e atualizações após períodos de chuvas intensas. Por fim, o R13 visa a atração de investimentos e funding social de órgãos federais ou agências de inovação. Com probabilidade de 31% a 50% e impacto muito alto, o aproveitamento consiste na elaboração de relatórios de impacto social e eficiência na gestão de abrigos para editais.
+
 
 ## 2.2. Personas (sprint 1)
 
@@ -315,7 +351,20 @@ Apresenta-se a seguir a lista de User Stories levantadas para o projeto GeoRisco
 
 ## 3.1. Requisitos do Sistema (sprints 1 a 5)
 
-*Esta seção formaliza o que o sistema deve fazer, sob quais regras e com quais qualidades. Atualize a cada sprint conforme os requisitos evoluem.*
+Esta seção formaliza o que o sistema deve fazer, sob quais regras e com quais qualidades. O sistema tem como propósito central permitir a compreensão precisa da quantidade de pessoas em territórios de risco, operando de forma georreferenciada para identificar residências mesmo em locais sem endereçamento oficial (como barracos ou vielas), utilizando coordenadas ou CEP Digital.
+
+O sistema atende primordialmente ao João Silva (Agente de Campo) no que tange à operatividade e coleta de dados em tempo real. Como João atua diretamente em áreas de risco e sob pressão, as funcionalidades de cadastro georreferenciado de edificações e a classificação de risco (R1 a R4) suprem sua necessidade de um sistema integrado e acessível em campo. O foco no registro de moradias, chefes de família e membros residentes permite que João cumpra seu objetivo de registrar informações com precisão, enquanto a identificação de perfis com necessidades especiais (idosos, PCDs, gestantes) resolve sua "dor" de comunicação falha entre equipes, garantindo que o plano de evacuação seja assertivo. Além disso, a gestão de unidades de acolhimento e estoque humanitário em tempo real reduz o retrabalho e a duplicidade de registros que ele atualmente enfrenta.
+
+Para Wesley Souza (Diretor da Defesa Civil), o sistema atua como uma ferramenta estratégica de tomada de decisão. As funcionalidades de processamento automático de mapas de calor de riscos e a geração de relatórios estatísticos em PDF atendem diretamente ao seu objetivo de definir estratégias de mitigação e sua necessidade por indicadores estratégicos e visão macro. A capacidade de exportar dados em formatos abertos (CSV) e o monitoramento da ocupação de leitos resolvem sua principal "dor": a ausência de relatórios confiáveis e a dificuldade em prever riscos. Por fim, a emissão de notificações automáticas via e-mail para a revisão anual garante a integridade dos dados a longo prazo, permitindo que Wesley mantenha a transparência na gestão e o planejamento de ações preventivas de forma contínua e eficiente.
+
+O funcionamento do sistema é regido, primeiramente, pela RN01 (Priorização de Evacuação), que estabelece os critérios de vulnerabilidade para o resgate: pessoas com mobilidade reduzida, acamados e com deficiência severa possuem prioridade absoluta, seguidos por gestantes, idosos e pessoas com deficiência moderada na escala hierárquica.
+
+Para garantir a eficácia operacional, o cadastro deve ser mantido atualizado conforme a RN02 (Alertas para Recadastro), que determina a emissão de alertas para a atualização dos dados dos assistidos a cada 12 meses.
+
+Por fim, o ciclo de vida dos dados é gerido pela RN03 (Arquivamento de Registros), que prevê o arquivamento de registros de moradores falecidos, removendo-os de operações ativas, mas preservando as informações para fins históricos, auditoria e conformidade com a LGPD.
+
+Para garantir a eficiência em campo, o sistema deve possuir capacidade de operação offline, permitindo o salvamento local dos dados com sincronização automática assim que houver cobertura de rede. O tempo de resposta para operações de salvamento e carregamento de mapas deve ser de, no máximo, 3 segundos. A interface mobile deve ser concisa e intuitiva, otimizada para o preenchimento de um cadastro completo em menos de 5 minutos, sendo adaptada para o uso do agente de campo em situações de estresse. O sistema permite a captura de fotos das fachadas dos imóveis para facilitar a identificação visual pelas equipes, mas permanece estritamente proibido o registro fotográfico das pessoas cadastradas. Além disso, a solução deve oferecer suporte à geolocalização multimodal (CEP, coordenadas e referências) e, durante esta fase de desenvolvimento, operar exclusivamente com dados hipotéticos e mascarados, garantindo total conformidade com a LGPD e o Termo de Confidencialidade. 
+
 
 ### 3.1.1 Lista de Atores
 
