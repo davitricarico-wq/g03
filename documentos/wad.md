@@ -94,7 +94,7 @@ Fontes (seção 8): (REF.1, REF.2, REF.3, REF.4, REF.5).
 A análise SWOT foi realizada com o objetivo de compreender o cenário interno e externo da instituição parceira, identificando suas forças, fraquezas, oportunidades e ameaças. Essa análise permite avaliar aspectos que impactam diretamente o desenvolvimento e a implementação da solução proposta, contribuindo para decisões mais estratégicas e alinhadas ao contexto da Defesa Civil.
 
 <div align="center">
-    <p>Figura 2: Análise Swot</p>
+    <p>Figura 1: Análise Swot</p>
     <img src="outros/swot.png" width="800">
     <p>Feito pela própria equipe (2026)</p>
 </div>
