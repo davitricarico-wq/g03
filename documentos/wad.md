@@ -418,14 +418,14 @@ Prioridade: 1 - muito importante, 2 - importante, 3 - descartável.
 
 | Eixo                     | Requisito | Métrica / Critério | Como atendido |
 |--------------------------|-----------|--------------------|---------------|
-| USAB — Usabilidade       | ...       | ...                | ...           |
-| CONF — Confiabilidade    | ...       | ...                | ...           |
-| DES — Desempenho         | ...       | p95 < X ms         | ...           |
-| SUP — Suportabilidade    | ...       | ...                | ...           |
-| SEG — Segurança          | ...       | ...                | ...           |
-| CAP — Capacidade         | ...       | ...                | ...           |
-| REST — Restrições Design | ...       | ...                | ...           |
-| ORG — Organizacionais    | ...       | ...                | ...           |
+| **USAB — Usabilidade** | Eficiência operacional da interface PWA em campo para os Agentes de Defesa Civil. | Tempo de preenchimento completo de um cadastro de moradia em **< 3 minutos**. | Testes de usabilidade (Time-on-Task) cronometrados com 5 Agentes de Campo reais. |
+| **CONF — Confiabilidade** | Tolerância a falhas de rede (Offline-first) e retenção de dados durante vistorias em áreas de sombra. | **100% dos dados** inseridos offline salvos em cache local e **99,9% de Uptime** anual do servidor. | Simulação de perda de pacote/modo avião durante o preenchimento e monitoramento automatizado. |
+| **DES — Desempenho** | Tempo de resposta do sistema sob condições normais de operação de rede (3G/4G/Wi-Fi). | Salvamento de dados locais em **< 500ms** e renderização do mapa de risco (p95) em **< 3 segundos**. | Testes de carga automatizados simulando acessos simultâneos (ex: JMeter ou k6). |
+| **SUP — Suportabilidade** | Compatibilidade de hardware e sistema operacional dos dispositivos móveis utilizados pela prefeitura. | Operação sem quebra de layout em telas de **5.5 a 7 polegadas** e nas **3 últimas versões** de Android/iOS. | Matriz de testes em emuladores (BrowserStack) e nos aparelhos físicos da Defesa Civil. |
+| **SEG — Segurança** | Proteção de dados sensíveis (LGPD) e integridade dos acessos ao sistema. | **100% dos dados pessoais** com criptografia AES-256, tráfego TLS 1.3 e bloqueio após 5 falhas de login. | Auditoria de código estático (SAST) e testes de intrusão (PenTest) no ambiente. |
+| **CAP — Capacidade** | Escalabilidade do banco de dados para suportar os picos de acesso durante alertas climáticos severos. | Processamento de até **500 requisições simultâneas por minuto** sem degradação do p95. | Testes de stress focados em transações de banco de dados e monitoramento de I/O. |
+| **REST — Restrições Design** | Limitações arquiteturais e de armazenamento do dispositivo e nuvem impostas ao produto. | Tamanho do bundle PWA (cache) **< 15MB** e compressão automática de fotos para no máximo **2MB** por imagem. | Análise de payload via DevTools do navegador e validação do tamanho no banco de arquivos. |
+| **ORG — Organizacionais** | Restrições impostas aos processos de desenvolvimento, testes e infraestrutura do projeto. | **100% de dados fictícios** em homologação. | Auditoria de base de testes. |
 
 ### 3.1.5. Matriz RF → RN → Endpoint (sprints 3 a 5)
 
