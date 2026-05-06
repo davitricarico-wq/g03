@@ -94,7 +94,7 @@ Fontes (seção 8): (REF.1, REF.2, REF.3, REF.4, REF.5).
 A análise SWOT foi realizada com o objetivo de compreender o cenário interno e externo da instituição parceira, identificando suas forças, fraquezas, oportunidades e ameaças. Essa análise permite avaliar aspectos que impactam diretamente o desenvolvimento e a implementação da solução proposta, contribuindo para decisões mais estratégicas e alinhadas ao contexto da Defesa Civil.
 
 <div align="center">
-    <p>Figura 2: Análise Swot</p>
+    <p>Figura 1: Análise Swot</p>
     <img src="outros/swot.png" width="800">
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -376,7 +376,6 @@ Para garantir a eficiência em campo, o sistema deve possuir capacidade de opera
 
 ### 3.1.2. Requisitos Funcionais (sprint 1, refinar até sprint 5)
 
-*Liste os RF numerados de forma objetiva e verificável. Cada RF deve poder ser convertido em caso de teste.*
 
 | ID    | Nome                                        | Descrição                                                                                             | Tipo    | Prioridade | Atores  | Status    |
 |-------|---------------------------------------------|-------------------------------------------------------------------------------------------------------|---------|------------|---------|-----------|
@@ -404,7 +403,6 @@ Prioridade: 1 - muito importante, 2 - importante, 3 - descartável.
 
 ### 3.1.3. Regras de Negócio (sprint 1, refinar até sprint 5)
 
-*Numere e redija as RN de forma implementável e testável. Toda RN deve ter pelo menos um teste automatizado associado a partir da sprint 3.*
 
 | ID | Descrição | RF associado | 
 |------|-----------|--------------| 
@@ -414,7 +412,6 @@ Prioridade: 1 - muito importante, 2 - importante, 3 - descartável.
 
 ### 3.1.4. Requisitos Não Funcionais — 8 Eixos ISO/IEC 25010 (sprints 1 a 5)
 
-*Preencha os 8 eixos. Cada eixo deve ter ao menos um RNF verificável (com métrica, limite ou critério concreto) ou justificativa explícita de ausência. Evolua do conceitual (sprint 1) ao técnico mensurável (sprint 5).*
 
 | Eixo                     | Requisito | Métrica / Critério | Como atendido |
 |--------------------------|-----------|--------------------|---------------|
@@ -429,7 +426,7 @@ Prioridade: 1 - muito importante, 2 - importante, 3 - descartável.
 
 ### 3.1.5. Matriz RF → RN → Endpoint (sprints 3 a 5)
 
-*Matriz de cobertura mostrando quais RN e endpoints implementam cada RF.*
+Matriz de cobertura que demonstra quais RN (Regras de Negócio) e endpoints implementam cada RF (Requisito Funcional).
 
 | RF    | RN associadas | Endpoint    | Método |
 |-------|---------------|-------------|--------|
