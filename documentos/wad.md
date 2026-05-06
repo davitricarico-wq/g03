@@ -94,7 +94,7 @@ Fontes (seção 8): (REF.1, REF.2, REF.3, REF.4, REF.5).
 A análise SWOT foi realizada com o objetivo de compreender o cenário interno e externo da instituição parceira, identificando suas forças, fraquezas, oportunidades e ameaças. Essa análise permite avaliar aspectos que impactam diretamente o desenvolvimento e a implementação da solução proposta, contribuindo para decisões mais estratégicas e alinhadas ao contexto da Defesa Civil.
 
 <div align="center">
-    <p>Figura 2: Análise Swot</p>
+    <p>Figura 1: Análise Swot</p>
     <img src="outros/swot.png" width="800">
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -250,101 +250,90 @@ Apresenta-se a seguir a lista de User Stories levantadas para o projeto GeoRisco
 | Identificação | US01 |
 |---|---|
 | Persona | João Silva (Agente de Campo) |
-| User Story | "como agente de campo, posso cadastrar moradores e dados socioestruturais, para manter informações organizadas e disponíveis no sistema" |
-| Critério de aceite 1 | CR1: Dado que o agente está em campo, quando um novo cadastro é realizado, então os dados devem ser armazenados corretamente no sistema |
-| Critério de aceite 2 | CR2: Dado que um cadastro foi concluído, quando acessado posteriormente, então as informações devem estar disponíveis para consulta |
-| Critérios INVEST | Independente: Pode ser implementada isoladamente; Negociável: Os campos do cadastro podem variar; Valiosa: Permite a organização das informações; Estimável: Baseada em operações CRUD; Pequena: Escopo bem definido; Testável: Cadastro pode ser validado por registro e consulta |
-
----
+| User Story | "Como agente de campo, quero cadastrar os dados sociodemográficos dos cidadãos para que eu possa vinculá-los às suas moradias e permitir que a gestão conheça o perfil da população atendida." |
+| Critério de aceite 1 | CR1: Dado que o agente de campo inicia o cadastro do núcleo familiar, quando preenche os dados obrigatórios e os indicadores de vulnerabilidade (Idosos, Crianças 0 a 12 anos, Gestantes/Lactantes, PCD), então o sistema deve vincular a pessoa à respectiva moradia. |
+| Critério de aceite 2 | CR2: Dado que o assistido possui condições específicas de saúde, quando o agente sinalizar no sistema, então devem ser preenchidos os campos de "Doenças crônicas" e "Uso de medicamento contínuo" para gerar histórico no perfil. |
+| Critérios INVEST | Independente: O desenvolvimento do módulo de cadastro pessoal não depende da implementação da funcionalidade de mapas.; Negociável: Os campos sociodemográficos e de vulnerabilidade podem ser ajustados.; Valiosa: Fornece a base de dados central para que a Defesa Civil identifique e proteja vidas humanas.; Estimável: É um formulário CRUD tradicional com complexidade previsível e bem delimitada.; Pequena: Foca exclusivamente nos dados demográficos e de saúde da pessoa.; Testável: O testador pode inserir dados simulados e validar a gravação e o vínculo no banco de dados. |
 
 | Identificação | US02 |
 |---|---|
-| Persona | Wesley Souza (Diretor) |
-| User Story | "como diretor, posso visualizar ocorrências em um mapa georreferenciado, para obter uma visão geral da situação" |
-| Critério de aceite 1 | CR1: Dado que existem ocorrências cadastradas, quando o mapa for acessado, então os pontos devem ser exibidos corretamente |
-| Critério de aceite 2 | CR2: Dado que uma ocorrência possui localização, quando selecionada, então suas informações devem ser apresentadas |
-| Critérios INVEST | Independente: Pode ser implementada separadamente da criação de ocorrências; Negociável: O nível de detalhamento do mapa pode variar; Valiosa: Facilita a tomada de decisão; Estimável: Baseia-se em integração com APIs de mapas; Pequena: Escopo restrito à visualização; Testável: A exibição pode ser validada visualmente |
-
----
+| Persona | João Silva (Agente de Campo) |
+| User Story | "Como agente de campo, quero cadastrar as características e a localização das moradias para que possamos mapear a infraestrutura da região e identificar possíveis vulnerabilidades." |
+| Critério de aceite 1 | CR1: Dado que o agente avalia o domicílio, quando insere o tipo de construção (Madeira, Alvenaria, Misto), o número de pavimentos e a condição da ocupação (Própria, Alugada, Cedida), então o sistema deve registrar o nível estrutural do imóvel. |
+| Critério de aceite 2 | CR2: Dado que o cadastro estrutural exige evidências visuais e de risco, quando o agente salvar o formulário, então o sistema deve exigir obrigatoriamente a inserção de Referência Geográfica, Sinais de alerta observados e permitir o upload de 2 fotos (fachada e entorno). |
+| Critérios INVEST | Independente: A gestão de infraestrutura pode ser tratada de forma modular no banco de dados.; Negociável: A quantidade máxima de fotos por moradia pode ser discutida tecnicamente.; Valiosa: Essencial para calcular o risco de desabamento ou alagamento de uma edificação específica.; Estimável: Os atributos presentes na ficha física delimitam o escopo exato do front-end.; Pequena: O escopo limita-se à estrutura da edificação, separando-se da localização por GPS.; Testável: O sistema deve ser capaz de receber os uploads de imagem e retornar os atributos estruturais salvos em um GET. |
 
 | Identificação | US03 |
 |---|---|
-| Persona | João Silva (Agente de Campo) |
-| User Story | "como agente de campo, posso consultar áreas de risco, para atuar com maior segurança" |
-| Critério de aceite 1 | CR1: Dado que existem áreas cadastradas, quando o agente consulta o sistema, então os dados devem ser exibidos |
-| Critério de aceite 2 | CR2: Dado que uma área é selecionada, quando visualizada, então seu nível de risco deve ser apresentado |
-| Critérios INVEST | Independente: Não depende do registro de ocorrências; Negociável: Tipos de dados podem ser ajustados; Valiosa: Reduz riscos operacionais; Estimável: Baseado em consultas ao banco de dados; Pequena: Função direta; Testável: Resultado verificável |
-
----
+| Persona | Wesley Souza (Gestor Operacional) |
+| User Story | "Como gestor operacional, quero visualizar moradias em um mapa georreferenciado, para obter uma visão geral das ocupações e facilitar tomadas de decisões estratégicas." |
+| Critério de aceite 1 | CR1: Dado que o gestor acessa o painel de georreferenciamento, quando o mapa renderizar na tela, então o sistema deve plotar automaticamente "pins" (marcadores) correspondentes às coordenadas GPS de todas as moradias cadastradas. |
+| Critério de aceite 2 | CR2: Dado que o gestor está visualizando o mapa de risco, quando ele clica sobre o marcador de um imóvel, então um card informativo contendo a "Área de Risco", "Referência Geográfica" e "Contato de emergência externo" deve ser exibido. |
+| Critérios INVEST | Independente: Consome os dados de geolocalização existentes sem interferir em como são cadastrados.; Negociável: O tipo de mapa (Satelite, Terreno) pode ser alterado conforme a biblioteca utilizada.; Valiosa: Entrega alto valor estratégico ao permitir a visualização espacial das zonas de perigo.; Estimável: A integração com APIs de mapas possui documentação robusta.; Pequena: Foca apenas na plotagem básica dos marcadores.; Testável: É possível criar coordenadas *mockadas* e verificar a correta plotagem na interface. |
 
 | Identificação | US04 |
 |---|---|
-| Persona | Wesley Souza (Diretor) |
-| User Story | "como diretor, posso gerenciar abrigos, para organizar o atendimento à população" |
-| Critério de aceite 1 | CR1: Dado que existem abrigos cadastrados, quando acessados, então devem ser exibidos com capacidade e ocupação |
-| Critério de aceite 2 | CR2: Dado que um abrigo é atualizado, quando salvo, então os dados devem ser refletidos no sistema |
-| Critérios INVEST | Independente: Funcionalidade isolada; Negociável: Campos podem ser ajustados; Valiosa: Melhora a gestão de crises; Estimável: CRUD simples; Pequena: Escopo limitado; Testável: Atualizações verificáveis |
-
----
+| Persona | Wesley Souza (Gestor Operacional) |
+| User Story | "Como gestor operacional, quero consultar as moradias e o perfil dos moradores de forma integrada, para que eu possa interpretar e identificar áreas de risco na região." |
+| Critério de aceite 1 | CR1: Dado que o gestor acessa o módulo integrado de consultas, quando seleciona o "Nº da Ficha" de uma moradia, então a tela deve consolidar os dados estruturais do imóvel e os dados sociodemográficos dos responsáveis (1º e 2º Responsável) e demais ocupantes. |
+| Critério de aceite 2 | CR2: Dado que o gestor visualiza a ficha integrada, quando a moradia estiver classificada com "Histórico de ocorrência" e tiver moradores "Com mobilidade reduzida/acamada", então o sistema deve exibir uma flag visual de "Risco Crítico" no cabeçalho da consulta. |
+| Critérios INVEST | Independente: Utiliza joins de dados já populados pelas US01 e US02.; Negociável: O layout de exibição e os níveis de alerta crítico podem ser ajustados.; Valiosa: Facilita o trabalho do gestor que não precisará cruzar tabelas manualmente em planilhas.; Estimável: A consulta a dados relacionados tem esforço facilmente mensurável.; Pequena: Trata-se de uma view (Visualização de dados) de leitura integrada.; Testável: O teste garante que as informações da ficha física batam com o que está sendo exibido digitalmente. |
 
 | Identificação | US05 |
 |---|---|
-| Persona | Wesley Souza (Diretor) |
-| User Story | "como diretor, posso gerar relatórios consolidados, para apoiar decisões estratégicas" |
-| Critério de aceite 1 | CR1: Dado que existem dados registrados, quando solicitado, então o relatório deve ser gerado automaticamente |
-| Critério de aceite 2 | CR2: Dado que o relatório foi gerado, quando acessado, então deve apresentar dados consolidados |
-| Critérios INVEST | Independente: Pode ser implementado separadamente; Negociável: Formato pode variar; Valiosa: Suporte estratégico; Estimável: Agregação de dados conhecida; Pequena: Escopo delimitado; Testável: Resultado validável |
-
----
+| Persona | João Silva (Agente de Campo) |
+| User Story | "Como agente de campo, quero que a localização da moradia utilize minha posição no momento do cadastro como referência, para que eu tenha salvo o local exato mesmo em zonas remotas." |
+| Critério de aceite 1 | CR1: Dado que o agente de campo está na tela de cadastro de nova moradia, quando clica no botão "Capturar Coordenadas GPS", então o sistema deve solicitar permissão do dispositivo e preencher automaticamente a Latitude e Longitude. |
+| Critério de aceite 2 | CR2: Dado que o agente está em uma área sem sinal de internet (offline), quando ele aciona a captura de GPS, então o sistema deve armazenar a coordenada localmente utilizando o sensor nativo do dispositivo para sincronização posterior. |
+| Critérios INVEST | Independente: A funcionalidade de captura de hardware é independente dos campos de texto do formulário.; Negociável: A precisão exigida (ex: margem de 5 a 10 metros) pode ser acordada com o time.; Valiosa: Elimina o erro humano da digitação de coordenadas numéricas longas.; Estimável: Utilizar APIs nativas de geolocalização mobile é padrão na indústria.; Pequena: Cobre especificamente um único componente de auto-preenchimento.; Testável: Pode-se simular diferentes coordenadas GPS em emuladores para validar a captura. |
 
 | Identificação | US06 |
 |---|---|
-| Persona | João Silva (Agente de Campo) |
-| User Story | "como agente de campo, posso atualizar ocorrências, para manter as informações corretas" |
-| Critério de aceite 1 | CR1: Dado que uma ocorrência já está registrada, quando editada, então os dados devem ser atualizados no sistema |
-| Critério de aceite 2 | CR2: Dado que a atualização foi realizada, quando a ocorrência for acessada, então as novas informações devem ser exibidas |
-| Critérios INVEST | Independente: Pode ser implementada separadamente; Negociável: Os campos de edição podem variar; Valiosa: Garante a atualização dos dados; Estimável: Baseada em operações CRUD; Pequena: Escopo específico; Testável: Alterações podem ser verificadas |
-
----
+| Persona | Wesley Silva (Gestor Operacional) |
+| User Story | "Como gestor operacional, quero filtrar moradias por atributos específicos, para poder priorizar atendimentos e identificar as necessidades do público que estou lidando." |
+| Critério de aceite 1 | CR1: Dado que o gerente está na tela de gerenciamento de dados, quando aplica os filtros de "Possui PCD" ou "Uso de equipamento de uso contínuo", então a lista de domicílios deve ser filtrada retornando apenas as residências que preencham esses critérios. |
+| Critério de aceite 2 | CR2: Dado que o gerente necessita planejar evacuações, quando ele cruzar os filtros de "Condição da ocupação" (ex: área de risco) com "Local de destino em caso de evacuação", então o sistema deve gerar uma lista exportável com os resultados. |
+| Critérios INVEST | Independente: A engine de busca e filtro roda independentemente das rotinas de inserção.; Negociável: Quais filtros exatos estarão disponíveis na V1 pode ser repriorizado.; Valiosa: Essencial para triagem rápida em cenários pre-desastre.; Estimável: A construção de queries dinâmicas no banco é uma tarefa de esforço previsível.; Pequena: Foca unicamente na filtragem de listagens textuais/tabelas.; Testável: O QA deve garantir que ao selecionar um filtro específico, nenhum dado fora do escopo selecionado vaze para a tela. |
 
 | Identificação | US07 |
 |---|---|
-| Persona | Wesley Souza (Diretor) |
-| User Story | "como diretor, posso filtrar ocorrências, para priorizar atendimentos" |
-| Critério de aceite 1 | CR1: Dado que existem ocorrências registradas, quando filtros são aplicados, então apenas os resultados correspondentes devem ser exibidos |
-| Critério de aceite 2 | CR2: Dado que os filtros são removidos, quando o sistema é atualizado, então todas as ocorrências devem ser exibidas novamente |
-| Critérios INVEST | Independente: Funciona de forma isolada; Negociável: Os filtros podem variar; Valiosa: Facilita a priorização de ações; Estimável: Baseada em consultas ao sistema; Pequena: Escopo limitado; Testável: Resultados podem ser validados |
-
----
+| Persona | João Silva (Agente de Campo) |
+| User Story | "Como agente de campo, quero cadastrar os pets (se houver) da moradia existente no sistema, para que, em casos de emergência, seja facilitada a evacuação e busca." |
+| Critério de aceite 1 | CR1: Dado que o agente de campo revisa a seção de contingência do domicílio, quando questiona o morador, então o formulário deve permitir a inserção das quantidades divididas pelas categorias: Cães, Gatos, Aves, ou Outros. |
+| Critério de aceite 2 | CR2: Dado que o resgate acessa a ficha de emergência do domicílio, quando visualiza a seção "Animais de estimação", então a quantidade exata informada deve estar em destaque para planejamento logístico de caixas de transporte. |
+| Critérios INVEST | Independente: O cadastro de animais não afeta os dados vitais dos seres humanos.; Negociável: A lista de categorias pode ser estendida para animais de grande porte dependendo da região.; Valiosa: Reduz a recusa de moradores em abandonar áreas de risco por causa de seus animais.; Estimável: É uma adição simples de atributos numéricos à entidade Domicílio.; Pequena: Pode ser finalizada em um ou dois dias de desenvolvimento.; Testável: Verificação da persistência e retorno no JSON do perfil do assistido. |
 
 | Identificação | US08 |
 |---|---|
-| Persona | Wesley Souza (Diretor) |
-| User Story | "como diretor, posso visualizar indicadores, para análise estratégica" |
-| Critério de aceite 1 | CR1: Dado que existem dados no sistema, quando o painel é acessado, então os indicadores devem ser exibidos |
-| Critério de aceite 2 | CR2: Dado que novos dados são inseridos, quando o sistema é atualizado, então os indicadores devem refletir essas mudanças |
-| Critérios INVEST | Independente: Pode ser desenvolvida separadamente; Negociável: Os indicadores podem variar; Valiosa: Apoia decisões estratégicas; Estimável: Baseada em agregação de dados; Pequena: Escopo definido; Testável: Dados exibidos podem ser verificados |
-
----
+| Persona | Wesley Souza (Gestor Operacional) |
+| User Story | "Como gestor operacional, quero visualizar os dados dos filtros da moradia e/ou assistidos por meio de mapas de calor, para que eu possa ter um retorno mais visual para análise geral." |
+| Critério de aceite 1 | CR1: Dado que o gestor acessa o mapa e seleciona o layer de "Mapa de Calor" cruzado com o filtro de "Idosos acima de 60 anos", quando a renderização ocorre, então as áreas com maior adensamento deste público devem ficar em tons intensos/avermelhados. |
+| Critério de aceite 2 | CR2: Dado que o mapa de calor é acionado, quando o usuário realizar "zoom in" ou "zoom out", então os clusters térmicos devem ser recalculados dinamicamente com base no novo nível de aproximação. |
+| Critérios INVEST | Independente: Construído como uma camada (layer) adicional em cima do mapa principal.; Negociável: A paleta de cores e o raio de dispersão podem ser calibrados futuramente.; Valiosa: Transforma dados brutos em inteligência visual e geográfica.; Estimável: Ferramentas modernas de mapas já contam com plugins de heatmap nativos.; Pequena: Foca na visualização agregada térmica.; Testável: Validar se agrupamentos de dados na mesma coordenada geram as manchas esperadas. |
 
 | Identificação | US09 |
 |---|---|
-| Persona | João Silva (Agente de Campo) |
-| User Story | "como agente de campo, posso acessar o sistema via dispositivo móvel, para atuar em campo" |
-| Critério de aceite 1 | CR1: Dado que o sistema é acessado por dispositivo móvel, quando carregado, então a interface deve ser responsiva |
-| Critério de aceite 2 | CR2: Dado que o agente utiliza o sistema em campo, quando acessa funcionalidades principais, então elas devem funcionar corretamente |
-| Critérios INVEST | Independente: Não depende de outras histórias; Negociável: Nível de adaptação pode variar; Valiosa: Permite uso em campo; Estimável: Baseada em responsividade; Pequena: Escopo técnico definido; Testável: Interface pode ser validada |
-
----
+| Persona | Wesley Souza (Gestor Operacional) |
+| User Story | "Como gestor operacional, quero arquivar moradias de assistidos, para manter o histórico de moradias que foram destruídas, evacuadas ou abandonadas." |
+| Critério de aceite 1 | CR1: Dado que um evento climático destruiu/evacuou uma moradia, quando o gestor entra no cadastro e clica em "Arquivar Imóvel", então o sistema deve exigir a seleção de um motivo (Destruída, Evacuada, Desapropriada) antes de confirmar a ação. |
+| Critério de aceite 2 | CR2: Dado que uma moradia foi arquivada, quando o gestor acessar os dashboards e o mapa geral de operações ativas, então esta moradia NÃO deve ser exibida, mantendo-se apenas na seção de "Histórico Inativo". |
+| Critérios INVEST | Independente: A funcionalidade de inativação lógica (soft delete) não depende de novos registros.; Negociável: Os motivos do arquivamento podem ser populados a partir de um domínio expansível.; Valiosa: Mantém a integridade do banco de dados enquanto limpa a visão operacional.; Estimável: Requer a adição de flags booleanas e atualização das queries.; Pequena: Funcionalidade contida e de rápida implementação.; Testável: Garantir que imóveis com status "Arquivado" não retornem em chamadas de API ativas. |
 
 | Identificação | US10 |
 |---|---|
-| Persona | Wesley Souza (Diretor) |
-| User Story | "como diretor, posso cadastrar equipes, para organizar operações" |
-| Critério de aceite 1 | CR1: Dado que uma equipe é cadastrada, quando salva, então os dados devem ser armazenados no sistema |
-| Critério de aceite 2 | CR2: Dado que existem equipes cadastradas, quando acessadas, então devem ser exibidas corretamente |
-| Critérios INVEST | Independente: Pode ser implementada isoladamente; Negociável: Os dados da equipe podem variar; Valiosa: Melhora a organização operacional; Estimável: Baseada em cadastro simples; Pequena: Escopo limitado; Testável: Cadastro pode ser validado |
+| Persona | Wesley Souza (Gestor Operacional) |
+| User Story | "Como gestor operacional, quero ser avisado a cada 12 meses de cadastro de cada usuário, um alerta para atualização das informações do mesmo." |
+| Critério de aceite 1 | CR1: Dado que o sistema possui uma rotina de checagem automatizada, quando a "Data de Atualização" de uma ficha completar 365 dias sem modificações, então o sistema deve gerar um alerta no painel do Gestor. |
+| Critério de aceite 2 | CR2: Dado que o gestor acessa a aba "Alertas de Atualização", quando a lista é exibida, então deve mostrar o "Nº da Ficha", o "1º Responsável" e há quantos dias a ficha encontra-se desatualizada. |
+| Critérios INVEST | Independente: A rotina roda em background e não interfere no fluxo de cadastro diário.; Negociável: O prazo de aviso pode ser parametrizável.; Valiosa: Evita o sucateamento dos dados em áreas de risco dinâmico.; Estimável: Configuração de uma job e um painel de notificações são tarefas comuns.; Pequena: Apenas identifica e lista pendências.; Testável: Alterar a data de modificação de um teste no banco para "Data Atual - 366 dias" e validar se o alerta dispara. |
 
+| Identificação | US11 |
+|---|---|
+| Persona | João Silva (Agente de Campo) |
+| User Story | "Como agente de campo, quero atualizar os dados anualmente para validação informacional do banco de dados da Defesa Civil." |
+| Critério de aceite 1 | CR1: Dado que o agente revisita um domicílio marcado por alerta de desatualização, quando ele revisa e re-salva os dados estruturais e humanos, então o sistema deve sobrepor um novo carimbo de "Data de Atualização" com o dia corrente. |
+| Critério de aceite 2 | CR2: Dado que o agente assina e envia a atualização, quando os dados são sincronizados no servidor, então o alerta de "desatualizado" no painel do Gestor Operacional deve desaparecer instantaneamente. |
+| Critérios INVEST | Independente: Atua apenas sobre registros já existentes fechando o ciclo de vida do dado.; Negociável: A necessidade de manter versionamento de histórico pode ser discutida.; Valiosa: Garante que o banco da Defesa Civil reflita sempre a realidade do ano vigente.; Estimável: É um reaproveitamento do formulário de criação adaptado para Update.; Pequena: Foca unicamente na ação de editar e limpar os alertas.; Testável: Atestar que a ação de salvar a edição atualiza a coluna correspondente no banco e zera a notificação. |
 
 
 # <a name="c3"></a>3. Projeto da Aplicação Web (sprints 1 a 5)
@@ -376,7 +365,6 @@ Para garantir a eficiência em campo, o sistema deve possuir capacidade de opera
 
 ### 3.1.2. Requisitos Funcionais (sprint 1, refinar até sprint 5)
 
-*Liste os RF numerados de forma objetiva e verificável. Cada RF deve poder ser convertido em caso de teste.*
 
 | ID    | Nome                                        | Descrição                                                                                             | Tipo    | Prioridade | Atores  | Status    |
 |-------|---------------------------------------------|-------------------------------------------------------------------------------------------------------|---------|------------|---------|-----------|
@@ -404,7 +392,6 @@ Prioridade: 1 - muito importante, 2 - importante, 3 - descartável.
 
 ### 3.1.3. Regras de Negócio (sprint 1, refinar até sprint 5)
 
-*Numere e redija as RN de forma implementável e testável. Toda RN deve ter pelo menos um teste automatizado associado a partir da sprint 3.*
 
 | ID | Descrição | RF associado | 
 |------|-----------|--------------| 
@@ -414,7 +401,6 @@ Prioridade: 1 - muito importante, 2 - importante, 3 - descartável.
 
 ### 3.1.4. Requisitos Não Funcionais — 8 Eixos ISO/IEC 25010 (sprints 1 a 5)
 
-*Preencha os 8 eixos. Cada eixo deve ter ao menos um RNF verificável (com métrica, limite ou critério concreto) ou justificativa explícita de ausência. Evolua do conceitual (sprint 1) ao técnico mensurável (sprint 5).*
 
 | Eixo                     | Requisito | Métrica / Critério | Como atendido |
 |--------------------------|-----------|--------------------|---------------|
@@ -429,7 +415,7 @@ Prioridade: 1 - muito importante, 2 - importante, 3 - descartável.
 
 ### 3.1.5. Matriz RF → RN → Endpoint (sprints 3 a 5)
 
-*Matriz de cobertura mostrando quais RN e endpoints implementam cada RF.*
+Matriz de cobertura que demonstra quais RN (Regras de Negócio) e endpoints implementam cada RF (Requisito Funcional).
 
 | RF    | RN associadas | Endpoint    | Método |
 |-------|---------------|-------------|--------|
