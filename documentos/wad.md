@@ -233,7 +233,7 @@ A oportunidade R10 foca na replicação para outros municípios do ABC para expa
 
 As personas apresentadas abaixo caracterizam-se como proto-personas, construídas a partir de inferências sobre o contexto institucional e os fluxos operacionais da Defesa Civil, visando representar os principais perfis de usuários e orientar o desenvolvimento da solução.
 
-<img src="../assets/persona2.png" width="520" height="520"> <img src="../assets/persona1.png" width="520" height="520"> 
+<img src="../assets/persona1.png" width="520" height="520"> <img src="../assets/persona2.png" width="520" height="520"> 
 
 Identificamos dois tipos de proto-personas possíveis para o âmbito em questão: agente de campo e diretor da Defesa Civil. Primeiro, o agente de campo, que no caso é o indivíduo que se responsabiliza pelas conduções das operações nos atendimentos emergenciais, como apontado acima com o João, em que dados demográficos, comportamentos e solução para o perfil de João representam um quadro hipotético que nos evidencia um jeito de humanizar o público-alvo para adotar estratégias mais assertivas e centradas no usuário real. 
 
