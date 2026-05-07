@@ -366,7 +366,6 @@ O sistema atende primordialmente ao Agente de Campo (A01) no que tange à operat
 
 ### 3.1.2 Requisitos Funcionais
 
-
 | ID | Nome | Descrição | Tipo | Prioridade | Atores | US Origem | Status |
 |---|---|---|---|---|---|---|---|
 | RF001 | Cadastro de Dados Sociodemográficos e Vínculos | O sistema deve registrar os dados pessoais dos cidadãos (nome, CPF, data de nascimento, condições de saúde, doenças crônicas e uso de medicação contínua) e os indicadores de vulnerabilidade (idoso, criança 0–12 anos, gestante/lactante, PCD), vinculando obrigatoriamente cada pessoa à sua respectiva moradia. | Cadastro | Alta | A01, A03 | US01 | Planejado |
