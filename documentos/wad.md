@@ -485,7 +485,7 @@ O diagrama mapeia dois atores e três perfis de uso distintos. O **Agente de Cam
 
 ### 3.6.2. Diagrama Entidade-Relacionamento (DER) (sprint 2)
 
-*Posicione aqui o DER com cardinalidades explícitas em ambos os lados de cada relação e identificação de PK/FK. O DER deve ser coerente com o diagrama de classes (3.2.3).*
+O Diagrama Entidade-Relacionamento (DER) representa a modelagem conceitual do banco de dados da aplicação, demonstrando as entidades do sistema, seus atributos, chaves primárias e estrangeiras, além dos relacionamentos e cardinalidades existentes. O diagrama serve como base para a implementação da estrutura relacional no banco de dados.
 
 ### 3.6.3. Modelo Relacional e Modelo Físico (sprints 2 e 4)
 
