@@ -453,7 +453,17 @@ O diagrama mapeia dois atores e três perfis de uso distintos. O **Agente de Cam
 
 ## 3.3. Wireframes (sprint 2)
 
-*Posicione aqui as imagens do wireframe construído para sua solução e, opcionalmente, o link para acesso (mantenha o link sempre público para visualização)*
+Esta seção é destinada para apresentar os primeiros esboços do sistema: os wireframes. 
+
+Um wireframe é um quadro com a estrutura do sistema desenhada em fios ou blocos de maneira bastante simples.
+
+1. Página Inicial
+
+ <div align="center">
+    <p>Figura X: Página Inicial</p>
+    <img src="../assets/pagina_inicial.png" width="800">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
 
 ## 3.4. Guia de estilos (sprint 3)
 
