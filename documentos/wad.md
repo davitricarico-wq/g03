@@ -491,7 +491,199 @@ O Diagrama Entidade-Relacionamento (DER) representa a modelagem conceitual do ba
 <img src="../assets/der-lógico.png">
 
 
+Cada **retângulo** no diagrama representa uma tabela do banco de dados. Cada **linha** dentro do retângulo representa uma coluna dessa tabela. As **linhas que conectam** os retângulos representam os relacionamentos entre as tabelas.
 
+
+## Tipos de Dados Utilizados
+
+| Tipo | Significado |
+|------|-------------|
+| `INT` | Número inteiro. Usado para identificadores, contagens e chaves. Ex: `1`, `42`, `1000`. |
+| `VARCHAR(n)` | Texto de tamanho **variável** com até *n* caracteres. Só ocupa o espaço que o texto realmente usar. Ex: nome de uma pessoa. |
+| `CHAR(n)` | Texto de tamanho **fixo** com exatamente *n* caracteres. Usado quando o valor sempre tem o mesmo tamanho. Ex: CPF (sempre 11 dígitos), CEP (sempre 8 dígitos), UF (sempre 2 letras). |
+| `TEXT` | Texto longo **sem limite de tamanho** definido. Usado para observações, descrições livres e campos abertos. |
+| `DATE` | Data no formato `AAAA-MM-DD`. Armazena apenas a data, sem horário. Ex: `1990-05-20`. |
+| `TIMESTAMP` | Data e hora completas. Armazena dia, mês, ano, hora, minuto e segundo. Ex: `2024-03-15 14:32:00`. |
+| `DECIMAL(p, s)` | Número com casas decimais. `p` é o total de dígitos e `s` são as casas após a vírgula. Ex: `DECIMAL(10,2)` permite valores como `99999999.99`. Usado para renda e coordenadas geográficas. |
+| `BOOLEAN` | Valor lógico **verdadeiro ou falso** (sim/não). Ex: possui veículo? sim ou não. |
+| `ENUM(valores)` | **Lista fechada** de valores permitidos. O campo só aceita um dos valores definidos previamente. Garante consistência e evita erros de digitação. Ex: `ENUM(estado_civil)` aceita apenas `"Solteiro"`, `"Casado"`, `"Divorciado"` etc. |
+| `PK` | ***Primary Key* — Chave Primária.** Identifica de forma única cada registro da tabela. Não pode se repetir nem ser nulo. |
+| `FK` | ***Foreign Key* — Chave Estrangeira.** Referencia a chave primária de outra tabela, criando o vínculo entre elas. |
+
+---
+
+## Entidades e seus Atributos
+
+### 1. Cidadão
+
+Entidade **central** do sistema. Representa a pessoa cadastrada no programa social. É o ponto de partida para todas as demais informações do cadastro.
+
+| Atributo | Tipo | Descrição |
+|----------|------|-----------|
+| `id_cidadao` | `INT PK` | Identificador único do cidadão, gerado automaticamente pelo sistema. |
+| `id_moradia` | `INT FK` | Referência à moradia onde o cidadão reside. Liga esta tabela à tabela **Moradia**. |
+| `nome_completo` | `VARCHAR(150)` | Nome civil completo da pessoa, com até 150 caracteres. |
+| `nome_social` | `VARCHAR(150)` | Nome pelo qual a pessoa prefere ser chamada, respeitando identidade de gênero. |
+| `data_nascimento` | `DATE` | Data de nascimento no formato `AAAA-MM-DD`. |
+| `situacao_ocupacional` | `ENUM` | Situação de trabalho atual: `Empregado`, `Desempregado`, `Autônomo`, `Aposentado`, `Estudante`, `Outro`. |
+| `doencas_cronicas` | `TEXT` | Campo aberto para registrar doenças crônicas que a pessoa possui. |
+| `medicamentos` | `TEXT` | Campo aberto para listar medicamentos de uso contínuo. |
+| `grau_parentesco_responsavel` | `ENUM` | Relação do cidadão com o responsável: `Pai`, `Mãe`, `Filho`, `Cônjuge`, `Tutor`, `Outro`. |
+| `escolaridade` | `ENUM` | Nível de instrução: `Sem instrução`, `Fund. incompleto`, `Fund. completo`, `Médio`, `Superior`, `Pós-graduação`. |
+| `apoio_necessario` | `BOOLEAN` | Indica se a pessoa necessita de apoio ou atendimento especial (`true` = sim / `false` = não). |
+
+---
+
+### 2. Responsável
+
+Representa a pessoa responsável pelo cidadão cadastrado e a moradia — pode ser um **familiar**, **tutor legal** ou **cuidador**. Armazena dados de contato e identificação do responsável.
+
+| Atributo | Tipo | Descrição |
+|----------|------|-----------|
+| `id_responsavel` | `INT PK` | Identificador único do responsável. |
+| `id_cidadao` | `INT FK` | Referência ao cidadão pelo qual este responsável responde. |
+| `email` | `VARCHAR(150)` | Endereço de e-mail para contato. |
+| `celular` | `VARCHAR(20)` | Número de celular com DDD. Tipo texto pois pode conter hífen, parênteses e o símbolo `+`. |
+| `renda` | `DECIMAL(10,2)` | Renda mensal do responsável em reais. Ex: `1412.00`. |
+| `cpf` | `CHAR(11)` | CPF **sem formatação**, sempre 11 dígitos numéricos. |
+| `raca` | `ENUM` | Autodeclaração de raça/cor conforme categorias do IBGE: `Branca`, `Preta`, `Parda`, `Amarela`, `Indígena`, `Não declarado`. |
+| `sexo` | `ENUM` | Sexo biológico ou identidade de gênero declarada: `Masculino`, `Feminino`, `Não binário`, `Não declarado`. |
+| `estado_civil` | `ENUM` | Situação conjugal: `Solteiro`, `Casado`, `Divorciado`, `Viúvo`, `União estável`. |
+| `nome_completo_mae` | `VARCHAR(150)` | Nome completo da mãe do responsável. |
+| `nome_completo_pai` | `VARCHAR(150)` | Nome completo do pai do responsável. |
+| `data_residencia_domicilio` | `DATE` | Data desde quando o responsável reside no domicílio atual. |
+| `data_residencia_municipio` | `DATE` | Data desde quando reside no município. Útil para verificar elegibilidade em programas locais. |
+| `programas_sociais` | `BOOLEAN` | Indica se é beneficiário de algum programa social (Bolsa Família, BPC etc.). |
+| `nis` | `VARCHAR(20)` | Número de Identificação Social, usado para programas do governo federal. |
+| `veiculo` | `BOOLEAN` | Indica se o responsável possui veículo próprio. |
+| `local_nascimento` | `VARCHAR(80)` | Cidade e estado onde o responsável nasceu. |
+
+---
+
+### 3. Gestante
+
+Entidade especializada para registrar informações de cidadãs em **período gestacional**. Só existe quando vinculada a um Cidadão que esteja grávida — trata-se de uma entidade opcional.
+
+| Atributo | Tipo | Descrição |
+|----------|------|-----------|
+| `id_gestante` | `INT PK` | Identificador único do registro de gestação. |
+| `data_prevista` | `DATE` | Data prevista para o parto, calculada a partir da última menstruação ou ultrassom. |
+
+---
+
+### 4. Grupo Prioritário
+
+Tabela auxiliar que define os **grupos de vulnerabilidade ou prioridade social**. Um cidadão pode pertencer a um ou mais grupos, o que orienta o direcionamento de políticas públicas e serviços.
+
+| Atributo | Tipo | Descrição |
+|----------|------|-----------|
+| `id_grupo_prioritario` | `INT PK` | Identificador único do grupo. |
+| `nome` | `VARCHAR(50)` | Nome do grupo. Ex: `Idoso`, `Gestante`, `PCD`, `Criança`, `Indígena`, `Quilombola`, `Situação de rua`. |
+| `tipo` | `ENUM` | Classificação do grupo por natureza: `Etária`, `Saúde`, `Social`, `Étnica`. |
+
+---
+
+### 5. Moradia
+
+Registra as informações do **imóvel onde o cidadão reside**. Centraliza dados estruturais, de ocupação e de contato do domicílio. Uma mesma moradia pode abrigar múltiplos cidadãos e múltiplos pets.
+
+| Atributo | Tipo | Descrição |
+|----------|------|-----------|
+| `id_moradia` | `INT PK` | Identificador único da moradia. |
+| `id_localizacao` | `INT FK` | Referência ao registro de localização geográfica deste imóvel. |
+| `tipo_construcao` | `ENUM` | Material predominante da construção: `Alvenaria`, `Madeira`, `Mista`, `Taipa`, `Outro`. |
+| `tipo_pavimento` | `ENUM` | Tipo de piso interno: `Terra`, `Cimento`, `Cerâmica`, `Madeira`, `Outro`. |
+| `condicao_ocupacao` | `ENUM` | Situação legal do imóvel: `Próprio`, `Alugado`, `Cedido`, `Invasão`, `Outro`. |
+| `tipo_uso_imovel` | `ENUM` | Finalidade do imóvel: `Residencial`, `Comercial`, `Misto`. |
+| `telefone` | `VARCHAR(20)` | Telefone fixo ou celular de contato da residência. |
+| `observacoes` | `TEXT` | Campo livre para informações adicionais sobre o imóvel. |
+| `data_cadastro` | `DATE` | Data em que a moradia foi cadastrada no sistema pela primeira vez. |
+| `ultima_atualizacao` | `DATE` | Data da última atualização dos dados da moradia. |
+
+---
+
+### 6. Localização
+
+Armazena os dados de **endereço e coordenadas geográficas** de uma moradia. A separação em entidade própria permite que o endereço seja gerenciado de forma independente, facilitando a plotagem em mapa e a padronização de CEPs.
+
+| Atributo | Tipo | Descrição |
+|----------|------|-----------|
+| `id_localizacao` | `INT PK` | Identificador único da localização. |
+| `coordenadas_longitude` | `DECIMAL` | Coordenada geográfica de **longitude** (eixo leste-oeste). Ex: `-46.633308`. |
+| `coordenadas_latitude` | `DECIMAL` | Coordenada geográfica de **latitude** (eixo norte-sul). Ex: `-23.550520`. |
+| `cep` | `CHAR(8)` | CEP **sem hífen**, sempre 8 dígitos. Ex: `13040000`. |
+| `logradouro` | `VARCHAR(80)` | Nome da rua, avenida, travessa etc. |
+| `bairro` | `VARCHAR(50)` | Nome do bairro. |
+| `numero` | `INT` | Número do imóvel na rua. Tipo inteiro pois é sempre numérico. |
+| `cidade` | `VARCHAR(50)` | Nome do município. |
+| `ponto_referencia` | `VARCHAR(150)` | Referência para facilitar a localização. Ex: `"Próximo à escola municipal"`. |
+| `uf` | `CHAR(2)` | Sigla do estado com exatamente 2 letras. Ex: `SP`, `RJ`, `MG`. |
+
+---
+
+### 7. Foto Moradia
+
+Armazena as **fotos do imóvel** registradas durante o cadastro. O vínculo com a Moradia é feito pela chave estrangeira, permitindo múltiplas fotos por moradia.
+
+| Atributo | Tipo | Descrição |
+|----------|------|-----------|
+| `id_foto_moradia` | `INT PK` | Identificador único da foto. |
+| `id_moradia` | `INT FK` | Referência à moradia à qual a foto pertence. |
+| `url` | `VARCHAR(255)` | Caminho ou endereço web onde o arquivo de imagem está armazenado no servidor. |
+
+---
+
+### 8. Pet
+
+Registra os **animais de estimação** que residem na moradia cadastrada. A presença de pets é relevante para programas de saúde animal, controle de zoonoses e assistência social.
+
+| Atributo | Tipo | Descrição |
+|----------|------|-----------|
+| `id_pet` | `INT PK` | Identificador único do pet. |
+| `id_moradia` | `INT FK` | Referência à moradia onde o pet vive. |
+| `nome` | `VARCHAR(50)` | Nome do animal. |
+| `porte_pet` | `ENUM` | Tamanho do animal: `Pequeno`, `Médio`, `Grande`. |
+| `tipo_pet` | `ENUM` | Espécie do animal: `Cão`, `Gato`, `Ave`, `Réptil`, `Outro`. |
+| `cor` | `VARCHAR(30)` | Coloração predominante do pelo ou plumagem do animal. |
+| `observacoes` | `TEXT` | Informações adicionais sobre o pet, como condição de saúde ou comportamento. |
+| `foto_url` | `VARCHAR(255)` | Endereço da foto do animal armazenada no servidor de arquivos. |
+
+---
+
+## Relacionamentos e Cardinalidades
+
+A **cardinalidade** define quantos registros de uma tabela podem se relacionar com registros de outra. Isso são definidos pelos "traços"
+
+### Cidadão → Moradia — `N:1` (Muitos para um)
+
+Muitos cidadãos podem residir em uma mesma moradia (ex: uma família inteira), mas cada cidadão reside em apenas uma moradia. A ligação é feita pelo campo `id_moradia` na tabela Cidadão.
+
+
+### Cidadão → Responsável — `1:N` (Um para muitos)
+
+Um cidadão pode ter um ou mais responsáveis registrados. Cada responsável está vinculado a um único cidadão. Exemplo: um tutor e um familiar cadastrados como responsáveis do mesmo cidadão.
+
+
+### Cidadão → Gestante — `1:0..1` (Um para zero ou um)
+
+O registro de gestação é **opcional**. Quando existe, pertence a exatamente um cidadão. Isso significa que a entidade Gestante só é criada para cidadãs em período gestacional (os demais cidadãos simplesmente não possuem esse vínculo).
+
+### Cidadão → Grupo Prioritário — `N:N` (Muitos para muitos)
+
+Um cidadão pode pertencer a vários grupos prioritários (ex: ser idoso **e** portador de deficiência ao mesmo tempo), e um grupo pode incluir muitos cidadãos. Na implementação, esse relacionamento exige uma **tabela associativa intermediária** — uma tabela extra que registra os pares de vínculos entre cidadãos e grupos.
+
+### Moradia → Localização — `1:1` (Um para um)
+
+Cada moradia possui exatamente uma localização geográfica, e cada localização pertence a exatamente uma moradia.
+
+### Moradia → Foto Moradia — `1:N` (Um para muitos)
+
+Uma moradia pode ter várias fotos registradas. Cada foto pertence a uma única moradia.
+
+
+### Moradia → Pet — `1:N` (Um para muitos)
+
+Uma moradia pode ter vários pets. Cada pet está vinculado a uma única moradia.
 
 ### 3.6.3. Modelo Relacional e Modelo Físico (sprints 2 e 4)
 
