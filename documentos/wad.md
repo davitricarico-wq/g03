@@ -487,9 +487,9 @@ O diagrama mapeia dois atores e três perfis de uso distintos. O **Agente de Cam
 
 O Diagrama Entidade-Relacionamento (DER) representa a modelagem conceitual do banco de dados da aplicação, demonstrando as entidades do sistema, seus atributos, chaves primárias e estrangeiras, além dos relacionamentos e cardinalidades existentes. O diagrama serve como base para a implementação da estrutura relacional no banco de dados.
 
-Ainda está em produção, porém já consigo disponibilizar o link do Diagrama Entidade Relacionamento: https://lucid.app/lucidchart/3f1bfd54-857b-4bbd-b5bb-01beb1641cb8/edit?viewport_loc=-3128%2C-83%2C942%2C459%2C0_0&invitationId=inv_03aca23c-a572-444f-81f6-0cf363b127d1 
 
-Já foram estabelecidas as entidades, atributos e tipos de dados. O diagrama apresenta o panôrama completo do escopo do projeto.
+<img src="../assets/der-lógico.png">
+
 
 
 
