@@ -192,12 +192,11 @@ Dessa forma, o Canvas de Proposta de Valor traz de maneira sintetizada diferente
 <div align="center">
     <p>Figura 3: Matriz de Riscos</p>
     <img src="outros/matriz-risco.jpg" width="800">
-    <p>Feito pela própria equipe (2026)</p>
 </div>
 
 <div align="center">
     <img src="outros/legenda-matriz-risco.jpg" width="800">
-    <p>Legenda da matriz de riscos.    Feito pela própria equipe (2026)</p>
+    <p>Feito pela própria equipe (2026)</p>
 </div>
 
 A Matriz de Riscos, também conhecida como Matriz de Probabilidade e Impacto, é uma ferramenta fundamental para o gerenciamento de riscos no projeto, pois permite identificar, classificar e priorizar os eventos que podem impactar seu desenvolvimento. Essa ferramenta auxilia na tomada de decisões estratégicas, direcionando esforços para mitigação de ameaças e aproveitamento de oportunidades no contexto da gestão de áreas de risco, acolhimento emergencial e logística humanitária. O conceito de risco está diretamente relacionado à combinação entre a probabilidade de ocorrência de um evento e o impacto que ele pode causar ao projeto. Dessa forma, riscos com alta probabilidade e alto impacto demandam maior atenção da equipe e dos stakeholders da Secretaria de Meio Ambiente e Defesa Civil, enquanto aqueles com menor criticidade podem ser monitorados com menor prioridade. Para este projeto, os riscos foram classificados em duas categorias principais: Riscos (ameaças) e Oportunidades (eventos positivos). O nível de criticidade foi definido a partir do cruzamento entre probabilidade e impacto, conforme os critérios apresentados a seguir.
@@ -231,9 +230,20 @@ A oportunidade R10 foca na replicação para outros municípios do ABC para expa
 
 ## 2.2. Personas (sprint 1)
 
-As personas apresentadas abaixo caracterizam-se como proto-personas, construídas a partir de inferências sobre o contexto institucional e os fluxos operacionais da Defesa Civil, visando representar os principais perfis de usuários e orientar o desenvolvimento da solução.
+As personas apresentadas abaixo caracterizam-se como proto-personas, construídas a partir de inferências sobre o contexto institucional e os fluxos operacionais da Defesa Civil, visando representar os principais perfis de usuários e orientar o desenvolvimento da solução. 
 
-<img src="../assets/persona1.png" width="520" height="520"> <img src="../assets/persona2.png" width="520" height="520"> 
+<div align="center">
+    <p>Figura 5: Persona 1</p>
+    <img src="../assets/persona1.png" width="520" height="520">
+    <p>Feito pela própria equipe (2026)</p> 
+</div>
+
+
+<div align="center">
+    <p>Figura 6: Persona 2</p>
+    <img src="../assets/persona2.png" width="520" height="520"> 
+    <p>Feito pela própria equipe (2026)</p>
+</div>
 
 Identificamos dois tipos de proto-personas possíveis para o âmbito em questão: agente de campo e gestor operacional da Defesa Civil. Primeiro, o agente de campo, que no caso é o indivíduo que se responsabiliza pelas conduções das operações nos atendimentos emergenciais, como apontado acima com o João, em que dados demográficos, comportamentos e solução para o perfil de João representam um quadro hipotético que nos evidencia um jeito de humanizar o público-alvo para adotar estratégias mais assertivas e centradas no usuário real. 
 
@@ -453,15 +463,37 @@ O diagrama mapeia dois atores e três perfis de uso distintos. O **Agente de Cam
 
 ## 3.3. Wireframes (sprint 2)
 
-Esta seção é destinada para apresentar os primeiros esboços do sistema: os wireframes. 
+Esta seção é destinada para apresentar os primeiros esboços do sistema: os wireframes. Além de ser a representação das telas de menor fidelidade com o resultado final, esses 
 
-Um wireframe é um quadro com a estrutura do sistema desenhada em fios ou blocos de maneira bastante simples.
+Um wireframe é um quadro (frame) com a estrutura do sistema desenhada em fios (wire) ou blocos de maneira bastante simples.
 
-1. Página Inicial
+**1. Página Inicial**
 
- <div align="center">
-    <p>Figura X: Página Inicial</p>
-    <img src="../assets/pagina_inicial.png" width="800">
+<div align="center">
+    <p>Figura 7: Wireframe Tela Inicial</p>
+    <img src="outros/paginaInicial.png">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
+**2. Páginas de Cadastro**
+
+<div align="center">
+    <p>Figura 8: Wireframe Tela Cadastro - Moradias</p>
+    <img src=".png">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
+<div align="center">
+    <p>Figura 9: Wireframe Tela Cadastro - Chefe de Família</p>
+    <img src=".png">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
+**3. Página de Mapa**
+
+<div align="center">
+    <p>Figura 10: Wireframe Tela Mapa</p>
+    <img src="outros/mapa.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
