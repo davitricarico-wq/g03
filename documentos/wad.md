@@ -479,13 +479,13 @@ Um wireframe é um quadro (frame) com a estrutura do sistema desenhada em fios (
 
 <div align="center">
     <p>Figura 8: Wireframe Tela Cadastro - Moradias</p>
-    <img src=".png">
+    <img src="outros/.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
 <div align="center">
-    <p>Figura 9: Wireframe Tela Cadastro - Chefe de Família</p>
-    <img src=".png">
+    <p>Figura 9: Wireframe Tela Cadastro - Responsável</p>
+    <img src="outros/formulario.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
