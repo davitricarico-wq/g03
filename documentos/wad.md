@@ -541,9 +541,13 @@ Esta seção permite a interação com um mapa georreferenciado e refinar a exib
 
 <div align="center">
     <p>Figura 13: Wireframe Tela Busca - </p>
-    <img src="outros/.png">
+    <img src="outros/consulta.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
+
+Esta seção permite a localização rápida de registros no sistema através de um campo de busca textual localizado no topo da tela. Para refinar a pesquisa e direcionar os resultados, o usuário conta com seletores sob o título "Tipo de pesquisa", permitindo alternar de forma simples entre a busca por dados de "Moradia" ou por "Responsável".
+
+Os dados encontrados são apresentados na área de "Resultados" em formato de lista contínua com cartões (cards). Cada cartão é estruturado para exibir uma imagem ou foto de referência à esquerda, acompanhada de linhas detalhadas de informações textuais à direita. Além disso, a tela preserva a barra retrátil de navegação na área inferior, garantindo que o usuário possa expandi-la para alternar agilmente entre os demais módulos do sistema.
 
 ## 3.4. Guia de estilos (sprint 3)
 
