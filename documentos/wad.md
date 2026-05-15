@@ -467,7 +467,7 @@ Esta seção é destinada para apresentar os primeiros esboços do sistema: os w
 
 Um wireframe é um quadro (frame) com a estrutura do sistema desenhada em fios (wire) ou blocos de maneira bastante simples.
 
-**1. Página Inicial**
+### **1. Página Inicial**
 
 <div align="center">
     <p>Figura 7: Wireframe Tela Inicial</p>
@@ -475,25 +475,39 @@ Um wireframe é um quadro (frame) com a estrutura do sistema desenhada em fios (
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
-**2. Páginas de Cadastro**
+### **2. Páginas de Cadastro**
 
 <div align="center">
     <p>Figura 8: Wireframe Tela Cadastro - Moradias</p>
-    <img src="outros/.png">
+    <img src="outros/formulario1.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
 <div align="center">
     <p>Figura 9: Wireframe Tela Cadastro - Responsável</p>
-    <img src="outros/formulario.png">
+    <img src="outros/formulario2.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
-**3. Página de Mapa**
+<div align="center">
+    <p>Figura 10: Wireframe Tela Cadastro - Moradores</p>
+    <img src="outros/.png">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
+### **3. Página de Mapa**
 
 <div align="center">
-    <p>Figura 10: Wireframe Tela Mapa</p>
+    <p>Figura 11: Wireframe Tela Mapa</p>
     <img src="outros/mapa.png">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
+### **4. Página de Busca**
+
+<div align="center">
+    <p>Figura 12: Wireframe Tela Busca - </p>
+    <img src="outros/.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
