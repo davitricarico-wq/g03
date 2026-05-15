@@ -446,6 +446,13 @@ O Diagrama de Classes de Dominio representa visualmente as principais entidades 
 Link do diagrama (realizado por meio do site draw.io): https://drive.google.com/file/d/1YfjTRYovyfGQ29EKa9RM1ScGjfUeJIIK/view?usp=sharing
 
 
+<div align="center">
+    <p>Figura 6: Diagrama de Classes de Domínio</p>
+    <img src="outros/diagrama-classes-dominio.png" width="800">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
+
 ### 3.2.4. Diagrama de Sequência UML (sprint 3)
 
 *Ao menos um fluxo prioritário, mostrando a interação entre as camadas Controller → Service → Repository → Banco. Linhas de vida verticais, ativação correta, mensagens síncronas e assíncronas diferenciadas, retornos tracejados.*
