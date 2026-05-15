@@ -467,6 +467,8 @@ Esta seção é destinada para apresentar os primeiros esboços do sistema: os w
 
 Um wireframe é um quadro (frame) com a estrutura do sistema desenhada em fios (wire) ou blocos de maneira bastante simples.
 
+Vale a pena ressaltar que todas as informações presentes nos wireframes são apenas para facilitar a visualização futura de uma aplicação funcional. Caso alguma informação precise ser adicionada ou excluída, isso será possível futuramente.
+
 ### **1. Página Inicial**
 
 <div align="center">
@@ -475,38 +477,90 @@ Um wireframe é um quadro (frame) com a estrutura do sistema desenhada em fios (
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
+Num primeiro momento, a ideia desse wireframe é a simplicidade e a intuitividade. O layout escolhido, com três grandes botões centralizados, e um cabeçalho, importante mas não principal, posicionado na parte de cima, tem como objetivo trazer poucas informações na tela, servindo apenas para uma recepção amigável e uma navegação intuitiva entre outras páginas.
+
+Além disso, na parte superior, exitem duas logos: Defesa civil de Santo André (círculo maior) e Prefeitura de Santo André (círculo menor). Junto dessas logos, respectivamente, tem um texgo generalizado (como "Olá Agente!") e um texto de cabeçalho simples. Por fim, a engrenagem no canto superior esquerdo significa uma possível aba de configurações.
+
+---
+
 ### **2. Páginas de Cadastro**
+
+Ao clicar no botão "Novo Cadastro", o usuário será redirecionado para a tela de cadastro, para inserir novos dados de pessoas e moradias no banco de dados.
+
+A ideia inicial é seguir uma ordem, separando cada seção por tela e guiando o usuário com setas indicando "próxima página" ou "página anterior". 
+
+Quanto ao menu de navegação, ele será mantido na parte inferior da tela, mas, agora, em uma barra retrátil indicada por uma seta apontada para cima. Ao clicar, o menu com os ícones referentes à "Tela Inicial", "Mapa" e "Tela de Busca" sobe e se torna visível. Essa funcionalidade foi pensada para evitar qualquer tipo de clique acidental que pudesse excluir toda a ficha ja escrita.
+
+---
 
 <div align="center">
     <p>Figura 8: Wireframe Tela Cadastro - Moradias</p>
-    <img src="outros/formulario1.png">
+    <img src="outros/cadastro1.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
+
+Esta seção engloba todas as informações necessárias para completar o cadastro das moradias. 
+
+Uma funcionalidade que vale a pena ressaltar, é a de inclusão de imagens. No bloco de "Referência Geográfica", será possível adicionar uma imagem tanto por foto quanto por upload, além de ser possível excluí-la.
+
+Outra funcionalidade interessante é a de seleção de item em um bloco, representada por uma seta para baixo que, ao clicar, são exibidas todos os preenchimentos possíveis para aquele campo.
+
+---
 
 <div align="center">
     <p>Figura 9: Wireframe Tela Cadastro - Responsável</p>
-    <img src="outros/formulario2.png">
+    <img src="outros/cadastro2.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
+Esta seção engloba todas as informações necessárias para completar o cadastro do responsável.
+
+A ideia de tela aqui se assemelha muito à anterior, mas apresenta funcionalidades nova, sendo elas a mecânica de arrastar a página para baixo. Isso foi pensado para representar que, com o desenvolvimento do projeto, essa tela poderá ter mais informações, ultrapassando o limite da tela. Por isso, a mecânica de "scroll" deve ser representada.
+
+---
+
 <div align="center">
     <p>Figura 10: Wireframe Tela Cadastro - Moradores</p>
-    <img src="outros/.png">
+    <img src="outros/cadastro3.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
+
+Esta seção engloba todas as informações necessárias para completar o cadastro dos moradores restantes.
+
+Nesse wireframe, algumas informações que estavam presentes na seção 2 serão preservadas, mas outras (como renda) serão removidas, com o intuito de deixar mais simples. 
+
+Além disso, vale ressaltar que na imagem está representado apenas o preenchimento de um morador. No caso de existir mais moradores, esse será apenas o modelo visual de como será o cadastro de cada pessoa.
+
+---
+
+<div align="center">
+    <p>Figura 11: Wireframe Tela Cadastro - Pets</p>
+    <img src="outros/cadastro4.png">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
+Esta seção engloba todas as informações necessárias para concluir o cadastro de Pets (se houver).
+
+Para o cadastro de Pets, será possível incluir algumas informações essenciais e uma foto do animal. Além disso, uma peculiaridade dessa seção é o botão "Concluir cadastro", já que ela é a ultima página para inserir informações.
+
+---
 
 ### **3. Página de Mapa**
 
 <div align="center">
-    <p>Figura 11: Wireframe Tela Mapa</p>
+    <p>Figura 12: Wireframe Tela Mapa</p>
     <img src="outros/mapa.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
+
+
+---
+
 ### **4. Página de Busca**
 
 <div align="center">
-    <p>Figura 12: Wireframe Tela Busca - </p>
+    <p>Figura 13: Wireframe Tela Busca - </p>
     <img src="outros/.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
