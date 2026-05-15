@@ -8,7 +8,7 @@
 
 #### Nomes dos integrantes do grupo
 
-Ali Abdallah
+Ali Abdallah  
 Arthur Davi  
 Davi Tricarico  
 Eduardo Totti  
@@ -192,12 +192,11 @@ Dessa forma, o Canvas de Proposta de Valor traz de maneira sintetizada diferente
 <div align="center">
     <p>Figura 3: Matriz de Riscos</p>
     <img src="outros/matriz-risco.jpg" width="800">
-    <p>Feito pela própria equipe (2026)</p>
 </div>
 
 <div align="center">
     <img src="outros/legenda-matriz-risco.jpg" width="800">
-    <p>Legenda da matriz de riscos.    Feito pela própria equipe (2026)</p>
+    <p>Feito pela própria equipe (2026)</p>
 </div>
 
 A Matriz de Riscos, também conhecida como Matriz de Probabilidade e Impacto, é uma ferramenta fundamental para o gerenciamento de riscos no projeto, pois permite identificar, classificar e priorizar os eventos que podem impactar seu desenvolvimento. Essa ferramenta auxilia na tomada de decisões estratégicas, direcionando esforços para mitigação de ameaças e aproveitamento de oportunidades no contexto da gestão de áreas de risco, acolhimento emergencial e logística humanitária. O conceito de risco está diretamente relacionado à combinação entre a probabilidade de ocorrência de um evento e o impacto que ele pode causar ao projeto. Dessa forma, riscos com alta probabilidade e alto impacto demandam maior atenção da equipe e dos stakeholders da Secretaria de Meio Ambiente e Defesa Civil, enquanto aqueles com menor criticidade podem ser monitorados com menor prioridade. Para este projeto, os riscos foram classificados em duas categorias principais: Riscos (ameaças) e Oportunidades (eventos positivos). O nível de criticidade foi definido a partir do cruzamento entre probabilidade e impacto, conforme os critérios apresentados a seguir.
@@ -231,13 +230,24 @@ A oportunidade R10 foca na replicação para outros municípios do ABC para expa
 
 ## 2.2. Personas (sprint 1)
 
-As personas apresentadas abaixo caracterizam-se como proto-personas, construídas a partir de inferências sobre o contexto institucional e os fluxos operacionais da Defesa Civil, visando representar os principais perfis de usuários e orientar o desenvolvimento da solução.
+As personas apresentadas abaixo caracterizam-se como proto-personas, construídas a partir de inferências sobre o contexto institucional e os fluxos operacionais da Defesa Civil, visando representar os principais perfis de usuários e orientar o desenvolvimento da solução. 
 
-<img src="../assets/persona2.png" width="520" height="520"> <img src="../assets/persona1.png" width="520" height="520"> 
+<div align="center">
+    <p>Figura 4: Persona 1</p>
+    <img src="../assets/persona1.png" width="520" height="520">
+    <p>Feito pela própria equipe (2026)</p> 
+</div>
 
-Identificamos dois tipos de proto-personas possíveis para o âmbito em questão: agente de campo e diretor da Defesa Civil. Primeiro, o agente de campo, que no caso é o indivíduo que se responsabiliza pelas conduções das operações nos atendimentos emergencial, como apontado acima com o João, em que dados demográficos, comportamentos e solução para o perfil de João representam um quadro hipotético que nos evidencia um jeito de humanizar o público-alvo para adotar estratégias mais assertivas e centradas no usuário real. 
 
-Além disso, tem-se o diretor da Defesa Civil, que atua no nível estratégico da operação, sendo responsável pela análise de dados consolidados, definição de prioridades e tomada de decisões em cenários de risco. Nesse contexto, observa-se que a persona atribuída a esse perfil, representada de forma hipotética, permite compreender suas principais necessidades, como acesso rápido a informações confiáveis, visualização de indicadores e geração de relatórios. Dessa forma, assim como no caso do agente de campo, a construção dessa proto-persona contribui para orientar o desenvolvimento de funcionalidades alinhadas às demandas reais do usuário, promovendo uma solução mais eficiente, integrada e centrada no processo decisório.
+<div align="center">
+    <p>Figura 5: Persona 2</p>
+    <img src="../assets/persona2.png" width="520" height="520"> 
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
+Identificamos dois tipos de proto-personas possíveis para o âmbito em questão: agente de campo e gestor operacional da Defesa Civil. Primeiro, o agente de campo, que no caso é o indivíduo que se responsabiliza pelas conduções das operações nos atendimentos emergenciais, como apontado acima com o João, em que dados demográficos, comportamentos e solução para o perfil de João representam um quadro hipotético que nos evidencia um jeito de humanizar o público-alvo para adotar estratégias mais assertivas e centradas no usuário real. 
+
+Além disso, tem-se o gestor operacional da Defesa Civil, o Wesley, que atua no nível estratégico da operação, sendo responsável pela análise de dados consolidados, definição de prioridades e tomada de decisões em cenários de risco. Nesse contexto, observa-se que a persona atribuída a esse perfil, representada de forma hipotética, permite compreender suas principais necessidades, como acesso centralizado a dados de diferentes plataformas, conhecimento sobre as informações das pessoas e suas localidades em áreas de risco e aumentar a eficiência dos agentes de campo no cadastro de casas e moradores. Dessa forma, assim como no caso do agente de campo, a construção dessa proto-persona contribui para orientar o desenvolvimento de funcionalidades alinhadas às demandas reais do usuário, promovendo uma solução mais eficiente, integrada e centrada no processo decisório.
 
 *Observação: Fotos extraídas de um site produtor de imagens de pessoas inexistentes*: [This Person Does Not Exist](https://thispersondoesnotexist.com/)
 
@@ -250,179 +260,163 @@ Apresenta-se a seguir a lista de User Stories levantadas para o projeto GeoRisco
 | Identificação | US01 |
 |---|---|
 | Persona | João Silva (Agente de Campo) |
-| User Story | "como agente de campo, posso cadastrar moradores e dados socioestruturais, para manter informações organizadas e disponíveis no sistema" |
-| Critério de aceite 1 | CR1: Dado que o agente está em campo, quando um novo cadastro é realizado, então os dados devem ser armazenados corretamente no sistema |
-| Critério de aceite 2 | CR2: Dado que um cadastro foi concluído, quando acessado posteriormente, então as informações devem estar disponíveis para consulta |
-| Critérios INVEST | Independente: Pode ser implementada isoladamente; Negociável: Os campos do cadastro podem variar; Valiosa: Permite a organização das informações; Estimável: Baseada em operações CRUD; Pequena: Escopo bem definido; Testável: Cadastro pode ser validado por registro e consulta |
-
----
+| User Story | "Como agente de campo, quero cadastrar os dados sociodemográficos dos cidadãos para que eu possa vinculá-los às suas moradias e permitir que a gestão conheça o perfil da população atendida." |
+| Critério de aceite 1 | CR1: Dado que o agente de campo inicia o cadastro do núcleo familiar, quando preenche os dados obrigatórios e os indicadores de vulnerabilidade (Idosos, Crianças 0 a 12 anos, Gestantes/Lactantes, PCD), então o sistema deve vincular a pessoa à respectiva moradia. |
+| Critério de aceite 2 | CR2: Dado que o assistido possui condições específicas de saúde, quando o agente sinalizar no sistema, então devem ser preenchidos os campos de "Doenças crônicas" e "Uso de medicamento contínuo" para gerar histórico no perfil. |
+| Critérios INVEST | Independente: O desenvolvimento do módulo de cadastro pessoal não depende da implementação da funcionalidade de mapas.; Negociável: Os campos sociodemográficos e de vulnerabilidade podem ser ajustados.; Valiosa: Fornece a base de dados central para que a Defesa Civil identifique e proteja vidas humanas.; Estimável: É um formulário CRUD tradicional com complexidade previsível e bem delimitada.; Pequena: Foca exclusivamente nos dados demográficos e de saúde da pessoa.; Testável: O testador pode inserir dados simulados e validar a gravação e o vínculo no banco de dados. |
 
 | Identificação | US02 |
 |---|---|
-| Persona | Wesley Souza (Diretor) |
-| User Story | "como diretor, posso visualizar ocorrências em um mapa georreferenciado, para obter uma visão geral da situação" |
-| Critério de aceite 1 | CR1: Dado que existem ocorrências cadastradas, quando o mapa for acessado, então os pontos devem ser exibidos corretamente |
-| Critério de aceite 2 | CR2: Dado que uma ocorrência possui localização, quando selecionada, então suas informações devem ser apresentadas |
-| Critérios INVEST | Independente: Pode ser implementada separadamente da criação de ocorrências; Negociável: O nível de detalhamento do mapa pode variar; Valiosa: Facilita a tomada de decisão; Estimável: Baseia-se em integração com APIs de mapas; Pequena: Escopo restrito à visualização; Testável: A exibição pode ser validada visualmente |
-
----
+| Persona | João Silva (Agente de Campo) |
+| User Story | "Como agente de campo, quero cadastrar as características e a localização das moradias para que possamos mapear a infraestrutura da região e identificar possíveis vulnerabilidades." |
+| Critério de aceite 1 | CR1: Dado que o agente avalia o domicílio, quando insere o tipo de construção (Madeira, Alvenaria, Misto), o número de pavimentos e a condição da ocupação (Própria, Alugada, Cedida), então o sistema deve registrar o nível estrutural do imóvel. |
+| Critério de aceite 2 | CR2: Dado que o cadastro estrutural exige evidências visuais e de risco, quando o agente salvar o formulário, então o sistema deve exigir obrigatoriamente a inserção de Referência Geográfica, Sinais de alerta observados e permitir o upload de 2 fotos (fachada e entorno). |
+| Critérios INVEST | Independente: A gestão de infraestrutura pode ser tratada de forma modular no banco de dados.; Negociável: A quantidade máxima de fotos por moradia pode ser discutida tecnicamente.; Valiosa: Essencial para calcular o risco de desabamento ou alagamento de uma edificação específica.; Estimável: Os atributos presentes na ficha física delimitam o escopo exato do front-end.; Pequena: O escopo limita-se à estrutura da edificação, separando-se da localização por GPS.; Testável: O sistema deve ser capaz de receber os uploads de imagem e retornar os atributos estruturais salvos em um GET. |
 
 | Identificação | US03 |
 |---|---|
-| Persona | João Silva (Agente de Campo) |
-| User Story | "como agente de campo, posso consultar áreas de risco, para atuar com maior segurança" |
-| Critério de aceite 1 | CR1: Dado que existem áreas cadastradas, quando o agente consulta o sistema, então os dados devem ser exibidos |
-| Critério de aceite 2 | CR2: Dado que uma área é selecionada, quando visualizada, então seu nível de risco deve ser apresentado |
-| Critérios INVEST | Independente: Não depende do registro de ocorrências; Negociável: Tipos de dados podem ser ajustados; Valiosa: Reduz riscos operacionais; Estimável: Baseado em consultas ao banco de dados; Pequena: Função direta; Testável: Resultado verificável |
-
----
+| Persona | Wesley Souza (Gestor Operacional) |
+| User Story | "Como gestor operacional, quero visualizar moradias em um mapa georreferenciado, para obter uma visão geral das ocupações e facilitar tomadas de decisões estratégicas." |
+| Critério de aceite 1 | CR1: Dado que o gestor acessa o painel de georreferenciamento, quando o mapa renderizar na tela, então o sistema deve plotar automaticamente "pins" (marcadores) correspondentes às coordenadas GPS de todas as moradias cadastradas. |
+| Critério de aceite 2 | CR2: Dado que o gestor está visualizando o mapa de risco, quando ele clica sobre o marcador de um imóvel, então um card informativo deve ser exibido. |
+| Critérios INVEST | Independente: Consome os dados de geolocalização existentes sem interferir em como são cadastrados.; Negociável: O tipo de mapa (Satelite, Terreno) pode ser alterado conforme a biblioteca utilizada.; Valiosa: Entrega alto valor estratégico ao permitir a visualização espacial das zonas de perigo.; Estimável: A integração com APIs de mapas possui documentação robusta.; Pequena: Foca apenas na plotagem básica dos marcadores.; Testável: É possível criar coordenadas *mockadas* e verificar a correta plotagem na interface. |
 
 | Identificação | US04 |
 |---|---|
-| Persona | Wesley Souza (Diretor) |
-| User Story | "como diretor, posso gerenciar abrigos, para organizar o atendimento à população" |
-| Critério de aceite 1 | CR1: Dado que existem abrigos cadastrados, quando acessados, então devem ser exibidos com capacidade e ocupação |
-| Critério de aceite 2 | CR2: Dado que um abrigo é atualizado, quando salvo, então os dados devem ser refletidos no sistema |
-| Critérios INVEST | Independente: Funcionalidade isolada; Negociável: Campos podem ser ajustados; Valiosa: Melhora a gestão de crises; Estimável: CRUD simples; Pequena: Escopo limitado; Testável: Atualizações verificáveis |
-
----
+| Persona | Wesley Souza (Gestor Operacional) |
+| User Story | "Como gestor operacional, quero consultar os dados das moradias e os perfis dos moradores de forma integrada, para que eu possa interpretar esses dados e identificar áreas de vulnerabilidades socioestruturais na região." |
+| Critério de aceite 1 | CR1: Dado que o gestor acessa o módulo integrado de consultas, quando seleciona o "Nº da Ficha" de uma moradia, então a tela deve consolidar os dados estruturais do imóvel e os dados sociodemográficos dos responsáveis (1º e 2º Responsável) e demais ocupantes. |
+| Critério de aceite 2 | CR2: Dado que o gestor visualiza a ficha integrada, quando a moradia estiver classificada com "Histórico de ocorrência" e tiver moradores "Com mobilidade reduzida/acamada", então o sistema deve exibir uma flag visual de "Risco Crítico" no cabeçalho da consulta. |
+| Critérios INVEST | Independente: Utiliza joins de dados já populados pelas US01 e US02.; Negociável: O layout de exibição e os níveis de alerta crítico podem ser ajustados.; Valiosa: Facilita o trabalho do gestor que não precisará cruzar tabelas manualmente em planilhas.; Estimável: A consulta a dados relacionados tem esforço facilmente mensurável.; Pequena: Trata-se de uma view (Visualização de dados) de leitura integrada.; Testável: O teste garante que as informações da ficha física batam com o que está sendo exibido digitalmente. |
 
 | Identificação | US05 |
 |---|---|
-| Persona | Wesley Souza (Diretor) |
-| User Story | "como diretor, posso gerar relatórios consolidados, para apoiar decisões estratégicas" |
-| Critério de aceite 1 | CR1: Dado que existem dados registrados, quando solicitado, então o relatório deve ser gerado automaticamente |
-| Critério de aceite 2 | CR2: Dado que o relatório foi gerado, quando acessado, então deve apresentar dados consolidados |
-| Critérios INVEST | Independente: Pode ser implementado separadamente; Negociável: Formato pode variar; Valiosa: Suporte estratégico; Estimável: Agregação de dados conhecida; Pequena: Escopo delimitado; Testável: Resultado validável |
-
----
+| Persona | João Silva (Agente de Campo) |
+| User Story | "Como agente de campo, quero que a localização da moradia utilize minha posição no momento do cadastro como referência, para que eu tenha salvo o local exato mesmo em zonas remotas." |
+| Critério de aceite 1 | CR1: Dado que o agente de campo está na tela de cadastro de nova moradia, quando concluir o cadastro, então o sistema deve solicitar permissão do dispositivo e preencher automaticamente a Latitude e Longitude. |
+| Critério de aceite 2 | CR2: Dado que o agente está em uma área sem sinal de internet (offline), quando ele aciona a captura de GPS, então o sistema deve armazenar a coordenada localmente utilizando o sensor nativo do dispositivo para sincronização posterior. |
+| Critérios INVEST | Independente: A funcionalidade de captura de hardware é independente dos campos de texto do formulário.; Negociável: A precisão exigida (ex: margem de 5 a 10 metros) pode ser acordada com o time.; Valiosa: Elimina o erro humano da digitação de coordenadas numéricas longas.; Estimável: Utilizar APIs nativas de geolocalização mobile é padrão na indústria.; Pequena: Cobre especificamente um único componente de auto-preenchimento.; Testável: Pode-se simular diferentes coordenadas GPS em emuladores para validar a captura. |
 
 | Identificação | US06 |
 |---|---|
-| Persona | João Silva (Agente de Campo) |
-| User Story | "como agente de campo, posso atualizar ocorrências, para manter as informações corretas" |
-| Critério de aceite 1 | CR1: Dado que uma ocorrência já está registrada, quando editada, então os dados devem ser atualizados no sistema |
-| Critério de aceite 2 | CR2: Dado que a atualização foi realizada, quando a ocorrência for acessada, então as novas informações devem ser exibidas |
-| Critérios INVEST | Independente: Pode ser implementada separadamente; Negociável: Os campos de edição podem variar; Valiosa: Garante a atualização dos dados; Estimável: Baseada em operações CRUD; Pequena: Escopo específico; Testável: Alterações podem ser verificadas |
-
----
+| Persona | Wesley Silva (Gestor Operacional) |
+| User Story | "Como gestor operacional, quero filtrar moradias por atributos específicos, para poder priorizar atendimentos e identificar as necessidades do público que estou lidando." |
+| Critério de aceite 1 | CR1: Dado que o gerente está na tela de gerenciamento de dados, quando aplica os filtros de, por exemplo, "Possui PCD" ou "Uso de equipamento de uso contínuo", então a lista de domicílios deve ser filtrada retornando apenas as residências que preencham esses critérios. |
+| Critério de aceite 2 | CR2: Dado que o gerente necessita planejar evacuações, quando ele cruzar os filtros de "Condição da ocupação" (ex: área de risco) com "Local de destino em caso de evacuação", então o sistema deve gerar uma lista exportável com os resultados. |
+| Critérios INVEST | Independente: A engine de busca e filtro roda independentemente das rotinas de inserção.; Negociável: Quais filtros exatos estarão disponíveis na V1 pode ser repriorizado.; Valiosa: Essencial para triagem rápida em cenários pre-desastre.; Estimável: A construção de queries dinâmicas no banco é uma tarefa de esforço previsível.; Pequena: Foca unicamente na filtragem de listagens textuais/tabelas.; Testável: O QA deve garantir que ao selecionar um filtro específico, nenhum dado fora do escopo selecionado vaze para a tela. |
 
 | Identificação | US07 |
 |---|---|
-| Persona | Wesley Souza (Diretor) |
-| User Story | "como diretor, posso filtrar ocorrências, para priorizar atendimentos" |
-| Critério de aceite 1 | CR1: Dado que existem ocorrências registradas, quando filtros são aplicados, então apenas os resultados correspondentes devem ser exibidos |
-| Critério de aceite 2 | CR2: Dado que os filtros são removidos, quando o sistema é atualizado, então todas as ocorrências devem ser exibidas novamente |
-| Critérios INVEST | Independente: Funciona de forma isolada; Negociável: Os filtros podem variar; Valiosa: Facilita a priorização de ações; Estimável: Baseada em consultas ao sistema; Pequena: Escopo limitado; Testável: Resultados podem ser validados |
-
----
+| Persona | João Silva (Agente de Campo) |
+| User Story | "Como agente de campo, quero cadastrar os pets (se houver) da moradia existente no sistema, para que, em casos de emergência, seja facilitada a evacuação e busca." |
+| Critério de aceite 1 | CR1: Dado que o agente de campo revisa a seção de contingência do domicílio, quando questiona o morador, então o formulário deve permitir a inserção das quantidades divididas pelas categorias: Cães, Gatos, Aves, ou Outros. |
+| Critério de aceite 2 | CR2: Dado que o resgate acessa a ficha de emergência do domicílio, quando visualiza a seção "Animais de estimação", então a quantidade exata informada deve estar em destaque para planejamento logístico de caixas de transporte. |
+| Critérios INVEST | Independente: O cadastro de animais não afeta os dados vitais dos seres humanos.; Negociável: A lista de categorias pode ser estendida para animais de grande porte dependendo da região.; Valiosa: Reduz a recusa de moradores em abandonar áreas de risco por causa de seus animais.; Estimável: É uma adição simples de atributos numéricos à entidade Domicílio.; Pequena: Pode ser finalizada em um ou dois dias de desenvolvimento.; Testável: Verificação da persistência e retorno no JSON do perfil do assistido. |
 
 | Identificação | US08 |
 |---|---|
-| Persona | Wesley Souza (Diretor) |
-| User Story | "como diretor, posso visualizar indicadores, para análise estratégica" |
-| Critério de aceite 1 | CR1: Dado que existem dados no sistema, quando o painel é acessado, então os indicadores devem ser exibidos |
-| Critério de aceite 2 | CR2: Dado que novos dados são inseridos, quando o sistema é atualizado, então os indicadores devem refletir essas mudanças |
-| Critérios INVEST | Independente: Pode ser desenvolvida separadamente; Negociável: Os indicadores podem variar; Valiosa: Apoia decisões estratégicas; Estimável: Baseada em agregação de dados; Pequena: Escopo definido; Testável: Dados exibidos podem ser verificados |
-
----
+| Persona | Wesley Souza (Gestor Operacional) |
+| User Story | "Como gestor operacional, quero visualizar os dados dos filtros da moradia e/ou assistidos por meio de mapas de calor, para que eu possa ter um retorno mais visual para análise geral." |
+| Critério de aceite 1 | CR1: Dado que o gestor acessa o mapa e seleciona o layer de "Mapa de Calor" cruzado, por exemplo, com o filtro de "Idosos", quando a renderização ocorre, então as áreas com maior adensamento deste público devem ficar em tons intensos/avermelhados. |
+| Critério de aceite 2 | CR2: Dado que o mapa de calor é acionado, quando o usuário realizar "zoom in" ou "zoom out", então os clusters térmicos devem ser recalculados dinamicamente com base no novo nível de aproximação. |
+| Critérios INVEST | Independente: Construído como uma camada (layer) adicional em cima do mapa principal.; Negociável: A paleta de cores e o raio de dispersão podem ser calibrados futuramente.; Valiosa: Transforma dados brutos em inteligência visual e geográfica.; Estimável: Ferramentas modernas de mapas já contam com plugins de heatmap nativos.; Pequena: Foca na visualização agregada térmica.; Testável: Validar se agrupamentos de dados na mesma coordenada geram as manchas esperadas. |
 
 | Identificação | US09 |
 |---|---|
-| Persona | João Silva (Agente de Campo) |
-| User Story | "como agente de campo, posso acessar o sistema via dispositivo móvel, para atuar em campo" |
-| Critério de aceite 1 | CR1: Dado que o sistema é acessado por dispositivo móvel, quando carregado, então a interface deve ser responsiva |
-| Critério de aceite 2 | CR2: Dado que o agente utiliza o sistema em campo, quando acessa funcionalidades principais, então elas devem funcionar corretamente |
-| Critérios INVEST | Independente: Não depende de outras histórias; Negociável: Nível de adaptação pode variar; Valiosa: Permite uso em campo; Estimável: Baseada em responsividade; Pequena: Escopo técnico definido; Testável: Interface pode ser validada |
-
----
+| Persona | Wesley Souza (Gestor Operacional) |
+| User Story | "Como gestor operacional, quero arquivar moradias de assistidos, para manter o histórico de moradias que foram destruídas, evacuadas ou abandonadas." |
+| Critério de aceite 1 | CR1: Dado que um evento climático destruiu/evacuou uma moradia, quando o gestor entra no cadastro e clica em "Arquivar Imóvel", então o sistema deve exigir a seleção de um motivo (Destruída, Evacuada, Desapropriada) antes de confirmar a ação. |
+| Critério de aceite 2 | CR2: Dado que uma moradia foi arquivada, quando o gestor acessar os painéis e o mapa geral de operações ativas, então esta moradia NÃO deve ser exibida, mantendo-se apenas na seção de "Histórico Inativo". |
+| Critérios INVEST | Independente: A funcionalidade de inativação lógica (soft delete) não depende de novos registros.; Negociável: Os motivos do arquivamento podem ser populados a partir de um domínio expansível.; Valiosa: Mantém a integridade do banco de dados enquanto limpa a visão operacional.; Estimável: Requer a adição de flags booleanas e atualização das queries.; Pequena: Funcionalidade contida e de rápida implementação.; Testável: Garantir que imóveis com status "Arquivado" não retornem em chamadas de API ativas. |
 
 | Identificação | US10 |
 |---|---|
-| Persona | Wesley Souza (Diretor) |
-| User Story | "como diretor, posso cadastrar equipes, para organizar operações" |
-| Critério de aceite 1 | CR1: Dado que uma equipe é cadastrada, quando salva, então os dados devem ser armazenados no sistema |
-| Critério de aceite 2 | CR2: Dado que existem equipes cadastradas, quando acessadas, então devem ser exibidas corretamente |
-| Critérios INVEST | Independente: Pode ser implementada isoladamente; Negociável: Os dados da equipe podem variar; Valiosa: Melhora a organização operacional; Estimável: Baseada em cadastro simples; Pequena: Escopo limitado; Testável: Cadastro pode ser validado |
+| Persona | Wesley Souza (Gestor Operacional) |
+| User Story | "Como gestor operacional, quero arquivar moradores falecidos, para manter o histórico do indivíduo sem comprometer os dados operacionais ativos." |
+| Critério de aceite 1 | CR1: Dado que um morador veio a óbito, quando o gestor acessar o cadastro do indivíduo e clicar em "Arquivar Morador", então o sistema deve exigir o preenchimento da data de falecimento e a confirmação da ação antes de concluir o arquivamento. |
+| Critério de aceite 2 | CR2: Dado que um morador foi arquivado como falecido, quando o gestor acessar listagens, relatórios ou operações ativas, então este morador NÃO deve ser exibido nos registros ativos, permanecendo apenas na seção de "Histórico de Moradores". |
+| Critérios INVEST | Independente: A funcionalidade de arquivamento lógico do morador pode ser implementada sem impactar o cadastro ativo.; Negociável: Os campos relacionados ao falecimento podem ser ajustados conforme as regras do sistema.; Valiosa: Mantém o histórico populacional preservado sem interferir nas operações correntes.; Estimável: Requer adição de status lógico, filtros de consulta e atualização das regras de exibição.; Pequena: Funcionalidade isolada e de baixa complexidade técnica.; Testável: Garantir que moradores arquivados não sejam retornados em consultas de moradores ativos e permaneçam acessíveis no histórico. |
 
+| Identificação | US11 |
+|---|---|
+| Persona | Wesley Souza (Gestor Operacional) |
+| User Story | "Como gestor operacional, quero ser avisado a cada 12 meses de cadastro de cada usuário, para que surja um alerta para atualização das informações do mesmo." |
+| Critério de aceite 1 | CR1: Dado que o sistema possui uma rotina de checagem automatizada, quando a "Data de Atualização" de uma ficha completar 365 dias sem modificações, então o sistema deve informar o gestor. |
+| Critério de aceite 2 | CR2: Dado que o gestor acessa a aba "Visualização/Mapa", quando as informações extras forem desatualizadas, então o número de cadastros desatualizados e atualizados deve aparecer. |
+| Critérios INVEST | Independente: A rotina roda em background e não interfere no fluxo de cadastro diário.; Negociável: O prazo de aviso pode ser parametrizável.; Valiosa: Evita o sucateamento dos dados em áreas de risco dinâmico.; Estimável: Configuração de uma job e um painel de notificações são tarefas comuns.; Pequena: Apenas identifica e lista pendências.; Testável: Alterar a data de modificação de um teste no banco para "Data Atual - 366 dias" e validar se o alerta dispara. |
+
+| Identificação | US12 |
+|---|---|
+| Persona | João Silva (Agente de Campo) |
+| User Story | "Como agente de campo, quero atualizar os dados anualmente para validação informacional do banco de dados da Defesa Civil." |
+| Critério de aceite 1 | CR1: Dado que o agente revisita um domicílio marcado por alerta de desatualização, quando ele revisa e re-salva os dados estruturais e sociais, então o sistema deve sobrepor a data de atualização antiga com a atual. |
+| Critério de aceite 2 | CR2: Dado que o agente assina e envia a atualização, quando os dados são sincronizados no servidor, então o indicador de "desatualizado" no painel do Gestor Operacional deve desaparecer instantaneamente. |
+| Critérios INVEST | Independente: Atua apenas sobre registros já existentes fechando o ciclo de vida do dado.; Negociável: A necessidade de manter versionamento de histórico pode ser discutida.; Valiosa: Garante que o banco da Defesa Civil reflita sempre a realidade do ano vigente.; Estimável: É um reaproveitamento do formulário de criação adaptado para Update.; Pequena: Foca unicamente na ação de editar e limpar os alertas.; Testável: Atestar que a ação de salvar a edição atualiza a coluna correspondente no banco e zera a notificação. |
 
 
 # <a name="c3"></a>3. Projeto da Aplicação Web (sprints 1 a 5)
 
 ## 3.1. Requisitos do Sistema (sprints 1 a 5)
 
-Esta seção formaliza o que o sistema deve fazer, sob quais regras e com quais qualidades. O sistema tem como propósito central permitir a compreensão precisa da quantidade de pessoas em territórios de risco, operando de forma georreferenciada para identificar residências mesmo em locais sem endereçamento oficial (como barracos ou vielas), utilizando coordenadas ou CEP Digital.
+Este documento formaliza o que o sistema deve fazer, sob quais regras e com quais qualidades, com base nas User Stories levantadas para o projeto. O sistema tem como propósito central permitir a compreensão precisa da quantidade de pessoas em territórios de risco, operando de forma georreferenciada para identificar residências mesmo em locais sem endereçamento oficial — como barracos ou vielas —, utilizando coordenadas GPS ou CEP Digital.
 
-O sistema atende primordialmente ao João Silva (Agente de Campo) no que tange à operatividade e coleta de dados em tempo real. Como João atua diretamente em áreas de risco e sob pressão, as funcionalidades de cadastro georreferenciado de edificações e a classificação de risco (R1 a R4) suprem sua necessidade de um sistema integrado e acessível em campo. O foco no registro de moradias, chefes de família e membros residentes permite que João cumpra seu objetivo de registrar informações com precisão, enquanto a identificação de perfis com necessidades especiais (idosos, PCDs, gestantes) resolve sua "dor" de comunicação falha entre equipes, garantindo que o plano de evacuação seja assertivo. Além disso, a gestão de unidades de acolhimento e estoque humanitário em tempo real reduz o retrabalho e a duplicidade de registros que ele atualmente enfrenta.
+O sistema atende primordialmente ao Agente de Campo (A01) no que tange à operatividade e à coleta de dados in loco, e ao Gestor Operacional (A03) na tomada de decisão estratégica. As funcionalidades de cadastro, visualização em mapa, geração de mapas de calor, filtros avançados e alertas de recadastro derivam diretamente das necessidades mapeadas nas US01 a US12.
 
-Para Wesley Souza (Diretor da Defesa Civil), o sistema atua como uma ferramenta estratégica de tomada de decisão. As funcionalidades de processamento automático de mapas de calor de riscos e a geração de relatórios estatísticos em PDF atendem diretamente ao seu objetivo de definir estratégias de mitigação e sua necessidade por indicadores estratégicos e visão macro. A capacidade de exportar dados em formatos abertos (CSV) e o monitoramento da ocupação de leitos resolvem sua principal "dor": a ausência de relatórios confiáveis e a dificuldade em prever riscos. Por fim, a emissão de notificações automáticas via e-mail para a revisão anual garante a integridade dos dados a longo prazo, permitindo que Wesley mantenha a transparência na gestão e o planejamento de ações preventivas de forma contínua e eficiente.
-
-O funcionamento do sistema é regido, primeiramente, pela RN01 (Priorização de Evacuação), que estabelece os critérios de vulnerabilidade para o resgate: pessoas com mobilidade reduzida, acamados e com deficiência severa possuem prioridade absoluta, seguidos por gestantes, idosos e pessoas com deficiência moderada na escala hierárquica.
-
-Para garantir a eficácia operacional, o cadastro deve ser mantido atualizado conforme a RN02 (Alertas para Recadastro), que determina a emissão de alertas para a atualização dos dados dos assistidos a cada 12 meses.
-
-Por fim, o ciclo de vida dos dados é gerido pela RN03 (Arquivamento de Registros), que prevê o arquivamento de registros de moradores falecidos, removendo-os de operações ativas, mas preservando as informações para fins históricos, auditoria e conformidade com a LGPD.
-
-Para garantir a eficiência em campo, o sistema deve possuir capacidade de operação offline, permitindo o salvamento local dos dados com sincronização automática assim que houver cobertura de rede. O tempo de resposta para operações de salvamento e carregamento de mapas deve ser de, no máximo, 3 segundos. A interface mobile deve ser concisa e intuitiva, otimizada para o preenchimento de um cadastro completo em menos de 5 minutos, sendo adaptada para o uso do agente de campo em situações de estresse. O sistema permite a captura de fotos das fachadas dos imóveis para facilitar a identificação visual pelas equipes, mas permanece estritamente proibido o registro fotográfico das pessoas cadastradas. Além disso, a solução deve oferecer suporte à geolocalização multimodal (CEP, coordenadas e referências) e, durante esta fase de desenvolvimento, operar exclusivamente com dados hipotéticos e mascarados, garantindo total conformidade com a LGPD e o Termo de Confidencialidade. 
-
+---
 
 ### 3.1.1 Lista de Atores
 
-| ID  | Nome do Ator                           | Descrição                                                                                                                                                                                                                                                                                               | Frequência de Uso | Proficiência Tecnológica |
-|-----|----------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------|--------------------------|
-| A01 | Agente de Defesa Civil (Campo)         | Pode realizar a coleta dados georreferenciados in loco, realizar vistorias em áreas de risco e alimentar o sistema com informações de interdições ou rotas obstruídas.                                                                                                                                  | Diária            | Média/baixo              |
-| A02 | Agente de Defesa Civil (interno)       | Pode visualizar todas as informações coletadas e gerar relatórios a partir delas.                                                                                                                                                                                                                       | Diário            | Média/Alta               |
-| A03 | Agente de Defesa Civil (Administração) | Pode gerenciar os parâmetros de monitoramento e extrair relatórios, análises e mapas de calor gerados automaticamente pela plataforma. Sua função é interpretar essas visões consolidadas de risco e vulnerabilidade para subsidiar a tomada de decisão e o planejamento de contingência da prefeitura. | Diária            | Média/Alta               |
+| ID  | Nome do Ator                           | Descrição                                                                                                                                                                                      | Frequência de Uso | Proficiência Tecnológica |
+|-----|----------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------|--------------------------|
+| A01 | Agente de Defesa Civil (Campo)         | Coleta dados georreferenciados in loco, realiza vistorias em áreas de risco e alimenta o sistema com informações de interdições ou rotas obstruídas.                                           | Diária            | Média / Baixa            |
+| A02 | Agente de Defesa Civil (Interno)       | Visualiza todas as informações coletadas e gera relatórios a partir delas.                                                                                                                     | Diária            | Média / Alta             |
+| A03 | Agente de Defesa Civil (Administração) | Gerencia os parâmetros de monitoramento e extrai relatórios, análises e mapas de calor. Subsidia a tomada de decisão e o planejamento de contingência da prefeitura. | Diária            | Média / Alta             |
 
-### 3.1.2. Requisitos Funcionais (sprint 1, refinar até sprint 5)
+---
 
+### 3.1.2 Requisitos Funcionais
 
-| ID    | Nome                                        | Descrição                                                                                             | Tipo    | Prioridade | Atores  | Status    |
-|-------|---------------------------------------------|-------------------------------------------------------------------------------------------------------|---------|------------|---------|-----------|
-| RF001 | Cadastro Georreferenciado de Moradias       | Registro de edificações com coordenadas geográficas e classificação de risco (R1 a R4).               | 1       | 1          | A01,A03 | Planejado |
-| RF002 | Cadastro de chefe de família                | Registro do responsável principal pelo núcleo familiar para fins de contato e auxílio.                | 1       | 1          | A01,A03 | Planejado |
-| RF003 | Cadastro de membros do núcleo familiar      | Registro de todos os residentes do imóvel para cálculo de densidade populacional por área.            | 1       | 1          | A01,A03 | Planejado |
-| RF004 | Cadastro de necessidades especiais          | Identificação de perfis prioritários (idosos, PCDs, gestantes) para o plano de evacuação.             | 1       | 1          | A01,A03 | Planejado |
-| RF005 | Cadastro de abrigos                         | Registro de unidades de acolhimento, incluindo endereço, infraestrutura e capacidade total de leitos. | 1       | 3          | A03     | Planejado |
-| RF006 | Gerenciamento de moradias                   | Interface para edição, suspensão ou exclusão de registros de imóveis no sistema.                      | 4, 5    | 1          | A01,A03 | Planejado |
-| RF007 | Gerenciamento de familias                   | Controle e histórico de vínculos familiares vinculados a uma ou mais moradias.                        | 4, 5    | 1          | A01,A03 | Planejado |
-| RF008 | Gerenciamento de membros do núcleo familiar | Edição de dados individuais dos dependentes e histórico de saúde/vulnerabilidade.                     | 4, 5    | 1          | A01,A03 | Planejado |
-| RF009 | Gerenciamento de chefe de família           | Atualização de dados de contato e substituição do responsável pelo núcleo familiar.                   | 4, 5    | 1          | A01,A03 | Planejado |
-| RF010 | Gerenciamento de abrigos                    | Interface CRUD para edição de dados cadastrais, inativação ou atualização estrutural dos abrigos.     | 4, 5    | 3          | A02     | Planejado |
-| RF011 | Controle de ocupação de abrigos             | Monitoramento em tempo real de vagas, leitos disponíveis e triagem de entrada (SUAS).                 | 4       | 3          | A02     | Planejado |
-| RF012 | Gestão de estoque humanitário               | Registro e baixa de doações, cestas básicas e materiais de primeira necessidade.                      | 1, 4, 5 | 3          | A02     | Planejado |
-| RF013 | Geração de mapas de calor                   | Processamento automático de densidade de riscos e vulnerabilidades sobre o mapa da cidade.            | 2       | 2          | A02,A03 | Planejado |
-| RF014 | Geração de relatórios                       | Consolidação de dados estatísticos em documentos (PDF) para análise de gestão.                        | 2       | 2          | A02,A03 | Planejado |
-| RF015 | Exportação dos dados                        | Extração de bases em formatos abertos (CSV/PDF) para integração com órgãos externos.                  | 2       | 3          | A02,A03 | Planejado |
-| RF016 | Aviso anual de atualização dos dados        | Notificação automática via sistema/e-mail para revisão periódica das informações cadastrais.          | 6       | 3          | A02     | Planejado |
-| RF017 | Visualização de utilização pelos atores do sistema        | Lista de logs referenciados pelo respectivo ator sobre a utilização dentro do sistema.          | 2       | 3          | A03     | Planejado |
+| ID | Nome | Descrição | Tipo | Prioridade | Atores | US Origem | Status |
+|---|---|---|---|---|---|---|---|
+| RF001 | Cadastro de Dados Sociodemográficos e Vínculos | O sistema deve registrar os dados pessoais dos cidadãos (nome, CPF, data de nascimento, condições de saúde, doenças crônicas e uso de medicação contínua) e os indicadores de vulnerabilidade (idoso, criança 0–12 anos, gestante/lactante, PCD), vinculando obrigatoriamente cada pessoa à sua respectiva moradia. | Cadastro | Alta | A01, A03 | US01 | Planejado |
+| RF002 | Cadastro Estrutural de Moradias | O sistema deve registrar as características físicas do imóvel, incluindo tipo de construção (Madeira, Alvenaria, Misto), número de pavimentos, condição de ocupação (Própria, Alugada, Cedida), sinais de alerta observados e upload de até 2 fotos (fachada e entorno). | Cadastro | Alta | A01, A03 | US02 | Planejado |
+| RF003 | Georreferenciamento de Moradias via GPS | O sistema deve capturar automaticamente as coordenadas geográficas (latitude e longitude) do dispositivo do agente no momento do cadastro da moradia, armazenando-as localmente quando offline e sincronizando-as com o servidor assim que houver conexão. | Cadastro | Alta | A01 | US05 | Planejado |
+| RF004 | Visualização de Moradias em Mapa Georreferenciado | O sistema deve exibir marcadores (pins) no mapa correspondentes às coordenadas de todas as moradias cadastradas, apresentando um card informativo com os dados do imóvel ao clicar sobre o marcador. | Relatório / Consulta | Alta | A02, A03 | US03 | Planejado |
+| RF005 | Consulta Integrada de Moradia e Moradores | O sistema deve consolidar, em uma única tela, os dados estruturais do imóvel e os dados sociodemográficos de todos os seus ocupantes, exibindo automaticamente a flag visual "Risco Crítico" quando a moradia possuir histórico de ocorrência e ao menos um morador com mobilidade reduzida ou acamado. | Consulta | Alta | A02, A03 | US04 | Planejado |
+| RF006 | Filtros Avançados de Moradias e Assistidos | O sistema deve permitir filtrar a lista de domicílios por atributos como "Possui PCD", "Uso de equipamento contínuo", "Condição da ocupação" e "Local de destino em caso de evacuação", gerando uma lista exportável com os resultados. | Consulta | Média | A02, A03 | US06 | Planejado |
+| RF007 | Cadastro de Animais de Estimação | O sistema deve registrar a quantidade de animais de estimação por categoria (Cães, Gatos, Aves, Outros) vinculada ao domicílio, exibindo essas informações em destaque na ficha de emergência para apoio ao planejamento logístico de evacuação. | Cadastro | Baixa | A01 | US07 | Planejado |
+| RF008 | Visualização de Mapa de Calor | O sistema deve gerar uma camada (layer) de mapa de calor cruzada com filtros selecionáveis (ex.: idosos, PCDs), recalculando dinamicamente os clusters térmicos ao realizar zoom in/out. | Relatório | Média | A02, A03 | US08 | Planejado |
+| RF009 | Arquivamento de Moradias | O sistema deve inativar logicamente (soft delete) imóveis destruídos, evacuados ou desapropriados, exigindo a seleção de um motivo obrigatório antes da confirmação, e deve impedir que imóveis arquivados apareçam em operações ativas, mantendo-os apenas no Histórico Inativo. | Atualização | Média | A03 | US09 | Planejado |
+| RF010 | Arquivamento de Moradores Falecidos | O sistema deve inativar logicamente o cadastro de moradores falecidos, exigindo o preenchimento da data de falecimento e a confirmação da ação, removendo-os de todas as listagens e relatórios ativos e preservando-os no Histórico de Moradores. | Atualização | Média | A02, A03 | US10 | Planejado |
+| RF011 | Alerta Automático de Recadastro (12 meses) | O sistema deve detectar automaticamente fichas sem modificação há 365 dias e emitir notificação ao gestor, exibindo no painel de visualização/mapa o total de cadastros desatualizados versus atualizados. | Outro | Média | A02, A03 | US11 | Planejado |
+| RF012 | Atualização Anual de Dados pelo Agente de Campo | O sistema deve permitir a reedição dos dados estruturais e sociodemográficos de domicílios com alerta de desatualização ativo, removendo automaticamente o indicador "desatualizado" do painel do gestor após o salvamento e a sincronização dos dados. | Atualização | Média | A01 | US12 | Planejado |
 
-*Legenda* 
-Tipo: 1 - cadastro (entrada), 2 - relatório (saída), 3 - consulta (leitura), 4 - atualização (edição), 5 - exclusão (remoção), 6 - outros.
-Prioridade: 1 - muito importante, 2 - importante, 3 - descartável.
+---
 
-### 3.1.3. Regras de Negócio (sprint 1, refinar até sprint 5)
+### 3.1.3 Regras de Negócio
 
+| ID   | Nome                                                   | Descrição                                                                                                                                                                                                                                                                   | Pré-condição                                                                              | Consequência do Descumprimento                                                                        | Atores       | RFs Associados      |
+|------|--------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------|--------------|---------------------|
+| RN01 | Priorização Hierárquica de Evacuação                   | A ordem de resgate deve seguir classificação de vulnerabilidade em 3 níveis: **(1) Nível Crítico** — mobilidade reduzida, acamados, deficiência severa ou dependência total; **(2) Nível Alto** — gestantes, lactantes, idosos, PCDs moderados e crianças de 0–12 anos; **(3) Nível Padrão** — demais indivíduos. | Existência de registros com indicadores de vulnerabilidade preenchidos.                   | Priorização incorreta no plano de evacuação, colocando vidas em risco.                                | A01, A02, A03 | RF001, RF005        |
+| RN02 | Recadastro Obrigatório a cada 12 Meses                 | O sistema deve detectar fichas de moradores e moradias sem atualização há 365 dias e emitir alerta automático. O alerta persiste até que o agente de campo revisite e re-salve os dados.                                                                                     | Ficha cadastrada há mais de 12 meses sem edição.                                          | Dados desatualizados podem comprometer planos de evacuação e distribuição de recursos humanitários.   | A02, A03     | RF011, RF012        |
+| RN03 | Arquivamento Lógico de Moradias e Moradores (LGPD)     | Registros de moradores falecidos e imóveis destruídos/evacuados/desapropriados devem ser inativados logicamente (soft delete), com registro de motivo e data. Os dados são preservados para fins históricos, auditoria e rastreabilidade, em conformidade com a LGPD.        | Ação confirmada pelo gestor com motivo e data preenchidos.                                | Deleção física viola a LGPD e elimina histórico necessário para relatórios e auditorias.              | A02, A03     | RF009, RF010        |
+| RN04 | Captura de Geolocalização e Proibição de Foto de Pessoas | O sistema deve capturar automaticamente as coordenadas GPS do dispositivo no cadastro de moradia. É estritamente proibido o registro fotográfico das pessoas cadastradas; apenas fotos de fachada e entorno do imóvel são permitidas (máx. 2 por imóvel).                    | Permissão de GPS concedida pelo dispositivo.                                              | Foto de pessoas cadastradas viola a LGPD e direitos de imagem.                                        | A01          | RF002, RF003        |
+| RN05 | Flag de Risco Crítico na Consulta Integrada            | Quando uma moradia possuir histórico de ocorrência registrado **E** tiver pelo menos um morador com mobilidade reduzida ou acamado, o sistema deve exibir automaticamente a flag visual "Risco Crítico" no cabeçalho da consulta integrada.                                 | Campos "Histórico de ocorrência" e "Mobilidade reduzida/acamado" preenchidos.             | Omissão da flag pode levar à negligência de vítimas em situação crítica.                              | A02, A03     | RF005               |
 
-| ID | Descrição | RF associado | 
-|------|-----------|--------------| 
-| RN01 | A priorização de evacuação deve considerar critérios de vulnerabilidade, com base em classificação hierárquica. No nível mais alto estão indivíduos com mobilidade reduzida, acamados, deficiência severa ou dependência total. Em seguida, gestantes, idosos e pessoas com deficiência moderada. Por fim, os demais indivíduos. | RF008, RF003, RF004| 
-| RN02 | O sistema deve emitir alertas para o recadastro (ou atualização) de assistidos a cada 12 meses(1 ano) desde o cadastro. | RF002, RF003, RF004, RF007, RF016 | 
-| RN03 | As moradias cujos moradores faleceram, devem ter seu registro arquivado. Não participando de operações ativas, mas preservando os dados para fins históricos, auditoria e rastreabilidade, estando também conforme a LGPD. | RF001, RF006, RF007 |
+---
 
-### 3.1.4. Requisitos Não Funcionais — 8 Eixos ISO/IEC 25010 (sprints 1 a 5)
+### 3.1.4 Requisitos Não Funcionais — ISO/IEC 25010:2011
 
-
-| Eixo                     | Requisito | Métrica / Critério | Como atendido |
-|--------------------------|-----------|--------------------|---------------|
-| **USAB — Usabilidade** | Eficiência operacional da interface PWA em campo para os Agentes de Defesa Civil. | Tempo de preenchimento completo de um cadastro de moradia em **< 3 minutos**. | Testes de usabilidade (Time-on-Task) cronometrados com 5 Agentes de Campo reais. |
-| **CONF — Confiabilidade** | Tolerância a falhas de rede (Offline-first) e retenção de dados durante vistorias em áreas de sombra. | **100% dos dados** inseridos offline salvos em cache local e **99,9% de Uptime** anual do servidor. | Simulação de perda de pacote/modo avião durante o preenchimento e monitoramento automatizado. |
-| **DES — Desempenho** | Tempo de resposta do sistema sob condições normais de operação de rede (3G/4G/Wi-Fi). | Salvamento de dados locais em **< 500ms** e renderização do mapa de risco (p95) em **< 3 segundos**. | Testes de carga automatizados simulando acessos simultâneos (ex: JMeter ou k6). |
-| **SUP — Suportabilidade** | Compatibilidade de hardware e sistema operacional dos dispositivos móveis utilizados pela prefeitura. | Operação sem quebra de layout em telas de **5.5 a 7 polegadas** e nas **3 últimas versões** de Android/iOS. | Matriz de testes em emuladores (BrowserStack) e nos aparelhos físicos da Defesa Civil. |
-| **SEG — Segurança** | Proteção de dados sensíveis (LGPD) e integridade dos acessos ao sistema. | **100% dos dados pessoais** com criptografia AES-256, tráfego TLS 1.3 e bloqueio após 5 falhas de login. | Auditoria de código estático (SAST) e testes de intrusão (PenTest) no ambiente. |
-| **CAP — Capacidade** | Escalabilidade do banco de dados para suportar os picos de acesso durante alertas climáticos severos. | Processamento de até **500 requisições simultâneas por minuto** sem degradação do p95. | Testes de stress focados em transações de banco de dados e monitoramento de I/O. |
-| **REST — Restrições Design** | Limitações arquiteturais e de armazenamento do dispositivo e nuvem impostas ao produto. | Tamanho do bundle PWA (cache) **< 15MB** e compressão automática de fotos para no máximo **2MB** por imagem. | Análise de payload via DevTools do navegador e validação do tamanho no banco de arquivos. |
-| **ORG — Organizacionais** | Restrições impostas aos processos de desenvolvimento, testes e infraestrutura do projeto. | **100% de dados fictícios** em homologação. | Auditoria de base de testes. |
+| ID | Eixo | Descrição | Derivação e Contexto do Parceiro | Métrica / Critério de Aceite | Conexão com RFs | Como Verificar |
+|---|---|---|---|---|---|---|
+| RNF001 | **Usabilidade** | A interface PWA deve permitir o preenchimento completo de um cadastro de moradia em menos de 3 minutos por agentes de campo em situações de estresse, com layout otimizado para uso em campo. | Derivado da US01 e US02: João Silva atua em áreas de risco sob pressão, com proficiência tecnológica média/baixa. O parceiro exige que o sistema reduza o tempo de operação e evite erros de preenchimento. A métrica de 3 minutos foi estabelecida com base no tempo médio de uma vistoria presencial. | Tempo médio de preenchimento completo < 3 min (Time-on-Task com mín. 5 agentes reais). Taxa de erro de preenchimento < 5%. | RF001, RF002 | Testes de usabilidade cronometrados com agentes reais em dispositivos móveis em condições simuladas de campo. |
+| RNF002 | **Confiabilidade** | O sistema deve operar em modo offline-first, salvando 100% dos dados localmente em cache durante vistorias em áreas sem cobertura, com sincronização automática ao reconectar. | Derivado da US05: o parceiro atua em vielas e zonas de risco com cobertura instável ou inexistente. A perda de dados em campo é inaceitável operacionalmente e pode custar vidas. O uptime de 99,9% foi definido como restrição organizacional do parceiro para sistemas críticos de gestão pública. | 100% dos dados offline persistidos sem perda; uptime ≥ 99,9% ao ano (downtime tolerado < 8,7 h/ano); sincronização concluída em até 30 s após reconexão. | RF003, RF012 | Simulação de modo avião durante preenchimento; monitoramento automatizado de uptime; testes de reconexão com verificação de integridade dos dados. |
+| RNF003 | **Desempenho** | O sistema deve responder dentro dos limites aceitáveis para operações em campo sob redes 3G/4G/Wi-Fi. | Derivado das US03 e US05: agentes e gestores consultam mapas e fichas em tempo real durante emergências. Um tempo de resposta elevado pode atrasar decisões críticas de evacuação. O parceiro opera com dispositivos de entrada intermediária e redes móveis de qualidade variável, tornando o desempenho sob 3G inegociável. | Salvamento local < 500 ms; renderização do mapa (p95) < 3 s; carga de ficha completa < 3 s em rede 3G simulada. | RF003, RF004, RF005 | Testes de carga com JMeter ou k6 simulando rede 3G (latência ~100 ms, banda ~1 Mbps) e múltiplos acessos simultâneos. |
+| RNF004 | **Capacidade** | O sistema deve suportar picos de acesso durante alertas climáticos severos sem degradação perceptível para nenhum dos usuários ativos. | Derivado do contexto operacional do parceiro: eventos climáticos extremos (enchentes, deslizamentos) disparam uso simultâneo por dezenas de agentes e gestores. A métrica de 500 req/min foi estimada com base no tamanho da equipe operacional da Defesa Civil de Santo André. | Processamento de até 500 requisições simultâneas por minuto sem degradação do p95. Tempo de resposta p95 não deve ultrapassar 3 s sob carga máxima. | RF004, RF008, RF011 | Testes de stress com simulação de pico de acesso; monitoramento de I/O e uso de CPU/memória do banco de dados durante carga máxima. |
+| RNF005 | **Suportabilidade** | A aplicação PWA deve operar corretamente nos dispositivos móveis fornecidos ou utilizados pela prefeitura, sem quebra de layout ou perda de funcionalidade. | Derivado da restrição de hardware do parceiro: a Defesa Civil de Santo André utiliza dispositivos institucionais de modelos variados, sem padronização de hardware, com telas entre 5,5 e 7 polegadas e versões de SO diversas. A compatibilidade ampla é essencial para a adoção do sistema em campo. | Layout funcional sem sobreposição de elementos em telas de 5,5 a 7 polegadas; compatibilidade plena com as 3 últimas versões de Android e iOS, sem erros de renderização. | RF001, RF002, RF003 | Matriz de testes em emuladores (BrowserStack) cobrindo modelos e versões especificados; testes complementares nos aparelhos físicos disponibilizados pela Defesa Civil. |
+| RNF006 | **Segurança** | Todos os dados pessoais devem ser protegidos em repouso e em trânsito, com controle de acesso robusto, em conformidade estrita com a LGPD e o Termo de Confidencialidade firmado com o parceiro. | Derivado de restrição legal e contratual: o sistema coleta dados sensíveis de cidadãos vulneráveis (saúde, geolocalização, composição familiar), classificados como dados sensíveis pela LGPD (Lei 13.709/2018). O Termo de Confidencialidade proíbe explicitamente o uso de dados reais em qualquer fase de desenvolvimento. AES-256 e TLS 1.3 são padrões mínimos para sistemas de gestão pública com dados pessoais. | 100% dos dados pessoais criptografados com AES-256 em repouso; tráfego via TLS 1.3; bloqueio automático após 5 tentativas de login falhas consecutivas. | RF001, RF002, RF009, RF010 | Auditoria de código estático (SAST); testes de intrusão (PenTest) em homologação; varredura de configurações de segurança do servidor (headers HTTP, certificados, políticas de senha). |
+| RNF007 | **Restrições de Design** | O bundle PWA deve ser compacto para funcionar em dispositivos com armazenamento limitado. Fotos de imóveis devem ser comprimidas automaticamente antes do armazenamento. | Derivado da US02 e da restrição de hardware do parceiro: dispositivos institucionais possuem armazenamento interno reduzido. O upload de fotos de fachada e entorno, exigido pelo parceiro como evidência visual, pode consumir espaço excessivo sem controle de tamanho. Os limites de 15 MB e 2 MB por foto foram definidos para garantir operação em aparelhos a partir de 16 GB com conexões lentas. | Bundle PWA em cache < 15 MB; cada imagem comprimida automaticamente para máx. 2 MB sem intervenção do agente. | RF002 | Análise de payload via Chrome DevTools (aba Network/Storage); validação automatizada do tamanho dos arquivos armazenados no banco após upload. |
+| RNF008 | **Organizacionais** | O ambiente de homologação e testes deve operar exclusivamente com dados fictícios e mascarados durante toda a fase de desenvolvimento, sem exceções. | Derivado diretamente do Termo de Confidencialidade e da LGPD: qualquer exposição acidental de dados reais de populações vulneráveis em ambiente de desenvolvimento constitui violação legal e contratual. Esta restrição se aplica a todos os membros da equipe em todas as sprints, incluindo seeds, fixtures e dumps de teste. | 100% dos registros em homologação fictícios ou mascarados, auditado ao encerramento de cada sprint. Nenhum CPF, nome real ou coordenada real em base de testes. | Todos os RFs | Auditoria periódica da base de testes; checklist de conformidade no encerramento de cada sprint; scripts de varredura automatizada para detectar padrões de dados reais. |
 
 ### 3.1.5. Matriz RF → RN → Endpoint (sprints 3 a 5)
 
@@ -442,18 +436,50 @@ Matriz de cobertura que demonstra quais RN (Regras de Negócio) e endpoints impl
 
 O diagrama de casos de uso é uma ilustração visual que representa as funcionalidades de um sistema sob a perspectiva de seus usuários, mapeando quais atores interagem com quais casos de uso. Nele, é possível visualizar como os requisitos funcionais se relacionam por meio de dois tipos de relação: `<<include>>`, que indica uma etapa obrigatória dentro de um fluxo, assim, sempre que o caso de uso base for executado, o caso de uso incluído também será; e `<<extend>>`, que indica uma etapa condicional, presente no fluxo apenas em situações específicas, sem ser obrigatória.
 
+<div align="center">
+    <p>Figura 6: Diagrama de Casos de Uso</p>
+    <img src="outros/diagrama_de_casos_de_uso.png">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
 
-<img src="outros/diagrama_de_casos_de_uso.png">
 
 O diagrama mapeia dois atores e três perfis de uso distintos. O **Agente de Campo** representa o perfil **cadastrador**, sendo responsável por registrar e gerenciar dados em campo, interagindo com os casos de uso de cadastro (RF001 a RF004) e gerenciamento (RF006 a RF009). O **Diretor da Defesa Civil** acumula os perfis de **visualizador** e **administrador**: como visualizador, acompanha informações estratégicas por meio dos mapas de calor (RF013); como administrador, é o único ator com acesso à geração de relatórios (RF014) e à exportação de dados (RF015). No fluxo de cadastro, as relações `<<include>>` evidenciam a obrigatoriedade em cadeia, como por exemplo: cadastrar uma moradia (RF001) sempre exige cadastrar o chefe de família (RF002), que por sua vez inclui o cadastro dos membros (RF003). Já o `<<extend>>` aparece nos dois pontos condicionais do diagrama: o cadastro de membros pode, opcionalmente, registrar necessidades especiais (RF004), e a exportação de dados (RF015) estende a geração de relatórios (RF014), ocorrendo apenas quando necessário.
 
 ### 3.2.3. Diagrama de Classes do Domínio (sprint 2)
+O Diagrama de Classes de Dominio representa visualmente as principais entidades do négocio, com seus atributos e relacionamentos entre elas. Não se preocupando com detalhes técnicos como métodos, chaves estrangeiras ou tecnologias específicas, focando somente em capturar o que existe no mundo real dentro do contexto do sistema.
 
-*Diagrama UML de classes com entidades, atributos, relacionamentos e responsabilidades. Diferencie **associação**, **agregação** (losango vazio), **composição** (losango cheio) e **herança** (triângulo vazio). Multiplicidade explícita em toda associação.*
+Link do diagrama (realizado por meio do site draw.io): https://drive.google.com/file/d/1YfjTRYovyfGQ29EKa9RM1ScGjfUeJIIK/view?usp=sharing
+
+
+<div align="center">
+    <p>Figura 7: Diagrama de Classes de Domínio</p>
+    <img src="outros/diagrama-classes-dominio.png" width="800">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
 
 ### 3.2.4. Diagrama de Sequência UML (sprint 3)
 
-*Ao menos um fluxo prioritário, mostrando a interação entre as camadas Controller → Service → Repository → Banco. Linhas de vida verticais, ativação correta, mensagens síncronas e assíncronas diferenciadas, retornos tracejados.*
+Os diagramas de sequência UML desta seção documentam os fluxos de interação entre as camadas da arquitetura do sistema deste projeto, evidenciando como as requisições originadas na interface do usuário percorrem a cadeia **Frontend → Controller → Service → Repository → Banco de Dados** até a geração da resposta. Cada linha de vida vertical representa um participante ativo no processamento, com ativações indicando o período em que cada componente mantém controle da execução. Mensagens síncronas (chamadas diretas) são representadas por setas sólidas, enquanto retornos são indicados por setas tracejadas. Caminhos alternativos e de exceção são delimitados por blocos `alt`/`opt`, refletindo as ramificações de negócio documentadas nos fluxos de interação.
+
+Os dois fluxos priorizados nesta sprint cobrem as operações de maior impacto no ciclo de uso do sistema: o cadastro completo de uma moradia com seus moradores, operação central dos agentes de campo, e a visualização georreferenciada do mapa de riscos pelo corpo gestor. Os demais fluxos (FL03 até FL11) estão na pasta ***diagrama_de_sequencia*** neste repositório.
+
+---
+
+#### FL01 — Cadastro de Cidadão e Vínculo à Moradia
+
+<img src="outros/diagrama_de_sequencia/fl01_cadastro_de_cidadao_e_vinculo_a_moradia.png">
+
+Este fluxo descreve a jornada de cadastro conduzida pelo **Agente de Campo (A01)** a partir do aplicativo mobile. O processo é estruturado em cinco sessões sequenciais: Moradia, Localização, Chefe de Família, Composição Familiar e Pets. Cada uma liberada somente após a confirmação da anterior, garantindo a integridade referencial dos dados antes do envio. Ao submeter o formulário completo, o Frontend dispara uma sequência ordenada de requisições `POST` que cria os registros em cascata (`LOCALIZACAO → MORADIA → CIDADAO → RESPONSAVEL → PET → FORMULARIO`), enquanto o Service aplica as regras de negócio RN01 (classificação de risco) e RN04 (restrição de fotos). O diagrama também contempla o **modo offline**, no qual o formulário é persistido em cache local via IndexedDB e sincronizado automaticamente ao restabelecer conexão, e o **caminho de exceção** de duplicidade de cadastro, que oferece ao agente as opções de busca, atualização ou cancelamento.
+
+---
+
+#### FL02 — Visualização de Mapa Georreferenciado
+
+<img src="outros/diagrama_de_sequencia/fl02_visualização_de_mapa_georreferenciado.png">
+
+Este fluxo descreve a consulta ao mapa de risco realizada pelo **Diretor ou Gestor Operacional (A02/A03)** a partir do painel desktop. Ao acessar o módulo de mapa, o Frontend solicita ao backend a lista de moradias com coordenadas geográficas e nível de risco, que são renderizadas como marcadores coloridos (vermelho para Crítico, laranja para Alto, amarelo para Padrão). Ao clicar em um marcador, uma segunda requisição carrega os dados completos da moradia, momento em que o Service executa a **regra transversal FL11** para avaliar a condição de Risco Crítico (RN05) (presença de morador com deficiência que necessita de apoio) e injeta a flag correspondente na resposta. O diagrama também cobre os caminhos alternativos de ausência de dados georreferenciados e de falha na API de mapas.
+
 
 ### 3.2.5. Diagrama de Atividades ou Estados (sprint 3)
 
@@ -469,7 +495,53 @@ O diagrama mapeia dois atores e três perfis de uso distintos. O **Agente de Cam
 
 ## 3.3. Wireframes (sprint 2)
 
-*Posicione aqui as imagens do wireframe construído para sua solução e, opcionalmente, o link para acesso (mantenha o link sempre público para visualização)*
+Esta seção é destinada para apresentar os primeiros esboços do sistema: os wireframes. Além de ser a representação das telas de menor fidelidade com o resultado final, esses 
+
+Um wireframe é um quadro (frame) com a estrutura do sistema desenhada em fios (wire) ou blocos de maneira bastante simples.
+
+### **1. Página Inicial**
+
+<div align="center">
+    <p>Figura 8: Wireframe Tela Inicial</p>
+    <img src="outros/paginaInicial.png">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
+### **2. Páginas de Cadastro**
+
+<div align="center">
+    <p>Figura 9: Wireframe Tela Cadastro - Moradias</p>
+    <img src="outros/formulario1.png">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
+<div align="center">
+    <p>Figura 10: Wireframe Tela Cadastro - Responsável</p>
+    <img src="outros/formulario2.png">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
+<div align="center">
+    <p>Figura 11: Wireframe Tela Cadastro - Moradores</p>
+    <img src="outros/.png">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
+### **3. Página de Mapa**
+
+<div align="center">
+    <p>Figura 12: Wireframe Tela Mapa</p>
+    <img src="outros/mapa.png">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
+### **4. Página de Busca**
+
+<div align="center">
+    <p>Figura 13: Wireframe Tela Busca - </p>
+    <img src="outros/.png">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
 
 ## 3.4. Guia de estilos (sprint 3)
 
@@ -501,7 +573,205 @@ O diagrama mapeia dois atores e três perfis de uso distintos. O **Agente de Cam
 
 ### 3.6.2. Diagrama Entidade-Relacionamento (DER) (sprint 2)
 
-*Posicione aqui o DER com cardinalidades explícitas em ambos os lados de cada relação e identificação de PK/FK. O DER deve ser coerente com o diagrama de classes (3.2.3).*
+O Diagrama Entidade-Relacionamento (DER) representa a modelagem conceitual do banco de dados da aplicação, demonstrando as entidades do sistema, seus atributos, chaves primárias e estrangeiras, além dos relacionamentos e cardinalidades existentes. O diagrama serve como base para a implementação da estrutura relacional no banco de dados.
+
+
+<img src="../assets/der-lógico.png">
+
+
+Cada **retângulo** no diagrama representa uma tabela do banco de dados. Cada **linha** dentro do retângulo representa uma coluna dessa tabela. As **linhas que conectam** os retângulos representam os relacionamentos entre as tabelas.
+
+
+## Tipos de Dados Utilizados
+
+| Tipo | Significado |
+|------|-------------|
+| `INT` | Número inteiro. Usado para identificadores, contagens e chaves. Ex: `1`, `42`, `1000`. |
+| `VARCHAR(n)` | Texto de tamanho **variável** com até *n* caracteres. Só ocupa o espaço que o texto realmente usar. Ex: nome de uma pessoa. |
+| `CHAR(n)` | Texto de tamanho **fixo** com exatamente *n* caracteres. Usado quando o valor sempre tem o mesmo tamanho. Ex: CPF (sempre 11 dígitos), CEP (sempre 8 dígitos), UF (sempre 2 letras). |
+| `TEXT` | Texto longo **sem limite de tamanho** definido. Usado para observações, descrições livres e campos abertos. |
+| `DATE` | Data no formato `AAAA-MM-DD`. Armazena apenas a data, sem horário. Ex: `1990-05-20`. |
+| `TIMESTAMP` | Data e hora completas. Armazena dia, mês, ano, hora, minuto e segundo. Ex: `2024-03-15 14:32:00`. |
+| `DECIMAL(p, s)` | Número com casas decimais. `p` é o total de dígitos e `s` são as casas após a vírgula. Ex: `DECIMAL(10,2)` permite valores como `99999999.99`. Usado para renda e coordenadas geográficas. |
+| `BOOLEAN` | Valor lógico **verdadeiro ou falso** (sim/não). Ex: possui veículo? sim ou não. |
+| `ENUM(valores)` | **Lista fechada** de valores permitidos. O campo só aceita um dos valores definidos previamente. Garante consistência e evita erros de digitação. Ex: `ENUM(estado_civil)` aceita apenas `"Solteiro"`, `"Casado"`, `"Divorciado"` etc. |
+| `PK` | ***Primary Key* — Chave Primária.** Identifica de forma única cada registro da tabela. Não pode se repetir nem ser nulo. |
+| `FK` | ***Foreign Key* — Chave Estrangeira.** Referencia a chave primária de outra tabela, criando o vínculo entre elas. |
+
+---
+
+## Entidades e seus Atributos
+
+### 1. Cidadão
+
+Entidade **central** do sistema. Representa a pessoa cadastrada no programa social. É o ponto de partida para todas as demais informações do cadastro.
+
+| Atributo | Tipo | Descrição |
+|----------|------|-----------|
+| `id_cidadao` | `INT PK` | Identificador único do cidadão, gerado automaticamente pelo sistema. |
+| `id_moradia` | `INT FK` | Referência à moradia onde o cidadão reside. Liga esta tabela à tabela **Moradia**. |
+| `nome_completo` | `VARCHAR(150)` | Nome civil completo da pessoa, com até 150 caracteres. |
+| `nome_social` | `VARCHAR(150)` | Nome pelo qual a pessoa prefere ser chamada, respeitando identidade de gênero. |
+| `data_nascimento` | `DATE` | Data de nascimento no formato `AAAA-MM-DD`. |
+| `situacao_ocupacional` | `ENUM` | Situação de trabalho atual: `Empregado`, `Desempregado`, `Autônomo`, `Aposentado`, `Estudante`, `Outro`. |
+| `doencas_cronicas` | `TEXT` | Campo aberto para registrar doenças crônicas que a pessoa possui. |
+| `medicamentos` | `TEXT` | Campo aberto para listar medicamentos de uso contínuo. |
+| `grau_parentesco_responsavel` | `ENUM` | Relação do cidadão com o responsável: `Pai`, `Mãe`, `Filho`, `Cônjuge`, `Tutor`, `Outro`. |
+| `escolaridade` | `ENUM` | Nível de instrução: `Sem instrução`, `Fund. incompleto`, `Fund. completo`, `Médio`, `Superior`, `Pós-graduação`. |
+| `apoio_necessario` | `BOOLEAN` | Indica se a pessoa necessita de apoio ou atendimento especial (`true` = sim / `false` = não). |
+
+---
+
+### 2. Responsável
+
+Representa a pessoa responsável pelo cidadão cadastrado e a moradia — pode ser um **familiar**, **tutor legal** ou **cuidador**. Armazena dados de contato e identificação do responsável.
+
+| Atributo | Tipo | Descrição |
+|----------|------|-----------|
+| `id_responsavel` | `INT PK` | Identificador único do responsável. |
+| `id_cidadao` | `INT FK` | Referência ao cidadão pelo qual este responsável responde. |
+| `email` | `VARCHAR(150)` | Endereço de e-mail para contato. |
+| `celular` | `VARCHAR(20)` | Número de celular com DDD. Tipo texto pois pode conter hífen, parênteses e o símbolo `+`. |
+| `renda` | `DECIMAL(10,2)` | Renda mensal do responsável em reais. Ex: `1412.00`. |
+| `cpf` | `CHAR(11)` | CPF **sem formatação**, sempre 11 dígitos numéricos. |
+| `raca` | `ENUM` | Autodeclaração de raça/cor conforme categorias do IBGE: `Branca`, `Preta`, `Parda`, `Amarela`, `Indígena`, `Não declarado`. |
+| `sexo` | `ENUM` | Sexo biológico ou identidade de gênero declarada: `Masculino`, `Feminino`, `Não binário`, `Não declarado`. |
+| `estado_civil` | `ENUM` | Situação conjugal: `Solteiro`, `Casado`, `Divorciado`, `Viúvo`, `União estável`. |
+| `nome_completo_mae` | `VARCHAR(150)` | Nome completo da mãe do responsável. |
+| `nome_completo_pai` | `VARCHAR(150)` | Nome completo do pai do responsável. |
+| `data_residencia_domicilio` | `DATE` | Data desde quando o responsável reside no domicílio atual. |
+| `data_residencia_municipio` | `DATE` | Data desde quando reside no município. Útil para verificar elegibilidade em programas locais. |
+| `programas_sociais` | `BOOLEAN` | Indica se é beneficiário de algum programa social (Bolsa Família, BPC etc.). |
+| `nis` | `VARCHAR(20)` | Número de Identificação Social, usado para programas do governo federal. |
+| `veiculo` | `BOOLEAN` | Indica se o responsável possui veículo próprio. |
+| `local_nascimento` | `VARCHAR(80)` | Cidade e estado onde o responsável nasceu. |
+
+---
+
+### 3. Gestante
+
+Entidade especializada para registrar informações de cidadãs em **período gestacional**. Só existe quando vinculada a um Cidadão que esteja grávida — trata-se de uma entidade opcional.
+
+| Atributo | Tipo | Descrição |
+|----------|------|-----------|
+| `id_gestante` | `INT PK` | Identificador único do registro de gestação. |
+| `data_prevista` | `DATE` | Data prevista para o parto, calculada a partir da última menstruação ou ultrassom. |
+
+---
+
+### 4. Grupo Prioritário
+
+Tabela auxiliar que define os **grupos de vulnerabilidade ou prioridade social**. Um cidadão pode pertencer a um ou mais grupos, o que orienta o direcionamento de políticas públicas e serviços.
+
+| Atributo | Tipo | Descrição |
+|----------|------|-----------|
+| `id_grupo_prioritario` | `INT PK` | Identificador único do grupo. |
+| `nome` | `VARCHAR(50)` | Nome do grupo. Ex: `Idoso`, `Gestante`, `PCD`, `Criança`, `Indígena`, `Quilombola`, `Situação de rua`. |
+| `tipo` | `ENUM` | Classificação do grupo por natureza: `Etária`, `Saúde`, `Social`, `Étnica`. |
+
+---
+
+### 5. Moradia
+
+Registra as informações do **imóvel onde o cidadão reside**. Centraliza dados estruturais, de ocupação e de contato do domicílio. Uma mesma moradia pode abrigar múltiplos cidadãos e múltiplos pets.
+
+| Atributo | Tipo | Descrição |
+|----------|------|-----------|
+| `id_moradia` | `INT PK` | Identificador único da moradia. |
+| `id_localizacao` | `INT FK` | Referência ao registro de localização geográfica deste imóvel. |
+| `tipo_construcao` | `ENUM` | Material predominante da construção: `Alvenaria`, `Madeira`, `Mista`, `Taipa`, `Outro`. |
+| `tipo_pavimento` | `ENUM` | Tipo de piso interno: `Terra`, `Cimento`, `Cerâmica`, `Madeira`, `Outro`. |
+| `condicao_ocupacao` | `ENUM` | Situação legal do imóvel: `Próprio`, `Alugado`, `Cedido`, `Invasão`, `Outro`. |
+| `tipo_uso_imovel` | `ENUM` | Finalidade do imóvel: `Residencial`, `Comercial`, `Misto`. |
+| `telefone` | `VARCHAR(20)` | Telefone fixo ou celular de contato da residência. |
+| `observacoes` | `TEXT` | Campo livre para informações adicionais sobre o imóvel. |
+| `data_cadastro` | `DATE` | Data em que a moradia foi cadastrada no sistema pela primeira vez. |
+| `ultima_atualizacao` | `DATE` | Data da última atualização dos dados da moradia. |
+
+---
+
+### 6. Localização
+
+Armazena os dados de **endereço e coordenadas geográficas** de uma moradia. A separação em entidade própria permite que o endereço seja gerenciado de forma independente, facilitando a plotagem em mapa e a padronização de CEPs.
+
+| Atributo | Tipo | Descrição |
+|----------|------|-----------|
+| `id_localizacao` | `INT PK` | Identificador único da localização. |
+| `coordenadas_longitude` | `DECIMAL` | Coordenada geográfica de **longitude** (eixo leste-oeste). Ex: `-46.633308`. |
+| `coordenadas_latitude` | `DECIMAL` | Coordenada geográfica de **latitude** (eixo norte-sul). Ex: `-23.550520`. |
+| `cep` | `CHAR(8)` | CEP **sem hífen**, sempre 8 dígitos. Ex: `13040000`. |
+| `logradouro` | `VARCHAR(80)` | Nome da rua, avenida, travessa etc. |
+| `bairro` | `VARCHAR(50)` | Nome do bairro. |
+| `numero` | `INT` | Número do imóvel na rua. Tipo inteiro pois é sempre numérico. |
+| `cidade` | `VARCHAR(50)` | Nome do município. |
+| `ponto_referencia` | `VARCHAR(150)` | Referência para facilitar a localização. Ex: `"Próximo à escola municipal"`. |
+| `uf` | `CHAR(2)` | Sigla do estado com exatamente 2 letras. Ex: `SP`, `RJ`, `MG`. |
+
+---
+
+### 7. Foto Moradia
+
+Armazena as **fotos do imóvel** registradas durante o cadastro. O vínculo com a Moradia é feito pela chave estrangeira, permitindo múltiplas fotos por moradia.
+
+| Atributo | Tipo | Descrição |
+|----------|------|-----------|
+| `id_foto_moradia` | `INT PK` | Identificador único da foto. |
+| `id_moradia` | `INT FK` | Referência à moradia à qual a foto pertence. |
+| `url` | `VARCHAR(255)` | Caminho ou endereço web onde o arquivo de imagem está armazenado no servidor. |
+
+---
+
+### 8. Pet
+
+Registra os **animais de estimação** que residem na moradia cadastrada. A presença de pets é relevante para programas de saúde animal, controle de zoonoses e assistência social.
+
+| Atributo | Tipo | Descrição |
+|----------|------|-----------|
+| `id_pet` | `INT PK` | Identificador único do pet. |
+| `id_moradia` | `INT FK` | Referência à moradia onde o pet vive. |
+| `nome` | `VARCHAR(50)` | Nome do animal. |
+| `porte_pet` | `ENUM` | Tamanho do animal: `Pequeno`, `Médio`, `Grande`. |
+| `tipo_pet` | `ENUM` | Espécie do animal: `Cão`, `Gato`, `Ave`, `Réptil`, `Outro`. |
+| `cor` | `VARCHAR(30)` | Coloração predominante do pelo ou plumagem do animal. |
+| `observacoes` | `TEXT` | Informações adicionais sobre o pet, como condição de saúde ou comportamento. |
+| `foto_url` | `VARCHAR(255)` | Endereço da foto do animal armazenada no servidor de arquivos. |
+
+---
+
+## Relacionamentos e Cardinalidades
+
+A **cardinalidade** define quantos registros de uma tabela podem se relacionar com registros de outra. Isso são definidos pelos "traços" que estão conectando cada tabela, e, textualmente, as relações são representadas desta maneira:
+
+### Cidadão → Moradia — `N:1` (Muitos para um)
+
+Muitos cidadãos podem residir em uma mesma moradia (ex: uma família inteira), mas cada cidadão reside em apenas uma moradia. A ligação é feita pelo campo `id_moradia` na tabela Cidadão.
+
+
+### Cidadão → Responsável — `1:N` (Um para muitos)
+
+Um cidadão pode ter um ou mais responsáveis registrados. Cada responsável está vinculado a um único cidadão. Exemplo: um tutor e um familiar cadastrados como responsáveis do mesmo cidadão.
+
+
+### Cidadão → Gestante — `1:0..1` (Um para zero ou um)
+
+O registro de gestação é **opcional**. Quando existe, pertence a exatamente um cidadão. Isso significa que a entidade Gestante só é criada para cidadãs em período gestacional (os demais cidadãos simplesmente não possuem esse vínculo).
+
+### Cidadão → Grupo Prioritário — `N:N` (Muitos para muitos)
+
+Um cidadão pode pertencer a vários grupos prioritários (ex: ser idoso **e** portador de deficiência ao mesmo tempo), e um grupo pode incluir muitos cidadãos. Na implementação, esse relacionamento exige uma **tabela associativa intermediária** — uma tabela extra que registra os pares de vínculos entre cidadãos e grupos.
+
+### Moradia → Localização — `1:1` (Um para um)
+
+Cada moradia possui exatamente uma localização geográfica, e cada localização pertence a exatamente uma moradia.
+
+### Moradia → Foto Moradia — `1:N` (Um para muitos)
+
+Uma moradia pode ter várias fotos registradas. Cada foto pertence a uma única moradia.
+
+
+### Moradia → Pet — `1:N` (Um para muitos)
+
+Uma moradia pode ter vários pets. Cada pet está vinculado a uma única moradia.
 
 ### 3.6.3. Modelo Relacional e Modelo Físico (sprints 2 e 4)
 
