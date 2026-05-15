@@ -535,6 +535,8 @@ Um wireframe é um quadro (frame) com a estrutura do sistema desenhada em fios (
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
+Esta seção permite a interação com um mapa georreferenciado e refinar a exibição de dados utilizando um menu lateral de Filtros com diversas caixas de seleção. Além disso, uma peculiaridade dessa seção é a possibilidade de recolher esse painel de filtros para maximizar a área visual do mapa, bem como a barra retratil de navegação no inferior da tela, que permite ao usuário alternar agilmente entre os módulos de "Mapa", "Formulário" e "Consulta".
+
 ### **4. Página de Busca**
 
 <div align="center">
