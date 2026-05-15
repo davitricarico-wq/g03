@@ -708,7 +708,7 @@ Registra os **animais de estimação** que residem na moradia cadastrada. A pres
 
 ## Relacionamentos e Cardinalidades
 
-A **cardinalidade** define quantos registros de uma tabela podem se relacionar com registros de outra. Isso são definidos pelos "traços"
+A **cardinalidade** define quantos registros de uma tabela podem se relacionar com registros de outra. Isso são definidos pelos "traços" que estão conectando cada tabela, e, textualmente, as relações são representadas desta maneira:
 
 ### Cidadão → Moradia — `N:1` (Muitos para um)
 
