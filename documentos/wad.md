@@ -549,6 +549,15 @@ Esta seção permite a localização rápida de registros no sistema através de
 
 Os dados encontrados são apresentados na área de "Resultados" em formato de lista contínua com cartões (cards). Cada cartão é estruturado para exibir uma imagem ou foto de referência à esquerda, acompanhada de linhas detalhadas de informações textuais à direita. Além disso, a tela preserva a barra retrátil de navegação na área inferior, garantindo que o usuário possa expandi-la para alternar agilmente entre os demais módulos do sistema.
 
+<div align="center">
+    <p>Figura 14: Wireframe Tela Resultado da Busca - </p>
+    <img src="outros/resultado.png">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
+Esta seção apresenta o detalhamento de um registro específico, acessado após a etapa de pesquisa. No topo, a interface mantém a barra superior e um campo de busca em destaque (com um ícone de lupa), pois o detalhamento aparece como um pop-up sobre a tela de busca, permitindo que o usuário mantenha o contexto e a possibilidade de alternar rapidamente para outros registros. O layout do detalhamento é dividido em duas colunas: à esquerda, uma imagem ou foto de referência relacionada ao registro; à direita, um conjunto organizado de informações textuais, estruturadas em linhas para facilitar a leitura e compreensão dos dados apresentados.
+
+
 ## 3.4. Guia de estilos (sprint 3)
 
 *Descreva aqui orientações gerais para o leitor sobre como utilizar os componentes do guia de estilos de sua solução*
