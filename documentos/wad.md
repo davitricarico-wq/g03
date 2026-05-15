@@ -535,13 +535,28 @@ Um wireframe é um quadro (frame) com a estrutura do sistema desenhada em fios (
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
+Esta seção permite a interação com um mapa georreferenciado e refinar a exibição de dados utilizando um menu lateral de Filtros com diversas caixas de seleção. Além disso, uma peculiaridade dessa seção é a possibilidade de recolher esse painel de filtros para maximizar a área visual do mapa, bem como a barra retratil de navegação no inferior da tela, que permite ao usuário alternar agilmente entre os módulos de "Mapa", "Formulário" e "Consulta".
+
 ### **4. Página de Busca**
 
 <div align="center">
     <p>Figura 13: Wireframe Tela Busca - </p>
-    <img src="outros/.png">
+    <img src="outros/consulta.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
+
+Esta seção permite a localização rápida de registros no sistema através de um campo de busca textual localizado no topo da tela. Para refinar a pesquisa e direcionar os resultados, o usuário conta com seletores sob o título "Tipo de pesquisa", permitindo alternar de forma simples entre a busca por dados de "Moradia" ou por "Responsável".
+
+Os dados encontrados são apresentados na área de "Resultados" em formato de lista contínua com cartões (cards). Cada cartão é estruturado para exibir uma imagem ou foto de referência à esquerda, acompanhada de linhas detalhadas de informações textuais à direita. Além disso, a tela preserva a barra retrátil de navegação na área inferior, garantindo que o usuário possa expandi-la para alternar agilmente entre os demais módulos do sistema.
+
+<div align="center">
+    <p>Figura 14: Wireframe Tela Resultado da Busca - </p>
+    <img src="outros/resultado.png">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
+Esta seção apresenta o detalhamento de um registro específico, acessado após a etapa de pesquisa. No topo, a interface mantém a barra superior e um campo de busca em destaque (com um ícone de lupa), pois o detalhamento aparece como um pop-up sobre a tela de busca, permitindo que o usuário mantenha o contexto e a possibilidade de alternar rapidamente para outros registros. O layout do detalhamento é dividido em duas colunas: à esquerda, uma imagem ou foto de referência relacionada ao registro; à direita, um conjunto organizado de informações textuais, estruturadas em linhas para facilitar a leitura e compreensão dos dados apresentados.
+
 
 ## 3.4. Guia de estilos (sprint 3)
 
