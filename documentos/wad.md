@@ -233,14 +233,14 @@ A oportunidade R10 foca na replicação para outros municípios do ABC para expa
 As personas apresentadas abaixo caracterizam-se como proto-personas, construídas a partir de inferências sobre o contexto institucional e os fluxos operacionais da Defesa Civil, visando representar os principais perfis de usuários e orientar o desenvolvimento da solução. 
 
 <div align="center">
-    <p>Figura 5: Persona 1</p>
+    <p>Figura 4: Persona 1</p>
     <img src="../assets/persona1.png" width="520" height="520">
     <p>Feito pela própria equipe (2026)</p> 
 </div>
 
 
 <div align="center">
-    <p>Figura 6: Persona 2</p>
+    <p>Figura 5: Persona 2</p>
     <img src="../assets/persona2.png" width="520" height="520"> 
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -436,14 +436,27 @@ Matriz de cobertura que demonstra quais RN (Regras de Negócio) e endpoints impl
 
 O diagrama de casos de uso é uma ilustração visual que representa as funcionalidades de um sistema sob a perspectiva de seus usuários, mapeando quais atores interagem com quais casos de uso. Nele, é possível visualizar como os requisitos funcionais se relacionam por meio de dois tipos de relação: `<<include>>`, que indica uma etapa obrigatória dentro de um fluxo, assim, sempre que o caso de uso base for executado, o caso de uso incluído também será; e `<<extend>>`, que indica uma etapa condicional, presente no fluxo apenas em situações específicas, sem ser obrigatória.
 
+<div align="center">
+    <p>Figura 6: Diagrama de Casos de Uso</p>
+    <img src="outros/diagrama_de_casos_de_uso.png">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
 
-<img src="outros/diagrama_de_casos_de_uso.png">
 
 O diagrama mapeia dois atores e três perfis de uso distintos. O **Agente de Campo** representa o perfil **cadastrador**, sendo responsável por registrar e gerenciar dados em campo, interagindo com os casos de uso de cadastro (RF001 a RF004) e gerenciamento (RF006 a RF009). O **Diretor da Defesa Civil** acumula os perfis de **visualizador** e **administrador**: como visualizador, acompanha informações estratégicas por meio dos mapas de calor (RF013); como administrador, é o único ator com acesso à geração de relatórios (RF014) e à exportação de dados (RF015). No fluxo de cadastro, as relações `<<include>>` evidenciam a obrigatoriedade em cadeia, como por exemplo: cadastrar uma moradia (RF001) sempre exige cadastrar o chefe de família (RF002), que por sua vez inclui o cadastro dos membros (RF003). Já o `<<extend>>` aparece nos dois pontos condicionais do diagrama: o cadastro de membros pode, opcionalmente, registrar necessidades especiais (RF004), e a exportação de dados (RF015) estende a geração de relatórios (RF014), ocorrendo apenas quando necessário.
 
 ### 3.2.3. Diagrama de Classes do Domínio (sprint 2)
+O Diagrama de Classes de Dominio representa visualmente as principais entidades do négocio, com seus atributos e relacionamentos entre elas. Não se preocupando com detalhes técnicos como métodos, chaves estrangeiras ou tecnologias específicas, focando somente em capturar o que existe no mundo real dentro do contexto do sistema.
 
-*Diagrama UML de classes com entidades, atributos, relacionamentos e responsabilidades. Diferencie **associação**, **agregação** (losango vazio), **composição** (losango cheio) e **herança** (triângulo vazio). Multiplicidade explícita em toda associação.*
+Link do diagrama (realizado por meio do site draw.io): https://drive.google.com/file/d/1YfjTRYovyfGQ29EKa9RM1ScGjfUeJIIK/view?usp=sharing
+
+
+<div align="center">
+    <p>Figura 7: Diagrama de Classes de Domínio</p>
+    <img src="outros/diagrama-classes-dominio.png" width="800">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
 
 ### 3.2.4. Diagrama de Sequência UML (sprint 3)
 
@@ -470,7 +483,7 @@ Um wireframe é um quadro (frame) com a estrutura do sistema desenhada em fios (
 ### **1. Página Inicial**
 
 <div align="center">
-    <p>Figura 7: Wireframe Tela Inicial</p>
+    <p>Figura 8: Wireframe Tela Inicial</p>
     <img src="outros/paginaInicial.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -478,19 +491,19 @@ Um wireframe é um quadro (frame) com a estrutura do sistema desenhada em fios (
 ### **2. Páginas de Cadastro**
 
 <div align="center">
-    <p>Figura 8: Wireframe Tela Cadastro - Moradias</p>
+    <p>Figura 9: Wireframe Tela Cadastro - Moradias</p>
     <img src="outros/formulario1.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
 <div align="center">
-    <p>Figura 9: Wireframe Tela Cadastro - Responsável</p>
+    <p>Figura 10: Wireframe Tela Cadastro - Responsável</p>
     <img src="outros/formulario2.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
 <div align="center">
-    <p>Figura 10: Wireframe Tela Cadastro - Moradores</p>
+    <p>Figura 11: Wireframe Tela Cadastro - Moradores</p>
     <img src="outros/.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -498,7 +511,7 @@ Um wireframe é um quadro (frame) com a estrutura do sistema desenhada em fios (
 ### **3. Página de Mapa**
 
 <div align="center">
-    <p>Figura 11: Wireframe Tela Mapa</p>
+    <p>Figura 12: Wireframe Tela Mapa</p>
     <img src="outros/mapa.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -506,7 +519,7 @@ Um wireframe é um quadro (frame) com a estrutura do sistema desenhada em fios (
 ### **4. Página de Busca**
 
 <div align="center">
-    <p>Figura 12: Wireframe Tela Busca - </p>
+    <p>Figura 13: Wireframe Tela Busca - </p>
     <img src="outros/.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
