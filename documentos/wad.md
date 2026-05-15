@@ -8,7 +8,7 @@
 
 #### Nomes dos integrantes do grupo
 
-Ali Abdallah  
+Ali Abdallah
 Arthur Davi  
 Davi Tricarico  
 Eduardo Totti  
