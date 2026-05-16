@@ -524,14 +524,20 @@ Um wireframe é um quadro (frame) com a estrutura do sistema desenhada em fios (
 
 <div align="center">
     <p>Figura 11: Wireframe Tela Cadastro - Moradores</p>
-    <img src="outros/.png">
+    <img src="outros/formulario3.png">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
+<div align="center">
+    <p>Figura 12: Wireframe Tela Cadastro - Pets e Animais</p>
+    <img src="outros/formulario4.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
 ### **3. Página de Mapa**
 
 <div align="center">
-    <p>Figura 12: Wireframe Tela Mapa</p>
+    <p>Figura 13: Wireframe Tela Mapa</p>
     <img src="outros/mapa.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -541,7 +547,7 @@ Esta seção permite a interação com um mapa georreferenciado e refinar a exib
 ### **4. Página de Busca**
 
 <div align="center">
-    <p>Figura 13: Wireframe Tela Busca - </p>
+    <p>Figura 14: Wireframe Tela Busca - </p>
     <img src="outros/consulta.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -551,7 +557,7 @@ Esta seção permite a localização rápida de registros no sistema através de
 Os dados encontrados são apresentados na área de "Resultados" em formato de lista contínua com cartões (cards). Cada cartão é estruturado para exibir uma imagem ou foto de referência à esquerda, acompanhada de linhas detalhadas de informações textuais à direita. Além disso, a tela preserva a barra retrátil de navegação na área inferior, garantindo que o usuário possa expandi-la para alternar agilmente entre os demais módulos do sistema.
 
 <div align="center">
-    <p>Figura 14: Wireframe Tela Resultado da Busca - </p>
+    <p>Figura 15: Wireframe Tela Resultado da Busca - </p>
     <img src="outros/resultado.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -586,7 +592,7 @@ Esta seção apresenta o detalhamento de um registro específico, acessado após
 ### 3.6.1. Modelo Entidade-Relacionamento (ER) (sprint 2)
 
 <div align="center">
-    <p>Figura 14: Modelo Entidade Relacionamento- </p>
+    <p>Figura 16: Modelo Entidade Relacionamento- </p>
     <img src="outros/MER.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -623,7 +629,7 @@ Em conformidade com a LGPD e regras de auditoria pública, **nenhum dado é dele
 
 O Diagrama Entidade-Relacionamento (DER) representa a modelagem conceitual do banco de dados da aplicação, demonstrando as entidades do sistema, seus atributos, chaves primárias e estrangeiras, além dos relacionamentos e cardinalidades existentes. O diagrama serve como base para a implementação da estrutura relacional no banco de dados.
 
-<p>Figura 15: Diagrama Entidade-Relacionamento - </p>
+<p>Figura 17: Diagrama Entidade-Relacionamento - </p>
 <img src="../assets/der-lógico.png">
 <p>Feito pela própria equipe (2026)</p>
 
