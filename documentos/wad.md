@@ -1288,21 +1288,6 @@ O modelo implementado assegura:
  **Performance em Mapeamento** — Índices estratégicos para geolocalização  
  **Suporte a Especialização** — Herança de Cidadão sem conflitos  
 
----
-
-#### Diagrama Entidade-Relacionamento (DER)
-
-*[Inserir diagrama ER gerado em DBDiagram.io ou ferramenta equivalente]*
-
-Relacionamentos principais:
-- **Família** ← 1:N → **Cidadão**
-- **Família** ← 1:N → **Pet**
-- **Família** ← N:N → **Moradia** (via `historico_ocupacao`)
-- **Cidadão** → **Responsável** (herança 0..1)
-- **Cidadão** → **Gestante** (herança 0..*)
-- **Cidadão** ← N:N → **GrupoPrioritario**
-- **Moradia** ← 1:N → **FotoMoradia**
-- **Moradia** ← 1:1 → **Localização**
 
 ### 3.6.4. Consultas SQL e lógica proposicional (sprint 2)
 
