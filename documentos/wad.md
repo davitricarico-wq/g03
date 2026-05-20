@@ -35,11 +35,13 @@ Lucas Bianchezzi
 
 [6. Estudo de Mercado e Plano de Marketing](#c6)
 
-[7. Conclusões e trabalhos futuros](#c7)
+[7. Registro de Atualizações](#c7)
 
-[8. Referências](#c8)
+[8. Conclusões e trabalhos futuros](#c8)
 
-[Anexos](#c9)
+[9. Referências](#c9)
+
+[Anexos](#c10)
 
 <br>
 
@@ -334,7 +336,7 @@ Apresenta-se a seguir a lista de User Stories levantadas para o projeto GeoRisco
 |---|---|
 | Persona | Wesley Souza (Gestor Operacional) |
 | User Story | "Como gestor operacional, quero arquivar moradores falecidos, para manter o histórico do indivíduo sem comprometer os dados operacionais ativos." |
-| Critério de aceite 1 | CR1: Dado que um morador veio a óbito, quando o gestor acessar o cadastro do indivíduo e clicar em "Arquivar Morador", então o sistema deve exigir o preenchimento da data de falecimento e a confirmação da ação antes de concluir o arquivamento. |
+| Critério de aceite 1 | CR1: Dado que um morador veio a óbito, quando acessado o cadastro do indivíduo e clicado em "Arquivar Morador", então o sistema deve exigir o preenchimento da data de falecimento e a confirmação da ação antes de concluir o arquivamento. |
 | Critério de aceite 2 | CR2: Dado que um morador foi arquivado como falecido, quando o gestor acessar listagens, relatórios ou operações ativas, então este morador NÃO deve ser exibido nos registros ativos, permanecendo apenas na seção de "Histórico de Moradores". |
 | Critérios INVEST | Independente: A funcionalidade de arquivamento lógico do morador pode ser implementada sem impactar o cadastro ativo.; Negociável: Os campos relacionados ao falecimento podem ser ajustados conforme as regras do sistema.; Valiosa: Mantém o histórico populacional preservado sem interferir nas operações correntes.; Estimável: Requer adição de status lógico, filtros de consulta e atualização das regras de exibição.; Pequena: Funcionalidade isolada e de baixa complexidade técnica.; Testável: Garantir que moradores arquivados não sejam retornados em consultas de moradores ativos e permaneçam acessíveis no histórico. |
 
@@ -799,15 +801,15 @@ Um cidadão pode possuir múltiplas vulnerabilidades (ex: Idoso e Acamado simult
 
 ### 3.6.3. Modelo Físico
 
-#### Diagrama Entidade-Relacionamento (DER) — Modelo Físico
+### Diagrama Entidade-Relacionamento (DER) — Modelo Físico
 
 O modelo físico apresentado implementa a arquitetura conceitual descrita em 3.6.1 e 3.6.2 utilizando PostgreSQL como SGBD. As principais decisões de implementação refletem os requisitos de rastreabilidade, integridade referencial, conformidade com LGPD e otimização para mapeamento geográfico de áreas de risco.
 
 ---
 
-#### Decisões Arquiteturais do Modelo Físico
+### Decisões Arquiteturais do Modelo Físico
 
-##### 1. Família como Entidade Agrupadeira Central
+#### 1. Família como Entidade Agrupadeira Central
 
 A entidade **`familia`** é o núcleo organizador do sistema. Todos os cidadãos e pets vinculam-se a uma família, não diretamente a uma moradia. Isso permite:
 - Controle de ocupação histórica sem duplicação de dados
@@ -815,7 +817,7 @@ A entidade **`familia`** é o núcleo organizador do sistema. Todos os cidadãos
 - Atualizações em massa (ex: toda a família se mudou)
 - Rastreamento de vulnerabilidade familiar ao longo do tempo
 
-##### 2. Herança de Cidadão: Responsável e Gestante
+#### 2. Herança de Cidadão: Responsável e Gestante
 
 A hierarquia `Cidadão` → (`Responsável`, `Gestante`) foi implementada usando **class-table inheritance**:
 - Tabela **`cidadao`** armazena atributos comuns (nome, data nascimento, situação ocupacional)
@@ -824,7 +826,7 @@ A hierarquia `Cidadão` → (`Responsável`, `Gestante`) foi implementada usando
 
 **Vantagem:** Um cidadão pode ser responsável, gestante, ou apenas dependente sem conflitos.
 
-##### 3. Relacionamento N:N com Histórico Temporal (Historico_Ocupacao)
+#### 3. Relacionamento N:N com Histórico Temporal (Historico_Ocupacao)
 
 O relacionamento **`historico_ocupacao`** entre `familia` e `moradia` preserva:
 - `data_entrada`: início da ocupação
@@ -833,7 +835,7 @@ O relacionamento **`historico_ocupacao`** entre `familia` e `moradia` preserva:
 
 Permite análises históricas completas: **qual familia morou onde, por quanto tempo, por quê**.
 
-##### 4. Soft Delete (Exclusão Lógica)
+#### 4. Soft Delete (Exclusão Lógica)
 
 Em conformidade com LGPD e auditoria pública:
 - **`cidadao.status_cadastro`** (BOOLEAN): ativa/inativa pessoa individual
@@ -842,14 +844,14 @@ Em conformidade com LGPD e auditoria pública:
 
 Nenhum registro é fisicamente deletado; histórico é preservado para auditoria.
 
-##### 5. Pet Vinculado a Família (Não a Moradia)
+#### 5. Pet Vinculado a Família (Não a Moradia)
 
 Pets relacionam-se a `familia` e não a `moradia` porque:
 - Quando uma família se muda, leva seus pets consigo
 - Evita dados órfãos quando moradia é evacuada
 - Facilita rastreamento de animais em emergências
 
-##### 6. Constraints e Validações
+#### 6. Constraints e Validações
 
 - **NOT NULL** em campos obrigatórios (nomes, datas, coordenadas)
 - **UNIQUE** em CPF, email, NIS (sem duplicação)
@@ -858,7 +860,7 @@ Pets relacionam-se a `familia` e não a `moradia` porque:
 
 ---
 
-#### Tipos Enumerados (ENUMs)
+### Tipos Enumerados (ENUMs)
 
 ```sql
 CREATE TYPE grau_parentesco_enum AS ENUM (
@@ -980,9 +982,9 @@ CREATE TYPE status_moradia_enum AS ENUM (
 
 ---
 
-#### Migrations DDL (Create Tables)
+### Migrations DDL (Create Tables)
 
-##### Migration 001: Criar Tabela de Localização
+#### Migration 001: Criar Tabela de Localização
 
 ```sql
 -- Armazena endereço e coordenadas geográficas
@@ -1007,7 +1009,7 @@ CREATE INDEX idx_localizacao_cep ON localizacao(cep);
 
 ---
 
-##### Migration 002: Criar Tabela de Moradia
+#### Migration 002: Criar Tabela de Moradia
 
 ```sql
 -- Representa o imóvel onde as famílias residem
@@ -1033,7 +1035,7 @@ CREATE INDEX idx_moradia_status ON moradia(status);
 
 ---
 
-##### Migration 003: Criar Tabela de Grupo Prioritário
+#### Migration 003: Criar Tabela de Grupo Prioritário
 
 ```sql
 -- Define grupos de vulnerabilidade/prioridade para atendimento
@@ -1049,7 +1051,7 @@ CREATE TABLE grupo_prioritario (
 
 ---
 
-##### Migration 004: Criar Tabela de Família
+#### Migration 004: Criar Tabela de Família
 
 ```sql
 -- Entidade agrupadeira central do sistema
@@ -1068,7 +1070,7 @@ CREATE INDEX idx_familia_status ON familia(status_ativo);
 
 ---
 
-##### Migration 005: Criar Tabela de Cidadão (Superclasse)
+#### Migration 005: Criar Tabela de Cidadão (Superclasse)
 
 ```sql
 -- Superclasse que agrupa Responsável e Gestante
@@ -1096,7 +1098,7 @@ CREATE INDEX idx_cidadao_status ON cidadao(status_cadastro);
 
 ---
 
-##### Migration 006: Criar Tabela de Responsável (Subclasse de Cidadão)
+#### Migration 006: Criar Tabela de Responsável (Subclasse de Cidadão)
 
 ```sql
 -- Subclasse de Cidadão: acrescenta dados burocrático-sociais
@@ -1131,7 +1133,7 @@ CREATE INDEX idx_responsavel_nis ON responsavel(nis);
 
 ---
 
-##### Migration 007: Criar Tabela de Gestante (Subclasse de Cidadão)
+#### Migration 007: Criar Tabela de Gestante (Subclasse de Cidadão)
 
 ```sql
 -- Subclasse de Cidadão: registra gestações
@@ -1153,7 +1155,7 @@ CREATE INDEX idx_gestante_data_prevista ON gestante(data_prevista);
 
 ---
 
-##### Migration 008: Criar Tabela de Pet
+#### Migration 008: Criar Tabela de Pet
 
 ```sql
 -- Registra animais de estimação residentes na família
@@ -1177,7 +1179,7 @@ CREATE INDEX idx_pet_familia ON pet(id_familia);
 
 ---
 
-##### Migration 009: Criar Tabela de Foto Moradia
+#### Migration 009: Criar Tabela de Foto Moradia
 
 ```sql
 -- Armazena fotos do imóvel para identificação visual
@@ -1197,7 +1199,7 @@ CREATE INDEX idx_foto_moradia ON foto_moradia(id_moradia);
 
 ---
 
-##### Migration 010: Criar Tabela Histórico de Ocupação (N:N com Histórico Temporal)
+#### Migration 010: Criar Tabela Histórico de Ocupação (N:N com Histórico Temporal)
 
 ```sql
 -- Relacionamento N:N entre Família e Moradia com atributos temporais
@@ -1225,7 +1227,7 @@ CREATE INDEX idx_hist_ocupacao_ativo ON historico_ocupacao(data_saida);
 
 ---
 
-##### Migration 011: Criar Tabela Associativa Cidadão-GrupoPrioritario (N:N)
+#### Migration 011: Criar Tabela Associativa Cidadão-GrupoPrioritario (N:N)
 
 ```sql
 -- Relacionamento N:N: um cidadão pode pertencer a vários grupos prioritários
@@ -1288,21 +1290,6 @@ O modelo implementado assegura:
  **Performance em Mapeamento** — Índices estratégicos para geolocalização  
  **Suporte a Especialização** — Herança de Cidadão sem conflitos  
 
----
-
-#### Diagrama Entidade-Relacionamento (DER)
-
-*[Inserir diagrama ER gerado em DBDiagram.io ou ferramenta equivalente]*
-
-Relacionamentos principais:
-- **Família** ← 1:N → **Cidadão**
-- **Família** ← 1:N → **Pet**
-- **Família** ← N:N → **Moradia** (via `historico_ocupacao`)
-- **Cidadão** → **Responsável** (herança 0..1)
-- **Cidadão** → **Gestante** (herança 0..*)
-- **Cidadão** ← N:N → **GrupoPrioritario**
-- **Moradia** ← 1:N → **FotoMoradia**
-- **Moradia** ← 1:1 → **Localização**
 
 ### 3.6.4. Consultas SQL e lógica proposicional (sprint 2)
 
@@ -1444,7 +1431,21 @@ Descreva os principais segmentos de mercado a serem atendidos pela aplicação. 
 *d) Promoção (até 200 palavras)*
 *Descreva as estratégias digitais planejadas, como SEO, redes sociais, marketing de conteúdo e campanhas pagas.*
 
-# <a name="c7"></a>7. Conclusões e trabalhos futuros (sprint 5)
+# <a name="c7"></a>7. Registro de atualizações (sprint 5)
+Início na sprint 2 pois não é possível realizar atualizações na sprint que foi iniciado o projeto;
+### Sprint 2
+Tivemos alterações nas Personas (ambas), User Stories (todas), RF, RNF e RN. Dado que o escopo do projeto estava confuso para a equipe, para melhor seguimento do projeto foi necessária essa reformulação na documentação.
+
+### Sprint 3
+
+
+### Sprint 4
+
+
+### Sprint 5
+
+
+# <a name="c8"></a>8. Conclusões e trabalhos futuros (sprint 5)
 
 *Escreva de que formas a solução da aplicação web atingiu os objetivos descritos na seção 2 deste documento. Indique pontos fortes e pontos a melhorar de maneira geral.*
 
@@ -1452,7 +1453,7 @@ Descreva os principais segmentos de mercado a serem atendidos pela aplicação. 
 
 *Relacione também quaisquer outras ideias que o grupo tenha para melhorias futuras*
 
-# <a name="c8"></a>8. Referências (sprints 1 a 5)
+# <a name="c9"></a>9. Referências (sprints 1 a 5)
 
 1. PORTER, Michael E. *Estratégia Competitiva: Técnicas para Análise de Indústrias e da Concorrência*. 2. ed. Rio de Janeiro: Campus, 2004.
 
@@ -1465,6 +1466,6 @@ Descreva os principais segmentos de mercado a serem atendidos pela aplicação. 
 5. PEDROSO, Luiz Guilherme Lourenço Becker. [Título do trabalho]. 2017. Trabalho de Conclusão de Curso (Graduação) – Universidade de São Paulo, São Paulo, 2017. Disponível em: https://bdta.abcd.usp.br/directbitstream/05356078-01cb-4989-856d-4cf4dcb8b4cc/LuizGuilhermeLourencoBeckerPedroso%20TCCPRO17.pdf
 . Acesso em: 30 abr. 2026.
 
-# <a name="c9"></a>Anexos
+# <a name="c10"></a>Anexos
 
 *Inclua aqui quaisquer complementos para seu projeto, como diagramas, imagens, tabelas etc. Organize em sub-tópicos utilizando headings menores (use ## ou ### para isso)*
