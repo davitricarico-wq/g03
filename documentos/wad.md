@@ -356,6 +356,22 @@ Apresenta-se a seguir a lista de User Stories levantadas para o projeto GeoRisco
 | Critério de aceite 2 | CR2: Dado que o agente assina e envia a atualização, quando os dados são sincronizados no servidor, então o indicador de "desatualizado" no painel do Gestor Operacional deve desaparecer instantaneamente. |
 | Critérios INVEST | Independente: Atua apenas sobre registros já existentes fechando o ciclo de vida do dado.; Negociável: A necessidade de manter versionamento de histórico pode ser discutida.; Valiosa: Garante que o banco da Defesa Civil reflita sempre a realidade do ano vigente.; Estimável: É um reaproveitamento do formulário de criação adaptado para Update.; Pequena: Foca unicamente na ação de editar e limpar os alertas.; Testável: Atestar que a ação de salvar a edição atualiza a coluna correspondente no banco e zera a notificação. |
 
+| Identificação | US13 |
+|---|---|
+| Persona | Wesley Souza (Gestor Operacional) |
+| User Story | Chefe de familia ausente |
+| Critério de aceite 1 | CR1:  |
+| Critério de aceite 2 | CR2:  |
+| Critérios INVEST | Independente: ; Negociável: ; Valiosa: ; Estimável: ; Pequena: ; Testável:  |
+
+| Identificação | US14 |
+|---|---|
+| Persona | Wesley Souza (Gestor Operacional) |
+| User Story | Moradia ausente |
+| Critério de aceite 1 | CR1:  |
+| Critério de aceite 2 | CR2:  |
+| Critérios INVEST | Independente: ; Negociável: ; Valiosa: ; Estimável: ; Pequena: ; Testável:  |
+
 
 # <a name="c3"></a>3. Projeto da Aplicação Web (sprints 1 a 5)
 
