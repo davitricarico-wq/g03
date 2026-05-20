@@ -1308,6 +1308,14 @@ O modelo implementado assegura:
 **Expressão lógica proposicional** | $(A \land B) \lor C$
 **Tabela Verdade** | <table> <thead> <tr> <th>$A$</th> <th>$B$</th> <th>$C$</th> <th>$(A \land B)$</th> <th>$(A \land B) \lor C$</th> </tr> </thead> <tbody> <tr> <td>F</td> <td>F</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>F</td> <td>V</td> <td>F</td> <td>V</td> </tr> <tr> <td>F</td> <td>V</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>V</td> <td>V</td> <td>F</td> <td>V</td> </tr> <tr> <td>V</td> <td>F</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>F</td> <td>V</td> <td>F</td> <td>V</td> </tr> <tr> <td>V</td> <td>V</td> <td>F</td> <td>V</td> <td>V</td> </tr> <tr> <td>V</td> <td>V</td> <td>V</td> <td>V</td> <td>V</td> </tr> </tbody> </table>
 
+#2 | ---
+--- | ---
+**Expressão SQL** | UPDATE ocorrencia SET status_ocorrencia = 'ENCERRADA' WHERE NOT(tipo_ocorrencia = 'ENCHENTE') AND prioridade = 'BAIXA';
+**Descrição da consulta** | Atualiza o status das ocorrências para “ENCERRADA” quando o tipo da ocorrência não for enchente e a prioridade for baixa.
+**Proposições lógicas** | $A$: O tipo da ocorrência é ENCHENTE (`tipo_ocorrencia = 'ENCHENTE'`) <br> $B$: A prioridade é BAIXA (`prioridade = 'BAIXA'`)
+**Expressão lógica proposicional** | $(\neg A) \land B$
+**Tabela Verdade** | <table> <thead> <tr> <th>$A$</th> <th>$B$</th> <th>$\neg A$</th> <th>$(\neg A) \land B$</th> </tr> </thead> <tbody> <tr> <td>F</td> <td>F</td> <td>V</td> <td>F</td> </tr> <tr> <td>F</td> <td>V</td> <td>V</td> <td>V</td> </tr> <tr> <td>V</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>V</td> <td>F</td> <td>F</td> </tr> </tbody> </table>
+
 ---
 
 
