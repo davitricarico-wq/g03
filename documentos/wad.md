@@ -1316,6 +1316,13 @@ O modelo implementado assegura:
 **Expressão lógica proposicional** | $(\neg A) \land B$
 **Tabela Verdade** | <table> <thead> <tr> <th>$A$</th> <th>$B$</th> <th>$\neg A$</th> <th>$(\neg A) \land B$</th> </tr> </thead> <tbody> <tr> <td>F</td> <td>F</td> <td>V</td> <td>F</td> </tr> <tr> <td>F</td> <td>V</td> <td>V</td> <td>V</td> </tr> <tr> <td>V</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>V</td> <td>F</td> <td>F</td> </tr> </tbody> </table>
 
+#3 | ---
+--- | ---
+**Expressão SQL** | DELETE FROM alerta WHERE (categoria IN ('BAIXO', 'MÉDIO')) OR (data_expiracao < CURRENT_DATE);
+**Descrição da consulta** | Remove alertas cuja categoria seja BAIXO ou MÉDIO, ou alertas que estejam expirados.
+**Proposições lógicas** | $A$: A categoria é BAIXO (`categoria = 'BAIXO'`) <br> $B$: A categoria é MÉDIO (`categoria = 'MÉDIO'`) <br> $C$: O alerta está expirado (`data_expiracao < CURRENT_DATE`)
+**Expressão lógica proposicional** | $(A \lor B) \lor C$
+**Tabela Verdade** | <table> <thead> <tr> <th>$A$</th> <th>$B$</th> <th>$C$</th> <th>$(A \lor B)$</th> <th>$(A \lor B) \lor C$</th> </tr> </thead> <tbody> <tr> <td>F</td> <td>F</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>F</td> <td>V</td> <td>F</td> <td>V</td> </tr> <tr> <td>F</td> <td>V</td> <td>F</td> <td>V</td> <td>V</td> </tr> <tr> <td>F</td> <td>V</td> <td>V</td> <td>V</td> <td>V</td> </tr> <tr> <td>V</td> <td>F</td> <td>F</td> <td>V</td> <td>V</td> </tr> <tr> <td>V</td> <td>F</td> <td>V</td> <td>V</td> <td>V</td> </tr> <tr> <td>V</td> <td>V</td> <td>F</td> <td>V</td> <td>V</td> </tr> <tr> <td>V</td> <td>V</td> <td>V</td> <td>V</td> <td>V</td> </tr> </tbody> </table>
 ---
 
 
