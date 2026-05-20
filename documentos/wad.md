@@ -1293,37 +1293,42 @@ O modelo implementado assegura:
 
 ### 3.6.4. Consultas SQL e lógica proposicional (sprint 2)
 
-*posicione aqui uma lista de consultas SQL compostas, realizadas pelo back-end da aplicação web, com sua respectiva lógica proposicional, descrita conforme template abaixo. Lembre-se que para usar LaTeX em markdown, basta você colocar as expressões entre $ ou $$*
+A lógica proposicional é um ramo da Matemática e da Computação utilizado para representar e analisar condições lógicas por meio de proposições. No contexto de bancos de dados e consultas SQL, ela permite interpretar como diferentes condições presentes em comandos como `WHERE`, `AND`, `OR`, `NOT`, `LIKE` e `IN` influenciam o resultado final de uma consulta.
 
-*Template de SQL + lógica proposicional*
-# 3.6.4 — Lógica Proposicional Aplicada às Consultas SQL
+Cada condição de uma instrução SQL pode ser representada por uma proposição lógica, normalmente identificada, formalmente, por letras como $A$, $B$ e $C$. Essas proposições assumem apenas dois valores possíveis: verdadeiro (V) ou falso (F). A partir disso, utilizam-se conectivos lógicos para combinar condições e construir expressões mais complexas. O operador `AND` corresponde à conjunção lógica ($\land$), exigindo que ambas as condições sejam verdadeiras; o operador `OR` representa a disjunção lógica ($\lor$), em que pelo menos uma condição deve ser verdadeira; e o operador `NOT` representa a negação lógica ($\neg$), invertendo o valor lógico da proposição.
+
+A tabela verdade é uma ferramenta utilizada para demonstrar todas as combinações possíveis entre proposições lógicas e seus respectivos resultados. Ela permite visualizar, de maneira organizada, como uma expressão lógica se comporta em diferentes cenários. Dessa forma, torna-se possível compreender com precisão quando uma consulta SQL retornará registros, atualizará dados ou excluirá informações do banco de dados.
+
+No desenvolvimento da aplicação web para a Defesa Civil, a lógica proposicional foi aplicada para estruturar consultas SQL mais robustas e coerentes, possibilitando a filtragem correta de dados relacionados a usuários, alertas, ocorrências, famílias e abrigos. As tabelas verdade auxiliam na validação dessas regras lógicas, garantindo maior clareza, previsibilidade e confiabilidade nas operações realizadas pelo sistema.
 
 ---
 
-#1 | ---
+#1 | Selecionar ...
 --- | ---
-**Expressão SQL** | SELECT * FROM usuario WHERE (nivel_risco = 'ALTO' AND status_abrigo = 'ATIVO') OR (idade >= 60);
+**Expressão SQL** | SELECT * FROM usuario WHERE (nivel_risco = 'ALTO' AND status_abrigo = 'ATIVO') OR (idade >= 60); (base para query)
 **Descrição da consulta** | Seleciona usuários que estão em área de risco alto e possuem abrigo ativo, ou usuários idosos com idade maior ou igual a 60 anos.
 **Proposições lógicas** | $A$: O nível de risco é ALTO (`nivel_risco = 'ALTO'`) <br> $B$: O abrigo está ATIVO (`status_abrigo = 'ATIVO'`) <br> $C$: A idade é maior ou igual a 60 (`idade \geq 60`)
 **Expressão lógica proposicional** | $(A \land B) \lor C$
 **Tabela Verdade** | <table> <thead> <tr> <th>$A$</th> <th>$B$</th> <th>$C$</th> <th>$(A \land B)$</th> <th>$(A \land B) \lor C$</th> </tr> </thead> <tbody> <tr> <td>F</td> <td>F</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>F</td> <td>V</td> <td>F</td> <td>V</td> </tr> <tr> <td>F</td> <td>V</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>V</td> <td>V</td> <td>F</td> <td>V</td> </tr> <tr> <td>V</td> <td>F</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>F</td> <td>V</td> <td>F</td> <td>V</td> </tr> <tr> <td>V</td> <td>V</td> <td>F</td> <td>V</td> <td>V</td> </tr> <tr> <td>V</td> <td>V</td> <td>V</td> <td>V</td> <td>V</td> </tr> </tbody> </table>
 
-#2 | ---
+#2 | Atualizar...
 --- | ---
-**Expressão SQL** | UPDATE ocorrencia SET status_ocorrencia = 'ENCERRADA' WHERE NOT(tipo_ocorrencia = 'ENCHENTE') AND prioridade = 'BAIXA';
+**Expressão SQL** | UPDATE ocorrencia SET status_ocorrencia = 'ENCERRADA' WHERE NOT(tipo_ocorrencia = 'ENCHENTE') AND prioridade = 'BAIXA';(base para query)
 **Descrição da consulta** | Atualiza o status das ocorrências para “ENCERRADA” quando o tipo da ocorrência não for enchente e a prioridade for baixa.
 **Proposições lógicas** | $A$: O tipo da ocorrência é ENCHENTE (`tipo_ocorrencia = 'ENCHENTE'`) <br> $B$: A prioridade é BAIXA (`prioridade = 'BAIXA'`)
 **Expressão lógica proposicional** | $(\neg A) \land B$
 **Tabela Verdade** | <table> <thead> <tr> <th>$A$</th> <th>$B$</th> <th>$\neg A$</th> <th>$(\neg A) \land B$</th> </tr> </thead> <tbody> <tr> <td>F</td> <td>F</td> <td>V</td> <td>F</td> </tr> <tr> <td>F</td> <td>V</td> <td>V</td> <td>V</td> </tr> <tr> <td>V</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>V</td> <td>F</td> <td>F</td> </tr> </tbody> </table>
 
-#3 | ---
+#3 | Deletar...
 --- | ---
-**Expressão SQL** | DELETE FROM alerta WHERE (categoria IN ('BAIXO', 'MÉDIO')) OR (data_expiracao < CURRENT_DATE);
+**Expressão SQL** | DELETE FROM alerta WHERE (categoria IN ('BAIXO', 'MÉDIO')) OR (data_expiracao < CURRENT_DATE); (base para query)
 **Descrição da consulta** | Remove alertas cuja categoria seja BAIXO ou MÉDIO, ou alertas que estejam expirados.
 **Proposições lógicas** | $A$: A categoria é BAIXO (`categoria = 'BAIXO'`) <br> $B$: A categoria é MÉDIO (`categoria = 'MÉDIO'`) <br> $C$: O alerta está expirado (`data_expiracao < CURRENT_DATE`)
 **Expressão lógica proposicional** | $(A \lor B) \lor C$
 **Tabela Verdade** | <table> <thead> <tr> <th>$A$</th> <th>$B$</th> <th>$C$</th> <th>$(A \lor B)$</th> <th>$(A \lor B) \lor C$</th> </tr> </thead> <tbody> <tr> <td>F</td> <td>F</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>F</td> <td>V</td> <td>F</td> <td>V</td> </tr> <tr> <td>F</td> <td>V</td> <td>F</td> <td>V</td> <td>V</td> </tr> <tr> <td>F</td> <td>V</td> <td>V</td> <td>V</td> <td>V</td> </tr> <tr> <td>V</td> <td>F</td> <td>F</td> <td>V</td> <td>V</td> </tr> <tr> <td>V</td> <td>F</td> <td>V</td> <td>V</td> <td>V</td> </tr> <tr> <td>V</td> <td>V</td> <td>F</td> <td>V</td> <td>V</td> </tr> <tr> <td>V</td> <td>V</td> <td>V</td> <td>V</td> <td>V</td> </tr> </tbody> </table>
 ---
+
+Ressalto que só fiz a estrutura de um exemplo de logica, mas ela ainda não apresenta as querys que iremos utilizar.
 
 
 ## 3.7. WebAPI e endpoints (sprints 3 e 4)
