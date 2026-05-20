@@ -1296,14 +1296,20 @@ O modelo implementado assegura:
 *posicione aqui uma lista de consultas SQL compostas, realizadas pelo back-end da aplicação web, com sua respectiva lógica proposicional, descrita conforme template abaixo. Lembre-se que para usar LaTeX em markdown, basta você colocar as expressões entre $ ou $$*
 
 *Template de SQL + lógica proposicional*
+# 3.6.4 — Lógica Proposicional Aplicada às Consultas SQL
+
+---
+
 #1 | ---
 --- | ---
-**Expressão SQL** | SELECT * FROM suppliers WHERE (state = 'California' AND supplier_id <> 900) OR (supplier_id = 100); 
-**Proposições lógicas** | $A$: O estado é 'California' (state = 'California') <br> $B$: O ID do fornecedor não é 900 (supplier_id ≠ 900) <br> $C$: O ID do fornecedor é 100 (supplier_id = 100)
+**Expressão SQL** | SELECT * FROM usuario WHERE (nivel_risco = 'ALTO' AND status_abrigo = 'ATIVO') OR (idade >= 60);
+**Descrição da consulta** | Seleciona usuários que estão em área de risco alto e possuem abrigo ativo, ou usuários idosos com idade maior ou igual a 60 anos.
+**Proposições lógicas** | $A$: O nível de risco é ALTO (`nivel_risco = 'ALTO'`) <br> $B$: O abrigo está ATIVO (`status_abrigo = 'ATIVO'`) <br> $C$: A idade é maior ou igual a 60 (`idade \geq 60`)
 **Expressão lógica proposicional** | $(A \land B) \lor C$
 **Tabela Verdade** | <table> <thead> <tr> <th>$A$</th> <th>$B$</th> <th>$C$</th> <th>$(A \land B)$</th> <th>$(A \land B) \lor C$</th> </tr> </thead> <tbody> <tr> <td>F</td> <td>F</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>F</td> <td>V</td> <td>F</td> <td>V</td> </tr> <tr> <td>F</td> <td>V</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>V</td> <td>V</td> <td>F</td> <td>V</td> </tr> <tr> <td>V</td> <td>F</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>F</td> <td>V</td> <td>F</td> <td>V</td> </tr> <tr> <td>V</td> <td>V</td> <td>F</td> <td>V</td> <td>V</td> </tr> <tr> <td>V</td> <td>V</td> <td>V</td> <td>V</td> <td>V</td> </tr> </tbody> </table>
 
-*Dica: edite a tabela verdade fora do markdown, para ter melhor controle*
+---
+
 
 ## 3.7. WebAPI e endpoints (sprints 3 e 4)
 
