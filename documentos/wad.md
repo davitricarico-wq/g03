@@ -366,10 +366,10 @@ Apresenta-se a seguir a lista de User Stories levantadas para o projeto GeoRisco
 | Identificação | US14 |
 |---|---|
 | Persona | Wesley Souza (Gestor Operacional) |
-| User Story | Moradia ausente |
-| Critério de aceite 1 | CR1:  |
-| Critério de aceite 2 | CR2:  |
-| Critérios INVEST | Independente: ; Negociável: ; Valiosa: ; Estimável: ; Pequena: ; Testável:  |
+| User Story | "Como gestor operacional, quero que toda família ativa possua obrigatoriamente uma moradia vinculada, para garantir a integridade cadastral e facilitar a gestão operacional e social das famílias atendidas." |
+| Critério de aceite 1 | CR1: Dado que uma família esteja ativa no sistema, quando não houver um moradia definida e ativa, então o sistema deve exibir um alerta de inconsistência cadastral e impedir a finalização ou permanência do cadastro como ativo. |
+| Critério de aceite 2 | CR2: Dado que a moradia seja arquivada, inativado ou removido enquanto uma família estiver vinculada, quando a alteração for confirmada, então o sistema deve exigir a definição de uma nova moradia. |
+| Critérios INVEST | Independente: A validação da moradia pode ser implementada sem impactar os demais módulos do sistema.; Negociável: As regras de definição e substituição da moradia podem ser ajustadas conforme as políticas da Defesa Civil.; Valiosa: Garante consistência nos registros familiares e melhora a rastreabilidade das informações sociais.; Estimável: A implementação exige apenas validações de vínculo e regras de negócio simples.; Pequena: O escopo está restrito à obrigatoriedade e substituição da moradia vinculada a família.; Testável: O QA pode tentar manter uma família ativa sem moradia e validar se o sistema envia o alerta corretamente. |
 
 
 # <a name="c3"></a>3. Projeto da Aplicação Web (sprints 1 a 5)
