@@ -445,8 +445,38 @@ Matriz de cobertura que demonstra quais RN (Regras de Negócio) e endpoints impl
 | RF001 | RN01, RN02    | `/usuarios` | POST   |
 
 ## 3.2. Arquitetura (sprints 1 a 5)
+A arquitetura projetada para o sistema é, em suma, baseada na Arquitetura de Seis Camadas (ou 6-Tier Architecture) com base em princípios SOLID e de separação de conceitos (Separation of Concerns). Dividindo a aplicação em componentes especializados e com responsabilidades muito bem definidas.
+Assim, fornece um código testável, escalável e de alta manutenibilidade, permitindo que as regras de negócio fiquem isoladas de detalhes de infraestrutura (como o banco de dados) e da interface do usuário.
 
 ### 3.2.1. Diagrama de Arquitetura (sprints 3 e 4)
+
+```
+src/
+├── models/
+│   ├── validations/ – validação dos atributos / classes
+│   └── implementations/ – definição das classes
+├── views/
+├── controllers/
+│   └── contracts/ – Contratos das nossas controllers (requisições)
+│   	├── requests/ – DTO das requisições
+│   	└── responses/ – DTO das responses(respostas)
+├── services/
+│   ├── interfaces – interfaces dos services
+│   ├── implementations – implementações dos services
+│   └── contracts/ – Contratos das nossas controllers (requisições)
+│   	├── requests/ – DTO das requisições
+│   	└── responses/ – DTO das responses(respostas)
+├── repositories/
+│   ├── interfaces/ – interfaces dos repositórios
+│   └── implementations/ – implementações dos repositórios
+├──mappers/
+├──database/
+│   └── migrations/
+├──routes/ – 
+├──middlewares/ – guarda o middleware global do sistema
+├──errors/ – tratamento de erros específicos do sistema
+└── helpers/               - transversal, fora do fluxo
+```
 
 *Posicione aqui o diagrama de arquitetura da solução, indicando as camadas principais (Controller, Service, Repository, Model) e suas responsabilidades. Atualize sempre que necessário.*
 
