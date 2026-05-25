@@ -1338,7 +1338,7 @@ No desenvolvimento da aplicação web para a Defesa Civil, a lógica proposicion
 
 ---
 
-#1 | ---
+#1 | SELECT
 --- | ---
 **Expressão SQL** | SELECT m.id, l.logradouro, l.bairro, p.nome as responsavel FROM vw_moradia_ativa m 
 JOIN localizacao l ON m.id_localizacao = l.id 
@@ -1350,7 +1350,7 @@ JOIN vw_pessoa_ativa p ON pf id_pessoa = p.id WHERE m.status = 'Em Risco' AND p.
 **Expressão lógica proposicional** | $(A \land B) \lor C$
 **Tabela Verdade** | <table> <thead> <tr> <th>$A$</th> <th>$B$</th> <th>$C$</th> <th>$(A \land B)$</th> <th>$(A \land B) \lor C$</th> </tr> </thead> <tbody> <tr> <td>F</td> <td>F</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>F</td> <td>V</td> <td>F</td> <td>V</td> </tr> <tr> <td>F</td> <td>V</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>V</td> <td>V</td> <td>F</td> <td>V</td> </tr> <tr> <td>V</td> <td>F</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>F</td> <td>V</td> <td>F</td> <td>V</td> </tr> <tr> <td>V</td> <td>V</td> <td>F</td> <td>V</td> <td>V</td> </tr> <tr> <td>V</td> <td>V</td> <td>V</td> <td>V</td> <td>V</td> </tr> </tbody> </table>
 
-#2 | ---
+#2 | SELECT
 --- | ---
 **Expressão SQL** | SELECT l.bairro, COUNT(p.id) as total_cronicos
 FROM vw_pessoa_ativa p
@@ -1365,7 +1365,7 @@ GROUP BY l.bairro;
 **Expressão lógica proposicional** | $(\neg A) \land B$
 **Tabela Verdade** | <table> <thead> <tr> <th>$A$</th> <th>$B$</th> <th>$\neg A$</th> <th>$(\neg A) \land B$</th> </tr> </thead> <tbody> <tr> <td>F</td> <td>F</td> <td>V</td> <td>F</td> </tr> <tr> <td>F</td> <td>V</td> <td>V</td> <td>V</td> </tr> <tr> <td>V</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>V</td> <td>F</td> <td>F</td> </tr> </tbody> </table>
 
-#3 | Deletar...
+#3 | SELECT
 --- | ---
 **Expressão SQL** | SELECT p.nome, gp.condicao, gp.data_prevista_parto
 FROM vw_pessoa_ativa p
@@ -1376,6 +1376,17 @@ WHERE gp.condicao ILIKE '%Gestante%';
 **Proposições lógicas** | $A$: A categoria é BAIXO (`categoria = 'BAIXO'`) <br> $B$: A categoria é MÉDIO (`categoria = 'MÉDIO'`) <br> $C$: O alerta está expirado (`data_expiracao < CURRENT_DATE`)
 **Expressão lógica proposicional** | $(A \lor B) \lor C$
 **Tabela Verdade** | <table> <thead> <tr> <th>$A$</th> <th>$B$</th> <th>$C$</th> <th>$(A \lor B)$</th> <th>$(A \lor B) \lor C$</th> </tr> </thead> <tbody> <tr> <td>F</td> <td>F</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>F</td> <td>V</td> <td>F</td> <td>V</td> </tr> <tr> <td>F</td> <td>V</td> <td>F</td> <td>V</td> <td>V</td> </tr> <tr> <td>F</td> <td>V</td> <td>V</td> <td>V</td> <td>V</td> </tr> <tr> <td>V</td> <td>F</td> <td>F</td> <td>V</td> <td>V</td> </tr> <tr> <td>V</td> <td>F</td> <td>V</td> <td>V</td> <td>V</td> </tr> <tr> <td>V</td> <td>V</td> <td>F</td> <td>V</td> <td>V</td> </tr> <tr> <td>V</td> <td>V</td> <td>V</td> <td>V</td> <td>V</td> </tr> </tbody> </table>
+
+#4 | UPDATE
+--- | ---
+**Expressão SQL** | UPDATE moradia SET deleted_at = NULL, status = 'Ativa' WHERE id = 10;
+**Descrição da consulta** | Reverter exclusão de uma moradia.
+**Proposições lógicas** | $A$: A categoria é BAIXO (`categoria = 'BAIXO'`) <br> $B$: A categoria é MÉDIO (`categoria = 'MÉDIO'`) <br> $C$: O alerta está expirado (`data_expiracao < CURRENT_DATE`)
+**Expressão lógica proposicional** | $(A \lor B) \lor C$
+**Tabela Verdade** | <table> <thead> <tr> <th>$A$</th> <th>$B$</th> <th>$C$</th> <th>$(A \lor B)$</th> <th>$(A \lor B) \lor C$</th> </tr> </thead> <tbody> <tr> <td>F</td> <td>F</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>F</td> <td>V</td> <td>F</td> <td>V</td> </tr> <tr> <td>F</td> <td>V</td> <td>F</td> <td>V</td> <td>V</td> </tr> <tr> <td>F</td> <td>V</td> <td>V</td> <td>V</td> <td>V</td> </tr> <tr> <td>V</td> <td>F</td> <td>F</td> <td>V</td> <td>V</td> </tr> <tr> <td>V</td> <td>F</td> <td>V</td> <td>V</td> <td>V</td> </tr> <tr> <td>V</td> <td>V</td> <td>F</td> <td>V</td> <td>V</td> </tr> <tr> <td>V</td> <td>V</td> <td>V</td> <td>V</td> <td>V</td> </tr> </tbody> </table>
+
+Na última tabela de consultas SQL, a expressão "id = 10" é usada como exemplo, e não como algo que ocorre frequentemente.
+
 ---
 
 
