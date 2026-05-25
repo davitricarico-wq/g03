@@ -607,7 +607,7 @@ Esta seção apresenta o detalhamento de um registro específico, acessado após
 Esta seção apresenta o guia de estilos utilizado no desenvolvimento da aplicação web. Aqui estão definidos os padrões visuais e componentes de interface adotados, como cores, tipografia, botões, ícones e demais elementos gráficos. O objetivo é garantir consistência visual, padronização e melhor experiência de uso durante o desenvolvimento e evolução da solução.
 
 <div align="center">
-    <p>Figura 16: Guia de estilos</p>
+    <p>Figura 16: Guia de estilo</p>
     <img src="outros/guia_de_estilos 1.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
