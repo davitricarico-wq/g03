@@ -1338,32 +1338,45 @@ No desenvolvimento da aplicação web para a Defesa Civil, a lógica proposicion
 
 ---
 
-#1 | Selecionar ...
+#1 | ---
 --- | ---
-**Expressão SQL** | SELECT * FROM usuario WHERE (nivel_risco = 'ALTO' AND status_abrigo = 'ATIVO') OR (idade >= 60); (base para query)
-**Descrição da consulta** | Seleciona usuários que estão em área de risco alto e possuem abrigo ativo, ou usuários idosos com idade maior ou igual a 60 anos.
+**Expressão SQL** | SELECT m.id, l.logradouro, l.bairro, p.nome as responsavel FROM vw_moradia_ativa m 
+JOIN localizacao l ON m.id_localizacao = l.id 
+JOIN familia_moradia fm ON m.id = fm.id_moradia AND fm.data_saida IS NULL 
+JOIN pessoa_familia pf ON fm.id_familia = pf.id_familia AND pf.data_saida IS NULL 
+JOIN vw_pessoa_ativa p ON pf id_pessoa = p.id WHERE m.status = 'Em Risco' AND p.parentesco = 'Responsável';
+**Descrição da consulta** | Buscar todas as moradias em risco com seus responsáveis familiares.
 **Proposições lógicas** | $A$: O nível de risco é ALTO (`nivel_risco = 'ALTO'`) <br> $B$: O abrigo está ATIVO (`status_abrigo = 'ATIVO'`) <br> $C$: A idade é maior ou igual a 60 (`idade \geq 60`)
 **Expressão lógica proposicional** | $(A \land B) \lor C$
 **Tabela Verdade** | <table> <thead> <tr> <th>$A$</th> <th>$B$</th> <th>$C$</th> <th>$(A \land B)$</th> <th>$(A \land B) \lor C$</th> </tr> </thead> <tbody> <tr> <td>F</td> <td>F</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>F</td> <td>V</td> <td>F</td> <td>V</td> </tr> <tr> <td>F</td> <td>V</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>V</td> <td>V</td> <td>F</td> <td>V</td> </tr> <tr> <td>V</td> <td>F</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>F</td> <td>V</td> <td>F</td> <td>V</td> </tr> <tr> <td>V</td> <td>V</td> <td>F</td> <td>V</td> <td>V</td> </tr> <tr> <td>V</td> <td>V</td> <td>V</td> <td>V</td> <td>V</td> </tr> </tbody> </table>
 
-#2 | Atualizar...
+#2 | ---
 --- | ---
-**Expressão SQL** | UPDATE ocorrencia SET status_ocorrencia = 'ENCERRADA' WHERE NOT(tipo_ocorrencia = 'ENCHENTE') AND prioridade = 'BAIXA';(base para query)
-**Descrição da consulta** | Atualiza o status das ocorrências para “ENCERRADA” quando o tipo da ocorrência não for enchente e a prioridade for baixa.
+**Expressão SQL** | SELECT l.bairro, COUNT(p.id) as total_cronicos
+FROM vw_pessoa_ativa p
+JOIN pessoa_familia pf ON p.id = pf.id_pessoa AND pf.data_saida IS NULL
+JOIN familia_moradia fm ON pf.id_familia = fm.id_familia AND fm.data_saida IS NULL
+JOIN moradia m ON fm.id_moradia = m.id
+JOIN localizacao l ON m.id_localizacao = l.id
+WHERE p.cronico = TRUE
+GROUP BY l.bairro;
+**Descrição da consulta** | Contar quantas pessoas com doenças crônicas existem por bairro.
 **Proposições lógicas** | $A$: O tipo da ocorrência é ENCHENTE (`tipo_ocorrencia = 'ENCHENTE'`) <br> $B$: A prioridade é BAIXA (`prioridade = 'BAIXA'`)
 **Expressão lógica proposicional** | $(\neg A) \land B$
 **Tabela Verdade** | <table> <thead> <tr> <th>$A$</th> <th>$B$</th> <th>$\neg A$</th> <th>$(\neg A) \land B$</th> </tr> </thead> <tbody> <tr> <td>F</td> <td>F</td> <td>V</td> <td>F</td> </tr> <tr> <td>F</td> <td>V</td> <td>V</td> <td>V</td> </tr> <tr> <td>V</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>V</td> <td>F</td> <td>F</td> </tr> </tbody> </table>
 
 #3 | Deletar...
 --- | ---
-**Expressão SQL** | DELETE FROM alerta WHERE (categoria IN ('BAIXO', 'MÉDIO')) OR (data_expiracao < CURRENT_DATE); (base para query)
-**Descrição da consulta** | Remove alertas cuja categoria seja BAIXO ou MÉDIO, ou alertas que estejam expirados.
+**Expressão SQL** | SELECT p.nome, gp.condicao, gp.data_prevista_parto
+FROM vw_pessoa_ativa p
+JOIN pessoa_grupo_prioritario pgp ON p.id = pgp.id_pessoa
+JOIN grupo_prioritario gp ON pgp.id_grupo_prioritario = gp.id
+WHERE gp.condicao ILIKE '%Gestante%';
+**Descrição da consulta** | Listar Gestantes (Prioridade Mental/Físico) cadastradas.
 **Proposições lógicas** | $A$: A categoria é BAIXO (`categoria = 'BAIXO'`) <br> $B$: A categoria é MÉDIO (`categoria = 'MÉDIO'`) <br> $C$: O alerta está expirado (`data_expiracao < CURRENT_DATE`)
 **Expressão lógica proposicional** | $(A \lor B) \lor C$
 **Tabela Verdade** | <table> <thead> <tr> <th>$A$</th> <th>$B$</th> <th>$C$</th> <th>$(A \lor B)$</th> <th>$(A \lor B) \lor C$</th> </tr> </thead> <tbody> <tr> <td>F</td> <td>F</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>F</td> <td>V</td> <td>F</td> <td>V</td> </tr> <tr> <td>F</td> <td>V</td> <td>F</td> <td>V</td> <td>V</td> </tr> <tr> <td>F</td> <td>V</td> <td>V</td> <td>V</td> <td>V</td> </tr> <tr> <td>V</td> <td>F</td> <td>F</td> <td>V</td> <td>V</td> </tr> <tr> <td>V</td> <td>F</td> <td>V</td> <td>V</td> <td>V</td> </tr> <tr> <td>V</td> <td>V</td> <td>F</td> <td>V</td> <td>V</td> </tr> <tr> <td>V</td> <td>V</td> <td>V</td> <td>V</td> <td>V</td> </tr> </tbody> </table>
 ---
-
-Ressalto que só fiz a estrutura de um exemplo de logica, mas ela ainda não apresenta as querys que iremos utilizar.
 
 
 ## 3.7. WebAPI e endpoints (sprints 3 e 4)
