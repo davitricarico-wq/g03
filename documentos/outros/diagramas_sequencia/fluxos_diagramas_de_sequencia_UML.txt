@@ -1,0 +1,664 @@
+' Diagramas de sequencia UML - GeoRisco Santo Andre
+' Atualizado conforme WAD atual: modelo centrado em familia,
+' historico_ocupacao, moradia, localizacao, cidadao, responsavel,
+' gestante, pet, foto_moradia e grupo_prioritario.
+
+@startuml FL01_Cadastro_Completo_Familia_Moradia
+
+title FL01 - Cadastro completo de familia, moradia e ocupacao
+
+actor "Agente de Campo (A01)" as Agente
+participant "Frontend PWA Mobile" as Frontend
+participant "Cache Local\n(IndexedDB)" as Cache
+participant "CadastroController" as Controller
+participant "CadastroService" as Service
+participant "CadastroRepository" as Repository
+database "Banco de Dados" as DB
+
+== Preenchimento em campo ==
+Agente -> Frontend : Inicia novo cadastro
+Frontend -> Agente : Exibe secoes de moradia,\nlocalizacao, familia, responsavel,\nmoradores, grupos prioritarios,\ngestante, pets e fotos
+
+Agente -> Frontend : Preenche dados estruturais da moradia
+Frontend -> Frontend : Captura GPS do dispositivo (RN04)
+
+alt GPS permitido e disponivel
+    Frontend -> Frontend : Preenche latitude e longitude
+else GPS indisponivel ou negado
+    Frontend -> Agente : Solicita CEP, logradouro,\nbairro, numero, cidade,\nUF e ponto de referencia
+    Agente -> Frontend : Informa localizacao manual
+end
+
+Agente -> Frontend : Anexa ate 2 fotos\n(fachada e entorno)
+Frontend -> Frontend : Valida RN04:\nfoto nao pode conter pessoas
+Agente -> Frontend : Informa responsavel,\ndemais cidadaos, vulnerabilidades,\ngestacao quando houver e pets
+
+== Envio ou persistencia local ==
+Agente -> Frontend : Confirma cadastro
+
+alt Dispositivo online
+    Frontend -> Controller : POST /cadastros-completos\n{localizacao, moradia, familia,\nresponsavel, cidadaos, grupos,\ngestantes, pets, fotos}
+    Controller -> Service : Validar payload, RN01 e RN04
+    Service -> Service : Validar integridade:\nfamilia ativa deve ter responsavel\ne ocupacao ativa
+    Service -> Repository : Abrir transacao
+
+    Repository -> DB : INSERT localizacao
+    DB --> Repository : id_localizacao
+    Repository -> DB : INSERT moradia\n{id_localizacao, status='Ativa'}
+    DB --> Repository : id_moradia
+    Repository -> DB : INSERT familia\n{status_ativo=true}
+    DB --> Repository : id_familia
+    Repository -> DB : INSERT historico_ocupacao\n{id_familia, id_moradia,\ndata_entrada=hoje,\ndata_saida=NULL, status='Regular'}
+    DB --> Repository : id_historico_ocupacao
+
+    Repository -> DB : INSERT cidadao do responsavel\n{id_familia, status_cadastro=true}
+    DB --> Repository : id_cidadao_responsavel
+    Repository -> DB : INSERT responsavel\n{id_cidadao_responsavel, cpf,\nrenda, contato, NIS}
+    DB --> Repository : id_responsavel
+
+    loop Para cada morador dependente
+        Repository -> DB : INSERT cidadao\n{id_familia, status_cadastro=true}
+        DB --> Repository : id_cidadao
+
+        opt Morador pertence a grupos prioritarios
+            Repository -> DB : INSERT cidadao_grupo_prioritario\n{id_cidadao, id_grupo_prioritario}
+            DB --> Repository : OK
+        end
+
+        opt Morador gestante
+            Repository -> DB : INSERT gestante\n{id_cidadao, data_prevista,\ndata_inicio}
+            DB --> Repository : OK
+        end
+    end
+
+    loop Para cada pet informado
+        Repository -> DB : INSERT pet\n{id_familia, tipo_pet,\nporte_pet, nome, observacoes}
+        DB --> Repository : OK
+    end
+
+    loop Para cada foto de moradia
+        Repository -> DB : INSERT foto_moradia\n{id_moradia, tipo_foto, url}
+        DB --> Repository : OK
+    end
+
+    Repository --> Service : Commit da transacao
+    Service --> Controller : HTTP 201 Created\n{id_familia, id_moradia,\nid_responsavel}
+    Controller --> Frontend : HTTP 201 Created
+    Frontend -> Agente : Exibe confirmacao do cadastro
+
+else Dispositivo offline
+    Frontend -> Cache : Salva cadastro completo\ncom UUID local e estado PENDENTE
+    Cache --> Frontend : Persistido localmente
+    Frontend -> Agente : Exibe "Salvo localmente,\naguardando sincronizacao"
+
+    Cache -> Frontend : Ao reconectar, aciona sync
+    Frontend -> Controller : POST /cadastros-completos\n{uuid_local, payload}
+    note over Frontend, Service
+      A sincronizacao deve ser idempotente.
+      O UUID local evita duplicidade quando
+      o envio for repetido por falha de rede.
+    end note
+end
+
+== Falhas principais ==
+alt CPF, email ou NIS duplicado
+    Service --> Controller : HTTP 409 Conflict
+    Controller --> Frontend : HTTP 409 Conflict
+    Frontend -> Agente : Exibe opcao de buscar cadastro\nou revisar dados
+else Campos obrigatorios invalidos
+    Service --> Controller : HTTP 422 Unprocessable Entity
+    Controller --> Frontend : Lista de campos invalidos
+    Frontend -> Agente : Destaca campos para correcao
+end
+
+@enduml
+
+
+@startuml FL02_Mapa_Georreferenciado_Gestor
+
+title FL02 - Visualizacao de moradias em mapa georreferenciado
+
+actor "Gestor Operacional (A02/A03)" as Gestor
+participant "Frontend Painel Desktop" as Frontend
+participant "MoradiaController" as Controller
+participant "MoradiaService" as Service
+participant "MoradiaRepository" as Repository
+database "Banco de Dados" as DB
+
+Gestor -> Frontend : Acessa modulo de mapa
+Frontend -> Controller : GET /moradias/mapa?status=Ativa
+Controller -> Service : Solicitar marcadores ativos
+Service -> Repository : Consultar moradias ativas\ncom localizacao
+Repository -> DB : SELECT moradia.id_moradia,\nlocalizacao.latitude,\nlocalizacao.longitude,\nmoradia.status\nFROM moradia JOIN localizacao\nWHERE moradia.status='Ativa'
+DB --> Repository : Lista de marcadores
+Repository --> Service : Lista de marcadores
+Service --> Controller : DTO de marcadores
+Controller --> Frontend : HTTP 200 OK\n[{id_moradia, lat, lng, status}]
+
+alt Existem moradias georreferenciadas
+    Frontend -> Frontend : Renderiza pins no mapa
+else Nenhum registro encontrado
+    Frontend -> Gestor : Exibe mapa vazio e mensagem\n"Nenhuma moradia ativa encontrada"
+end
+
+Gestor -> Frontend : Clica em um marcador
+Frontend -> Controller : GET /moradias/{id_moradia}/consulta-integrada
+Controller -> Service : Carregar moradia, ocupacao ativa,\nfamilia, moradores, pets e fotos
+Service -> Repository : Buscar dados integrados
+Repository -> DB : SELECT moradia, localizacao,\nhistorico_ocupacao, familia,\ncidadao, responsavel,\npet, foto_moradia\nWHERE moradia.id_moradia=:id\nAND historico_ocupacao.data_saida IS NULL
+DB --> Repository : Dados integrados
+Repository --> Service : Dados integrados
+Service -> Service : Aplicar RN05\n(flag Risco Critico)
+Service --> Controller : Objeto de consulta integrada
+Controller --> Frontend : HTTP 200 OK\n{moradia, familia, moradores,\npets, fotos, risco_critico}
+Frontend -> Gestor : Exibe card com dados da moradia\ne flag de risco quando aplicavel
+
+alt Falha na API de mapa
+    Frontend -> Gestor : Exibe fallback em lista tabular
+end
+
+@enduml
+
+
+@startuml FL03_Consulta_Integrada_Moradia_Moradores
+
+title FL03 - Consulta integrada de moradia e moradores
+
+actor "Gestor Operacional (A02/A03)" as Gestor
+participant "Frontend Painel Desktop" as Frontend
+participant "ConsultaController" as Controller
+participant "ConsultaService" as Service
+participant "ConsultaRepository" as Repository
+database "Banco de Dados" as DB
+
+Gestor -> Frontend : Acessa modulo de consulta
+Frontend -> Controller : GET /moradias?busca={termo}
+Controller -> Service : Buscar moradias por termo,\nstatus ou localizacao
+Service -> Repository : Consultar moradias candidatas
+Repository -> DB : SELECT moradia, localizacao\nWHERE status <> 'Demolida'\nOR filtro informado
+DB --> Repository : Lista resumida
+Repository --> Service : Lista resumida
+Service --> Controller : Resultado resumido
+Controller --> Frontend : HTTP 200 OK
+Frontend -> Gestor : Exibe lista de fichas
+
+Gestor -> Frontend : Seleciona uma ficha
+Frontend -> Controller : GET /moradias/{id}/consulta-integrada
+Controller -> Service : Montar ficha integrada
+Service -> Repository : Consultar ocupacao ativa
+Repository -> DB : SELECT historico_ocupacao,\nfamilia, cidadao, responsavel,\ngestante, grupo_prioritario,\npet, foto_moradia\nWHERE id_moradia=:id\nAND data_saida IS NULL
+DB --> Repository : Dados da ocupacao ativa
+Repository --> Service : Dados da ocupacao ativa
+
+alt Moradia sem ocupacao ativa
+    Service --> Controller : HTTP 200 OK\n{moradia, ocupacao_atual=null,\nhistorico=true}
+    Controller --> Frontend : Moradia sem familia residente
+    Frontend -> Gestor : Exibe ficha do imovel\nsem moradores ativos
+else Ocupacao ativa encontrada
+    Service -> Service : Classificar prioridade RN01
+    Service -> Service : Aplicar RN05\n(hist. ocorrencia + mobilidade reduzida/acamado)
+    Service --> Controller : Ficha integrada
+    Controller --> Frontend : HTTP 200 OK\n{moradia, familia, responsavel,\nmoradores, grupos, pets,\nprioridade, risco_critico}
+    Frontend -> Gestor : Exibe consulta consolidada
+end
+
+@enduml
+
+
+@startuml FL04_Filtros_Avancados_Exportacao
+
+title FL04 - Filtros avancados de moradias e assistidos
+
+actor "Gestor Operacional (A02/A03)" as Gestor
+participant "Frontend Painel Desktop" as Frontend
+participant "FiltroController" as Controller
+participant "FiltroService" as Service
+participant "FiltroRepository" as Repository
+database "Banco de Dados" as DB
+
+Gestor -> Frontend : Acessa tela de gerenciamento de dados
+Frontend -> Gestor : Exibe filtros de moradia,\nvulnerabilidade, ocupacao,\ndestino de evacuacao e status
+Gestor -> Frontend : Seleciona filtros combinados
+
+Frontend -> Controller : GET /moradias?filtros=...
+Controller -> Service : Validar filtros permitidos
+Service -> Repository : Montar consulta dinamica
+Repository -> DB : SELECT moradia, localizacao,\nfamilia, cidadao, grupo_prioritario,\nhistorico_ocupacao\nWHERE filtros aplicados\nAND ocupacao atual quando necessario
+DB --> Repository : Resultado filtrado
+Repository --> Service : Resultado filtrado
+Service -> Service : Aplicar RN01 para ordenacao\npor prioridade quando solicitado
+Service --> Controller : Lista filtrada
+Controller --> Frontend : HTTP 200 OK
+
+alt Resultado vazio
+    Frontend -> Gestor : Exibe "Nenhum registro encontrado"
+else Resultado encontrado
+    Frontend -> Gestor : Exibe tabela filtrada\ncom dados exportaveis
+
+    opt Gestor solicita exportacao
+        Gestor -> Frontend : Clica em Exportar
+        Frontend -> Controller : GET /moradias/exportar?filtros=...
+        Controller -> Service : Reexecutar consulta\ncom mesmos filtros
+        Service -> Repository : Buscar dataset exportavel
+        Repository -> DB : SELECT dataset filtrado
+        DB --> Repository : Dataset
+        Repository --> Service : Dataset
+        Service -> Service : Serializar CSV ou PDF
+        Service --> Controller : Arquivo gerado
+        Controller --> Frontend : HTTP 200 OK\narquivo para download
+        Frontend -> Gestor : Inicia download
+    end
+end
+
+@enduml
+
+
+@startuml FL05_Atualizacao_Anual_Dados
+
+title FL05 - Atualizacao anual de dados pelo agente de campo
+
+actor "Agente de Campo (A01)" as Agente
+participant "Frontend PWA Mobile" as Frontend
+participant "Cache Local\n(IndexedDB)" as Cache
+participant "CadastroController" as Controller
+participant "CadastroService" as Service
+participant "CadastroRepository" as Repository
+database "Banco de Dados" as DB
+
+Agente -> Frontend : Abre ficha marcada para recadastro
+Frontend -> Controller : GET /familias/{id_familia}/cadastro-completo
+Controller -> Service : Carregar cadastro atual
+Service -> Repository : Consultar familia,\nocupacao ativa, moradia,\nlocalizacao, cidadaos,\nresponsavel, gestantes,\npets e fotos
+Repository -> DB : SELECT dados integrados\nWHERE familia.id_familia=:id\nAND historico_ocupacao.data_saida IS NULL
+DB --> Repository : Dados atuais
+Repository --> Service : Dados atuais
+Service --> Controller : Cadastro completo
+Controller --> Frontend : HTTP 200 OK
+Frontend -> Agente : Exibe formulario pre-preenchido
+
+Agente -> Frontend : Revisa e edita dados
+Frontend -> Frontend : Valida campos obrigatorios\ne fotos permitidas
+Agente -> Frontend : Salva atualizacao
+
+alt Online
+    Frontend -> Controller : PUT /familias/{id_familia}/cadastro-completo\n{dados_atualizados}
+    Controller -> Service : Validar RN01, RN04,\nRN02 e integridade
+    Service -> Repository : Abrir transacao
+    Repository -> DB : UPDATE familia\nSET status_ativo=...
+    Repository -> DB : UPDATE/INSERT cidadao,\nresponsavel, gestante,\ncidadao_grupo_prioritario,\npet conforme alteracoes
+    Repository -> DB : UPDATE moradia\nSET ultima_atualizacao=CURRENT_DATE
+    Repository -> DB : UPDATE localizacao\nquando alterada
+
+    opt Familia mudou de moradia
+        Repository -> DB : UPDATE historico_ocupacao atual\nSET data_saida=CURRENT_DATE,\nstatus='Mudanca/Evacuacao'
+        Repository -> DB : INSERT historico_ocupacao\n{id_familia, nova_moradia,\ndata_entrada=CURRENT_DATE,\ndata_saida=NULL}
+    end
+
+    Repository --> Service : Commit
+    Service -> Service : Remover indicador de desatualizado
+    Service --> Controller : HTTP 200 OK
+    Controller --> Frontend : HTTP 200 OK
+    Frontend -> Agente : Exibe "Cadastro atualizado"
+else Offline
+    Frontend -> Cache : Enfileira atualizacao\ncom UUID local
+    Cache --> Frontend : Atualizacao salva localmente
+    Frontend -> Agente : Exibe "Aguardando sincronizacao"
+    Cache -> Frontend : Ao reconectar, sincroniza
+    Frontend -> Controller : PUT /familias/{id}/cadastro-completo\n{uuid_local, dados_atualizados}
+end
+
+@enduml
+
+
+@startuml FL06_Cadastro_Manutencao_Pets
+
+title FL06 - Cadastro e manutencao de pets vinculados a familia
+
+actor "Agente de Campo (A01)" as Agente
+participant "Frontend PWA Mobile" as Frontend
+participant "PetController" as Controller
+participant "PetService" as Service
+participant "PetRepository" as Repository
+database "Banco de Dados" as DB
+
+Agente -> Frontend : Acessa secao Animais de Estimacao
+Frontend -> Controller : GET /familias/{id_familia}/pets
+Controller -> Service : Listar pets da familia
+Service -> Repository : Consultar pets ativos da familia
+Repository -> DB : SELECT pet\nWHERE id_familia=:id_familia
+DB --> Repository : Lista de pets
+Repository --> Service : Lista de pets
+Service --> Controller : Lista de pets
+Controller --> Frontend : HTTP 200 OK
+Frontend -> Agente : Exibe pets ja cadastrados
+
+Agente -> Frontend : Adiciona ou edita pet
+Frontend -> Controller : POST /familias/{id_familia}/pets\nou PUT /pets/{id_pet}
+Controller -> Service : Validar tipo_pet obrigatorio\ne porte_pet quando informado
+Service -> Repository : Persistir pet vinculado a familia
+Repository -> DB : INSERT/UPDATE pet\n{id_familia, tipo_pet,\nporte_pet, nome, cor,\nobservacoes, foto_url}
+DB --> Repository : OK
+Repository --> Service : OK
+Service --> Controller : HTTP 200/201
+Controller --> Frontend : HTTP 200/201
+Frontend -> Agente : Atualiza lista de pets
+
+note over Service, DB
+  Pet pertence a familia, nao diretamente a moradia.
+  Se a familia for realocada, o historico de ocupacao
+  muda, mas os pets acompanham o mesmo id_familia.
+end note
+
+@enduml
+
+
+@startuml FL07_Mapa_Calor_Indicadores
+
+title FL07 - Mapa de calor e indicadores de vulnerabilidade
+
+actor "Gestor Operacional (A02/A03)" as Gestor
+participant "Frontend Painel Desktop" as Frontend
+participant "IndicadorController" as Controller
+participant "IndicadorService" as Service
+participant "IndicadorRepository" as Repository
+database "Banco de Dados" as DB
+
+Gestor -> Frontend : Ativa camada de mapa de calor
+Gestor -> Frontend : Seleciona filtro\n(ex.: idosos, PCD, acamados,\ngestantes, criancas)
+
+Frontend -> Controller : GET /indicadores/mapa-calor\n?filtro=...&zoom=...
+Controller -> Service : Calcular clusters termicos
+Service -> Repository : Buscar coordenadas de moradias\ncom familias/moradores filtrados
+Repository -> DB : SELECT localizacao.latitude,\nlocalizacao.longitude,\nCOUNT(cidadao.id_cidadao)\nFROM moradia JOIN localizacao\nJOIN historico_ocupacao\nJOIN familia JOIN cidadao\nLEFT JOIN cidadao_grupo_prioritario\nWHERE moradia.status='Ativa'\nAND historico_ocupacao.data_saida IS NULL\nAND filtros aplicados\nGROUP BY cluster
+DB --> Repository : Coordenadas e intensidades
+Repository --> Service : Dataset de calor
+Service --> Controller : {lat, lng, intensidade}
+Controller --> Frontend : HTTP 200 OK
+Frontend -> Frontend : Renderiza layer de calor
+
+loop Alteracao de zoom ou filtro
+    Gestor -> Frontend : Ajusta zoom/filtro
+    Frontend -> Controller : GET /indicadores/mapa-calor\n?filtro=novo&zoom=novo
+    Controller -> Service : Recalcular clusters
+    Service -> Repository : Consultar nova granularidade
+    Repository -> DB : SELECT agregado atualizado
+    DB --> Repository : Dataset atualizado
+    Repository --> Service : Dataset atualizado
+    Service --> Controller : Dataset atualizado
+    Controller --> Frontend : HTTP 200 OK
+    Frontend -> Frontend : Re-renderiza mapa de calor
+end
+
+par Indicadores de recadastro
+    Frontend -> Controller : GET /indicadores/recadastro
+    Controller -> Service : Calcular atualizados x desatualizados
+    Service -> Repository : Consultar moradias ativas\ncom ultima_atualizacao
+    Repository -> DB : SELECT COUNT(*) total,\nCOUNT(*) FILTER (WHERE ultima_atualizacao < CURRENT_DATE - INTERVAL '365 days') desatualizadas\nFROM moradia WHERE status='Ativa'
+    DB --> Repository : Totais
+    Repository --> Service : Totais
+    Service --> Controller : {total, atualizadas, desatualizadas}
+    Controller --> Frontend : HTTP 200 OK
+    Frontend -> Gestor : Exibe indicadores no painel
+end
+
+@enduml
+
+
+@startuml FL08_Arquivamento_Moradia
+
+title FL08 - Arquivamento logico de moradia
+
+actor "Gestor Operacional (A03)" as Gestor
+participant "Frontend Painel Desktop" as Frontend
+participant "MoradiaController" as Controller
+participant "MoradiaService" as Service
+participant "MoradiaRepository" as Repository
+database "Banco de Dados" as DB
+
+Gestor -> Frontend : Localiza moradia ativa
+Gestor -> Frontend : Aciona Arquivar Moradia
+Frontend -> Gestor : Exibe modal com motivo\n(Demolida, Interditada,\nArea de Risco Evacuada)
+Gestor -> Frontend : Confirma motivo
+
+Frontend -> Controller : PATCH /moradias/{id_moradia}/status\n{status, motivo}
+Controller -> Service : Validar motivo obrigatorio
+Service -> Repository : Verificar ocupacao ativa
+Repository -> DB : SELECT historico_ocupacao,\nfamilia\nWHERE id_moradia=:id\nAND data_saida IS NULL
+DB --> Repository : Ocupacao atual ou vazio
+Repository --> Service : Resultado
+
+alt Existe familia ativa ocupando a moradia
+    Service -> Service : Aplicar integridade US14:\nfamilia ativa precisa de moradia ativa
+    Service --> Controller : HTTP 409 Conflict\n{requer_realocacao=true}
+    Controller --> Frontend : HTTP 409 Conflict
+    Frontend -> Gestor : Solicita selecionar nova moradia\nou inativar familia antes do arquivamento
+
+    opt Gestor informa nova moradia
+        Frontend -> Controller : POST /familias/{id_familia}/realocacoes\n{nova_moradia, status_saida}
+        Controller -> Service : Encerrar ocupacao atual\ne criar nova ocupacao
+        Service -> Repository : Abrir transacao
+        Repository -> DB : UPDATE historico_ocupacao\nSET data_saida=CURRENT_DATE,\nstatus=:motivo
+        Repository -> DB : INSERT historico_ocupacao\n{id_familia, nova_moradia,\ndata_entrada=CURRENT_DATE,\ndata_saida=NULL}
+        Repository -> DB : UPDATE moradia antiga\nSET status=:status
+        DB --> Repository : OK
+        Repository --> Service : Commit
+        Service --> Controller : HTTP 200 OK
+        Controller --> Frontend : HTTP 200 OK
+        Frontend -> Gestor : Confirma arquivamento e realocacao
+    end
+else Nao existe ocupacao ativa
+    Service -> Repository : Atualizar status da moradia
+    Repository -> DB : UPDATE moradia\nSET status=:status\nWHERE id_moradia=:id
+    DB --> Repository : OK
+    Repository --> Service : OK
+    Service --> Controller : HTTP 200 OK
+    Controller --> Frontend : HTTP 200 OK
+    Frontend -> Frontend : Remove moradia de mapas/listas ativas
+    Frontend -> Gestor : Confirma arquivamento
+end
+
+@enduml
+
+
+@startuml FL09_Arquivamento_Morador_Falecido
+
+title FL09 - Arquivamento logico de morador falecido
+
+actor "Gestor Operacional (A02/A03)" as Gestor
+participant "Frontend Painel Desktop" as Frontend
+participant "CidadaoController" as Controller
+participant "CidadaoService" as Service
+participant "CidadaoRepository" as Repository
+database "Banco de Dados" as DB
+
+Gestor -> Frontend : Acessa ficha do morador
+Gestor -> Frontend : Aciona Arquivar Morador
+Frontend -> Gestor : Solicita data de falecimento
+Gestor -> Frontend : Confirma dados
+
+Frontend -> Controller : PATCH /cidadaos/{id_cidadao}/arquivar\n{motivo='Falecimento', data_falecimento}
+Controller -> Service : Validar data e permissao
+Service -> Repository : Verificar familia do cidadao\ne se e responsavel
+Repository -> DB : SELECT cidadao, familia,\nresponsavel\nWHERE cidadao.id_cidadao=:id
+DB --> Repository : Dados do cidadao
+Repository --> Service : Dados do cidadao
+
+alt Cidadao e responsavel da familia
+    Service -> Repository : Buscar outros cidadaos ativos\nda mesma familia
+    Repository -> DB : SELECT cidadao\nWHERE id_familia=:id_familia\nAND status_cadastro=true\nAND id_cidadao <> :id
+    DB --> Repository : Possiveis novos responsaveis
+    Repository --> Service : Lista de candidatos
+
+    alt Nao ha outro morador ativo
+        Service --> Controller : HTTP 409 Conflict\n{requer_acao_familia=true}
+        Controller --> Frontend : HTTP 409 Conflict
+        Frontend -> Gestor : Informa que a familia ficara\nsem responsavel e sem membros ativos
+    else Ha candidato a novo responsavel
+        Service --> Controller : HTTP 409 Conflict\n{requer_novo_responsavel=true,\ncandidatos}
+        Controller --> Frontend : Lista de candidatos
+        Frontend -> Gestor : Solicita novo responsavel
+        Gestor -> Frontend : Seleciona novo responsavel
+        Frontend -> Controller : PUT /familias/{id_familia}/responsavel\n{id_cidadao_novo}
+        Controller -> Service : Criar ou atualizar especializacao\nresponsavel do novo cidadao
+        Service -> Repository : INSERT/UPDATE responsavel\n{id_cidadao_novo}
+        Repository -> DB : INSERT/UPDATE responsavel
+        DB --> Repository : OK
+    end
+end
+
+Frontend -> Controller : PATCH /cidadaos/{id_cidadao}/arquivar\n{confirmado=true}
+Controller -> Service : Arquivar cidadao
+Service -> Repository : Atualizar status logico
+Repository -> DB : UPDATE cidadao\nSET status_cadastro=false\nWHERE id_cidadao=:id
+DB --> Repository : OK
+Repository --> Service : OK
+Service -> Service : Reavaliar RN01 e RN05\npara a familia/moradia atual
+Service --> Controller : HTTP 200 OK
+Controller --> Frontend : HTTP 200 OK
+Frontend -> Gestor : Atualiza ficha e historico
+
+@enduml
+
+
+@startuml FL10_Alerta_Automatico_Recadastro
+
+title FL10 - Alerta automatico de recadastro a cada 12 meses
+
+participant "Job Agendado\n(Diario)" as Cron
+participant "RecadastroService" as Service
+participant "RecadastroRepository" as Repository
+database "Banco de Dados" as DB
+actor "Gestor Operacional (A02/A03)" as Gestor
+participant "Frontend Painel Desktop" as Frontend
+participant "IndicadorController" as Controller
+
+== Rotina automatica ==
+Cron -> Service : Executar verificacao diaria RN02
+Service -> Repository : Buscar moradias ativas\nsem atualizacao ha 365 dias
+Repository -> DB : SELECT moradia, historico_ocupacao,\nfamilia\nFROM moradia\nJOIN historico_ocupacao\nJOIN familia\nWHERE moradia.status='Ativa'\nAND historico_ocupacao.data_saida IS NULL\nAND familia.status_ativo=true\nAND moradia.ultima_atualizacao < CURRENT_DATE - INTERVAL '365 days'
+DB --> Repository : Cadastros desatualizados
+Repository --> Service : Lista de pendencias
+Service -> Service : Montar alerta operacional\npara o painel do gestor
+
+note over Service, DB
+  O WAD descreve o alerta de recadastro,
+  mas o modelo fisico atual nao define uma
+  tabela NOTIFICACAO. Este fluxo trata o alerta
+  como indicador derivado da consulta.
+end note
+
+== Consulta no painel ==
+Gestor -> Frontend : Abre painel ou mapa
+Frontend -> Controller : GET /indicadores/recadastro
+Controller -> Service : Solicitar totais RN02
+Service -> Repository : Contar cadastros atualizados\ne desatualizados
+Repository -> DB : SELECT totais por ultima_atualizacao\nFROM moradia\nWHERE status='Ativa'
+DB --> Repository : Totais
+Repository --> Service : Totais
+Service --> Controller : {atualizados, desatualizados}
+Controller --> Frontend : HTTP 200 OK
+Frontend -> Gestor : Exibe contador de cadastros\ndesatualizados
+
+Gestor -> Frontend : Clica no contador
+Frontend -> Controller : GET /moradias?desatualizado=true
+Controller -> Service : Listar moradias pendentes
+Service -> Repository : Consultar moradias vencidas
+Repository -> DB : SELECT dados para revisita
+DB --> Repository : Lista
+Repository --> Service : Lista
+Service --> Controller : Lista filtrada
+Controller --> Frontend : HTTP 200 OK
+Frontend -> Gestor : Exibe lista para recadastro
+
+@enduml
+
+
+@startuml FL11_Regra_Transversal_Risco_Critico
+
+title FL11 - Regra transversal de Risco Critico (RN05)
+
+participant "Fluxo Chamador\n(FL02/FL03/FL04/FL05/FL07/FL09)" as Chamador
+participant "Service" as Service
+participant "Repository" as Repository
+database "Banco de Dados" as DB
+participant "Frontend" as Frontend
+actor "Usuario" as Usuario
+
+note over Chamador, Service
+  RN05 nao e um fluxo independente.
+  E aplicada quando a consulta integrada,
+  mapa, filtro, relatorio ou atualizacao
+  carrega moradia com ocupacao ativa.
+end note
+
+Chamador -> Service : Solicita avaliacao RN05\n{id_moradia}
+Service -> Repository : Buscar moradia, ocorrencias\ne moradores ativos da ocupacao atual
+Repository -> DB : SELECT indicador de historico_ocorrencia,\ncidadao.id_cidadao,\ngrupo_prioritario.nome\nFROM moradia\nJOIN historico_ocupacao\nJOIN familia\nJOIN cidadao\nLEFT JOIN cidadao_grupo_prioritario\nLEFT JOIN grupo_prioritario\nWHERE moradia.id_moradia=:id\nAND historico_ocupacao.data_saida IS NULL\nAND cidadao.status_cadastro=true
+DB --> Repository : Dados para avaliacao
+Repository --> Service : Dados para avaliacao
+
+Service -> Service : Verificar condicao:\nhistorico_ocorrencia=true\nE algum morador em grupo\n'Mobilidade reduzida' ou 'Acamado'
+
+alt Condicao RN05 satisfeita
+    Service --> Chamador : risco_critico=true
+    Chamador --> Frontend : Objeto com flag
+    Frontend -> Usuario : Exibe "Risco Critico"\nno cabecalho/card
+else Condicao RN05 nao satisfeita
+    Service --> Chamador : risco_critico=false
+    Chamador --> Frontend : Objeto sem flag critica
+    Frontend -> Usuario : Exibe ficha normalmente
+end
+
+@enduml
+
+
+@startuml FL12_Integridade_Familia_Responsavel_Ocupacao
+
+title FL12 - Validacao transversal de integridade cadastral
+
+participant "Fluxo Chamador\n(Cadastro, Atualizacao,\nArquivamento, Realocacao)" as Chamador
+participant "Service" as Service
+participant "Repository" as Repository
+database "Banco de Dados" as DB
+participant "Frontend" as Frontend
+actor "Usuario" as Usuario
+
+note over Service
+  Regras derivadas das US13 e US14:
+  familia ativa deve possuir responsavel ativo
+  e ocupacao ativa em uma moradia valida.
+end note
+
+Chamador -> Service : Solicita validacao de integridade\n{id_familia}
+Service -> Repository : Verificar familia ativa
+Repository -> DB : SELECT familia\nWHERE id_familia=:id
+DB --> Repository : Familia
+Repository --> Service : Familia
+
+alt Familia inativa
+    Service --> Chamador : Integridade aprovada\npara contexto historico
+else Familia ativa
+    Service -> Repository : Verificar responsavel ativo
+    Repository -> DB : SELECT responsavel, cidadao\nWHERE cidadao.id_familia=:id\nAND cidadao.status_cadastro=true\nAND responsavel.id_cidadao=cidadao.id_cidadao
+    DB --> Repository : Responsavel ativo ou vazio
+    Repository --> Service : Resultado
+
+    Service -> Repository : Verificar ocupacao ativa
+    Repository -> DB : SELECT historico_ocupacao, moradia\nWHERE id_familia=:id\nAND data_saida IS NULL\nAND moradia.status='Ativa'
+    DB --> Repository : Ocupacao ativa ou vazio
+    Repository --> Service : Resultado
+
+    alt Sem responsavel ativo
+        Service --> Chamador : HTTP 409 Conflict\n{erro='familia_sem_responsavel'}
+        Chamador --> Frontend : Bloqueio de operacao
+        Frontend -> Usuario : Solicita definir novo responsavel
+    else Sem moradia ativa vinculada
+        Service --> Chamador : HTTP 409 Conflict\n{erro='familia_sem_moradia_ativa'}
+        Chamador --> Frontend : Bloqueio de operacao
+        Frontend -> Usuario : Solicita vincular nova moradia\nou inativar familia
+    else Integridade preservada
+        Service --> Chamador : Validacao OK
+    end
+end
+
+@enduml
