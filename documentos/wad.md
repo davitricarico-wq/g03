@@ -592,7 +592,7 @@ Esta seção apresenta o guia de estilos utilizado no desenvolvimento da aplica�
 
 ### 3.4.1 Cores
 
-*Apresente aqui a paleta de cores, com seus códigos de aplicação e suas respectivas funções*
+A a paleta de cores pensada para o
 
 ### 3.4.2 Tipografia
 
@@ -608,12 +608,24 @@ Esta seção apresenta o guia de estilos utilizado no desenvolvimento da aplica�
 
 *posicione aqui algumas imagens demonstrativas de seu protótipo de alta fidelidade e o link para acesso ao protótipo completo (mantenha o link sempre público para visualização)*
 
+<div align="center">
+    <p>Figura 16: Mockup da Seção 1 de Cadastro </p>
+    <img src="outros/formularioMoradia.png">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
+<div align="center">
+    <p>Figura 17: Mockup da Seção 2 de Cadastro </p>
+    <img src="outros/formularioResponsavel.png">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
 ## 3.6. Modelagem do banco de dados (sprints 2 e 4)
 
 ### 3.6.1. Modelo Entidade-Relacionamento (ER) (sprint 2)
 
 <div align="center">
-    <p>Figura 16: Modelo Entidade Relacionamento- </p>
+    <p>Figura 18: Modelo Entidade Relacionamento- </p>
     <img src="outros/MER.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
