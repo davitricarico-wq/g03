@@ -589,41 +589,49 @@ Esta seção apresenta o detalhamento de um registro específico, acessado após
 
 ## 3.6. Modelagem do banco de dados (sprints 2 e 4)
 
-### 3.6.1. Modelo Entidade-Relacionamento (ER) (sprint 2)
+### 3.6.1. Modelo Entidade-Relacionamento (MER)
+
+O **Modelo Entidade-Relacionamento (MER)** é uma abordagem conceitual que representa a estrutura de dados de um sistema através da identificação de entidades (objetos do mundo real), seus atributos e os relacionamentos entre elas. Para este projeto, adotamos a **notação Chen**, que utiliza retângulos para entidades, losangos para relacionamentos, elipses para atributos e triângulos para especializações, oferecendo clareza visual e conformidade com padrões acadêmicos e profissionais.
 
 <div align="center">
-    <p>Figura 16: Modelo Entidade Relacionamento- </p>
-    <img src="outros/MER.png">
+    <p>Figura 16: Modelo Entidade-Relacionamento</p>
+    <img src="outros/MER.jpg">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
 O modelo de dados foi estruturado seguindo as melhores práticas de normalização, rastreabilidade e integridade referencial, com foco em sistemas governamentais. As principais decisões arquiteturais refletidas no diagrama são:
 
-#### 1. Herança e Especialização (Pessoa, Responsável e Grávida)
-Para evitar redundância de dados e focar no Responsável da Família sem perder o mapeamento de vulnerabilidade dos dependentes, adotamos o padrão de herança (representado pelo triângulo).
-* **`Pessoa` (Superclasse):** Centraliza os atributos universais (Nome, Escolaridade, Situação Ocupacional, Doenças Crônicas).
-* **`Responsável` e `Grávida` (Subclasses):** Herdam os atributos de Pessoa, mas agregam dados específicos de suas funções no sistema. O `Responsável` carrega a carga burocrática (CPF, NIS, Renda, Programas Sociais), enquanto a `Grávida` guarda dados vitais de saúde para prioridade em resgates (Data Prevista de Parto).
+#### 1. Herança e Especialização (Pessoa e Responsável)
+Para evitar redundância de dados e focar no Responsável da Família, adotamos o padrão de herança (representado pelo triângulo na notação Chen).
+* **`Pessoa` (Superclasse):** Centraliza os atributos universais (Nome Social, Data de Nascimento, Escolaridade, Situação Ocupacional, Medicação, Status).
+* **`Responsável` (Subclasse):** Herda atributos de Pessoa e agrega dados específicos de gestão familiar: CPF, NIS, Renda, Programas Sociais, dados de contato (Telefone, Email) e informações de residência.
 
 #### 2. Agrupamento Lógico por `Família`
-Em vez de vincular dezenas de indivíduos diretamente a uma casa de forma solta, criamos a entidade agrupadeira **`Família`**.
-* Toda `Pessoa` está vinculada a uma `Família` (relacionamento *Pertence*).
-* A `Família` possui obrigatoriamente um `Responsável`.
-* **Vantagem Técnica:** Essa decisão facilita o trânsito de dados. Se uma enchente desalojar 6 pessoas de uma casa, o sistema precisa atualizar apenas o endereço da entidade `Família`, e todos os membros (incluindo os `Pets` associados a ela) herdam a mudança automaticamente.
+Em vez de vincular dezenas de indivíduos diretamente a uma moradia de forma solta, criamos a entidade agrupadeira **`Família`**.
+* Toda `Pessoa` está vinculada a uma `Família` (relacionamento *Pertence*) com cardinalidade (0, n).
+* A `Família` possui obrigatoriamente um `Responsável` com cardinalidade (1, n).
+* **Vantagem Técnica:** Essa decisão facilita o trânsito de dados. Se uma enchente desalojar 6 pessoas de uma casa, o sistema precisa atualizar apenas o registro da entidade `Família` na tabela `ocupa`, e todos os membros herdam a mudança automaticamente.
 
-#### 3. Rastreabilidade e Histórico (Relacionamento N:N "Ocupa")
-O maior desafio resolvido neste modelo foi a preservação do histórico de ocupação sem duplicar dados físicos. A estrutura da **`Moradia`** (Latitude, Longitude, CEP) é imutável. O que muda é quem mora lá.
-* Criamos o relacionamento **Muitos-para-Muitos (N:N)** chamado **`Ocupa`** entre `Família` e `Moradia`.
-* Este relacionamento gera uma tabela associativa contendo atributos temporais: **`DataEntrada`**, **`DataSaida`** e **`Status`**.
-* **Como funciona:** Quando uma família se muda ou é evacuada, preenchemos a `DataSaida` do vínculo atual e criamos um novo vínculo com a nova moradia. Assim, temos a linha do tempo exata de por quais casas a família passou e quais famílias já ocuparam um determinado terreno de risco. Por isso dizemos que uma família ocupa N casas ao longo do tempo, e uma casa é ocupada por N famílias ao longo do tempo, sem perder nenhum dado histórico.
+#### 3. Rastreabilidade e Histórico (Relacionamento N:N "ocupa")
+O maior desafio resolvido neste modelo foi a preservação do histórico de ocupação sem duplicar dados físicos. A estrutura da **`Moradia`** (localização geográfica, CEP, características construtivas) é imutável. O que muda é quem mora lá.
+* Criamos o relacionamento **Muitos-para-Muitos (N:N)** chamado **`ocupa`** entre `Família` e `Moradia`, com cardinalidade (0, n) em ambas as extremidades.
+* Este relacionamento gera uma tabela associativa contendo atributos temporais: **`DataEntrada`** e **`DataSaida`**, permitindo rastrear períodos de ocupação.
+* **Como funciona:** Quando uma família se muda ou é evacuada, preenchemos a `DataSaida` do vínculo atual e criamos um novo vínculo com a nova moradia. Assim, temos a linha do tempo exata de por quais imóveis a família passou e quais famílias já ocuparam determinadas moradias de risco, sem perder nenhum dado histórico.
 
 #### 4. Exclusão Lógica (Soft Delete) e Estados Operacionais
 Em conformidade com a LGPD e regras de auditoria pública, **nenhum dado é deletado fisicamente (DROP/DELETE)**.
 * Inserimos o atributo **`Status`** nas entidades vitais (`Pessoa` e `Moradia`).
-* Se um morador sai do município, o status da `Pessoa` fica inativo. Se uma casa de risco desaba, o status da `Moradia` é atualizado para "Demolida". O histórico do que aconteceu ali permanece intacto.
+* Se um morador sai do município, o status da `Pessoa` fica inativo. Se uma moradia é desapropriada ou demolida, o status é atualizado para o estado correspondente. O histórico permanece intacto para auditoria.
 
 #### 5. Entidades Satélites Flexíveis
-* **`Foto`:** Ligada em uma relação (1:N) com a `Moradia`, permitindo criar uma galeria de fotos para identificação da moradia.
-* **`GrupoPrioritario`:** Permite associar cidadãos a listas de vulnerabilidade (ex: Acamados, Deficientes Visuais), agilizando a logística humanitária em emergências.
+* **`Foto`:** Ligada em uma relação (0, n) com `Moradia`, permitindo criar uma galeria de fotos para identificação e documentação visual da moradia.
+* **`Pet`:** Relacionada a `Pessoa` (0, n), registrando animais de estimação dependentes para logística humanitária em evacuações.
+* **`GrupoPrioritario`:** Relacionada a `Pessoa` (0, n), permitindo associar cidadãos a listas de vulnerabilidade (ex: Acamados, Deficientes Visuais), agilizando a logística de resgates em emergências.
+
+#### 6. Localização Geográfica e Referência Endereçal
+A entidade **`localizacao`** centraliza dados geográficos e endereçais:
+* Relacionada a `Moradia` (1, 1), garantindo que cada imóvel possui uma localização única e imutável.
+* Armazena **Latitude**, **Longitude**, **CEP**, **Logradouro**, **Bairro**, **Cidade**, **Estado**, **Número**, **Referência** e **Complemento**, permitindo georreferenciamento preciso e retroação em mapas de risco.
 
 ### 3.6.2. Diagrama Entidade-Relacionamento (DER) (sprint 2)
 
