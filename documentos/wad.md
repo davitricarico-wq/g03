@@ -1340,19 +1340,21 @@ No desenvolvimento da aplicação web para a Defesa Civil, a lógica proposicion
 
 #1 | SELECT
 --- | ---
-**Expressão SQL** | SELECT m.id, l.logradouro, l.bairro, p.nome as responsavel FROM vw_moradia_ativa m 
+**Expressão SQL** | SELECT m.id, l.logradouro, l.bairro, p.nome AS responsavel FROM vw_moradia_ativa m 
 JOIN localizacao l ON m.id_localizacao = l.id 
 JOIN familia_moradia fm ON m.id = fm.id_moradia AND fm.data_saida IS NULL 
 JOIN pessoa_familia pf ON fm.id_familia = pf.id_familia AND pf.data_saida IS NULL 
 JOIN vw_pessoa_ativa p ON pf id_pessoa = p.id WHERE m.status = 'Em Risco' AND p.parentesco = 'Responsável';
 **Descrição da consulta** | Buscar todas as moradias em risco com seus responsáveis familiares.
-**Proposições lógicas** | $A$: O nível de risco é ALTO (`nivel_risco = 'ALTO'`) <br> $B$: O abrigo está ATIVO (`status_abrigo = 'ATIVO'`) <br> $C$: A idade é maior ou igual a 60 (`idade \geq 60`)
-**Expressão lógica proposicional** | $(A \land B) \lor C$
-**Tabela Verdade** | <table> <thead> <tr> <th>$A$</th> <th>$B$</th> <th>$C$</th> <th>$(A \land B)$</th> <th>$(A \land B) \lor C$</th> </tr> </thead> <tbody> <tr> <td>F</td> <td>F</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>F</td> <td>V</td> <td>F</td> <td>V</td> </tr> <tr> <td>F</td> <td>V</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>V</td> <td>V</td> <td>F</td> <td>V</td> </tr> <tr> <td>V</td> <td>F</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>F</td> <td>V</td> <td>F</td> <td>V</td> </tr> <tr> <td>V</td> <td>V</td> <td>F</td> <td>V</td> <td>V</td> </tr> <tr> <td>V</td> <td>V</td> <td>V</td> <td>V</td> <td>V</td> </tr> </tbody> </table>
+**Proposições lógicas** | $A$: A moradia está em risco (`m.status = 'Em Risco' `) <br> $B$: O parentesco é Responsável(`p.parentesco = 'Responsável'`) <br> $C$: Os vínculos estão ativos  (`fm.data_saida IS NULL AND pf.data_saida IS NULL`)
+**Expressão lógica proposicional** | $(A \land B) \land C$
+**Tabela Verdade** | <table> <thead> <tr> <th>$A$</th> <th>$B$</th> <th>$C$</th> <th>$(A \land B)$</th> <th>$(A \land B) \land C$</th> </tr> </thead> <tbody> <tr> <td>V</td> <td>V</td> <td>V</td> <td>V</td> <td>V</td> </tr> <tr> <td>V</td> <td>V</td> <td>F</td> <td>V</td> <td>F</td> </tr> <tr> <td>V</td> <td>F</td> <td>V</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>F</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>V</td> <td>V</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>V</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>F</td> <td>V</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>F</td> <td>F</td> <td>F</td> <td>F</td> </tr> </tbody> </table>
+
+A consulta #1 só retorna resultado quando todas as condições são verdadeiras ao mesmo tempo.
 
 #2 | SELECT
 --- | ---
-**Expressão SQL** | SELECT l.bairro, COUNT(p.id) as total_cronicos
+**Expressão SQL** | SELECT l.bairro, COUNT(p.id) AS total_cronicos
 FROM vw_pessoa_ativa p
 JOIN pessoa_familia pf ON p.id = pf.id_pessoa AND pf.data_saida IS NULL
 JOIN familia_moradia fm ON pf.id_familia = fm.id_familia AND fm.data_saida IS NULL
@@ -1361,29 +1363,31 @@ JOIN localizacao l ON m.id_localizacao = l.id
 WHERE p.cronico = TRUE
 GROUP BY l.bairro;
 **Descrição da consulta** | Contar quantas pessoas com doenças crônicas existem por bairro.
-**Proposições lógicas** | $A$: O tipo da ocorrência é ENCHENTE (`tipo_ocorrencia = 'ENCHENTE'`) <br> $B$: A prioridade é BAIXA (`prioridade = 'BAIXA'`)
-**Expressão lógica proposicional** | $(\neg A) \land B$
-**Tabela Verdade** | <table> <thead> <tr> <th>$A$</th> <th>$B$</th> <th>$\neg A$</th> <th>$(\neg A) \land B$</th> </tr> </thead> <tbody> <tr> <td>F</td> <td>F</td> <td>V</td> <td>F</td> </tr> <tr> <td>F</td> <td>V</td> <td>V</td> <td>V</td> </tr> <tr> <td>V</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>V</td> <td>F</td> <td>F</td> </tr> </tbody> </table>
+**Proposições lógicas** | $A$: A pessoa tem doença crônica (`tipo_ocorrencia = 'ENCHENTE'`) <br> $B$: O vínculo familiar está ativo (`prioridade = 'BAIXA'`) <br> $C$: O vínculo de moradia está ativo (`fm.data_saida IS NULL`)
+**Expressão lógica proposicional** |  $(A \land B) \land C$
+**Tabela Verdade** |  <table> <thead> <tr> <th>$A$</th> <th>$B$</th> <th>$C$</th> <th>$(A \land B)$</th> <th>$(A \land B) \land C$</th> </tr> </thead> <tbody> <tr> <td>V</td> <td>V</td> <td>V</td> <td>V</td> <td>V</td> </tr> <tr> <td>V</td> <td>V</td> <td>F</td> <td>V</td> <td>F</td> </tr> <tr> <td>V</td> <td>F</td> <td>V</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>F</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>V</td> <td>V</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>V</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>F</td> <td>V</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>F</td> <td>F</td> <td>F</td> <td>F</td> </tr> </tbody> </table>
+
+A consulta #2 só retorna resultado quando todas as condições são verdadeiras ao mesmo tempo.
 
 #3 | SELECT
 --- | ---
-**Expressão SQL** | SELECT p.nome, gp.condicao, gp.data_prevista_parto
-FROM vw_pessoa_ativa p
-JOIN pessoa_grupo_prioritario pgp ON p.id = pgp.id_pessoa
-JOIN grupo_prioritario gp ON pgp.id_grupo_prioritario = gp.id
-WHERE gp.condicao ILIKE '%Gestante%';
-**Descrição da consulta** | Listar Gestantes (Prioridade Mental/Físico) cadastradas.
-**Proposições lógicas** | $A$: A categoria é BAIXO (`categoria = 'BAIXO'`) <br> $B$: A categoria é MÉDIO (`categoria = 'MÉDIO'`) <br> $C$: O alerta está expirado (`data_expiracao < CURRENT_DATE`)
-**Expressão lógica proposicional** | $(A \lor B) \lor C$
-**Tabela Verdade** | <table> <thead> <tr> <th>$A$</th> <th>$B$</th> <th>$C$</th> <th>$(A \lor B)$</th> <th>$(A \lor B) \lor C$</th> </tr> </thead> <tbody> <tr> <td>F</td> <td>F</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>F</td> <td>V</td> <td>F</td> <td>V</td> </tr> <tr> <td>F</td> <td>V</td> <td>F</td> <td>V</td> <td>V</td> </tr> <tr> <td>F</td> <td>V</td> <td>V</td> <td>V</td> <td>V</td> </tr> <tr> <td>V</td> <td>F</td> <td>F</td> <td>V</td> <td>V</td> </tr> <tr> <td>V</td> <td>F</td> <td>V</td> <td>V</td> <td>V</td> </tr> <tr> <td>V</td> <td>V</td> <td>F</td> <td>V</td> <td>V</td> </tr> <tr> <td>V</td> <td>V</td> <td>V</td> <td>V</td> <td>V</td> </tr> </tbody> </table>
+**Expressão SQL** | SELECT p.nome, gp.condicao, gp.data_prevista_parto FROM vw_pessoa_ativa p JOIN pessoa_grupo_prioritario pgp ON p.id = pgp.id_pessoa JOIN grupo_prioritario gp ON pgp.id_grupo_prioritario = gp.id WHERE gp.condicao ILIKE '%Gestante%';
+**Descrição da consulta** | Listar gestantes cadastradas em grupos prioritários.
+**Proposições lógicas** | $A$: A pessoa pertence a um grupo prioritário (`pgp.id_pessoa = p.id`) <br> $B$: A condição do grupo contém "Gestante" (`gp.condicao ILIKE '%Gestante%'`)
+**Expressão lógica proposicional** | $A \land B$
+**Tabela Verdade** | <table> <thead> <tr> <th>$A$</th> <th>$B$</th> <th>$A \land B$</th> </tr> </thead> <tbody> <tr> <td>V</td> <td>V</td> <td>V</td> </tr> <tr> <td>V</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>V</td> <td>F</td> </tr> <tr> <td>F</td> <td>F</td> <td>F</td> </tr> </tbody> </table>
+
+A consulta #3 só retorna resultado quando a pessoa pertence a um grupo prioritário e a condição cadastrada contém o termo "Gestante".
 
 #4 | UPDATE
 --- | ---
 **Expressão SQL** | UPDATE moradia SET deleted_at = NULL, status = 'Ativa' WHERE id = 10;
-**Descrição da consulta** | Reverter exclusão de uma moradia.
-**Proposições lógicas** | $A$: A categoria é BAIXO (`categoria = 'BAIXO'`) <br> $B$: A categoria é MÉDIO (`categoria = 'MÉDIO'`) <br> $C$: O alerta está expirado (`data_expiracao < CURRENT_DATE`)
-**Expressão lógica proposicional** | $(A \lor B) \lor C$
-**Tabela Verdade** | <table> <thead> <tr> <th>$A$</th> <th>$B$</th> <th>$C$</th> <th>$(A \lor B)$</th> <th>$(A \lor B) \lor C$</th> </tr> </thead> <tbody> <tr> <td>F</td> <td>F</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>F</td> <td>V</td> <td>F</td> <td>V</td> </tr> <tr> <td>F</td> <td>V</td> <td>F</td> <td>V</td> <td>V</td> </tr> <tr> <td>F</td> <td>V</td> <td>V</td> <td>V</td> <td>V</td> </tr> <tr> <td>V</td> <td>F</td> <td>F</td> <td>V</td> <td>V</td> </tr> <tr> <td>V</td> <td>F</td> <td>V</td> <td>V</td> <td>V</td> </tr> <tr> <td>V</td> <td>V</td> <td>F</td> <td>V</td> <td>V</td> </tr> <tr> <td>V</td> <td>V</td> <td>V</td> <td>V</td> <td>V</td> </tr> </tbody> </table>
+**Descrição da consulta** | Reverter exclusão lógica de uma moradia específica.
+**Proposições lógicas** | $A$: O ID da moradia corresponde ao registro alvo (`id = :id`) <br> $B$: A moradia estava marcada como excluída (`deleted_at IS NOT NULL`)
+**Expressão lógica proposicional** | $A \land B$
+**Tabela Verdade** | <table> <thead> <tr> <th>$A$</th> <th>$B$</th> <th>$A \land B$</th> </tr> </thead> <tbody> <tr> <td>V</td> <td>V</td> <td>V</td> </tr> <tr> <td>V</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>V</td> <td>F</td> </tr> <tr> <td>F</td> <td>F</td> <td>F</td> </tr> </tbody> </table>
+
+A consulta #4 só realiza a atualização quando o registro corresponde ao ID informado e a moradia possui exclusão lógica previamente registrada.
 
 Na última tabela de consultas SQL, a expressão "id = 10" é usada como exemplo, e não como algo que ocorre frequentemente.
 
