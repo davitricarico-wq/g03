@@ -445,40 +445,42 @@ Matriz de cobertura que demonstra quais RN (Regras de Negócio) e endpoints impl
 | RF001 | RN01, RN02    | `/usuarios` | POST   |
 
 ## 3.2. Arquitetura (sprints 1 a 5)
-A arquitetura projetada para o sistema é, em suma, baseada na Arquitetura de Seis Camadas (ou 6-Tier Architecture) com base em princípios SOLID e de separação de conceitos (Separation of Concerns). Dividindo a aplicação em componentes especializados e com responsabilidades muito bem definidas.
+A arquitetura projetada para o sistema é, em suma, baseada na Arquitetura de Camadas (Layered Architecture), porém com a aplicação de: Arquitetura de Seis Camadas (6-Tier Architecture) com base em princípios SOLID e de separação de conceitos (Separation of Concerns). Dividindo a aplicação em componentes especializados e com responsabilidades muito bem definidas.
 Assim, fornece um código testável, escalável e de alta manutenibilidade, permitindo que as regras de negócio fiquem isoladas de detalhes de infraestrutura (como o banco de dados) e da interface do usuário.
 
 ### 3.2.1. Diagrama de Arquitetura (sprints 3 e 4)
 
 ```
 src/
-├── models/
+├── models/ – tipos e interfaces
 │   ├── validations/ – validação dos atributos / classes
 │   └── implementations/ – definição das classes
-├── views/
-├── controllers/
-│   └── contracts/ – Contratos das nossas controllers (requisições)
-│   	├── requests/ – DTO das requisições
-│   	└── responses/ – DTO das responses(respostas)
-├── services/
-│   ├── interfaces – interfaces dos services
+├── views/ – telas (templates ejs)
+├── DTOs/ – Data Transfer Objects: entidades com somente as propriedades necessárias
+├── controllers/ – borda HTTP
+├── services/ – regras de negócio
+│   ├── interfaces – Contratos dos services
 │   ├── implementations – implementações dos services
-│   └── contracts/ – Contratos das nossas controllers (requisições)
-│   	├── requests/ – DTO das requisições
-│   	└── responses/ – DTO das responses(respostas)
-├── repositories/
-│   ├── interfaces/ – interfaces dos repositórios
+├── repositories/ – acesso ao banco de dados
+│   ├── interfaces/ – Contratos dos repositórios
 │   └── implementations/ – implementações dos repositórios
-├──mappers/
-├──database/
-│   └── migrations/
-├──routes/ – 
+├──mappers/ – transformadores de objetos: Model → DTO
+├──database/ – configurações do banco de dados e histórico de migrações
+│   └── migrations/ – versionamento do esquema do banco de dados
+(transversal, fora do fluxo)
+├──routes/ – rotas (endpoints) das requisições
 ├──middlewares/ – guarda o middleware global do sistema
-├──errors/ – tratamento de erros específicos do sistema
-└── helpers/               - transversal, fora do fluxo
+├──errors/ – classes de tratamento de erros específicos e customizados do sistema
+└── helpers/ – utilitários puros
+
 ```
 
-*Posicione aqui o diagrama de arquitetura da solução, indicando as camadas principais (Controller, Service, Repository, Model) e suas responsabilidades. Atualize sempre que necessário.*
+<div align="center">
+    <p>Figura: Diagrama de Classe Arquitetural</p>
+    <img src="outros/diagrama-classe-arquitetural.drawio.png">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
 
 ### 3.2.2. Diagrama de Casos de Uso (sprint 1)
 
@@ -526,7 +528,18 @@ Este fluxo descreve a consulta ao mapa de risco realizada pelo **Diretor ou Gest
 
 ### 3.2.7. Padrões de Projeto Aplicados (sprints 3 a 5)
 
-*Documente os design patterns utilizados (Repository, Strategy, Factory, DTO etc.) e quais princípios SOLID se aplicam. Justifique a adoção de cada padrão com base em uma necessidade real do projeto.*
+Esta sessão detalha os padrões de projeto (Design Patterns) e conceitos arquiteturais implementados na estrutura de seis camadas do projeto **GeoRisco**, correlacionando cada escolha técnica a uma necessidade de negócio real da Defesa Civil de Santo André.
+
+| Padrão / Conceito Arquitetural | Justificativa e Necessidade Real no Projeto GeoRisco |
+| :--- | :--- |
+| **Arquitetura em Seis Camadas (6-Tier)** | Garante a separação estrita de conceitos (*Separation of Concerns*). Isola a lógica complexa de monitoramento de riscos ambientais das tecnologias voláteis, como o banco de dados e as interfaces visuais em EJS, tornando o sistema testável e modular. |
+| **Princípios SOLID** | Servem como base para guiar o desacoplamento. O **SRP** garante que arquivos de rota ou controllers não executem cálculos geográficos, o **OCP** permite adicionar novos métodos de notificação sem quebrar o código existente, e o **DIP** viabiliza o uso de mocks para testes rápidos. |
+| **Repository Pattern** | Centraliza e abstrai o acesso aos dados geoespaciais e cadastrais. Se a equipe precisar alterar a forma de persistência (como migrar de queries SQL puras para um ORM), a camada de negócio (`services/`) não precisará sofrer nenhuma modificação. |
+| **Data Transfer Object (DTO)** | Controla estritamente o fluxo de dados que trafega entre as bordas do sistema. Impede que informações confidenciais das pessoas em vulnerabilidade sejam expostas desnecessariamente para as views (EJS) e assegura que os `services` recebam dados já refinados e validados pelos `controllers`. |
+| **Data Mapper** | Responsável por converter os modelos de banco de dados (`Models`) em objetos otimizados para apresentação (`DTOs`). No GeoRisco, sua principal necessidade é isolar os dados brutos e transformá-los em estruturas limpas, evitando que a lógica de formatação de exibição polua a lógica de negócios. |
+| **Domain Model** | Garante que as regras e os comportamentos centrais das entidades do ecossistema do projeto fiquem encapsulados em objetos de domínio ricos (`models/`), e não espalhados de forma procedural pelo código. |
+| **Helper** | Isola algoritmos específicos de sistemas externos ao software, envolvendo sistemas nativos como GPS, bibliotecas, dentre outros. |
+| **Custom Exceptions & Centralized Handling** | Padroniza e centraliza as falhas do sistema na camada de `errors/` e middlewares. Essencial para mapear erros específicos de negócio da Defesa Civil (ex: "Área de risco não mapeada" ou "Coordenadas inválidas") e tratá-los de forma amigável ao usuário, sem expor logs técnicos sensíveis de banco de dados na interface. |
 
 ## 3.3. Wireframes (sprint 2)
 
