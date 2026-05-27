@@ -95,8 +95,8 @@ Cria um cadastro completo em uma unica operacao transacional, incluindo `localiz
       "situacao_ocupacional": "Empregado",
       "doencas_cronicas": "Hipertensao",
       "medicamentos": "Losartana",
-      "grau_parentesco_responsavel": "Respons?vel",
-      "escolaridade": "Ensino M?dio Completo"
+      "grau_parentesco_responsavel": "Responsavel",
+      "escolaridade": "Ensino Medio Completo"
     },
     "cpf": "12345678901",
     "email": "maria@example.com",
@@ -132,7 +132,7 @@ Cria um cadastro completo em uma unica operacao transacional, incluindo `localiz
   ],
   "pets": [
     {
-      "tipo_pet": "C?o",
+      "tipo_pet": "Cao",
       "porte_pet": "Pequeno",
       "nome": "Rex",
       "cor": "Caramelo",
@@ -306,7 +306,7 @@ GET /api/moradias/1/consulta-integrada
       "grupos_prioritarios": [
         {
           "id_grupo_prioritario": 1,
-          "nome": "Crian?a"
+          "nome": "Crianca"
         }
       ]
     }
@@ -314,7 +314,7 @@ GET /api/moradias/1/consulta-integrada
   "pets": [
     {
       "id_pet": 1,
-      "tipo_pet": "C?o",
+      "tipo_pet": "Cao",
       "porte_pet": "Pequeno",
       "nome": "Rex"
     }
@@ -471,7 +471,7 @@ GET /api/familias/1/pets
   {
     "id_pet": 1,
     "id_familia": 1,
-    "tipo_pet": "C?o",
+    "tipo_pet": "Cao",
     "porte_pet": "Pequeno",
     "nome": "Rex",
     "cor": "Caramelo",
@@ -507,7 +507,7 @@ Cadastra um novo pet vinculado a uma familia.
 
 ```json
 {
-  "tipo_pet": "C?o",
+  "tipo_pet": "Cao",
   "porte_pet": "Pequeno",
   "nome": "Rex",
   "cor": "Caramelo",
