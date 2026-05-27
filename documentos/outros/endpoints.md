@@ -59,7 +59,7 @@ Cria um cadastro completo em uma unica operacao transacional, incluindo `localiz
 | Metodo | `POST` |
 | Endpoint | `/api/cadastros-completos` |
 | Atores | A01, A03 |
-| RF/RN relacionados | RF001, RF002, RF003, RF007 / RN01, RN04 |
+| RF/RN relacionados | RF001, RF002, RF003 / RN01, RN04 |
 
 ### Request
 
@@ -95,8 +95,8 @@ Cria um cadastro completo em uma unica operacao transacional, incluindo `localiz
       "situacao_ocupacional": "Empregado",
       "doencas_cronicas": "Hipertensao",
       "medicamentos": "Losartana",
-      "grau_parentesco_responsavel": "Responsavel",
-      "escolaridade": "Ensino Medio"
+      "grau_parentesco_responsavel": "Respons?vel",
+      "escolaridade": "Ensino M?dio Completo"
     },
     "cpf": "12345678901",
     "email": "maria@example.com",
@@ -119,7 +119,7 @@ Cria um cadastro completo em uma unica operacao transacional, incluindo `localiz
       "doencas_cronicas": null,
       "medicamentos": null,
       "grau_parentesco_responsavel": "Filho/Filha",
-      "escolaridade": "Fundamental",
+      "escolaridade": "Ensino Fundamental Incompleto",
       "grupos_prioritarios": [1]
     }
   ],
@@ -132,7 +132,7 @@ Cria um cadastro completo em uma unica operacao transacional, incluindo `localiz
   ],
   "pets": [
     {
-      "tipo_pet": "Cao",
+      "tipo_pet": "C?o",
       "porte_pet": "Pequeno",
       "nome": "Rex",
       "cor": "Caramelo",
@@ -306,7 +306,7 @@ GET /api/moradias/1/consulta-integrada
       "grupos_prioritarios": [
         {
           "id_grupo_prioritario": 1,
-          "nome": "Crianca"
+          "nome": "Crian?a"
         }
       ]
     }
@@ -314,7 +314,7 @@ GET /api/moradias/1/consulta-integrada
   "pets": [
     {
       "id_pet": 1,
-      "tipo_pet": "Cao",
+      "tipo_pet": "C?o",
       "porte_pet": "Pequeno",
       "nome": "Rex"
     }
@@ -352,7 +352,7 @@ Lista moradias, ocupacoes e assistidos a partir de filtros de busca, status, vul
 | Metodo | `GET` |
 | Endpoint | `/api/moradias` |
 | Atores | A02, A03 |
-| RF/RN relacionados | RF006, RF011 / RN02 |
+| RF/RN relacionados | RF006 |
 
 ### Query Params
 
@@ -447,7 +447,405 @@ Content-Disposition: attachment; filename="moradias.csv"
 
 ---
 
-## 6. Buscar Cadastro Completo da Familia
+## 6. Listar Pets da Familia
+
+Lista pets vinculados a uma familia.
+
+| Campo | Valor |
+|---|---|
+| Metodo | `GET` |
+| Endpoint | `/api/familias/{id_familia}/pets` |
+| Atores | A01, A02, A03 |
+| RF/RN relacionados | RF007 |
+
+### Request
+
+```txt
+GET /api/familias/1/pets
+```
+
+### Response `200 OK`
+
+```json
+[
+  {
+    "id_pet": 1,
+    "id_familia": 1,
+    "tipo_pet": "C?o",
+    "porte_pet": "Pequeno",
+    "nome": "Rex",
+    "cor": "Caramelo",
+    "observacoes": "Animal acompanha a familia em evacuacao"
+  }
+]
+```
+
+### Status Possiveis
+
+| Status | Explicacao |
+|---:|---|
+| `200` | Pets retornados com sucesso. Pode retornar array vazio. |
+| `401` | Usuario nao autenticado. |
+| `403` | Usuario sem permissao para visualizar pets. |
+| `404` | Familia nao encontrada. |
+| `500` | Falha ao consultar pets. |
+
+---
+
+## 7. Cadastrar Pet
+
+Cadastra um novo pet vinculado a uma familia.
+
+| Campo | Valor |
+|---|---|
+| Metodo | `POST` |
+| Endpoint | `/api/familias/{id_familia}/pets` |
+| Atores | A01 |
+| RF/RN relacionados | RF007 |
+
+### Request
+
+```json
+{
+  "tipo_pet": "C?o",
+  "porte_pet": "Pequeno",
+  "nome": "Rex",
+  "cor": "Caramelo",
+  "observacoes": "Animal acompanha a familia em evacuacao",
+  "foto_url": "https://storage.example.com/pet-rex.jpg"
+}
+```
+
+### Response `201 Created`
+
+```json
+{
+  "message": "Pet cadastrado com sucesso",
+  "id_pet": 1,
+  "id_familia": 1
+}
+```
+
+### Status Possiveis
+
+| Status | Explicacao |
+|---:|---|
+| `201` | Pet criado com sucesso. |
+| `400` | JSON malformado. |
+| `401` | Usuario nao autenticado. |
+| `403` | Usuario sem permissao para cadastrar pet. |
+| `404` | Familia nao encontrada. |
+| `422` | `tipo_pet` ausente ou valor invalido. |
+| `500` | Falha ao criar pet. |
+
+---
+
+## 8. Atualizar Pet
+
+Atualiza dados de um pet existente.
+
+| Campo | Valor |
+|---|---|
+| Metodo | `PUT` |
+| Endpoint | `/api/pets/{id_pet}` |
+| Atores | A01, A03 |
+| RF/RN relacionados | RF007 |
+
+### Request
+
+```json
+{
+  "tipo_pet": "Gato",
+  "porte_pet": "Pequeno",
+  "nome": "Mimi",
+  "cor": "Preto",
+  "observacoes": "Atualizacao cadastral"
+}
+```
+
+### Response `200 OK`
+
+```json
+{
+  "message": "Pet atualizado com sucesso",
+  "id_pet": 1
+}
+```
+
+### Status Possiveis
+
+| Status | Explicacao |
+|---:|---|
+| `200` | Pet atualizado com sucesso. |
+| `400` | JSON malformado. |
+| `401` | Usuario nao autenticado. |
+| `403` | Usuario sem permissao para atualizar pet. |
+| `404` | Pet nao encontrado. |
+| `422` | Campos enviados possuem valores invalidos. |
+| `500` | Falha ao atualizar pet. |
+
+---
+
+## 9. Consultar Dados do Mapa de Calor
+
+Retorna dados agregados para renderizacao do mapa de calor.
+
+| Campo | Valor |
+|---|---|
+| Metodo | `GET` |
+| Endpoint | `/api/indicadores/mapa-calor` |
+| Atores | A02, A03 |
+| RF/RN relacionados | RF008 / RN01 |
+
+### Query Params
+
+| Parametro | Obrigatorio | Exemplo | Descricao |
+|---|---:|---|---|
+| `filtro` | Nao | `Idoso` | Grupo ou criterio usado no mapa de calor. |
+| `zoom` | Nao | `14` | Nivel de zoom usado para recalculo de clusters. |
+
+### Request
+
+```txt
+GET /api/indicadores/mapa-calor?filtro=Acamado&zoom=14
+```
+
+### Response `200 OK`
+
+```json
+[
+  {
+    "latitude": -23.6632,
+    "longitude": -46.5381,
+    "intensidade": 8
+  },
+  {
+    "latitude": -23.6641,
+    "longitude": -46.5395,
+    "intensidade": 3
+  }
+]
+```
+
+### Status Possiveis
+
+| Status | Explicacao |
+|---:|---|
+| `200` | Dataset do mapa de calor retornado com sucesso. Pode retornar array vazio. |
+| `400` | Filtro ou zoom invalido. |
+| `401` | Usuario nao autenticado. |
+| `403` | Usuario sem permissao para visualizar indicadores. |
+| `500` | Falha ao calcular agregacoes. |
+
+---
+
+## 10. Atualizar Status da Moradia
+
+Atualiza o status operacional da moradia. Pode representar arquivamento logico para moradias demolidas, interditadas ou evacuadas.
+
+| Campo | Valor |
+|---|---|
+| Metodo | `PATCH` |
+| Endpoint | `/api/moradias/{id_moradia}/status` |
+| Atores | A03 |
+| RF/RN relacionados | RF009 / RN03 |
+
+### Request
+
+```json
+{
+  "status": "Demolida",
+  "motivo": "Imovel destruido por deslizamento"
+}
+```
+
+### Response `200 OK`
+
+```json
+{
+  "message": "Status da moradia atualizado com sucesso",
+  "id_moradia": 1,
+  "status": "Demolida"
+}
+```
+
+### Response `409 Conflict`
+
+```json
+{
+  "error": "Moradia possui ocupacao ativa",
+  "details": "Realocar ou inativar a familia antes de arquivar a moradia",
+  "requer_realocacao": true,
+  "id_familia": 1
+}
+```
+
+### Status Possiveis
+
+| Status | Explicacao |
+|---:|---|
+| `200` | Status atualizado com sucesso. |
+| `400` | JSON malformado. |
+| `401` | Usuario nao autenticado. |
+| `403` | Usuario sem permissao para arquivar moradia. |
+| `404` | Moradia nao encontrada. |
+| `409` | Moradia possui familia ativa vinculada e exige realocacao ou inativacao previa. |
+| `422` | Status ou motivo ausente/invalido. |
+| `500` | Falha ao atualizar status da moradia. |
+
+---
+
+## 11. Realocar Familia
+
+Encerra a ocupacao atual de uma familia e cria novo registro em `historico_ocupacao` para a nova moradia.
+
+| Campo | Valor |
+|---|---|
+| Metodo | `POST` |
+| Endpoint | `/api/familias/{id_familia}/realocacoes` |
+| Atores | A03 |
+| RF/RN relacionados | RF009, RF012 / RN03 |
+
+### Request
+
+```json
+{
+  "id_nova_moradia": 2,
+  "status_saida": "Evacuada por deslizamento",
+  "data_entrada": "2026-05-25"
+}
+```
+
+### Response `201 Created`
+
+```json
+{
+  "message": "Familia realocada com sucesso",
+  "id_familia": 1,
+  "id_moradia_anterior": 1,
+  "id_nova_moradia": 2,
+  "id_historico_ocupacao": 10
+}
+```
+
+### Status Possiveis
+
+| Status | Explicacao |
+|---:|---|
+| `201` | Realocacao criada com sucesso. |
+| `400` | JSON malformado. |
+| `401` | Usuario nao autenticado. |
+| `403` | Usuario sem permissao para realocar familia. |
+| `404` | Familia ou nova moradia nao encontrada. |
+| `409` | Familia nao possui ocupacao ativa ou nova moradia nao esta apta. |
+| `422` | Data de entrada ou status de saida invalido. |
+| `500` | Falha ao processar realocacao. |
+
+---
+
+## 12. Arquivar Morador Falecido
+
+Inativa logicamente o cadastro de um cidadao falecido, preservando o historico para auditoria e relatorios historicos.
+
+| Campo | Valor |
+|---|---|
+| Metodo | `PATCH` |
+| Endpoint | `/api/cidadaos/{id_cidadao}/arquivar` |
+| Atores | A02, A03 |
+| RF/RN relacionados | RF010 / RN03 |
+
+### Request
+
+```json
+{
+  "motivo": "Falecimento",
+  "data_falecimento": "2026-05-20",
+  "confirmado": true
+}
+```
+
+### Response `200 OK`
+
+```json
+{
+  "message": "Cidadao arquivado com sucesso",
+  "id_cidadao": 1,
+  "status_cadastro": false
+}
+```
+
+### Response `409 Conflict`
+
+Quando o cidadao arquivado for o responsavel da familia:
+
+```json
+{
+  "error": "Cidadao e responsavel da familia",
+  "details": "E necessario definir novo responsavel antes de concluir o arquivamento",
+  "requer_novo_responsavel": true,
+  "candidatos": [
+    {
+      "id_cidadao": 2,
+      "nome_completo": "Joao Silva"
+    }
+  ]
+}
+```
+
+### Status Possiveis
+
+| Status | Explicacao |
+|---:|---|
+| `200` | Cidadao arquivado com sucesso. |
+| `400` | JSON malformado. |
+| `401` | Usuario nao autenticado. |
+| `403` | Usuario sem permissao para arquivar cidadao. |
+| `404` | Cidadao nao encontrado. |
+| `409` | Cidadao e responsavel da familia e exige substituicao antes da conclusao. |
+| `422` | Data de falecimento ausente/invalida ou motivo invalido. |
+| `500` | Falha ao arquivar cidadao. |
+
+---
+
+## 13. Consultar Indicadores de Recadastro
+
+Retorna totais de cadastros atualizados e desatualizados, conforme RN02.
+
+| Campo | Valor |
+|---|---|
+| Metodo | `GET` |
+| Endpoint | `/api/indicadores/recadastro` |
+| Atores | A02, A03 |
+| RF/RN relacionados | RF011 / RN02 |
+
+### Request
+
+```txt
+GET /api/indicadores/recadastro
+```
+
+### Response `200 OK`
+
+```json
+{
+  "total": 120,
+  "atualizados": 95,
+  "desatualizados": 25
+}
+```
+
+### Status Possiveis
+
+| Status | Explicacao |
+|---:|---|
+| `200` | Indicadores retornados com sucesso. |
+| `401` | Usuario nao autenticado. |
+| `403` | Usuario sem permissao para consultar indicadores. |
+| `500` | Falha ao calcular indicadores. |
+
+---
+
+## 14. Buscar Cadastro Completo da Familia
 
 Retorna todos os dados de uma familia para revisao ou atualizacao anual.
 
@@ -507,7 +905,7 @@ GET /api/familias/1/cadastro-completo
 
 ---
 
-## 7. Atualizar Cadastro Completo da Familia
+## 15. Atualizar Cadastro Completo da Familia
 
 Atualiza o cadastro completo de uma familia, incluindo dados sociais, estruturais e historico de ocupacao quando houver realocacao.
 
@@ -588,404 +986,6 @@ Atualiza o cadastro completo de uma familia, incluindo dados sociais, estruturai
 
 ---
 
-## 8. Listar Pets da Familia
-
-Lista pets vinculados a uma familia.
-
-| Campo | Valor |
-|---|---|
-| Metodo | `GET` |
-| Endpoint | `/api/familias/{id_familia}/pets` |
-| Atores | A01, A02, A03 |
-| RF/RN relacionados | RF007 |
-
-### Request
-
-```txt
-GET /api/familias/1/pets
-```
-
-### Response `200 OK`
-
-```json
-[
-  {
-    "id_pet": 1,
-    "id_familia": 1,
-    "tipo_pet": "Cao",
-    "porte_pet": "Pequeno",
-    "nome": "Rex",
-    "cor": "Caramelo",
-    "observacoes": "Animal acompanha a familia em evacuacao"
-  }
-]
-```
-
-### Status Possiveis
-
-| Status | Explicacao |
-|---:|---|
-| `200` | Pets retornados com sucesso. Pode retornar array vazio. |
-| `401` | Usuario nao autenticado. |
-| `403` | Usuario sem permissao para visualizar pets. |
-| `404` | Familia nao encontrada. |
-| `500` | Falha ao consultar pets. |
-
----
-
-## 9. Cadastrar Pet
-
-Cadastra um novo pet vinculado a uma familia.
-
-| Campo | Valor |
-|---|---|
-| Metodo | `POST` |
-| Endpoint | `/api/familias/{id_familia}/pets` |
-| Atores | A01 |
-| RF/RN relacionados | RF007 |
-
-### Request
-
-```json
-{
-  "tipo_pet": "Cao",
-  "porte_pet": "Pequeno",
-  "nome": "Rex",
-  "cor": "Caramelo",
-  "observacoes": "Animal acompanha a familia em evacuacao",
-  "foto_url": "https://storage.example.com/pet-rex.jpg"
-}
-```
-
-### Response `201 Created`
-
-```json
-{
-  "message": "Pet cadastrado com sucesso",
-  "id_pet": 1,
-  "id_familia": 1
-}
-```
-
-### Status Possiveis
-
-| Status | Explicacao |
-|---:|---|
-| `201` | Pet criado com sucesso. |
-| `400` | JSON malformado. |
-| `401` | Usuario nao autenticado. |
-| `403` | Usuario sem permissao para cadastrar pet. |
-| `404` | Familia nao encontrada. |
-| `422` | `tipo_pet` ausente ou valor invalido. |
-| `500` | Falha ao criar pet. |
-
----
-
-## 10. Atualizar Pet
-
-Atualiza dados de um pet existente.
-
-| Campo | Valor |
-|---|---|
-| Metodo | `PUT` |
-| Endpoint | `/api/pets/{id_pet}` |
-| Atores | A01, A03 |
-| RF/RN relacionados | RF007 |
-
-### Request
-
-```json
-{
-  "tipo_pet": "Gato",
-  "porte_pet": "Pequeno",
-  "nome": "Mimi",
-  "cor": "Preto",
-  "observacoes": "Atualizacao cadastral"
-}
-```
-
-### Response `200 OK`
-
-```json
-{
-  "message": "Pet atualizado com sucesso",
-  "id_pet": 1
-}
-```
-
-### Status Possiveis
-
-| Status | Explicacao |
-|---:|---|
-| `200` | Pet atualizado com sucesso. |
-| `400` | JSON malformado. |
-| `401` | Usuario nao autenticado. |
-| `403` | Usuario sem permissao para atualizar pet. |
-| `404` | Pet nao encontrado. |
-| `422` | Campos enviados possuem valores invalidos. |
-| `500` | Falha ao atualizar pet. |
-
----
-
-## 11. Consultar Dados do Mapa de Calor
-
-Retorna dados agregados para renderizacao do mapa de calor.
-
-| Campo | Valor |
-|---|---|
-| Metodo | `GET` |
-| Endpoint | `/api/indicadores/mapa-calor` |
-| Atores | A02, A03 |
-| RF/RN relacionados | RF008 / RN01 |
-
-### Query Params
-
-| Parametro | Obrigatorio | Exemplo | Descricao |
-|---|---:|---|---|
-| `filtro` | Nao | `idosos` | Grupo ou criterio usado no mapa de calor. |
-| `zoom` | Nao | `14` | Nivel de zoom usado para recalculo de clusters. |
-
-### Request
-
-```txt
-GET /api/indicadores/mapa-calor?filtro=acamados&zoom=14
-```
-
-### Response `200 OK`
-
-```json
-[
-  {
-    "latitude": -23.6632,
-    "longitude": -46.5381,
-    "intensidade": 8
-  },
-  {
-    "latitude": -23.6641,
-    "longitude": -46.5395,
-    "intensidade": 3
-  }
-]
-```
-
-### Status Possiveis
-
-| Status | Explicacao |
-|---:|---|
-| `200` | Dataset do mapa de calor retornado com sucesso. Pode retornar array vazio. |
-| `400` | Filtro ou zoom invalido. |
-| `401` | Usuario nao autenticado. |
-| `403` | Usuario sem permissao para visualizar indicadores. |
-| `500` | Falha ao calcular agregacoes. |
-
----
-
-## 12. Consultar Indicadores de Recadastro
-
-Retorna totais de cadastros atualizados e desatualizados, conforme RN02.
-
-| Campo | Valor |
-|---|---|
-| Metodo | `GET` |
-| Endpoint | `/api/indicadores/recadastro` |
-| Atores | A02, A03 |
-| RF/RN relacionados | RF011 / RN02 |
-
-### Request
-
-```txt
-GET /api/indicadores/recadastro
-```
-
-### Response `200 OK`
-
-```json
-{
-  "total": 120,
-  "atualizados": 95,
-  "desatualizados": 25
-}
-```
-
-### Status Possiveis
-
-| Status | Explicacao |
-|---:|---|
-| `200` | Indicadores retornados com sucesso. |
-| `401` | Usuario nao autenticado. |
-| `403` | Usuario sem permissao para consultar indicadores. |
-| `500` | Falha ao calcular indicadores. |
-
----
-
-## 13. Atualizar Status da Moradia
-
-Atualiza o status operacional da moradia. Pode representar arquivamento logico para moradias demolidas, interditadas ou evacuadas.
-
-| Campo | Valor |
-|---|---|
-| Metodo | `PATCH` |
-| Endpoint | `/api/moradias/{id_moradia}/status` |
-| Atores | A03 |
-| RF/RN relacionados | RF009 / RN03 |
-
-### Request
-
-```json
-{
-  "status": "Demolida",
-  "motivo": "Imovel destruido por deslizamento"
-}
-```
-
-### Response `200 OK`
-
-```json
-{
-  "message": "Status da moradia atualizado com sucesso",
-  "id_moradia": 1,
-  "status": "Demolida"
-}
-```
-
-### Response `409 Conflict`
-
-```json
-{
-  "error": "Moradia possui ocupacao ativa",
-  "details": "Realocar ou inativar a familia antes de arquivar a moradia",
-  "requer_realocacao": true,
-  "id_familia": 1
-}
-```
-
-### Status Possiveis
-
-| Status | Explicacao |
-|---:|---|
-| `200` | Status atualizado com sucesso. |
-| `400` | JSON malformado. |
-| `401` | Usuario nao autenticado. |
-| `403` | Usuario sem permissao para arquivar moradia. |
-| `404` | Moradia nao encontrada. |
-| `409` | Moradia possui familia ativa vinculada e exige realocacao ou inativacao previa. |
-| `422` | Status ou motivo ausente/invalido. |
-| `500` | Falha ao atualizar status da moradia. |
-
----
-
-## 14. Realocar Familia
-
-Encerra a ocupacao atual de uma familia e cria novo registro em `historico_ocupacao` para a nova moradia.
-
-| Campo | Valor |
-|---|---|
-| Metodo | `POST` |
-| Endpoint | `/api/familias/{id_familia}/realocacoes` |
-| Atores | A03 |
-| RF/RN relacionados | RF009, RF012 / RN03 |
-
-### Request
-
-```json
-{
-  "id_nova_moradia": 2,
-  "status_saida": "Evacuada por deslizamento",
-  "data_entrada": "2026-05-25"
-}
-```
-
-### Response `201 Created`
-
-```json
-{
-  "message": "Familia realocada com sucesso",
-  "id_familia": 1,
-  "id_moradia_anterior": 1,
-  "id_nova_moradia": 2,
-  "id_historico_ocupacao": 10
-}
-```
-
-### Status Possiveis
-
-| Status | Explicacao |
-|---:|---|
-| `201` | Realocacao criada com sucesso. |
-| `400` | JSON malformado. |
-| `401` | Usuario nao autenticado. |
-| `403` | Usuario sem permissao para realocar familia. |
-| `404` | Familia ou nova moradia nao encontrada. |
-| `409` | Familia nao possui ocupacao ativa ou nova moradia nao esta apta. |
-| `422` | Data de entrada ou status de saida invalido. |
-| `500` | Falha ao processar realocacao. |
-
----
-
-## 15. Arquivar Morador Falecido
-
-Inativa logicamente o cadastro de um cidadao falecido, preservando o historico para auditoria e relatorios historicos.
-
-| Campo | Valor |
-|---|---|
-| Metodo | `PATCH` |
-| Endpoint | `/api/cidadaos/{id_cidadao}/arquivar` |
-| Atores | A02, A03 |
-| RF/RN relacionados | RF010 / RN03 |
-
-### Request
-
-```json
-{
-  "motivo": "Falecimento",
-  "data_falecimento": "2026-05-20",
-  "confirmado": true
-}
-```
-
-### Response `200 OK`
-
-```json
-{
-  "message": "Cidadao arquivado com sucesso",
-  "id_cidadao": 1,
-  "status_cadastro": false
-}
-```
-
-### Response `409 Conflict`
-
-Quando o cidadao arquivado for o responsavel da familia:
-
-```json
-{
-  "error": "Cidadao e responsavel da familia",
-  "details": "E necessario definir novo responsavel antes de concluir o arquivamento",
-  "requer_novo_responsavel": true,
-  "candidatos": [
-    {
-      "id_cidadao": 2,
-      "nome_completo": "Joao Silva"
-    }
-  ]
-}
-```
-
-### Status Possiveis
-
-| Status | Explicacao |
-|---:|---|
-| `200` | Cidadao arquivado com sucesso. |
-| `400` | JSON malformado. |
-| `401` | Usuario nao autenticado. |
-| `403` | Usuario sem permissao para arquivar cidadao. |
-| `404` | Cidadao nao encontrado. |
-| `409` | Cidadao e responsavel da familia e exige substituicao antes da conclusao. |
-| `422` | Data de falecimento ausente/invalida ou motivo invalido. |
-| `500` | Falha ao arquivar cidadao. |
-
----
-
 ## 16. Definir ou Substituir Responsavel da Familia
 
 Define ou substitui o responsavel ativo de uma familia.
@@ -1047,14 +1047,14 @@ Define ou substitui o responsavel ativo de uma familia.
 | `GET` | `/api/moradias/{id_moradia}/consulta-integrada` | Consultar ficha integrada da moradia. |
 | `GET` | `/api/moradias` | Listar moradias com busca e filtros. |
 | `GET` | `/api/moradias/exportar` | Exportar lista filtrada. |
-| `GET` | `/api/familias/{id_familia}/cadastro-completo` | Buscar cadastro completo para revisao. |
-| `PUT` | `/api/familias/{id_familia}/cadastro-completo` | Atualizar cadastro completo. |
 | `GET` | `/api/familias/{id_familia}/pets` | Listar pets da familia. |
 | `POST` | `/api/familias/{id_familia}/pets` | Cadastrar pet. |
 | `PUT` | `/api/pets/{id_pet}` | Atualizar pet. |
 | `GET` | `/api/indicadores/mapa-calor` | Consultar dados do mapa de calor. |
-| `GET` | `/api/indicadores/recadastro` | Consultar indicadores de recadastro. |
 | `PATCH` | `/api/moradias/{id_moradia}/status` | Atualizar status/arquivar moradia. |
 | `POST` | `/api/familias/{id_familia}/realocacoes` | Realocar familia entre moradias. |
 | `PATCH` | `/api/cidadaos/{id_cidadao}/arquivar` | Arquivar morador falecido. |
+| `GET` | `/api/indicadores/recadastro` | Consultar indicadores de recadastro. |
+| `GET` | `/api/familias/{id_familia}/cadastro-completo` | Buscar cadastro completo para revisao. |
+| `PUT` | `/api/familias/{id_familia}/cadastro-completo` | Atualizar cadastro completo. |
 | `PUT` | `/api/familias/{id_familia}/responsavel` | Definir ou substituir responsavel familiar. |
