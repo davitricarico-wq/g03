@@ -473,7 +473,7 @@ Os dois fluxos priorizados nesta sprint cobrem as operações de maior impacto n
 
 #### FL01 — Cadastro de Cidadão e Vínculo à Moradia
 
-<img src="outros/diagrama_de_sequencia/fl01_cadastro_de_cidadao_e_vinculo_a_moradia.png">
+<img src="outros\diagramas_sequencia\fl01_cadastro_de_cidadao_e_vinculo_a_moradia.png">
 
 Este fluxo descreve a jornada de cadastro conduzida pelo **Agente de Campo (A01)** a partir do aplicativo mobile. O processo é estruturado em cinco sessões sequenciais: Moradia, Localização, Chefe de Família, Composição Familiar e Pets. Cada uma liberada somente após a confirmação da anterior, garantindo a integridade referencial dos dados antes do envio. Ao submeter o formulário completo, o Frontend dispara uma sequência ordenada de requisições `POST` que cria os registros em cascata (`LOCALIZACAO → MORADIA → CIDADAO → RESPONSAVEL → PET → FORMULARIO`), enquanto o Service aplica as regras de negócio RN01 (classificação de risco) e RN04 (restrição de fotos). O diagrama também contempla o **modo offline**, no qual o formulário é persistido em cache local via IndexedDB e sincronizado automaticamente ao restabelecer conexão, e o **caminho de exceção** de duplicidade de cadastro, que oferece ao agente as opções de busca, atualização ou cancelamento.
 
@@ -481,7 +481,7 @@ Este fluxo descreve a jornada de cadastro conduzida pelo **Agente de Campo (A01)
 
 #### FL02 — Visualização de Mapa Georreferenciado
 
-<img src="outros/diagrama_de_sequencia/fl02_visualização_de_mapa_georreferenciado.png">
+<img src="outros/diagramas_sequencia/fl02_visualização_de_mapa_georreferenciado.png">
 
 Este fluxo descreve a consulta ao mapa de risco realizada pelo **Diretor ou Gestor Operacional (A02/A03)** a partir do painel desktop. Ao acessar o módulo de mapa, o Frontend solicita ao backend a lista de moradias com coordenadas geográficas e nível de risco, que são renderizadas como marcadores coloridos (vermelho para Crítico, laranja para Alto, amarelo para Padrão). Ao clicar em um marcador, uma segunda requisição carrega os dados completos da moradia, momento em que o Service executa a **regra transversal FL11** para avaliar a condição de Risco Crítico (RN05) (presença de morador com deficiência que necessita de apoio) e injeta a flag correspondente na resposta. O diagrama também cobre os caminhos alternativos de ausência de dados georreferenciados e de falha na API de mapas.
 
