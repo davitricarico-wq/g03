@@ -1426,9 +1426,13 @@ A documentação completa dos endpoints propostos para a WebAPI está disponíve
 
 A Matriz de Rastreabilidade (RTM - Requirements Traceability Matrix) consolida, em uma única visão, os elos entre cada Persona, Requisito Funcional (RF), Regra de Negócio (RN), endpoint de API, tela da interface e caso de teste correspondente. O objetivo é garantir que nenhum requisito fique sem implementação, sem teste e sem evidência de validação, em que qualquer lacuna nessa cadeia representa um risco direto à integridade e à confiabilidade do sistema.
 
-| Persona | RF    | RN   | Endpoint    | Tela     | Teste | Evidência        |
-|---------|-------|------|-------------|----------|-------|------------------|
-| ...     | RF001 | RN01 | `/usuarios` | Cadastro | CT02  | print, log, relatório de cobertura |
+| # | Persona | US | RF | RN | Endpoint | Método | Tela | Casos de Teste | Evidência |
+|---|---------|----|----|-----|----------|--------|------|----------------|-----------|
+| 1 | Agente de Campo | US01, US02, US05 | RF001 — Cadastro Sociodemográfico e Vínculos<br>RF002 — Cadastro Estrutural de Moradias<br>RF003 — Georreferenciamento via GPS | RN01, RN04 | `/api/cadastros-completos` | `POST` | Cadastro → Moradias, Responsável, Moradores | CT01 — Cadastro completo transacional com sucesso (`201`)<br>CT02 — Validação de campos obrigatórios ausentes (`422`)<br>CT03 — CPF/NIS/email duplicado retorna conflito (`409`)<br>CT04 — Upload de foto de pessoa bloqueado pela RN04 (`422`)<br>CT05 — Captura de coordenadas GPS e persistência em cache offline<br>CT06 — Sincronização automática ao reconectar | Print da tela de cadastro; log de inserção no banco; relatório de cobertura de testes |
+| 2 | Gestor | US03 | RF004 — Visualização em Mapa Georreferenciado | — | `/api/moradias/mapa` | `GET` | Mapa | CT07 — Plotagem de marcadores para todas as moradias ativas<br>CT08 — Filtro por `status=Ativa` retorna apenas moradias ativas<br>CT09 — Moradias arquivadas ausentes do resultado<br>CT10 — Array vazio retorna `200` sem erro | Print do mapa com marcadores; evidência de ausência de moradias arquivadas |
+| 3 | Gestor | US04 | RF005 — Consulta Integrada de Moradia e Moradores | RN01, RN05 | `/api/moradias/{id_moradia}/consulta-integrada` | `GET` | Consulta → Resultado da Busca | CT11 — Ficha integrada retorna dados de moradia, responsável, moradores e pets<br>CT12 — Campo `risco_critico: true` presente quando RN05 satisfeita (mobilidade reduzida + histórico de ocorrência)<br>CT13 — Campo `risco_critico: false` quando condição não satisfeita<br>CT14 — `prioridade` calculada conforme RN01<br>CT15 — `404` para moradia inexistente | Print da ficha com flag ativa; print sem flag; log de resposta da API |
+| 4 | Gestor | US06 | RF006 — Filtros Avançados de Moradias | — | `/api/moradias` | `GET` | Consulta / Mapa | CT16 — Filtro por `grupo_prioritario=Acamado` retorna apenas registros correspondentes<br>CT17 — Filtro por `condicao_ocupacao=Cedida` isolado e combinado<br>CT18 — Filtro `desatualizado=true` retorna apenas fichas com `ultima_atualizacao` > 365 dias<br>CT19 — Nenhum dado fora do filtro selecionado vaza na resposta | Print dos resultados filtrados; evidência de ausência de registros fora do escopo |
+
 
 # <a name="c4"></a>4. Desenvolvimento da Aplicação Web
 
