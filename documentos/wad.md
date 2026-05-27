@@ -655,12 +655,18 @@ A a paleta de cores pensada para o
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
+<div align="center">
+    <p>Figura 18: Mockup da Seção 3 de Cadastro </p>
+    <img src="outros/formularioMoradores.png">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
 ## 3.6. Modelagem do banco de dados (sprints 2 e 4)
 
 ### 3.6.1. Modelo Entidade-Relacionamento (ER) (sprint 2)
 
 <div align="center">
-    <p>Figura 18: Modelo Entidade Relacionamento- </p>
+    <p>Figura 19: Modelo Entidade Relacionamento</p>
     <img src="outros/MER.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
