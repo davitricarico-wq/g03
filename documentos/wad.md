@@ -278,31 +278,31 @@ Apresenta-se a seguir a lista de User Stories levantadas para o projeto GeoRisco
 | Identificação | US03 |
 |---|---|
 | Persona | Wesley Souza (Gestor Operacional) |
-| User Story | "Como gestor operacional, quero visualizar moradias em um mapa georreferenciado, para obter uma visão geral das ocupações e facilitar tomadas de decisões estratégicas." |
+| User Story | "Como gestor operacional, quero visualizar moradias em um mapa georreferenciado, para obter uma visão geral das ocupações, facilitar tomadas de decisões estratégicas e identificar áreas de vulnerabilidades socioestruturais na região." |
 | Critério de aceite 1 | CR1: Dado que o gestor acessa o painel de georreferenciamento, quando o mapa renderizar na tela, então o sistema deve plotar automaticamente "pins" (marcadores) correspondentes às coordenadas GPS de todas as moradias cadastradas. |
-| Critério de aceite 2 | CR2: Dado que o gestor está visualizando o mapa de risco, quando ele clica sobre o marcador de um imóvel, então um card informativo deve ser exibido. |
+| Critério de aceite 2 | CR2: Dado que o gestor está visualizando o mapa, quando ele clica sobre o marcador de um imóvel, então um card informativo deve ser exibido com os dados basicos da moradia. |
 | Critérios INVEST | Independente: Consome os dados de geolocalização existentes sem interferir em como são cadastrados.; Negociável: O tipo de mapa (Satelite, Terreno) pode ser alterado conforme a biblioteca utilizada.; Valiosa: Entrega alto valor estratégico ao permitir a visualização espacial das zonas de perigo.; Estimável: A integração com APIs de mapas possui documentação robusta.; Pequena: Foca apenas na plotagem básica dos marcadores.; Testável: É possível criar coordenadas *mockadas* e verificar a correta plotagem na interface. |
 
 | Identificação | US04 |
 |---|---|
 | Persona | Wesley Souza (Gestor Operacional) |
-| User Story | "Como gestor operacional, quero consultar os dados das moradias e os perfis dos moradores de forma integrada, para que eu possa interpretar esses dados e identificar áreas de vulnerabilidades socioestruturais na região." |
-| Critério de aceite 1 | CR1: Dado que o gestor acessa o módulo integrado de consultas, quando seleciona o "Nº da Ficha" de uma moradia, então a tela deve consolidar os dados estruturais do imóvel e os dados sociodemográficos dos responsáveis (1º e 2º Responsável) e demais ocupantes. |
-| Critério de aceite 2 | CR2: Dado que o gestor visualiza a ficha integrada, quando a moradia estiver classificada com "Histórico de ocorrência" e tiver moradores "Com mobilidade reduzida/acamada", então o sistema deve exibir uma flag visual de "Risco Crítico" no cabeçalho da consulta. |
+| User Story | "Como gestor operacional, quero poder buscar os dados das familias e moradias, para que eu possa consultar dados de familias ou grupos com informações especificas." |
+| Critério de aceite 1 | CR1: Dado que o gestor acessa o módulo de consultas, quando pesquisa o nome ou apelido do responsável ou o id da moradia, então a tela deve mostrar os dados basicos sobre o responsável, moradia, moradores e pets relacionados à família. |
+| Critério de aceite 2 | CR2: Dado que o gestor visualiza os dados de uma familia, quando a familia estiver sem uma moradia relacionada, então o sistema deve exibir uma flag visual de "cadastro incompleto" no cabeçalho da consulta. |
 | Critérios INVEST | Independente: Utiliza joins de dados já populados pelas US01 e US02.; Negociável: O layout de exibição e os níveis de alerta crítico podem ser ajustados.; Valiosa: Facilita o trabalho do gestor que não precisará cruzar tabelas manualmente em planilhas.; Estimável: A consulta a dados relacionados tem esforço facilmente mensurável.; Pequena: Trata-se de uma view (Visualização de dados) de leitura integrada.; Testável: O teste garante que as informações da ficha física batam com o que está sendo exibido digitalmente. |
 
 | Identificação | US05 |
 |---|---|
 | Persona | João Silva (Agente de Campo) |
 | User Story | "Como agente de campo, quero que a localização da moradia utilize minha posição no momento do cadastro como referência, para que eu tenha salvo o local exato mesmo em zonas remotas." |
-| Critério de aceite 1 | CR1: Dado que o agente de campo está na tela de cadastro de nova moradia, quando concluir o cadastro, então o sistema deve solicitar permissão do dispositivo e preencher automaticamente a Latitude e Longitude. |
-| Critério de aceite 2 | CR2: Dado que o agente aciona a captura de GPS durante o cadastro, quando a permissão de localização está concedida no dispositivo, então o sistema deve registrar as coordenadas capturadas junto ao formulário antes de enviá-lo. |
+| Critério de aceite 1 | CR1: Dado que o agente de campo entra na tela de cadastro de nova moradia, quando a tela carregar, então o sistema deve solicitar permissão do dispositivo e preencher automaticamente a Latitude e Longitude. |
+| Critério de aceite 2 | CR2: Dado que o agente tenha cadastrado os dados das familias de outro lugar que não seja a moradia atual, quando o mesmo for fazer o cadastro, então o sistema deve possuir um retorno visual indicando se a localização já foi obtida, um botão de apagar a localização registrada e outro de re-registrar a localização utilizando a localização atual. |
 | Critérios INVEST | Independente: A funcionalidade de captura de hardware é independente dos campos de texto do formulário.; Negociável: A precisão exigida (ex: margem de 5 a 10 metros) pode ser acordada com o time.; Valiosa: Elimina o erro humano da digitação de coordenadas numéricas longas.; Estimável: Utilizar APIs nativas de geolocalização mobile é padrão na indústria.; Pequena: Cobre especificamente um único componente de auto-preenchimento.; Testável: Pode-se simular diferentes coordenadas GPS em emuladores para validar a captura. |
 
 | Identificação | US06 |
 |---|---|
 | Persona | Wesley Souza (Gestor Operacional) |
-| User Story | "Como gestor operacional, quero filtrar moradias por atributos específicos, para poder priorizar atendimentos e identificar as necessidades do público que estou lidando." |
+| User Story | "Como gestor operacional, quero filtrar familias e moradias por atributos específicos, para poder priorizar atendimentos e identificar as necessidades do público que estou lidando." |
 | Critério de aceite 1 | CR1: Dado que o gerente está na tela de gerenciamento de dados, quando aplica os filtros de, por exemplo, "Possui PCD" ou "Uso de equipamento de uso contínuo", então a lista de domicílios deve ser filtrada retornando apenas as residências que preencham esses critérios. |
 | Critério de aceite 2 | CR2: Dado que o gerente necessita planejar evacuações, quando ele cruzar os filtros de "Condição da ocupação" (ex: área de risco) com "Local de destino em caso de evacuação", então o sistema deve exibir os domicílios filtrados na tela de resultados. _(exportação de lista removida do escopo desta entrega)_ |
 | Critérios INVEST | Independente: A engine de busca e filtro roda independentemente das rotinas de inserção.; Negociável: Quais filtros exatos estarão disponíveis na V1 pode ser repriorizado.; Valiosa: Essencial para triagem rápida em cenários pre-desastre.; Estimável: A construção de queries dinâmicas no banco é uma tarefa de esforço previsível.; Pequena: Foca unicamente na filtragem de listagens textuais/tabelas.; Testável: O QA deve garantir que ao selecionar um filtro específico, nenhum dado fora do escopo selecionado vaze para a tela. |
