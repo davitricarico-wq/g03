@@ -534,7 +534,7 @@ Este fluxo descreve a consulta ao mapa de risco realizada pelo **Diretor ou Gest
 
 <img src="outros/diagramas_sequencia/FL03_Consulta_Areas_Risco.png">
 
-Este fluxo detalha a consulta integrada executada pelo **Gestor Operacional (A02/A03)** ao pesquisar ou selecionar uma ficha. O Frontend solicita uma listagem resumida de moradias e, apÃ³s a seleÃ§Ã£o de um registro, carrega os dados completos da moradia, localizaÃ§Ã£o, ocupaÃ§Ã£o ativa, famÃ­lia, responsÃ¡vel, moradores, gestantes, grupos prioritÃ¡rios, pets e fotos. A consulta utiliza o `historico_ocupacao` para identificar a famÃ­lia atualmente vinculada Ã  moradia, considerando apenas ocupaÃ§Ãµes com `data_saida` nula. Caso nÃ£o exista ocupaÃ§Ã£o ativa, o sistema retorna a ficha do imÃ³vel sem moradores ativos. Quando hÃ¡ ocupaÃ§Ã£o ativa, o Service calcula a prioridade de evacuaÃ§Ã£o (RN01) e avalia a flag de Risco CrÃ­tico (RN05).
+Este fluxo detalha a consulta integrada executada pelo **Gestor Operacional (A02/A03)** ao pesquisar ou selecionar uma ficha. O Frontend solicita uma listagem resumida de moradias e, após a seleção de um registro, carrega os dados completos da moradia, localização, ocupação ativa, família, responsável, moradores, gestantes, grupos prioritários, pets e fotos. A consulta utiliza o `historico_ocupacao` para identificar a família atualmente vinculada à moradia, considerando apenas ocupações com `data_saida` nula. Caso não exista ocupação ativa, o sistema retorna a ficha do imóvel sem moradores ativos. Quando há ocupação ativa, o Service calcula a prioridade de evacuação (RN01) e avalia a flag de Risco Crítico (RN05).
 
 ---
 
@@ -554,11 +554,11 @@ Este fluxo descreve a revisão anual de uma família marcada para recadastro, co
 
 ---
 
-#### FL06 - Cadastro e manutenÃ§Ã£o de pets vinculados Ã  famÃ­lia
+#### FL06 - Cadastro e manutenção de pets vinculados à família
 
 <img src="outros/diagramas_sequencia/FL06_Filtros_Dados.png">
 
-Este fluxo detalha a manutenÃ§Ã£o dos animais de estimaÃ§Ã£o informados pelo **Agente de Campo (A01)**. O Frontend consulta os pets jÃ¡ vinculados Ã  famÃ­lia e permite adicionar ou editar registros, sempre associando o animal ao `id_familia`, e nÃ£o diretamente Ã  moradia. Essa decisÃ£o acompanha o modelo de dados atual: se a famÃ­lia for realocada, os pets permanecem associados ao mesmo nÃºcleo familiar, enquanto o histÃ³rico de ocupaÃ§Ã£o registra a mudanÃ§a de moradia. O Service valida os campos obrigatÃ³rios, como `tipo_pet`, e o Repository persiste os dados na tabela `pet`.
+Este fluxo detalha a manutenção dos animais de estimação informados pelo **Agente de Campo (A01)**. O Frontend consulta os pets já vinculados à família e permite adicionar ou editar registros, sempre associando o animal ao `id_familia`, e não diretamente à moradia. Essa decisão acompanha o modelo de dados atual: se a família for realocada, os pets permanecem associados ao mesmo núcleo familiar, enquanto o histórico de ocupação registra a mudança de moradia. O Service valida os campos obrigatórios, como `tipo_pet`, e o Repository persiste os dados na tabela `pet`.
 
 ---
 
@@ -570,11 +570,11 @@ Este fluxo descreve a geração do mapa de calor utilizado pelo **Gestor Operaci
 
 ---
 
-#### FL08 - Arquivamento lÃ³gico de moradia
+#### FL08 - Arquivamento lógico de moradia
 
 <img src="outros/diagramas_sequencia/FL08_Arquivamento_Moradia.png">
 
-Este fluxo representa o arquivamento lÃ³gico de uma moradia pelo **Gestor Operacional (A03)**. O gestor seleciona uma moradia ativa, informa o motivo do arquivamento e envia a solicitaÃ§Ã£o de alteraÃ§Ã£o de status. O Service verifica se existe uma ocupaÃ§Ã£o ativa vinculada Ã  moradia por meio de `historico_ocupacao`. Se houver famÃ­lia ativa residindo no local, a operaÃ§Ã£o Ã© bloqueada com conflito, pois a US14 exige que toda famÃ­lia ativa possua uma moradia ativa vinculada. Nesse caso, o sistema solicita realocaÃ§Ã£o ou inativaÃ§Ã£o da famÃ­lia antes de concluir o arquivamento. Se nÃ£o houver ocupaÃ§Ã£o ativa, o status da moradia Ã© atualizado sem exclusÃ£o fÃ­sica, preservando a rastreabilidade histÃ³rica conforme RN03.
+Este fluxo representa o arquivamento lógico de uma moradia pelo **Gestor Operacional (A03)**. O gestor seleciona uma moradia ativa, informa o motivo do arquivamento e envia a solicitação de alteração de status. O Service verifica se existe uma ocupação ativa vinculada à moradia por meio de `historico_ocupacao`. Se houver família ativa residindo no local, a operação é bloqueada com conflito, pois a US14 exige que toda família ativa possua uma moradia ativa vinculada. Nesse caso, o sistema solicita realocação ou inativação da família antes de concluir o arquivamento. Se não houver ocupação ativa, o status da moradia é atualizado sem exclusão física, preservando a rastreabilidade histórica conforme RN03.
 
 ---
 
