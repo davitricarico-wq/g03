@@ -538,19 +538,19 @@ Este fluxo detalha a consulta integrada executada pelo **Gestor Operacional (A02
 
 ---
 
-#### FL04 - Filtros avanÃ§ados de moradias e assistidos
+#### FL04 - Filtros avançados de moradias e assistidos
 
 <img src="outros/diagramas_sequencia/FL04_Relatorios.png">
 
-Este fluxo representa o uso de filtros avanÃ§ados pelo **Gestor Operacional (A02/A03)** na tela de gerenciamento de dados. O usuÃ¡rio pode combinar critÃ©rios como status da moradia, condiÃ§Ã£o de ocupaÃ§Ã£o, grupos prioritÃ¡rios, vulnerabilidades, destino em caso de evacuaÃ§Ã£o e situaÃ§Ã£o de recadastro. O Frontend envia os filtros ao Controller, que delega ao Service a validaÃ§Ã£o dos parÃ¢metros e a montagem da consulta. O Repository cruza as tabelas `moradia`, `localizacao`, `historico_ocupacao`, `familia`, `cidadao`, `cidadao_grupo_prioritario` e `grupo_prioritario`, retornando uma lista filtrada. Quando nÃ£o hÃ¡ resultados, o painel exibe uma mensagem orientativa. Quando hÃ¡ registros, o gestor pode exportar a listagem em formato CSV ou PDF.
+Este fluxo representa o uso de filtros avançados pelo **Gestor Operacional (A02/A03)** na tela de gerenciamento de dados. O usuário pode combinar critérios como status da moradia, condição de ocupação, grupos prioritários, vulnerabilidades, destino em caso de evacuação e situação de recadastro. O Frontend envia os filtros ao Controller, que delega ao Service a validação dos parâmetros e a montagem da consulta. O Repository cruza as tabelas `moradia`, `localizacao`, `historico_ocupacao`, `familia`, `cidadao`, `cidadao_grupo_prioritario` e `grupo_prioritario`, retornando uma lista filtrada. Quando não há resultados, o painel exibe uma mensagem orientativa. Quando há registros, o gestor pode exportar a listagem em formato CSV ou PDF.
 
 ---
 
-#### FL05 - AtualizaÃ§Ã£o anual de dados pelo agente de campo
+#### FL05 - Atualização anual de dados pelo agente de campo
 
 <img src="outros/diagramas_sequencia/FL05_Atualizacao_Dados.png">
 
-Este fluxo descreve a revisÃ£o anual de uma famÃ­lia marcada para recadastro, conduzida pelo **Agente de Campo (A01)**. O Frontend carrega o cadastro completo da famÃ­lia, incluindo ocupaÃ§Ã£o ativa, moradia, localizaÃ§Ã£o, responsÃ¡vel, moradores, gestantes, pets e fotos. O agente revisa os dados em campo e envia as alteraÃ§Ãµes para o backend, que valida as regras RN01, RN02 e RN04 antes de persistir as atualizaÃ§Ãµes. Caso a famÃ­lia tenha mudado de moradia, o Service encerra o vÃ­nculo atual em `historico_ocupacao` com `data_saida` e cria uma nova ocupaÃ§Ã£o ativa. Em modo offline, a alteraÃ§Ã£o Ã© enfileirada no cache local com UUID prÃ³prio e sincronizada posteriormente.
+Este fluxo descreve a revisão anual de uma família marcada para recadastro, conduzida pelo **Agente de Campo (A01)**. O Frontend carrega o cadastro completo da família, incluindo ocupação ativa, moradia, localização, responsável, moradores, gestantes, pets e fotos. O agente revisa os dados em campo e envia as alterações para o backend, que valida as regras RN01, RN02 e RN04 antes de persistir as atualizações. Caso a família tenha mudado de moradia, o Service encerra o vínculo atual em `historico_ocupacao` com `data_saida` e cria uma nova ocupação ativa. Em modo offline, a alteração é enfileirada no cache local com UUID próprio e sincronizada posteriormente.
 
 ---
 
@@ -566,7 +566,7 @@ Este fluxo detalha a manutenÃ§Ã£o dos animais de estimaÃ§Ã£o informados 
 
 <img src="outros/diagramas_sequencia/FL07_Mapa_Calor.png">
 
-Este fluxo descreve a geraÃ§Ã£o do mapa de calor utilizado pelo **Gestor Operacional (A02/A03)** para visualizar concentraÃ§Ãµes de vulnerabilidade no territÃ³rio. O usuÃ¡rio ativa a camada de calor e seleciona filtros como idosos, PCDs, acamados, gestantes ou crianÃ§as. O backend consulta moradias ativas, ocupaÃ§Ãµes atuais e moradores vinculados aos grupos prioritÃ¡rios, agrupando coordenadas por intensidade. O Frontend renderiza a camada sobre o mapa e recalcula os clusters quando o usuÃ¡rio altera zoom ou filtro. Em paralelo, o painel pode consultar os indicadores de recadastro, exibindo o total de registros atualizados e desatualizados.
+Este fluxo descreve a geração do mapa de calor utilizado pelo **Gestor Operacional (A02/A03)** para visualizar concentrações de vulnerabilidade no território. O usuário ativa a camada de calor e seleciona filtros como idosos, PCDs, acamados, gestantes ou crianças. O backend consulta moradias ativas, ocupações atuais e moradores vinculados aos grupos prioritários, agrupando coordenadas por intensidade. O Frontend renderiza a camada sobre o mapa e recalcula os clusters quando o usuário altera zoom ou filtro. Em paralelo, o painel pode consultar os indicadores de recadastro, exibindo o total de registros atualizados e desatualizados.
 
 ---
 
@@ -578,35 +578,35 @@ Este fluxo representa o arquivamento lÃ³gico de uma moradia pelo **Gestor Oper
 
 ---
 
-#### FL09 - Arquivamento lÃ³gico de morador falecido
+#### FL09 - Arquivamento lógico de morador falecido
 
 <img src="outros/diagramas_sequencia/FL09_Arquivamento_Morador.png">
 
-Este fluxo descreve o arquivamento lÃ³gico de um morador falecido realizado pelo **Gestor Operacional (A02/A03)**. O gestor informa a data de falecimento e confirma a operaÃ§Ã£o. O Service verifica se o cidadÃ£o Ã© o responsÃ¡vel da famÃ­lia. Caso seja, o sistema exige a escolha de um novo responsÃ¡vel ativo antes de concluir o arquivamento, preservando a integridade definida pela US13. Quando a substituiÃ§Ã£o Ã© resolvida, o cadastro do cidadÃ£o Ã© inativado por meio de `status_cadastro=false`, sem deleÃ§Ã£o fÃ­sica. ApÃ³s a atualizaÃ§Ã£o, o Service reavalia a prioridade da famÃ­lia e a regra de Risco CrÃ­tico, garantindo que consultas e relatÃ³rios ativos nÃ£o exibam moradores arquivados.
+Este fluxo descreve o arquivamento lógico de um morador falecido realizado pelo **Gestor Operacional (A02/A03)**. O gestor informa a data de falecimento e confirma a operação. O Service verifica se o cidadão é o responsável da família. Caso seja, o sistema exige a escolha de um novo responsável ativo antes de concluir o arquivamento, preservando a integridade definida pela US13. Quando a substituição é resolvida, o cadastro do cidadão é inativado por meio de `status_cadastro=false`, sem deleção física. Após a atualização, o Service reavalia a prioridade da família e a regra de Risco Crítico, garantindo que consultas e relatórios ativos não exibam moradores arquivados.
 
 ---
 
-#### FL10 - Alerta automÃ¡tico de recadastro a cada 12 meses
+#### FL10 - Alerta automático de recadastro a cada 12 meses
 
 <img src="outros/diagramas_sequencia/FL10_Alerta_Recadastro.png">
 
-Este fluxo documenta a rotina de recadastro obrigatÃ³rio prevista pela RN02. Um job agendado verifica diariamente moradias ativas cuja `ultima_atualizacao` tenha ultrapassado 365 dias. A consulta considera moradias com ocupaÃ§Ã£o ativa e famÃ­lia ativa, evitando alertas sobre registros apenas histÃ³ricos. No painel, o **Gestor Operacional (A02/A03)** consulta os indicadores de recadastro e visualiza o total de cadastros atualizados e desatualizados. Ao clicar no indicador, o Frontend redireciona para a listagem de moradias com o filtro `desatualizado=true`, permitindo organizar as revisitas de campo.
+Este fluxo documenta a rotina de recadastro obrigatório prevista pela RN02. Um job agendado verifica diariamente moradias ativas cuja `ultima_atualizacao` tenha ultrapassado 365 dias. A consulta considera moradias com ocupação ativa e família ativa, evitando alertas sobre registros apenas históricos. No painel, o **Gestor Operacional (A02/A03)** consulta os indicadores de recadastro e visualiza o total de cadastros atualizados e desatualizados. Ao clicar no indicador, o Frontend redireciona para a listagem de moradias com o filtro `desatualizado=true`, permitindo organizar as revisitas de campo.
 
 ---
 
-#### FL11 - Regra transversal de Risco CrÃ­tico (RN05)
+#### FL11 - Regra transversal de Risco Crítico (RN05)
 
 <img src="outros/diagramas_sequencia/FL11_Flag_Risco_Critico.png">
 
-Este fluxo representa uma regra transversal, acionada por outros fluxos sempre que uma moradia e seus moradores ativos sÃ£o carregados para exibiÃ§Ã£o. O Service consulta a moradia, a ocupaÃ§Ã£o ativa, a famÃ­lia residente e os cidadÃ£os vinculados aos grupos prioritÃ¡rios. A condiÃ§Ã£o RN05 Ã© satisfeita quando a moradia possui histÃ³rico de ocorrÃªncia e existe ao menos um morador ativo classificado com mobilidade reduzida ou acamado. Quando a condiÃ§Ã£o Ã© verdadeira, a resposta recebe `risco_critico=true`, permitindo que o Frontend destaque a flag "Risco CrÃ­tico" em cards, fichas e consultas integradas. Quando a condiÃ§Ã£o nÃ£o Ã© satisfeita, a ficha Ã© exibida sem o alerta.
+Este fluxo representa uma regra transversal, acionada por outros fluxos sempre que uma moradia e seus moradores ativos são carregados para exibição. O Service consulta a moradia, a ocupação ativa, a família residente e os cidadãos vinculados aos grupos prioritários. A condição RN05 é satisfeita quando a moradia possui histórico de ocorrência e existe ao menos um morador ativo classificado com mobilidade reduzida ou acamado. Quando a condição é verdadeira, a resposta recebe `risco_critico=true`, permitindo que o Frontend destaque a flag "Risco Crítico" em cards, fichas e consultas integradas. Quando a condição não é satisfeita, a ficha é exibida sem o alerta.
 
 ---
 
-#### FL12 - ValidaÃ§Ã£o transversal de integridade cadastral
+#### FL12 - Validação transversal de integridade cadastral
 
 <img src="outros/diagramas_sequencia/FL12_Integridade_Familia_Responsavel_Ocupacao.png">
 
-Este fluxo consolida as validaÃ§Ãµes derivadas das US13 e US14. Ele nÃ£o representa uma tela isolada, mas uma regra transversal chamada por operaÃ§Ãµes de cadastro, atualizaÃ§Ã£o, arquivamento e realocaÃ§Ã£o. Sempre que uma famÃ­lia ativa Ã© alterada, o Service verifica se existe responsÃ¡vel ativo vinculado e se hÃ¡ uma ocupaÃ§Ã£o ativa em moradia vÃ¡lida. Se a famÃ­lia ficar sem responsÃ¡vel, a operaÃ§Ã£o Ã© bloqueada e o usuÃ¡rio deve definir um novo responsÃ¡vel. Se a famÃ­lia ficar sem moradia ativa, o sistema exige a criaÃ§Ã£o de uma nova ocupaÃ§Ã£o ou a inativaÃ§Ã£o da famÃ­lia. Essa validaÃ§Ã£o impede inconsistÃªncias cadastrais e preserva a coerÃªncia entre `familia`, `responsavel`, `moradia` e `historico_ocupacao`.
+Este fluxo consolida as validações derivadas das US13 e US14. Ele não representa uma tela isolada, mas uma regra transversal chamada por operações de cadastro, atualização, arquivamento e realocação. Sempre que uma família ativa é alterada, o Service verifica se existe responsável ativo vinculado e se há uma ocupação ativa em moradia válida. Se a família ficar sem responsável, a operação é bloqueada e o usuário deve definir um novo responsável. Se a família ficar sem moradia ativa, o sistema exige a criação de uma nova ocupação ou a inativação da família. Essa validação impede inconsistências cadastrais e preserva a coerência entre `familia`, `responsavel`, `moradia` e `historico_ocupacao`.
 
 
 ### 3.2.5. Diagrama de Atividades ou Estados (sprint 3)
