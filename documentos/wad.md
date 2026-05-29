@@ -759,30 +759,236 @@ Esta seção apresenta o detalhamento de um registro específico, acessado após
 
 Esta seção apresenta o guia de estilos utilizado no desenvolvimento da aplicação web. Aqui estão definidos os padrões visuais e componentes de interface adotados, como cores, tipografia, botões, ícones e demais elementos gráficos. O objetivo é garantir consistência visual, padronização e melhor experiência de uso durante o desenvolvimento e evolução da solução.
 
+<div align="center">
+    <p>Figura 16: Guia de estilos</p>
+    <img src="outros/guia_de_estilos.png">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
 ### 3.4.1 Cores
 
-*Apresente aqui a paleta de cores, com seus códigos de aplicação e suas respectivas funções*
+A a paleta de cores pensada para a prototipação foi inspirada na logo oficial da própria Defesa Civil de Santo André e do CREDEC-SA (Centro de Resiliência às Emergências de Defesa Civil de Santo André). Logos: 
+
+<div align="center">
+    <p>Figura 17: Logo da Defesa Civil de Santo André</p>
+    <img src="outros/logoSantoAndre.png" width="200">
+    <p>Defesa Civil de Santo André</p>
+</div>
+
+<div align="center">
+    <p>Figura 18: Logo do CREDEC-SA</p>
+    <img src="outros/logoCREDEC.png" width="200">
+    <p>CREDEC-SA</p>
+</div>
+
+A equipe decidiu usar dois tons de azul, um de laranja e três cores neutras. A composição da paleta ficou assim: 
+
+- Azul Escuro: #182C4C
+- Azul Claro: #004ea1
+- Laranja: #ff7500
+- Cinza Escuro: #5e5e5e
+- Cinza Claro: #9f9f9f
+- Branco: #ffffff 
+
 
 ### 3.4.2 Tipografia
 
-*Apresente aqui a tipografia da solução, com famílias de fontes e suas respectivas funções*
+A família tipográfica utilizada na solução é a **DM Sans**, uma fonte geométrica sem serifa (sans-serif) de baixo contraste, projetada pela Colophon Foundry. É ideal para textos legíveis em tamanhos menores e apresenta formas geométricas claras que transmitem um tom neutro e objetivo.
 
-### 3.4.3 Iconografia e imagens 
+| Estilo | Peso | Tamanho | Uso |
+|---|---|---|---|
+| Título | DM Sans Bold | 64px | Títulos principais de página |
+| Header 1 | DM Sans Regular | 48px | Cabeçalhos de seção primária |
+| Header 2 | DM Sans Regular | 40px | Cabeçalhos de seção secundária |
+| Header 3 | DM Sans Regular | 36px | Cabeçalhos terciários |
+| Header 4 | DM Sans Regular | 32px | Cabeçalhos quaternários |
+| Header 5 | DM Sans Regular | 24px | Cabeçalhos de menor hierarquia |
+| Corpo / Label | DM Sans Light | 16px | Textos descritivos, legendas e rótulos de componentes |
 
-*(esta subseção é opcional, caso não existam ícones e imagens, apague esta subseção)*
+A cor de texto primária é `#1a1a2e`, utilizada em headers e corpo sobre fundo branco ou claro. Em fundos coloridos, aplica-se texto branco (`#ffffff`).
 
-*posicione aqui imagens e textos contendo exemplos padronizados de ícones e imagens, com seus respectivos atributos de aplicação, utilizadas na solução*
+### 3.4.3 Iconografia e Imagens
+
+A solução utiliza um conjunto de ícones de linha (outline) com estilo geométrico, coerente com a tipografia DM Sans.
+
+**Atributos de aplicação:**
+
+- **Cor padrão:** `#5e5e5e` — ícones em estado neutro
+- **Cor ativa:** `#004ea1` — ícones em estado selecionado ou ação principal
+- **Cor sobre fundo escuro:** `#ffffff` — sobre fundos `#182C4C` ou `#004ea1`
+- **Tamanho padrão:** 24×24px
+
+| Ícone | Função |
+|---|---|
+| Documento | Representar arquivos ou conteúdos |
+| Casa | Navegação para a tela inicial |
+| Lupa | Acionar campo de pesquisa |
+| Copiar | Duplicar conteúdo ou elemento |
+| Editar | Editar informações |
+| Diamante | Indicar item especial ou favorito |
+| Localização | Indicar endereço ou mapa |
+| Upload | Enviar ou exportar conteúdo |
+| Lixeira | Excluir item |
+| Grade | Visualização em formato de tabela |
+| Filtro | Filtrar listagens ou resultados |
+| Seta | Navegar para o próximo passo ou página |
 
 ## 3.5. Protótipo de alta fidelidade (sprint 3)
 
-*posicione aqui algumas imagens demonstrativas de seu protótipo de alta fidelidade e o link para acesso ao protótipo completo (mantenha o link sempre público para visualização)*
+### Protótipo Tela Inicial
+
+A tela inicial apresenta o logotipo da Defesa Civil de Santo André centralizado
+no topo, sobre um fundo azul gradiente, seguido da saudação **"Bem vindo, Agente."**
+com destaque em laranja no nome do perfil.
+
+O conteúdo principal exibe três opções de navegação em formato de cards:
+
+- **Cadastro** — card destacado com fundo azul e borda laranja, indicando a ação
+  primária da tela. Contém ícone de documento à esquerda e seta de navegação à direita.
+- **Busca** — card secundário com fundo branco, ícone de lupa e seta de navegação.
+- **Mapa** — card secundário com fundo branco, ícone de localização e seta de navegação.
+
+Na parte inferior, uma barra de navegação fixa exibe os três atalhos principais:
+**Cadastro**, **Mapa** (ativo) e **Busca**, com ícones e rótulos de texto.
+
+---
+
+<div align="center">
+    <p>Figura 18: Mockup da Tela Inicial </p>
+    <img src="outros/inicial v2.png" width="400">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
+### Protótipos da Tela de Mapa
+
+A tela de mapa exibe um cabeçalho azul escuro com o logotipo da Defesa Civil à
+esquerda, o título **"Visualização"** centralizado e um ícone de home à direita
+para retornar à tela inicial.
+
+O conteúdo principal é ocupado por um mapa interativo da região de Santo André,
+sobre o qual é sobreposto um painel lateral de **Filtros** no canto esquerdo.
+O painel possui borda laranja, fundo branco e lista categorias de ocorrências
+selecionáveis via checkbox. Um botão com seta **"<"** permite recolher o painel,
+expandindo a área visível do mapa.
+
+A barra de navegação inferior mantém o padrão da aplicação com os atalhos
+**Cadastro**, **Mapa** (ativo) e **Busca**.
+
+ <div align="center">
+    <p>Figura 19: Mockup Tela de Mapa </p>
+    <img src="outros/mapa v2.png" width="400">
+    <p>Feito pela própria equipe (2026)</p>
+</div> 
+
+### Protótipos da Tela de Busca
+
+A tela de busca mantém o cabeçalho padrão com logotipo, título **"Busca"** e
+ícone de home. Abaixo, um campo de texto com ícone de lupa permite inserir termos
+de pesquisa, acompanhado de um botão de filtro à direita.
+
+Os resultados são exibidos abaixo do label **"Resultados:"** em azul, com um
+contador de registros encontrados ("4 encontrados") alinhado à direita.
+
+Cada resultado é apresentado em um card com borda arredondada contendo:
+- **Nome completo** em destaque e CPF como subtítulo
+- **Localização** (bairro), **quantidade de pessoas** e **quantidade de pets**
+  com ícones correspondentes
+- **Tags coloridas** indicando vulnerabilidades do cadastro (ex.: Gestante,
+  Criança, Idoso, Doença Crônica), cada uma com cor própria
+- Botão **"Editar"** com ícone à direita e botão de **exclusão** (lixeira) abaixo
+
+A barra de navegação inferior mantém o padrão com **Cadastro**, **Mapa** (ativo)
+e **Busca**.
+
+ <div align="center">
+    <p>Figura 20: Mockup Tela de Busca </p>
+    <img src="outros/busca v2.png" width="400">
+    <p>Feito pela própria equipe (2026)</p>
+</div> 
+
+### Protótipos das telas de Cadastro
+
+Estes protótipos apresentam grandes semelhanças entre eles, visto que possuem quase que a mesma funcionalidade. Entre elas estão, barra azul superior, barra de navegação entre seções, título indicando seção, menu de navegação inferior, botão "Próximo" (embora na seção 2 não seja possível ver), campos para preenchimento de informações, sinalização de obrigatoriedade (* vermelho) e barra lateral indicando possível arraste da página ("scroll up" e "scroll down")
+
+Além disso, os protótipos apresentam funcionalidades em comum, sendo elas: a barra de navegação entre seções indica em qual seção o usuário está (deixando o bloco referente à seção atual azul); o botão "Concluir", apesar de ausente, é exibido assim que o usuário completar todos os campos obrigatórios em qualquer seção; campos preenchíveis por digitação, seleção múltipla, "sim ou não", seleção de data e adição de imagens. 
+
+---
+
+<div align="center">
+    <p>Figura 19: Mockup da Seção 1 de Cadastro </p>
+    <img src="outros/formularioMoradia.png" width="400">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
+A primeira tela ao clicar no botão "Cadastro" da tela inicial é a seção 1, referente à entrada dos dados da moradia. A partir daqui, o usuário fica livre para navegar entre as seções de cadastro conforme o contexto da entrevista com os moradores evolui. 
+
+A primeira seção engloba todos os dados necessários para o cadastro da moradia visitada. 
+
+Um detalhe bastante importante sobre a mudança dos wireframes para os mockups é a disposição da barra superior da tela. As mudanças citadas a seguir se aplicam à todas as telas de cadastro: exclusão do botão de configurações; exclusão da imagem de logo à esquerda; reposicionamento da logo da Defesa Civil de Santo André; exclusão do pequeno texto acompanhado da logo; adição do ícone de casa (redireciona para a tela inicial). 
+
+Este protótipo já apresenta exemplos de informações a serem adicionadas nos campos e como ficaria com todos preenchidos, incluindo a imagem de referência minimizada.
+
+---
+
+<div align="center">
+    <p>Figura 20: Mockup da Seção 2 de Cadastro </p>
+    <img src="outros/formularioResponsavel.png" width="400">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
+A segunda seção engloba todos os dados necessários para o cadastro do responsável pela família/moradia. 
+
+Este protótipo, diferente do anterior, mostra como são os campos de resposta "sim ou não" (boolean) e sinaliza exatamente como o menu inferior interage com o restante dos elementos na tela: opacidade parcial. Além disso, esta tela, por conter uma quantidade maior de informações, não mostra os campos de problema crônico, medicamento e prioridade que, por sua vez, estão ocultos juntos do botão de próximo. Todo o conteúdo poderá ser visualizado com um simples arraste na tela para baixo.
+
+Este protótipo já apresenta exemplos de informações a serem adicionadas nos campos e como ficaria com todos preenchidos.
+
+---
+
+<div align="center">
+    <p>Figura 21: Mockup da Seção 3 de Cadastro </p>
+    <img src="outros/formularioMoradores.png" width="400">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
+A terceira seção engloba todos os dados necessários para o cadastro de todos os moradores da moradia visitada. 
+
+Este protótipo, basicamente imita a estrutura dos dois anteriores e indica todas as informações obrigatórias ou não e o tipo de preenchimento. Por outro lado, esta seção e a próxima apresentam um novo grande botão tracejado. No caso dessa página, ao clicar, o usuário adicionará mais um morador. Além disso, os dados preenchidos do primeiro morador devem ser ocultos e compactados para uma longa barra horizontal que, se clicada, expandirá todos os dados do morador cadastrado. O botão "+Adicionar Morador" estará sempre visível abaixo do último formulário incompleto ou expandido. 
+
+Vale a pena ressaltar que os dados de moradores, selecionados pela equipe, também estão presentes na seção 2 (Responsável), mas apenas os dados que foram julgados essenciais ficaram para a seção 3.
+
+Este protótipo já apresenta exemplos de informações a serem adicionadas nos campos e como ficaria com todos preenchidos.
+
+---
+
+<div align="center">
+    <p>Figura 22: Mockup da Seção 4 de Cadastro </p>
+    <img src="outros/formularioPets.png" width="400">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
+A quarta seção engloba todos os dados necessários para o cadastro de todos os pets/animais vinculados à moradia visitada. 
+
+Este protótipo é bastante semelhante ao anterior em termos de estrutura, porém apresenta informações diferentes a serem preenchidas, já que aqui o assunto é um animal, e não uma pessoa. 
+
+A funcionalidade de adicionar mais de um cadastro também está presente aqui e, assim como na seção 1 (Moradia), existe a possibilidade de ser cadastrada uma imagem de referência do(s) animal(is), mas agora com um campo que indique o nome do arquivo inserido.
+
+Por fim, é apenas nesse protótipo que o botão "Concluir" está representado porque entende-se que, mesmo com a liberdade de escolha para a ordem de preenchimento dos dados, a seção de pets muitas vezes será a última.
+
+Este protótipo já apresenta exemplos de informações a serem adicionadas nos campos e como ficaria com todos preenchidos, incluindo com imagens.
+
+
+---
+
+[Link para visualização do protótipo](https://www.figma.com/design/9C6LICPO1RCl5y9UaVsCQo/Mockups?node-id=0-1&p=f&t=KbpgFnX3YR4LP3ui-0)
+
+---
 
 ## 3.6. Modelagem do banco de dados (sprints 2 e 4)
 
 ### 3.6.1. Modelo Entidade-Relacionamento (ER) (sprint 2)
 
 <div align="center">
-    <p>Figura 16: Modelo Entidade Relacionamento- </p>
+    <p>Figura 23: Modelo Entidade Relacionamento</p>
     <img src="outros/MER.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -819,7 +1025,7 @@ Em conformidade com a LGPD e regras de auditoria pública, **nenhum dado é dele
 
 O Diagrama Entidade-Relacionamento (DER) representa a modelagem conceitual do banco de dados da aplicação, demonstrando as entidades do sistema, seus atributos, chaves primárias e estrangeiras, além dos relacionamentos e cardinalidades existentes. O diagrama serve como base para a implementação da estrutura relacional no banco de dados.
 
-<p>Figura 17: Diagrama Entidade-Relacionamento - </p>
+<p>Figura 24: Diagrama Entidade-Relacionamento - </p>
 <img src="/assets/der-logico.png">
 <p>Feito pela própria equipe (2026)</p>
 
