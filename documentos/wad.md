@@ -493,7 +493,17 @@ O diagrama mapeia dois atores e três perfis de uso distintos. O **Agente de Cam
 
 ### 3.2.3. Diagrama de Classes do Domínio (sprint 2)
 
-*Diagrama UML de classes com entidades, atributos, relacionamentos e responsabilidades. Diferencie **associação**, **agregação** (losango vazio), **composição** (losango cheio) e **herança** (triângulo vazio). Multiplicidade explícita em toda associação.*
+O Diagrama de Classes de Dominio representa visualmente as principais entidades do négocio, com seus atributos e relacionamentos entre elas. Não se preocupando com detalhes técnicos como métodos, chaves estrangeiras ou tecnologias específicas, focando somente em capturar o que existe no mundo real dentro do contexto do sistema.
+
+Link do diagrama (realizado por meio do site draw.io): https://drive.google.com/file/d/1YfjTRYovyfGQ29EKa9RM1ScGjfUeJIIK/view?usp=sharing
+
+
+<div align="center">
+    <p>Figura 7: Diagrama de Classes de Domínio</p>
+    <img src="outros/diagrama-classes-dominio.drawio.png" width="800">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
 
 ### 3.2.4. Diagrama de Sequência UML (sprint 3)
 
@@ -505,7 +515,7 @@ Os dois fluxos priorizados nesta sprint cobrem as operações de maior impacto n
 
 #### FL01 — Cadastro de Cidadão e Vínculo à Moradia
 
-<img src="outros\diagramas_sequencia\fl01_cadastro_de_cidadao_e_vinculo_a_moradia.png">
+<img src="outros/diagramas_sequencia/fl01_cadastro_de_cidadao_e_vinculo_a_moradia.png">
 
 Este fluxo descreve a jornada de cadastro conduzida pelo **Agente de Campo (A01)** a partir do aplicativo mobile. O processo é estruturado em cinco sessões sequenciais: Moradia, Localização, Chefe de Família, Composição Familiar e Pets. Cada uma liberada somente após a confirmação da anterior, garantindo a integridade referencial dos dados antes do envio. Ao submeter o formulário completo, o Frontend dispara uma sequência ordenada de requisições `POST` que cria os registros em cascata (`LOCALIZACAO → MORADIA → CIDADAO → RESPONSAVEL → PET → FORMULARIO`), enquanto o Service aplica as regras de negócio RN01 (classificação de risco) e RN04 (restrição de fotos). O diagrama também contempla o **modo offline**, no qual o formulário é persistido em cache local via IndexedDB e sincronizado automaticamente ao restabelecer conexão, e o **caminho de exceção** de duplicidade de cadastro, que oferece ao agente as opções de busca, atualização ou cancelamento.
 
@@ -835,7 +845,7 @@ Em conformidade com a LGPD e regras de auditoria pública, **nenhum dado é dele
 O Diagrama Entidade-Relacionamento (DER) representa a modelagem conceitual do banco de dados da aplicação, demonstrando as entidades do sistema, seus atributos, chaves primárias e estrangeiras, além dos relacionamentos e cardinalidades existentes. O diagrama serve como base para a implementação da estrutura relacional no banco de dados.
 
 <p>Figura 17: Diagrama Entidade-Relacionamento - </p>
-<img src="../assets/der-logico.png">
+<img src="/assets/der-logico.png">
 <p>Feito pela própria equipe (2026)</p>
 
 Cada **retângulo** no diagrama representa uma tabela do banco de dados. Cada **linha** dentro do retângulo representa uma coluna dessa tabela. As **linhas que conectam** os retângulos representam os relacionamentos entre as tabelas.
@@ -1508,7 +1518,7 @@ No desenvolvimento da aplicação web para a Defesa Civil, a lógica proposicion
 
 #1 | SELECT
 --- | ---
-**Expressão SQL** | SELECT m.id_moradia, l.logradouro, l.bairro, c.nome_completo AS responsavel FROM moradia m JOIN localizacao l ON m.id_localizacao = l.id_localizacao JOIN historico_ocupacao ho ON m.id_moradia = ho.id_moradia JOIN familia f ON ho.id_familia = f.id_familia JOIN cidadao c ON f.id_familia = c.id_familia JOIN responsavel r ON c.id_cidadao = r.id_cidadao WHERE m.status IN ('Interditada', 'Área de Risco Evacuada') AND ho.data_saida IS NULL AND f.status_ativo = TRUE AND c.status_cadastro = TRUE;
+**Expressão SQL** | SELECT m.id_moradia, m.id_localizacao, m.tipo_construcao, m.condicao_ocupacao, m.tipo_uso_imovel, m.telefone, m.observacoes, m.data_cadastro, m.ultima_atualizacao, m.status, l.logradouro, l.bairro, c.nome_completo AS responsavel FROM moradia m JOIN localizacao l ON m.id_localizacao = l.id_localizacao JOIN historico_ocupacao ho ON m.id_moradia = ho.id_moradia JOIN familia f ON ho.id_familia = f.id_familia JOIN cidadao c ON f.id_familia = c.id_familia JOIN responsavel r ON c.id_cidadao = r.id_cidadao WHERE m.status IN ('Interditada', 'Área de Risco Evacuada') AND ho.data_saida IS NULL AND f.status_ativo = TRUE AND c.status_cadastro = TRUE;
 **Descrição da consulta** | Buscar moradias em condição de risco operacional com seus responsáveis familiares ativos.
 **Proposições lógicas** | $A$: A moradia está em condição de risco operacional (`m.status IN ('Interditada', 'Área de Risco Evacuada')`) <br> $B$: A família ocupa atualmente a moradia (`ho.data_saida IS NULL`) <br> $C$: A família e o responsável estão ativos (`f.status_ativo = TRUE AND c.status_cadastro = TRUE`)
 **Expressão lógica proposicional** | $(A \land B) \land C$
@@ -1528,7 +1538,7 @@ A consulta #2 só contabiliza o cidadão quando há doença crônica registrada,
 
 #3 | SELECT
 --- | ---
-**Expressão SQL** | SELECT c.nome_completo, g.data_prevista, gp.nome AS grupo_prioritario FROM cidadao c JOIN gestante g ON c.id_cidadao = g.id_cidadao JOIN cidadao_grupo_prioritario cgp ON c.id_cidadao = cgp.id_cidadao JOIN grupo_prioritario gp ON cgp.id_grupo_prioritario = gp.id_grupo_prioritario WHERE c.status_cadastro = TRUE AND gp.nome = 'Gestante';
+**Expressão SQL** | SELECT c.nome_completo, gp.data_prevista, gp.nome AS grupo_prioritario FROM cidadao c JOIN cidadao_grupo_prioritario cgp ON c.id_cidadao = cgp.id_cidadao JOIN grupo_prioritario gp ON cgp.id_grupo_prioritario = gp.id_grupo_prioritario WHERE c.status_cadastro = TRUE AND gp.nome = 'Gestante';
 **Descrição da consulta** | Listar gestantes ativas cadastradas em grupos prioritários.
 **Proposições lógicas** | $A$: O cidadão está ativo (`c.status_cadastro = TRUE`) <br> $B$: O cidadão possui registro de gestante (`g.id_cidadao IS NOT NULL`) <br> $C$: O cidadão pertence ao grupo prioritário Gestante (`gp.nome = 'Gestante'`)
 **Expressão lógica proposicional** | $(A \land B) \land C$
@@ -1573,15 +1583,37 @@ A documentação completa dos endpoints propostos para a WebAPI está disponíve
 
 ## 3.9. Matriz de Rastreabilidade (RTM) (sprints 3 a 5)
 
-*A RTM consolida a rastreabilidade completa do sistema. Um elo quebrado invalida toda a cadeia — mantenha-a atualizada a cada sprint. A partir da sprint 3 não deve haver lacunas nos fluxos centrais.*
+A Matriz de Rastreabilidade (RTM - Requirements Traceability Matrix) consolida, em uma única visão, os elos entre cada Persona, Requisito Funcional (RF), Regra de Negócio (RN), endpoint de API, tela da interface e caso de teste correspondente. O objetivo é garantir que nenhum requisito fique sem implementação, sem teste e sem evidência de validação, em que qualquer lacuna nessa cadeia representa um risco direto à integridade e à confiabilidade do sistema.
 
-| Persona | RF    | RN   | Endpoint    | Tela     | Teste | Evidência        |
-|---------|-------|------|-------------|----------|-------|------------------|
-| ...     | RF001 | RN01 | `/usuarios` | Cadastro | CT02  | print, log, relatório de cobertura |
+| # | Persona | US | RF | RN | Endpoint | Método | Tela | Casos de Teste | Evidência |
+|---|---------|----|----|-----|----------|--------|------|----------------|-----------|
+| 1 | Agente de Campo | US01, US02, US05 | RF001 — Cadastro Sociodemográfico e Vínculos<br>RF002 — Cadastro Estrutural de Moradias<br>RF003 — Georreferenciamento via GPS | RN01, RN04 | `/api/cadastros-completos` | `POST` | Cadastro → Moradias, Responsável, Moradores | CT01: Cadastro completo transacional com sucesso (`201`)<br>CT02: Validação de campos obrigatórios ausentes (`422`)<br>CT03: CPF/NIS/email duplicado retorna conflito (`409`)<br>CT04: Upload de foto de pessoa bloqueado pela RN04 (`422`)<br>CT05: Captura de coordenadas GPS e persistência em cache offline<br>CT06: Sincronização automática ao reconectar | Print da tela de cadastro; log de inserção no banco; relatório de cobertura de testes |
+| 2 | Gestor | US03 | RF004 — Visualização em Mapa Georreferenciado | — | `/api/moradias/mapa` | `GET` | Mapa | CT07: Plotagem de marcadores para todas as moradias ativas<br>CT08: Filtro por `status=Ativa` retorna apenas moradias ativas<br>CT09: Moradias arquivadas ausentes do resultado<br>CT10: Array vazio retorna `200` sem erro | Print do mapa com marcadores; evidência de ausência de moradias arquivadas |
+| 3 | Gestor | US04 | RF005 — Consulta Integrada de Moradia e Moradores | RN01, RN05 | `/api/moradias/{id_moradia}/consulta-integrada` | `GET` | Consulta → Resultado da Busca | CT11: Ficha integrada retorna dados de moradia, responsável, moradores e pets<br>CT12: Campo `risco_critico: true` presente quando RN05 satisfeita (mobilidade reduzida + histórico de ocorrência)<br>CT13: Campo `risco_critico: false` quando condição não satisfeita<br>CT14: `prioridade` calculada conforme RN01<br>CT15: `404` para moradia inexistente | Print da ficha com flag ativa; print sem flag; log de resposta da API |
+| 4 | Gestor | US06 | RF006 — Filtros Avançados de Moradias | — | `/api/moradias` | `GET` | Consulta / Mapa | CT16: Filtro por `grupo_prioritario=Acamado` retorna apenas registros correspondentes<br>CT17: Filtro por `condicao_ocupacao=Cedida` isolado e combinado<br>CT18: Filtro `desatualizado=true` retorna apenas fichas com `ultima_atualizacao` > 365 dias<br>CT19: Nenhum dado fora do filtro selecionado vaza na resposta | Print dos resultados filtrados; evidência de ausência de registros fora do escopo |
+| 5 | Gestor | US06 | RF006 — Exportação de Moradias Filtradas | — | `/api/moradias/exportar` | `GET` | Consulta | CT20: Exportação CSV com headers corretos (`Content-Disposition`)<br>CT21: Exportação PDF gerada sem erros<br>CT22: Filtros aplicados na exportação refletem os mesmos da listagem<br>CT23: Formato inválido retorna `400` | Arquivo CSV/PDF gerado como evidência; print do download no navegador |
+| 6 | Agente de Campo | US07 | RF007 — Cadastro de Animais de Estimação | — | `/api/familias/{id_familia}/pets` | `POST` | Cadastro → Pets | CT24: Cadastro de múltiplos pets por categoria com sucesso (`201`)<br>CT25: `tipo_pet` ausente retorna `422`<br>CT26: Família inexistente retorna `404` | Print do cadastro de pet; log de inserção no banco |
+| 7 | Agente de Campo e Gestor | US07 | RF007 — Listagem de Pets da Família | — | `/api/familias/{id_familia}/pets` | `GET` | Consulta / Ficha de Emergência | CT27: Pets exibidos em destaque na ficha de emergência da família<br>CT28: Array vazio retorna `200` sem erro | Print da ficha de emergência com seção de pets |
+| 8 | Agente de Campo e Gestor | US07 | RF007 — Atualização de Pet | — | `/api/pets/{id_pet}` | `PUT` | Cadastro → Pets | CT29: Atualização de todos os campos com sucesso (`200`)<br>CT30 — Pet inexistente retorna `404` | Log de atualização no banco |
+| 9 | Gestor | US08 | RF008 — Mapa de Calor | RN01 | `/api/indicadores/mapa-calor` | `GET` | Mapa | CT31: Layer de calor renderizado com filtro `Idoso`<br>CT32: Recálculo dinâmico de intensidade ao variar parâmetro `zoom`<br>CT33: Agrupamentos de coordenadas iguais geram intensidade proporcional<br>CT34: Array vazio retorna `200` sem erro | Print do mapa de calor com filtro ativo; evidência de recálculo em diferentes níveis de zoom |
+| 10 | Gestor | US09 | RF009 — Arquivamento de Moradias | RN03 | `/api/moradias/{id_moradia}/status` | `PATCH` | Consulta / Mapa | CT35: Arquivamento com `status=Demolida` e motivo obrigatório (`200`)<br>CT36: Tentativa de arquivamento com família ativa vinculada retorna `409` com `requer_realocacao: true`<br>CT37: Moradia arquivada ausente no mapa ativo<br>CT38: Moradia arquivada visível no Histórico Inativo<br>CT39: `status` ou `motivo` ausentes retornam `422` | Print do `409` com payload de realocação; print do mapa sem a moradia; print do histórico |
+| 11 | Gestor | US09, US14 | RF009 — Realocação de Família | RN03 | `/api/familias/{id_familia}/realocacoes` | `POST` | Consulta | CT40: Realocação cria novo registro em `historico_ocupacao` e encerra ocupação anterior<br>CT41: Família sem ocupação ativa retorna `409`<br>CT42: Nova moradia inexistente retorna `404`<br>CT43:  `data_entrada` inválida retorna `422` | Log do `historico_ocupacao` antes e depois; print de confirmação |
+| 12 | Gestor | US10 | RF010 — Arquivamento de Moradores Falecidos | RN03 | `/api/cidadaos/{id_cidadao}/arquivar` | `PATCH` | Consulta | CT44: Arquivamento com `data_falecimento` e `confirmado: true` (`200`)<br>CT45: Cidadão arquivado ausente em listagens ativas<br>CT46: Cidadão arquivado visível no Histórico de Moradores<br>CT47: Arquivamento do responsável retorna `409` com lista de `candidatos`<br>CT48: `data_falecimento` ausente retorna `422` | Print de `409` com candidatos; print da listagem sem o morador; print do histórico |
+| 13 | Gestor | US11 | RF011 — Alerta Automático de Recadastro (12 meses) | RN02 | `GET /api/indicadores/recadastro` + job agendado em background | `GET` | Mapa / Painel | CT49: Disparo do job após ficha atingir 365 dias sem atualização<br>CT50: Painel exibe contadores `atualizados` e `desatualizados` corretamente<br>CT51: Após atualização da ficha, contador `desatualizados` decrementa na próxima consulta | Log do job agendado; print do painel com contador ativo; evidência de decremento após atualização |
+| 14 | Agente de Campo | US12 | RF012 — Atualização Anual de Dados | RN01, RN02, RN04 | `GET /api/familias/{id_familia}/cadastro-completo`<br>`PUT /api/familias/{id_familia}/cadastro-completo` | `GET` / `PUT` | Cadastro (edição) | CT52: Busca da ficha completa para revisão (`200`)<br>CT53: Re-salvamento atualiza `ultima_atualizacao` para a data atual<br>CT54: Indicador `desatualizado` removido do painel do gestor após sincronização<br>CT55: Foto em desacordo com RN04 bloqueia a atualização (`422`)<br>CT56: Atualização que deixa família sem responsável retorna `409`) | Print antes/depois no painel; log de sincronização; print do `ultima_atualizacao` no banco |
+| 15 | Gestor | US13 | Regra de responsável obrigatório por família | RN03 | `/api/familias/{id_familia}/responsavel` | `PUT` | Consulta | CT57: Definição de responsável com dados completos (`200`)<br>CT58: Cidadão informado que não pertence à família retorna `409`<br>CT59: CPF/NIS/email inválidos retornam `422`<br>CT60: Família inexistente retorna `404` | Log de atualização no banco; print de confirmação na tela |
+
+---
 
 # <a name="c4"></a>4. Desenvolvimento da Aplicação Web
 
 ## 4.1. Primeira versão da aplicação web (sprint 3)
+
+Na primeira versão do sistema web, foi aplicado a estrutura de pastas juntamente com o desenvolvimento das funcionalidades CRUD base do sistema referente a moradia, moradores, responsáveis e pets, havendo já um protótipo de alta fidelidade com guia e identidade visual. Ademais, o código foi desenvolvido utilizando a metodologia TDD (Test Driven Design), onde o desenvolvimento é orientado a testes, garantindo um código já testado e comprovado.
+
+Assim, ainda não foi inserido métodos complexos e mais específicos, priorizando a entrega de um MVC visualizável e testável.
+
+Dentre as dificuldades, encontramos problemas diversos considerando o prazo de entrega apertadíssimo, dificultando na possibilidade de aplicações de funcionalidades secundárias, porém úteis, como o alerta de atualização do cadastro de Gestantes após um prazo estimado de gravidez; diferenciação de pets para animais com fins funcionais (comerciais e reprodutivos). Sendo todas estas, inseridas como escopo extra que desejaríamos de implementar se fosse possível.
 
 *Descreva e ilustre aqui o desenvolvimento da primeira versão do sistema web. Utilize prints de tela para ilustrar. Indique obrigatoriamente: (a) o que foi implementado, (b) o que não foi concluído, (c) dificuldades técnicas enfrentadas e próximos passos.*
 
