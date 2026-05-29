@@ -445,10 +445,42 @@ Matriz de cobertura que demonstra quais RN (Regras de Negócio) e endpoints impl
 | RF001 | RN01, RN02    | `/usuarios` | POST   |
 
 ## 3.2. Arquitetura (sprints 1 a 5)
+A arquitetura projetada para o sistema é, em suma, baseada na Arquitetura de Camadas (Layered Architecture), porém com a aplicação de: Arquitetura de Seis Camadas (6-Tier Architecture) com base em princípios SOLID e de separação de conceitos (Separation of Concerns). Dividindo a aplicação em componentes especializados e com responsabilidades muito bem definidas.
+Assim, fornece um código testável, escalável e de alta manutenibilidade, permitindo que as regras de negócio fiquem isoladas de detalhes de infraestrutura (como o banco de dados) e da interface do usuário.
 
 ### 3.2.1. Diagrama de Arquitetura (sprints 3 e 4)
 
-*Posicione aqui o diagrama de arquitetura da solução, indicando as camadas principais (Controller, Service, Repository, Model) e suas responsabilidades. Atualize sempre que necessário.*
+```
+src/
+├── models/ – tipos e interfaces
+│   ├── validations/ – validação dos atributos / classes
+│   └── implementations/ – definição das classes
+├── views/ – telas (templates ejs)
+├── DTOs/ – Data Transfer Objects: entidades com somente as propriedades necessárias
+├── controllers/ – borda HTTP
+├── services/ – regras de negócio
+│   ├── interfaces – Contratos dos services
+│   ├── implementations – implementações dos services
+├── repositories/ – acesso ao banco de dados
+│   ├── interfaces/ – Contratos dos repositórios
+│   └── implementations/ – implementações dos repositórios
+├──mappers/ – transformadores de objetos: Model → DTO
+├──database/ – configurações do banco de dados e histórico de migrações
+│   └── migrations/ – versionamento do esquema do banco de dados
+(transversal, fora do fluxo)
+├──routes/ – rotas (endpoints) das requisições
+├──middlewares/ – guarda o middleware global do sistema
+├──errors/ – classes de tratamento de erros específicos e customizados do sistema
+└── helpers/ – utilitários puros
+
+```
+
+<div align="center">
+    <p>Figura: Diagrama de Classe Arquitetural</p>
+    <img src="outros/diagrama-classe-arquitetural.drawio.png">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
 
 ### 3.2.2. Diagrama de Casos de Uso (sprint 1)
 
@@ -461,11 +493,121 @@ O diagrama mapeia dois atores e três perfis de uso distintos. O **Agente de Cam
 
 ### 3.2.3. Diagrama de Classes do Domínio (sprint 2)
 
-*Diagrama UML de classes com entidades, atributos, relacionamentos e responsabilidades. Diferencie **associação**, **agregação** (losango vazio), **composição** (losango cheio) e **herança** (triângulo vazio). Multiplicidade explícita em toda associação.*
+O Diagrama de Classes de Dominio representa visualmente as principais entidades do négocio, com seus atributos e relacionamentos entre elas. Não se preocupando com detalhes técnicos como métodos, chaves estrangeiras ou tecnologias específicas, focando somente em capturar o que existe no mundo real dentro do contexto do sistema.
+
+Link do diagrama (realizado por meio do site draw.io): https://drive.google.com/file/d/1YfjTRYovyfGQ29EKa9RM1ScGjfUeJIIK/view?usp=sharing
+
+
+<div align="center">
+    <p>Figura 7: Diagrama de Classes de Domínio</p>
+    <img src="outros/diagrama-classes-dominio.drawio.png" width="800">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
 
 ### 3.2.4. Diagrama de Sequência UML (sprint 3)
 
-*Ao menos um fluxo prioritário, mostrando a interação entre as camadas Controller → Service → Repository → Banco. Linhas de vida verticais, ativação correta, mensagens síncronas e assíncronas diferenciadas, retornos tracejados.*
+Os diagramas de sequência UML desta seção documentam os fluxos de interação entre as camadas da arquitetura do sistema deste projeto, evidenciando como as requisições originadas na interface do usuário percorrem a cadeia **Frontend → Controller → Service → Repository → Banco de Dados** até a geração da resposta. Cada linha de vida vertical representa um participante ativo no processamento, com ativações indicando o período em que cada componente mantém controle da execução. Mensagens síncronas (chamadas diretas) são representadas por setas sólidas, enquanto retornos são indicados por setas tracejadas. Caminhos alternativos e de exceção são delimitados por blocos `alt`/`opt`, refletindo as ramificações de negócio documentadas nos fluxos de interação.
+
+Os doze fluxos documentados nesta seção cobrem o ciclo principal de uso do sistema, desde o cadastro em campo até as operações de consulta, filtros, mapa de calor, recadastro, arquivamento e validações transversais de integridade. A modelagem foi atualizada conforme o WAD atual, considerando a arquitetura de dados centrada em **família**, **moradia**, **histórico de ocupação**, **cidadão**, **responsável**, **pet**, **foto de moradia** e **grupo prioritário**.
+
+---
+
+#### FL01 — Cadastro de Cidadão e Vínculo à Moradia
+
+<img src="outros/diagramas_sequencia/fl01_cadastro_de_cidadao_e_vinculo_a_moradia.png">
+
+Este fluxo descreve a jornada de cadastro conduzida pelo **Agente de Campo (A01)** a partir do aplicativo mobile. O processo é estruturado em cinco sessões sequenciais: Moradia, Localização, Chefe de Família, Composição Familiar e Pets. Cada uma liberada somente após a confirmação da anterior, garantindo a integridade referencial dos dados antes do envio. Ao submeter o formulário completo, o Frontend dispara uma sequência ordenada de requisições `POST` que cria os registros em cascata (`LOCALIZACAO → MORADIA → CIDADAO → RESPONSAVEL → PET → FORMULARIO`), enquanto o Service aplica as regras de negócio RN01 (classificação de risco) e RN04 (restrição de fotos). O diagrama também contempla o **modo offline**, no qual o formulário é persistido em cache local via IndexedDB e sincronizado automaticamente ao restabelecer conexão, e o **caminho de exceção** de duplicidade de cadastro, que oferece ao agente as opções de busca, atualização ou cancelamento.
+
+---
+
+#### FL02 — Visualização de Mapa Georreferenciado
+
+<img src="outros/diagramas_sequencia/fl02_visualização_de_mapa_georreferenciado.png">
+
+Este fluxo descreve a consulta ao mapa de risco realizada pelo **Diretor ou Gestor Operacional (A02/A03)** a partir do painel desktop. Ao acessar o módulo de mapa, o Frontend solicita ao backend a lista de moradias com coordenadas geográficas e nível de risco, que são renderizadas como marcadores coloridos (vermelho para Crítico, laranja para Alto, amarelo para Padrão). Ao clicar em um marcador, uma segunda requisição carrega os dados completos da moradia, momento em que o Service executa a **regra transversal FL11** para avaliar a condição de Risco Crítico (RN05) (presença de morador com deficiência que necessita de apoio) e injeta a flag correspondente na resposta. O diagrama também cobre os caminhos alternativos de ausência de dados georreferenciados e de falha na API de mapas.
+
+
+---
+
+#### FL03 - Consulta integrada de moradia e moradores
+
+<img src="outros/diagramas_sequencia/FL03_Consulta_Areas_Risco.png">
+
+Este fluxo detalha a consulta integrada executada pelo **Gestor Operacional (A02/A03)** ao pesquisar ou selecionar uma ficha. O Frontend solicita uma listagem resumida de moradias e, apÃ³s a seleÃ§Ã£o de um registro, carrega os dados completos da moradia, localizaÃ§Ã£o, ocupaÃ§Ã£o ativa, famÃ­lia, responsÃ¡vel, moradores, gestantes, grupos prioritÃ¡rios, pets e fotos. A consulta utiliza o `historico_ocupacao` para identificar a famÃ­lia atualmente vinculada Ã  moradia, considerando apenas ocupaÃ§Ãµes com `data_saida` nula. Caso nÃ£o exista ocupaÃ§Ã£o ativa, o sistema retorna a ficha do imÃ³vel sem moradores ativos. Quando hÃ¡ ocupaÃ§Ã£o ativa, o Service calcula a prioridade de evacuaÃ§Ã£o (RN01) e avalia a flag de Risco CrÃ­tico (RN05).
+
+---
+
+#### FL04 - Filtros avanÃ§ados de moradias e assistidos
+
+<img src="outros/diagramas_sequencia/FL04_Relatorios.png">
+
+Este fluxo representa o uso de filtros avanÃ§ados pelo **Gestor Operacional (A02/A03)** na tela de gerenciamento de dados. O usuÃ¡rio pode combinar critÃ©rios como status da moradia, condiÃ§Ã£o de ocupaÃ§Ã£o, grupos prioritÃ¡rios, vulnerabilidades, destino em caso de evacuaÃ§Ã£o e situaÃ§Ã£o de recadastro. O Frontend envia os filtros ao Controller, que delega ao Service a validaÃ§Ã£o dos parÃ¢metros e a montagem da consulta. O Repository cruza as tabelas `moradia`, `localizacao`, `historico_ocupacao`, `familia`, `cidadao`, `cidadao_grupo_prioritario` e `grupo_prioritario`, retornando uma lista filtrada. Quando nÃ£o hÃ¡ resultados, o painel exibe uma mensagem orientativa. Quando hÃ¡ registros, o gestor pode exportar a listagem em formato CSV ou PDF.
+
+---
+
+#### FL05 - AtualizaÃ§Ã£o anual de dados pelo agente de campo
+
+<img src="outros/diagramas_sequencia/FL05_Atualizacao_Dados.png">
+
+Este fluxo descreve a revisÃ£o anual de uma famÃ­lia marcada para recadastro, conduzida pelo **Agente de Campo (A01)**. O Frontend carrega o cadastro completo da famÃ­lia, incluindo ocupaÃ§Ã£o ativa, moradia, localizaÃ§Ã£o, responsÃ¡vel, moradores, gestantes, pets e fotos. O agente revisa os dados em campo e envia as alteraÃ§Ãµes para o backend, que valida as regras RN01, RN02 e RN04 antes de persistir as atualizaÃ§Ãµes. Caso a famÃ­lia tenha mudado de moradia, o Service encerra o vÃ­nculo atual em `historico_ocupacao` com `data_saida` e cria uma nova ocupaÃ§Ã£o ativa. Em modo offline, a alteraÃ§Ã£o Ã© enfileirada no cache local com UUID prÃ³prio e sincronizada posteriormente.
+
+---
+
+#### FL06 - Cadastro e manutenÃ§Ã£o de pets vinculados Ã  famÃ­lia
+
+<img src="outros/diagramas_sequencia/FL06_Filtros_Dados.png">
+
+Este fluxo detalha a manutenÃ§Ã£o dos animais de estimaÃ§Ã£o informados pelo **Agente de Campo (A01)**. O Frontend consulta os pets jÃ¡ vinculados Ã  famÃ­lia e permite adicionar ou editar registros, sempre associando o animal ao `id_familia`, e nÃ£o diretamente Ã  moradia. Essa decisÃ£o acompanha o modelo de dados atual: se a famÃ­lia for realocada, os pets permanecem associados ao mesmo nÃºcleo familiar, enquanto o histÃ³rico de ocupaÃ§Ã£o registra a mudanÃ§a de moradia. O Service valida os campos obrigatÃ³rios, como `tipo_pet`, e o Repository persiste os dados na tabela `pet`.
+
+---
+
+#### FL07 - Mapa de calor e indicadores de vulnerabilidade
+
+<img src="outros/diagramas_sequencia/FL07_Mapa_Calor.png">
+
+Este fluxo descreve a geraÃ§Ã£o do mapa de calor utilizado pelo **Gestor Operacional (A02/A03)** para visualizar concentraÃ§Ãµes de vulnerabilidade no territÃ³rio. O usuÃ¡rio ativa a camada de calor e seleciona filtros como idosos, PCDs, acamados, gestantes ou crianÃ§as. O backend consulta moradias ativas, ocupaÃ§Ãµes atuais e moradores vinculados aos grupos prioritÃ¡rios, agrupando coordenadas por intensidade. O Frontend renderiza a camada sobre o mapa e recalcula os clusters quando o usuÃ¡rio altera zoom ou filtro. Em paralelo, o painel pode consultar os indicadores de recadastro, exibindo o total de registros atualizados e desatualizados.
+
+---
+
+#### FL08 - Arquivamento lÃ³gico de moradia
+
+<img src="outros/diagramas_sequencia/FL08_Arquivamento_Moradia.png">
+
+Este fluxo representa o arquivamento lÃ³gico de uma moradia pelo **Gestor Operacional (A03)**. O gestor seleciona uma moradia ativa, informa o motivo do arquivamento e envia a solicitaÃ§Ã£o de alteraÃ§Ã£o de status. O Service verifica se existe uma ocupaÃ§Ã£o ativa vinculada Ã  moradia por meio de `historico_ocupacao`. Se houver famÃ­lia ativa residindo no local, a operaÃ§Ã£o Ã© bloqueada com conflito, pois a US14 exige que toda famÃ­lia ativa possua uma moradia ativa vinculada. Nesse caso, o sistema solicita realocaÃ§Ã£o ou inativaÃ§Ã£o da famÃ­lia antes de concluir o arquivamento. Se nÃ£o houver ocupaÃ§Ã£o ativa, o status da moradia Ã© atualizado sem exclusÃ£o fÃ­sica, preservando a rastreabilidade histÃ³rica conforme RN03.
+
+---
+
+#### FL09 - Arquivamento lÃ³gico de morador falecido
+
+<img src="outros/diagramas_sequencia/FL09_Arquivamento_Morador.png">
+
+Este fluxo descreve o arquivamento lÃ³gico de um morador falecido realizado pelo **Gestor Operacional (A02/A03)**. O gestor informa a data de falecimento e confirma a operaÃ§Ã£o. O Service verifica se o cidadÃ£o Ã© o responsÃ¡vel da famÃ­lia. Caso seja, o sistema exige a escolha de um novo responsÃ¡vel ativo antes de concluir o arquivamento, preservando a integridade definida pela US13. Quando a substituiÃ§Ã£o Ã© resolvida, o cadastro do cidadÃ£o Ã© inativado por meio de `status_cadastro=false`, sem deleÃ§Ã£o fÃ­sica. ApÃ³s a atualizaÃ§Ã£o, o Service reavalia a prioridade da famÃ­lia e a regra de Risco CrÃ­tico, garantindo que consultas e relatÃ³rios ativos nÃ£o exibam moradores arquivados.
+
+---
+
+#### FL10 - Alerta automÃ¡tico de recadastro a cada 12 meses
+
+<img src="outros/diagramas_sequencia/FL10_Alerta_Recadastro.png">
+
+Este fluxo documenta a rotina de recadastro obrigatÃ³rio prevista pela RN02. Um job agendado verifica diariamente moradias ativas cuja `ultima_atualizacao` tenha ultrapassado 365 dias. A consulta considera moradias com ocupaÃ§Ã£o ativa e famÃ­lia ativa, evitando alertas sobre registros apenas histÃ³ricos. No painel, o **Gestor Operacional (A02/A03)** consulta os indicadores de recadastro e visualiza o total de cadastros atualizados e desatualizados. Ao clicar no indicador, o Frontend redireciona para a listagem de moradias com o filtro `desatualizado=true`, permitindo organizar as revisitas de campo.
+
+---
+
+#### FL11 - Regra transversal de Risco CrÃ­tico (RN05)
+
+<img src="outros/diagramas_sequencia/FL11_Flag_Risco_Critico.png">
+
+Este fluxo representa uma regra transversal, acionada por outros fluxos sempre que uma moradia e seus moradores ativos sÃ£o carregados para exibiÃ§Ã£o. O Service consulta a moradia, a ocupaÃ§Ã£o ativa, a famÃ­lia residente e os cidadÃ£os vinculados aos grupos prioritÃ¡rios. A condiÃ§Ã£o RN05 Ã© satisfeita quando a moradia possui histÃ³rico de ocorrÃªncia e existe ao menos um morador ativo classificado com mobilidade reduzida ou acamado. Quando a condiÃ§Ã£o Ã© verdadeira, a resposta recebe `risco_critico=true`, permitindo que o Frontend destaque a flag "Risco CrÃ­tico" em cards, fichas e consultas integradas. Quando a condiÃ§Ã£o nÃ£o Ã© satisfeita, a ficha Ã© exibida sem o alerta.
+
+---
+
+#### FL12 - ValidaÃ§Ã£o transversal de integridade cadastral
+
+<img src="outros/diagramas_sequencia/FL12_Integridade_Familia_Responsavel_Ocupacao.png">
+
+Este fluxo consolida as validaÃ§Ãµes derivadas das US13 e US14. Ele nÃ£o representa uma tela isolada, mas uma regra transversal chamada por operaÃ§Ãµes de cadastro, atualizaÃ§Ã£o, arquivamento e realocaÃ§Ã£o. Sempre que uma famÃ­lia ativa Ã© alterada, o Service verifica se existe responsÃ¡vel ativo vinculado e se hÃ¡ uma ocupaÃ§Ã£o ativa em moradia vÃ¡lida. Se a famÃ­lia ficar sem responsÃ¡vel, a operaÃ§Ã£o Ã© bloqueada e o usuÃ¡rio deve definir um novo responsÃ¡vel. Se a famÃ­lia ficar sem moradia ativa, o sistema exige a criaÃ§Ã£o de uma nova ocupaÃ§Ã£o ou a inativaÃ§Ã£o da famÃ­lia. Essa validaÃ§Ã£o impede inconsistÃªncias cadastrais e preserva a coerÃªncia entre `familia`, `responsavel`, `moradia` e `historico_ocupacao`.
+
 
 ### 3.2.5. Diagrama de Atividades ou Estados (sprint 3)
 
@@ -477,7 +619,18 @@ O diagrama mapeia dois atores e três perfis de uso distintos. O **Agente de Cam
 
 ### 3.2.7. Padrões de Projeto Aplicados (sprints 3 a 5)
 
-*Documente os design patterns utilizados (Repository, Strategy, Factory, DTO etc.) e quais princípios SOLID se aplicam. Justifique a adoção de cada padrão com base em uma necessidade real do projeto.*
+Esta sessão detalha os padrões de projeto (Design Patterns) e conceitos arquiteturais implementados na estrutura de seis camadas do projeto **GeoRisco**, correlacionando cada escolha técnica a uma necessidade de negócio real da Defesa Civil de Santo André.
+
+| Padrão / Conceito Arquitetural | Justificativa e Necessidade Real no Projeto GeoRisco |
+| :--- | :--- |
+| **Arquitetura em Seis Camadas (6-Tier)** | Garante a separação estrita de conceitos (*Separation of Concerns*). Isola a lógica complexa de monitoramento de riscos ambientais das tecnologias voláteis, como o banco de dados e as interfaces visuais em EJS, tornando o sistema testável e modular. |
+| **Princípios SOLID** | Servem como base para guiar o desacoplamento. O **SRP** garante que arquivos de rota ou controllers não executem cálculos geográficos, o **OCP** permite adicionar novos métodos de notificação sem quebrar o código existente, e o **DIP** viabiliza o uso de mocks para testes rápidos. |
+| **Repository Pattern** | Centraliza e abstrai o acesso aos dados geoespaciais e cadastrais. Se a equipe precisar alterar a forma de persistência (como migrar de queries SQL puras para um ORM), a camada de negócio (`services/`) não precisará sofrer nenhuma modificação. |
+| **Data Transfer Object (DTO)** | Controla estritamente o fluxo de dados que trafega entre as bordas do sistema. Impede que informações confidenciais das pessoas em vulnerabilidade sejam expostas desnecessariamente para as views (EJS) e assegura que os `services` recebam dados já refinados e validados pelos `controllers`. |
+| **Data Mapper** | Responsável por converter os modelos de banco de dados (`Models`) em objetos otimizados para apresentação (`DTOs`). No GeoRisco, sua principal necessidade é isolar os dados brutos e transformá-los em estruturas limpas, evitando que a lógica de formatação de exibição polua a lógica de negócios. |
+| **Domain Model** | Garante que as regras e os comportamentos centrais das entidades do ecossistema do projeto fiquem encapsulados em objetos de domínio ricos (`models/`), e não espalhados de forma procedural pelo código. |
+| **Helper** | Isola algoritmos específicos de sistemas externos ao software, envolvendo sistemas nativos como GPS, bibliotecas, dentre outros. |
+| **Custom Exceptions & Centralized Handling** | Padroniza e centraliza as falhas do sistema na camada de `errors/` e middlewares. Essencial para mapear erros específicos de negócio da Defesa Civil (ex: "Área de risco não mapeada" ou "Coordenadas inválidas") e tratá-los de forma amigável ao usuário, sem expor logs técnicos sensíveis de banco de dados na interface. |
 
 ## 3.3. Wireframes (sprint 2)
 
@@ -673,7 +826,7 @@ Em conformidade com a LGPD e regras de auditoria pública, **nenhum dado é dele
 O Diagrama Entidade-Relacionamento (DER) representa a modelagem conceitual do banco de dados da aplicação, demonstrando as entidades do sistema, seus atributos, chaves primárias e estrangeiras, além dos relacionamentos e cardinalidades existentes. O diagrama serve como base para a implementação da estrutura relacional no banco de dados.
 
 <p>Figura 17: Diagrama Entidade-Relacionamento - </p>
-<img src="../assets/der-logico.png">
+<img src="/assets/der-logico.png">
 <p>Feito pela própria equipe (2026)</p>
 
 Cada **retângulo** no diagrama representa uma tabela do banco de dados. Cada **linha** dentro do retângulo representa uma coluna dessa tabela. As **linhas que conectam** os retângulos representam os relacionamentos entre as tabelas.
@@ -1334,29 +1487,62 @@ O modelo implementado assegura:
 
 ### 3.6.4. Consultas SQL e lógica proposicional (sprint 2)
 
-*posicione aqui uma lista de consultas SQL compostas, realizadas pelo back-end da aplicação web, com sua respectiva lógica proposicional, descrita conforme template abaixo. Lembre-se que para usar LaTeX em markdown, basta você colocar as expressões entre $ ou $$*
+A lógica proposicional é um ramo da Matemática e da Computação utilizado para representar e analisar condições lógicas por meio de proposições. No contexto de bancos de dados e consultas SQL, ela permite interpretar como diferentes condições presentes em comandos como `WHERE`, `AND`, `OR`, `NOT`, `LIKE` e `IN` influenciam o resultado final de uma consulta.
 
-*Template de SQL + lógica proposicional*
-# 3.6.4 — Lógica Proposicional Aplicada às Consultas SQL
+Cada condição de uma instrução SQL pode ser representada por uma proposição lógica, normalmente identificada por letras como $A$, $B$ e $C$. Essas proposições assumem apenas dois valores possíveis: verdadeiro (V) ou falso (F). A partir disso, utilizam-se conectivos lógicos para combinar condições e construir expressões mais complexas. O operador `AND` corresponde à conjunção lógica ($\land$), exigindo que ambas as condições sejam verdadeiras; o operador `OR` representa a disjunção lógica ($\lor$), em que pelo menos uma condição deve ser verdadeira; e o operador `NOT` representa a negação lógica ($\neg$), invertendo o valor lógico da proposição.
+
+A tabela verdade é uma ferramenta utilizada para demonstrar todas as combinações possíveis entre proposições lógicas e seus respectivos resultados. Ela permite visualizar, de maneira organizada, como uma expressão lógica se comporta em diferentes cenários. Dessa forma, torna-se possível compreender com precisão quando uma consulta SQL retornará registros ou atualizará dados do banco.
+
+No desenvolvimento da aplicação web para a Defesa Civil, a lógica proposicional foi aplicada para estruturar consultas SQL mais robustas e coerentes, possibilitando a filtragem correta de dados relacionados a cidadãos, famílias, moradias, grupos prioritários, vínculos de ocupação e localização. As tabelas verdade auxiliam na validação dessas regras lógicas, garantindo maior clareza, previsibilidade e confiabilidade nas operações realizadas pelo sistema.
 
 ---
 
-#1 | ---
+#1 | SELECT
 --- | ---
-**Expressão SQL** | SELECT * FROM usuario WHERE (nivel_risco = 'ALTO' AND status_abrigo = 'ATIVO') OR (idade >= 60);
-**Descrição da consulta** | Seleciona usuários que estão em área de risco alto e possuem abrigo ativo, ou usuários idosos com idade maior ou igual a 60 anos.
-**Proposições lógicas** | $A$: O nível de risco é ALTO (`nivel_risco = 'ALTO'`) <br> $B$: O abrigo está ATIVO (`status_abrigo = 'ATIVO'`) <br> $C$: A idade é maior ou igual a 60 (`idade \geq 60`)
-**Expressão lógica proposicional** | $(A \land B) \lor C$
-**Tabela Verdade** | <table> <thead> <tr> <th>$A$</th> <th>$B$</th> <th>$C$</th> <th>$(A \land B)$</th> <th>$(A \land B) \lor C$</th> </tr> </thead> <tbody> <tr> <td>F</td> <td>F</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>F</td> <td>V</td> <td>F</td> <td>V</td> </tr> <tr> <td>F</td> <td>V</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>V</td> <td>V</td> <td>F</td> <td>V</td> </tr> <tr> <td>V</td> <td>F</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>F</td> <td>V</td> <td>F</td> <td>V</td> </tr> <tr> <td>V</td> <td>V</td> <td>F</td> <td>V</td> <td>V</td> </tr> <tr> <td>V</td> <td>V</td> <td>V</td> <td>V</td> <td>V</td> </tr> </tbody> </table>
+**Expressão SQL** | SELECT m.id_moradia, m.id_localizacao, m.tipo_construcao, m.condicao_ocupacao, m.tipo_uso_imovel, m.telefone, m.observacoes, m.data_cadastro, m.ultima_atualizacao, m.status, l.logradouro, l.bairro, c.nome_completo AS responsavel FROM moradia m JOIN localizacao l ON m.id_localizacao = l.id_localizacao JOIN historico_ocupacao ho ON m.id_moradia = ho.id_moradia JOIN familia f ON ho.id_familia = f.id_familia JOIN cidadao c ON f.id_familia = c.id_familia JOIN responsavel r ON c.id_cidadao = r.id_cidadao WHERE m.status IN ('Interditada', 'Área de Risco Evacuada') AND ho.data_saida IS NULL AND f.status_ativo = TRUE AND c.status_cadastro = TRUE;
+**Descrição da consulta** | Buscar moradias em condição de risco operacional com seus responsáveis familiares ativos.
+**Proposições lógicas** | $A$: A moradia está em condição de risco operacional (`m.status IN ('Interditada', 'Área de Risco Evacuada')`) <br> $B$: A família ocupa atualmente a moradia (`ho.data_saida IS NULL`) <br> $C$: A família e o responsável estão ativos (`f.status_ativo = TRUE AND c.status_cadastro = TRUE`)
+**Expressão lógica proposicional** | $(A \land B) \land C$
+**Tabela Verdade** | <table> <thead> <tr> <th>$A$</th> <th>$B$</th> <th>$C$</th> <th>$(A \land B)$</th> <th>$(A \land B) \land C$</th> </tr> </thead> <tbody> <tr> <td>F</td> <td>F</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>F</td> <td>V</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>V</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>V</td> <td>V</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>F</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>F</td> <td>V</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>V</td> <td>F</td> <td>V</td> <td>F</td> </tr> <tr> <td>V</td> <td>V</td> <td>V</td> <td>V</td> <td>V</td> </tr> </tbody> </table>
+
+A consulta #1 só retorna resultado quando a moradia está em risco operacional, possui ocupação ativa e os cadastros da família e do responsável permanecem ativos.
+
+#2 | SELECT
+--- | ---
+**Expressão SQL** | SELECT l.bairro, COUNT(c.id_cidadao) AS total_cronicos FROM cidadao c JOIN familia f ON c.id_familia = f.id_familia JOIN historico_ocupacao ho ON f.id_familia = ho.id_familia JOIN moradia m ON ho.id_moradia = m.id_moradia JOIN localizacao l ON m.id_localizacao = l.id_localizacao WHERE c.doencas_cronicas IS NOT NULL AND c.status_cadastro = TRUE AND f.status_ativo = TRUE AND ho.data_saida IS NULL GROUP BY l.bairro;
+**Descrição da consulta** | Contar quantas pessoas com doenças crônicas registradas existem por bairro.
+**Proposições lógicas** | $A$: A pessoa possui doença crônica registrada (`c.doencas_cronicas IS NOT NULL`) <br> $B$: O cidadão e sua família estão ativos (`c.status_cadastro = TRUE AND f.status_ativo = TRUE`) <br> $C$: O vínculo de ocupação da moradia está ativo (`ho.data_saida IS NULL`)
+**Expressão lógica proposicional** | $(A \land B) \land C$
+**Tabela Verdade** | <table> <thead> <tr> <th>$A$</th> <th>$B$</th> <th>$C$</th> <th>$(A \land B)$</th> <th>$(A \land B) \land C$</th> </tr> </thead> <tbody> <tr> <td>F</td> <td>F</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>F</td> <td>V</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>V</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>V</td> <td>V</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>F</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>F</td> <td>V</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>V</td> <td>F</td> <td>V</td> <td>F</td> </tr> <tr> <td>V</td> <td>V</td> <td>V</td> <td>V</td> <td>V</td> </tr> </tbody> </table>
+
+A consulta #2 só contabiliza o cidadão quando há doença crônica registrada, cadastro ativo e ocupação residencial vigente.
+
+#3 | SELECT
+--- | ---
+**Expressão SQL** | SELECT c.nome_completo, gp.data_prevista, gp.nome AS grupo_prioritario FROM cidadao c JOIN cidadao_grupo_prioritario cgp ON c.id_cidadao = cgp.id_cidadao JOIN grupo_prioritario gp ON cgp.id_grupo_prioritario = gp.id_grupo_prioritario WHERE c.status_cadastro = TRUE AND gp.nome = 'Gestante';
+**Descrição da consulta** | Listar gestantes ativas cadastradas em grupos prioritários.
+**Proposições lógicas** | $A$: O cidadão está ativo (`c.status_cadastro = TRUE`) <br> $B$: O cidadão possui registro de gestante (`g.id_cidadao IS NOT NULL`) <br> $C$: O cidadão pertence ao grupo prioritário Gestante (`gp.nome = 'Gestante'`)
+**Expressão lógica proposicional** | $(A \land B) \land C$
+**Tabela Verdade** | <table> <thead> <tr> <th>$A$</th> <th>$B$</th> <th>$C$</th> <th>$(A \land B)$</th> <th>$(A \land B) \land C$</th> </tr> </thead> <tbody> <tr> <td>F</td> <td>F</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>F</td> <td>V</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>V</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>V</td> <td>V</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>F</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>F</td> <td>V</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>V</td> <td>F</td> <td>V</td> <td>F</td> </tr> <tr> <td>V</td> <td>V</td> <td>V</td> <td>V</td> <td>V</td> </tr> </tbody> </table>
+
+A consulta #3 só retorna resultado quando o cidadão está ativo, possui registro na tabela de gestantes e está associado ao grupo prioritário correspondente.
+
+#4 | UPDATE
+--- | ---
+**Expressão SQL** | UPDATE moradia SET status = 'Ativa', ultima_atualizacao = CURRENT_DATE WHERE id_moradia = :id_moradia AND status IN ('Interditada', 'Área de Risco Evacuada');
+**Descrição da consulta** | Reativar uma moradia específica que estava em status não operacional reversível.
+**Proposições lógicas** | $A$: A moradia corresponde ao registro informado (`id_moradia = :id_moradia`) <br> $B$: A moradia está em status não operacional reversível (`status IN ('Interditada', 'Área de Risco Evacuada')`)
+**Expressão lógica proposicional** | $A \land B$
+**Tabela Verdade** | <table> <thead> <tr> <th>$A$</th> <th>$B$</th> <th>$A \land B$</th> </tr> </thead> <tbody> <tr> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>V</td> <td>F</td> </tr> <tr> <td>V</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>V</td> <td>V</td> </tr> </tbody> </table>
+
+A consulta #4 só realiza a atualização quando o registro informado existe no contexto da operação e a moradia está previamente classificada em um status não operacional reversível.
 
 ---
 
 
 ## 3.7. WebAPI e endpoints (sprints 3 e 4)
 
-*Utilize um link para outra página de documentação contendo a descrição completa de cada endpoint. Ou descreva aqui cada endpoint criado para seu sistema.* 
-
-*Cada endpoint deve conter endereço, método (GET, POST, PUT, PATCH, DELETE), header, body, formatos de response e os status codes possíveis (200, 201, 204, 400, 401, 403, 404, 409, 422, 500).*
+A documentação completa dos endpoints propostos para a WebAPI está disponível em [documentos/outros/endpoints.md](outros/endpoints.md). O arquivo descreve a base URL, headers, formato padrão de erro, métodos HTTP, endpoints, atores, RF/RN relacionados, exemplos de request/response e status codes possíveis.
 
 ## 3.8. Autenticação, Autorização e Resiliência (sprint 5)
 
@@ -1378,15 +1564,37 @@ O modelo implementado assegura:
 
 ## 3.9. Matriz de Rastreabilidade (RTM) (sprints 3 a 5)
 
-*A RTM consolida a rastreabilidade completa do sistema. Um elo quebrado invalida toda a cadeia — mantenha-a atualizada a cada sprint. A partir da sprint 3 não deve haver lacunas nos fluxos centrais.*
+A Matriz de Rastreabilidade (RTM - Requirements Traceability Matrix) consolida, em uma única visão, os elos entre cada Persona, Requisito Funcional (RF), Regra de Negócio (RN), endpoint de API, tela da interface e caso de teste correspondente. O objetivo é garantir que nenhum requisito fique sem implementação, sem teste e sem evidência de validação, em que qualquer lacuna nessa cadeia representa um risco direto à integridade e à confiabilidade do sistema.
 
-| Persona | RF    | RN   | Endpoint    | Tela     | Teste | Evidência        |
-|---------|-------|------|-------------|----------|-------|------------------|
-| ...     | RF001 | RN01 | `/usuarios` | Cadastro | CT02  | print, log, relatório de cobertura |
+| # | Persona | US | RF | RN | Endpoint | Método | Tela | Casos de Teste | Evidência |
+|---|---------|----|----|-----|----------|--------|------|----------------|-----------|
+| 1 | Agente de Campo | US01, US02, US05 | RF001 — Cadastro Sociodemográfico e Vínculos<br>RF002 — Cadastro Estrutural de Moradias<br>RF003 — Georreferenciamento via GPS | RN01, RN04 | `/api/cadastros-completos` | `POST` | Cadastro → Moradias, Responsável, Moradores | CT01: Cadastro completo transacional com sucesso (`201`)<br>CT02: Validação de campos obrigatórios ausentes (`422`)<br>CT03: CPF/NIS/email duplicado retorna conflito (`409`)<br>CT04: Upload de foto de pessoa bloqueado pela RN04 (`422`)<br>CT05: Captura de coordenadas GPS e persistência em cache offline<br>CT06: Sincronização automática ao reconectar | Print da tela de cadastro; log de inserção no banco; relatório de cobertura de testes |
+| 2 | Gestor | US03 | RF004 — Visualização em Mapa Georreferenciado | — | `/api/moradias/mapa` | `GET` | Mapa | CT07: Plotagem de marcadores para todas as moradias ativas<br>CT08: Filtro por `status=Ativa` retorna apenas moradias ativas<br>CT09: Moradias arquivadas ausentes do resultado<br>CT10: Array vazio retorna `200` sem erro | Print do mapa com marcadores; evidência de ausência de moradias arquivadas |
+| 3 | Gestor | US04 | RF005 — Consulta Integrada de Moradia e Moradores | RN01, RN05 | `/api/moradias/{id_moradia}/consulta-integrada` | `GET` | Consulta → Resultado da Busca | CT11: Ficha integrada retorna dados de moradia, responsável, moradores e pets<br>CT12: Campo `risco_critico: true` presente quando RN05 satisfeita (mobilidade reduzida + histórico de ocorrência)<br>CT13: Campo `risco_critico: false` quando condição não satisfeita<br>CT14: `prioridade` calculada conforme RN01<br>CT15: `404` para moradia inexistente | Print da ficha com flag ativa; print sem flag; log de resposta da API |
+| 4 | Gestor | US06 | RF006 — Filtros Avançados de Moradias | — | `/api/moradias` | `GET` | Consulta / Mapa | CT16: Filtro por `grupo_prioritario=Acamado` retorna apenas registros correspondentes<br>CT17: Filtro por `condicao_ocupacao=Cedida` isolado e combinado<br>CT18: Filtro `desatualizado=true` retorna apenas fichas com `ultima_atualizacao` > 365 dias<br>CT19: Nenhum dado fora do filtro selecionado vaza na resposta | Print dos resultados filtrados; evidência de ausência de registros fora do escopo |
+| 5 | Gestor | US06 | RF006 — Exportação de Moradias Filtradas | — | `/api/moradias/exportar` | `GET` | Consulta | CT20: Exportação CSV com headers corretos (`Content-Disposition`)<br>CT21: Exportação PDF gerada sem erros<br>CT22: Filtros aplicados na exportação refletem os mesmos da listagem<br>CT23: Formato inválido retorna `400` | Arquivo CSV/PDF gerado como evidência; print do download no navegador |
+| 6 | Agente de Campo | US07 | RF007 — Cadastro de Animais de Estimação | — | `/api/familias/{id_familia}/pets` | `POST` | Cadastro → Pets | CT24: Cadastro de múltiplos pets por categoria com sucesso (`201`)<br>CT25: `tipo_pet` ausente retorna `422`<br>CT26: Família inexistente retorna `404` | Print do cadastro de pet; log de inserção no banco |
+| 7 | Agente de Campo e Gestor | US07 | RF007 — Listagem de Pets da Família | — | `/api/familias/{id_familia}/pets` | `GET` | Consulta / Ficha de Emergência | CT27: Pets exibidos em destaque na ficha de emergência da família<br>CT28: Array vazio retorna `200` sem erro | Print da ficha de emergência com seção de pets |
+| 8 | Agente de Campo e Gestor | US07 | RF007 — Atualização de Pet | — | `/api/pets/{id_pet}` | `PUT` | Cadastro → Pets | CT29: Atualização de todos os campos com sucesso (`200`)<br>CT30 — Pet inexistente retorna `404` | Log de atualização no banco |
+| 9 | Gestor | US08 | RF008 — Mapa de Calor | RN01 | `/api/indicadores/mapa-calor` | `GET` | Mapa | CT31: Layer de calor renderizado com filtro `Idoso`<br>CT32: Recálculo dinâmico de intensidade ao variar parâmetro `zoom`<br>CT33: Agrupamentos de coordenadas iguais geram intensidade proporcional<br>CT34: Array vazio retorna `200` sem erro | Print do mapa de calor com filtro ativo; evidência de recálculo em diferentes níveis de zoom |
+| 10 | Gestor | US09 | RF009 — Arquivamento de Moradias | RN03 | `/api/moradias/{id_moradia}/status` | `PATCH` | Consulta / Mapa | CT35: Arquivamento com `status=Demolida` e motivo obrigatório (`200`)<br>CT36: Tentativa de arquivamento com família ativa vinculada retorna `409` com `requer_realocacao: true`<br>CT37: Moradia arquivada ausente no mapa ativo<br>CT38: Moradia arquivada visível no Histórico Inativo<br>CT39: `status` ou `motivo` ausentes retornam `422` | Print do `409` com payload de realocação; print do mapa sem a moradia; print do histórico |
+| 11 | Gestor | US09, US14 | RF009 — Realocação de Família | RN03 | `/api/familias/{id_familia}/realocacoes` | `POST` | Consulta | CT40: Realocação cria novo registro em `historico_ocupacao` e encerra ocupação anterior<br>CT41: Família sem ocupação ativa retorna `409`<br>CT42: Nova moradia inexistente retorna `404`<br>CT43:  `data_entrada` inválida retorna `422` | Log do `historico_ocupacao` antes e depois; print de confirmação |
+| 12 | Gestor | US10 | RF010 — Arquivamento de Moradores Falecidos | RN03 | `/api/cidadaos/{id_cidadao}/arquivar` | `PATCH` | Consulta | CT44: Arquivamento com `data_falecimento` e `confirmado: true` (`200`)<br>CT45: Cidadão arquivado ausente em listagens ativas<br>CT46: Cidadão arquivado visível no Histórico de Moradores<br>CT47: Arquivamento do responsável retorna `409` com lista de `candidatos`<br>CT48: `data_falecimento` ausente retorna `422` | Print de `409` com candidatos; print da listagem sem o morador; print do histórico |
+| 13 | Gestor | US11 | RF011 — Alerta Automático de Recadastro (12 meses) | RN02 | `GET /api/indicadores/recadastro` + job agendado em background | `GET` | Mapa / Painel | CT49: Disparo do job após ficha atingir 365 dias sem atualização<br>CT50: Painel exibe contadores `atualizados` e `desatualizados` corretamente<br>CT51: Após atualização da ficha, contador `desatualizados` decrementa na próxima consulta | Log do job agendado; print do painel com contador ativo; evidência de decremento após atualização |
+| 14 | Agente de Campo | US12 | RF012 — Atualização Anual de Dados | RN01, RN02, RN04 | `GET /api/familias/{id_familia}/cadastro-completo`<br>`PUT /api/familias/{id_familia}/cadastro-completo` | `GET` / `PUT` | Cadastro (edição) | CT52: Busca da ficha completa para revisão (`200`)<br>CT53: Re-salvamento atualiza `ultima_atualizacao` para a data atual<br>CT54: Indicador `desatualizado` removido do painel do gestor após sincronização<br>CT55: Foto em desacordo com RN04 bloqueia a atualização (`422`)<br>CT56: Atualização que deixa família sem responsável retorna `409`) | Print antes/depois no painel; log de sincronização; print do `ultima_atualizacao` no banco |
+| 15 | Gestor | US13 | Regra de responsável obrigatório por família | RN03 | `/api/familias/{id_familia}/responsavel` | `PUT` | Consulta | CT57: Definição de responsável com dados completos (`200`)<br>CT58: Cidadão informado que não pertence à família retorna `409`<br>CT59: CPF/NIS/email inválidos retornam `422`<br>CT60: Família inexistente retorna `404` | Log de atualização no banco; print de confirmação na tela |
+
+---
 
 # <a name="c4"></a>4. Desenvolvimento da Aplicação Web
 
 ## 4.1. Primeira versão da aplicação web (sprint 3)
+
+Na primeira versão do sistema web, foi aplicado a estrutura de pastas juntamente com o desenvolvimento das funcionalidades CRUD base do sistema referente a moradia, moradores, responsáveis e pets, havendo já um protótipo de alta fidelidade com guia e identidade visual. Ademais, o código foi desenvolvido utilizando a metodologia TDD (Test Driven Design), onde o desenvolvimento é orientado a testes, garantindo um código já testado e comprovado.
+
+Assim, ainda não foi inserido métodos complexos e mais específicos, priorizando a entrega de um MVC visualizável e testável.
+
+Dentre as dificuldades, encontramos problemas diversos considerando o prazo de entrega apertadíssimo, dificultando na possibilidade de aplicações de funcionalidades secundárias, porém úteis, como o alerta de atualização do cadastro de Gestantes após um prazo estimado de gravidez; diferenciação de pets para animais com fins funcionais (comerciais e reprodutivos). Sendo todas estas, inseridas como escopo extra que desejaríamos de implementar se fosse possível.
 
 *Descreva e ilustre aqui o desenvolvimento da primeira versão do sistema web. Utilize prints de tela para ilustrar. Indique obrigatoriamente: (a) o que foi implementado, (b) o que não foi concluído, (c) dificuldades técnicas enfrentadas e próximos passos.*
 
