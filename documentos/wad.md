@@ -449,7 +449,16 @@ Matriz de cobertura que demonstra quais RN (Regras de Negócio) e endpoints impl
 | RF005 | RN01, RN05    | `/api/moradias/{id_moradia}/consulta-integrada` | GET |
 | RF006 | RN02          | `/api/moradias` | GET |
 | RF006 | RN02          | `/api/moradias/exportar` | GET |
-
+| RF007 | N/A           | `/api/familias/{id_familia}/pets` | GET |
+| RF007 | N/A           | `/api/familias/{id_familia}/pets` | POST |
+| RF007 | N/A           | `/api/pets/{id_pet}` | PUT |
+| RF008 | RN01          | `/api/indicadores/mapa-calor` | GET |
+| RF009 | RN03          | `/api/moradias/{id_moradia}/status` | PATCH |
+| RF009 | RN03          | `/api/familias/{id_familia}/realocacoes` | POST |
+| RF010 | RN03          | `/api/cidadaos/{id_cidadao}/arquivar` | PATCH |
+| RF011 | RN02          | `/api/indicadores/recadastro` | GET |
+| RF012 | RN02          | `/api/familias/{id_familia}/cadastro-completo` | GET |
+| RF012 | RN01, RN02, RN04 | `/api/familias/{id_familia}/cadastro-completo` | PUT |
 
 ## 3.2. Arquitetura (sprints 1 a 5)
 
