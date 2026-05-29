@@ -493,7 +493,17 @@ O diagrama mapeia dois atores e três perfis de uso distintos. O **Agente de Cam
 
 ### 3.2.3. Diagrama de Classes do Domínio (sprint 2)
 
-*Diagrama UML de classes com entidades, atributos, relacionamentos e responsabilidades. Diferencie **associação**, **agregação** (losango vazio), **composição** (losango cheio) e **herança** (triângulo vazio). Multiplicidade explícita em toda associação.*
+O Diagrama de Classes de Dominio representa visualmente as principais entidades do négocio, com seus atributos e relacionamentos entre elas. Não se preocupando com detalhes técnicos como métodos, chaves estrangeiras ou tecnologias específicas, focando somente em capturar o que existe no mundo real dentro do contexto do sistema.
+
+Link do diagrama (realizado por meio do site draw.io): https://drive.google.com/file/d/1YfjTRYovyfGQ29EKa9RM1ScGjfUeJIIK/view?usp=sharing
+
+
+<div align="center">
+    <p>Figura 7: Diagrama de Classes de Domínio</p>
+    <img src="outros/diagrama-classes-dominio.drawio.png" width="800">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
 
 ### 3.2.4. Diagrama de Sequência UML (sprint 3)
 
@@ -505,7 +515,7 @@ Os dois fluxos priorizados nesta sprint cobrem as operações de maior impacto n
 
 #### FL01 — Cadastro de Cidadão e Vínculo à Moradia
 
-<img src="outros\diagramas_sequencia\fl01_cadastro_de_cidadao_e_vinculo_a_moradia.png">
+<img src="outros/diagramas_sequencia/fl01_cadastro_de_cidadao_e_vinculo_a_moradia.png">
 
 Este fluxo descreve a jornada de cadastro conduzida pelo **Agente de Campo (A01)** a partir do aplicativo mobile. O processo é estruturado em cinco sessões sequenciais: Moradia, Localização, Chefe de Família, Composição Familiar e Pets. Cada uma liberada somente após a confirmação da anterior, garantindo a integridade referencial dos dados antes do envio. Ao submeter o formulário completo, o Frontend dispara uma sequência ordenada de requisições `POST` que cria os registros em cascata (`LOCALIZACAO → MORADIA → CIDADAO → RESPONSAVEL → PET → FORMULARIO`), enquanto o Service aplica as regras de negócio RN01 (classificação de risco) e RN04 (restrição de fotos). O diagrama também contempla o **modo offline**, no qual o formulário é persistido em cache local via IndexedDB e sincronizado automaticamente ao restabelecer conexão, e o **caminho de exceção** de duplicidade de cadastro, que oferece ao agente as opções de busca, atualização ou cancelamento.
 
@@ -729,7 +739,7 @@ Em conformidade com a LGPD e regras de auditoria pública, **nenhum dado é dele
 O Diagrama Entidade-Relacionamento (DER) representa a modelagem conceitual do banco de dados da aplicação, demonstrando as entidades do sistema, seus atributos, chaves primárias e estrangeiras, além dos relacionamentos e cardinalidades existentes. O diagrama serve como base para a implementação da estrutura relacional no banco de dados.
 
 <p>Figura 17: Diagrama Entidade-Relacionamento - </p>
-<img src="../assets/der-logico.png">
+<img src="/assets/der-logico.png">
 <p>Feito pela própria equipe (2026)</p>
 
 Cada **retângulo** no diagrama representa uma tabela do banco de dados. Cada **linha** dentro do retângulo representa uma coluna dessa tabela. As **linhas que conectam** os retângulos representam os relacionamentos entre as tabelas.
@@ -1402,7 +1412,7 @@ No desenvolvimento da aplicação web para a Defesa Civil, a lógica proposicion
 
 #1 | SELECT
 --- | ---
-**Expressão SQL** | SELECT m.id_moradia, l.logradouro, l.bairro, c.nome_completo AS responsavel FROM moradia m JOIN localizacao l ON m.id_localizacao = l.id_localizacao JOIN historico_ocupacao ho ON m.id_moradia = ho.id_moradia JOIN familia f ON ho.id_familia = f.id_familia JOIN cidadao c ON f.id_familia = c.id_familia JOIN responsavel r ON c.id_cidadao = r.id_cidadao WHERE m.status IN ('Interditada', 'Área de Risco Evacuada') AND ho.data_saida IS NULL AND f.status_ativo = TRUE AND c.status_cadastro = TRUE;
+**Expressão SQL** | SELECT m.id_moradia, m.id_localizacao, m.tipo_construcao, m.condicao_ocupacao, m.tipo_uso_imovel, m.telefone, m.observacoes, m.data_cadastro, m.ultima_atualizacao, m.status, l.logradouro, l.bairro, c.nome_completo AS responsavel FROM moradia m JOIN localizacao l ON m.id_localizacao = l.id_localizacao JOIN historico_ocupacao ho ON m.id_moradia = ho.id_moradia JOIN familia f ON ho.id_familia = f.id_familia JOIN cidadao c ON f.id_familia = c.id_familia JOIN responsavel r ON c.id_cidadao = r.id_cidadao WHERE m.status IN ('Interditada', 'Área de Risco Evacuada') AND ho.data_saida IS NULL AND f.status_ativo = TRUE AND c.status_cadastro = TRUE;
 **Descrição da consulta** | Buscar moradias em condição de risco operacional com seus responsáveis familiares ativos.
 **Proposições lógicas** | $A$: A moradia está em condição de risco operacional (`m.status IN ('Interditada', 'Área de Risco Evacuada')`) <br> $B$: A família ocupa atualmente a moradia (`ho.data_saida IS NULL`) <br> $C$: A família e o responsável estão ativos (`f.status_ativo = TRUE AND c.status_cadastro = TRUE`)
 **Expressão lógica proposicional** | $(A \land B) \land C$
@@ -1422,7 +1432,7 @@ A consulta #2 só contabiliza o cidadão quando há doença crônica registrada,
 
 #3 | SELECT
 --- | ---
-**Expressão SQL** | SELECT c.nome_completo, g.data_prevista, gp.nome AS grupo_prioritario FROM cidadao c JOIN gestante g ON c.id_cidadao = g.id_cidadao JOIN cidadao_grupo_prioritario cgp ON c.id_cidadao = cgp.id_cidadao JOIN grupo_prioritario gp ON cgp.id_grupo_prioritario = gp.id_grupo_prioritario WHERE c.status_cadastro = TRUE AND gp.nome = 'Gestante';
+**Expressão SQL** | SELECT c.nome_completo, gp.data_prevista, gp.nome AS grupo_prioritario FROM cidadao c JOIN cidadao_grupo_prioritario cgp ON c.id_cidadao = cgp.id_cidadao JOIN grupo_prioritario gp ON cgp.id_grupo_prioritario = gp.id_grupo_prioritario WHERE c.status_cadastro = TRUE AND gp.nome = 'Gestante';
 **Descrição da consulta** | Listar gestantes ativas cadastradas em grupos prioritários.
 **Proposições lógicas** | $A$: O cidadão está ativo (`c.status_cadastro = TRUE`) <br> $B$: O cidadão possui registro de gestante (`g.id_cidadao IS NOT NULL`) <br> $C$: O cidadão pertence ao grupo prioritário Gestante (`gp.nome = 'Gestante'`)
 **Expressão lógica proposicional** | $(A \land B) \land C$
@@ -1476,6 +1486,12 @@ A documentação completa dos endpoints propostos para a WebAPI está disponíve
 # <a name="c4"></a>4. Desenvolvimento da Aplicação Web
 
 ## 4.1. Primeira versão da aplicação web (sprint 3)
+
+Na primeira versão do sistema web, foi aplicado a estrutura de pastas juntamente com o desenvolvimento das funcionalidades CRUD base do sistema referente a moradia, moradores, responsáveis e pets, havendo já um protótipo de alta fidelidade com guia e identidade visual. Ademais, o código foi desenvolvido utilizando a metodologia TDD (Test Driven Design), onde o desenvolvimento é orientado a testes, garantindo um código já testado e comprovado.
+
+Assim, ainda não foi inserido métodos complexos e mais específicos, priorizando a entrega de um MVC visualizável e testável.
+
+Dentre as dificuldades, encontramos problemas diversos considerando o prazo de entrega apertadíssimo, dificultando na possibilidade de aplicações de funcionalidades secundárias, porém úteis, como o alerta de atualização do cadastro de Gestantes após um prazo estimado de gravidez; diferenciação de pets para animais com fins funcionais (comerciais e reprodutivos). Sendo todas estas, inseridas como escopo extra que desejaríamos de implementar se fosse possível.
 
 *Descreva e ilustre aqui o desenvolvimento da primeira versão do sistema web. Utilize prints de tela para ilustrar. Indique obrigatoriamente: (a) o que foi implementado, (b) o que não foi concluído, (c) dificuldades técnicas enfrentadas e próximos passos.*
 
