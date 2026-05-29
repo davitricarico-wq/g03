@@ -635,18 +635,22 @@ Este fluxo consolida as validações derivadas das US13 e US14. Ele não represe
 
 ### 3.2.7. Padrões de Projeto Aplicados (sprints 3 a 5)
 
-Esta sessão detalha os padrões de projeto (Design Patterns) e conceitos arquiteturais implementados na estrutura de seis camadas do projeto **GeoRisco**, correlacionando cada escolha técnica a uma necessidade de negócio real da Defesa Civil de Santo André.
+Durante o desenvolvimento do backend do GeoRisco, foram aplicados padrões arquiteturais voltados à separação de responsabilidades, testabilidade e manutenção das regras de negócio. A aplicação foi estruturada em camadas, utilizando TypeScript, Express, PostgreSQL e Supabase Storage.
 
-| Padrão / Conceito Arquitetural | Justificativa e Necessidade Real no Projeto GeoRisco |
-| :--- | :--- |
-| **Arquitetura em Seis Camadas (6-Tier)** | Garante a separação estrita de conceitos (*Separation of Concerns*). Isola a lógica complexa de monitoramento de riscos ambientais das tecnologias voláteis, como o banco de dados e as interfaces visuais em EJS, tornando o sistema testável e modular. |
-| **Princípios SOLID** | Servem como base para guiar o desacoplamento. O **SRP** garante que arquivos de rota ou controllers não executem cálculos geográficos, o **OCP** permite adicionar novos métodos de notificação sem quebrar o código existente, e o **DIP** viabiliza o uso de mocks para testes rápidos. |
-| **Repository Pattern** | Centraliza e abstrai o acesso aos dados geoespaciais e cadastrais. Se a equipe precisar alterar a forma de persistência (como migrar de queries SQL puras para um ORM), a camada de negócio (`services/`) não precisará sofrer nenhuma modificação. |
-| **Data Transfer Object (DTO)** | Controla estritamente o fluxo de dados que trafega entre as bordas do sistema. Impede que informações confidenciais das pessoas em vulnerabilidade sejam expostas desnecessariamente para as views (EJS) e assegura que os `services` recebam dados já refinados e validados pelos `controllers`. |
-| **Data Mapper** | Responsável por converter os modelos de banco de dados (`Models`) em objetos otimizados para apresentação (`DTOs`). No GeoRisco, sua principal necessidade é isolar os dados brutos e transformá-los em estruturas limpas, evitando que a lógica de formatação de exibição polua a lógica de negócios. |
-| **Domain Model** | Garante que as regras e os comportamentos centrais das entidades do ecossistema do projeto fiquem encapsulados em objetos de domínio ricos (`models/`), e não espalhados de forma procedural pelo código. |
-| **Helper** | Isola algoritmos específicos de sistemas externos ao software, envolvendo sistemas nativos como GPS, bibliotecas, dentre outros. |
-| **Custom Exceptions & Centralized Handling** | Padroniza e centraliza as falhas do sistema na camada de `errors/` e middlewares. Essencial para mapear erros específicos de negócio da Defesa Civil (ex: "Área de risco não mapeada" ou "Coordenadas inválidas") e tratá-los de forma amigável ao usuário, sem expor logs técnicos sensíveis de banco de dados na interface. |
+| Padrão / Conceito Arquitetural | Aplicação no GeoRisco | Justificativa |
+| :--- | :--- | :--- |
+| **Arquitetura em Camadas** | O backend está organizado em `routes`, `controllers`, `services`, `repositories`, `dtos`, `models`, `validations`, `errors`, `db` e `storage`. | Essa divisão separa entrada HTTP, regras de negócio, persistência e infraestrutura. Isso facilita manutenção em um sistema com cadastros de pessoas, moradias, famílias, pets, fotos e vínculos históricos. |
+| **Controller** | Os controllers recebem requisições, extraem parâmetros, normalizam payloads e retornam respostas HTTP. | Evita que regras de negócio e SQL fiquem misturados com detalhes de rota, status code e renderização de views/API. |
+| **Service Layer** | Os services concentram validações de negócio, transações e orquestração entre repositories. | Necessário para operações compostas, como cadastro de responsável, criação de núcleo familiar, vínculo entre família e moradia e upload de fotos. |
+| **Repository Pattern** | Os repositories encapsulam consultas SQL e acesso ao PostgreSQL. | Isola a persistência da lógica de negócio, permitindo alterar queries, views ou estratégia de banco sem impactar diretamente controllers e services. |
+| **DTO (Data Transfer Object)** | Os DTOs definem os formatos de entrada e saída usados em cadastros, buscas, fotos, moradias e famílias. | Ajuda a controlar os dados trafegados entre frontend e backend, reduzindo exposição desnecessária de campos sensíveis e padronizando contratos da API. |
+| **Dependency Injection por Construtor** | Controllers recebem services, e services recebem repositories por construtor, baseados em interfaces. | Reduz acoplamento entre classes e facilita testes com mocks, como nos testes de controller e persistência. |
+| **Interface Segregation / Contratos** | Existem interfaces específicas para services e repositories, como `IPessoaService`, `IPessoaRepository`, `IFamiliaService` e equivalentes. | Os contratos deixam claro o que cada camada pode consumir, evitando dependência direta de implementação concreta. |
+| **Validação Centralizada** | Arquivos em `validations/` e funções de normalização em `request-utils.ts` validam payloads, IDs, datas, números e campos obrigatórios. | Garante consistência nos dados antes de persistir informações sensíveis e reduz duplicação de validação nos controllers. |
+| **Custom Exception** | A classe `HttpError` representa erros de negócio com status HTTP definido. | Permite diferenciar erros esperados, como ID inválido ou registro não encontrado, de falhas internas do servidor. |
+| **Tratamento Centralizado de Erros** | A função `handleControllerError` padroniza respostas de erro nos controllers. | Evita repetição de lógica de erro e impede que detalhes técnicos sejam expostos ao usuário final. |
+| **Transação na Camada de Serviço** | Operações que afetam múltiplas tabelas usam `BEGIN`, `COMMIT` e `ROLLBACK` nos services. | Mantém integridade em fluxos críticos, como criação de responsável, moradia com localização e núcleo familiar completo. |
+| **Adapter / Facade para Serviço Externo** | O acesso ao Supabase Storage fica isolado em `storage/supabase-storage.client.ts` e no `FotoStorageService`. | Centraliza a integração externa de armazenamento de fotos, evitando que controllers e repositories dependam diretamente da API do Supabase. |
 
 ## 3.3. Wireframes (sprint 2)
 
