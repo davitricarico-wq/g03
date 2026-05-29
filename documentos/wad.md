@@ -760,14 +760,36 @@ Esta seção apresenta o detalhamento de um registro específico, acessado após
 Esta seção apresenta o guia de estilos utilizado no desenvolvimento da aplicação web. Aqui estão definidos os padrões visuais e componentes de interface adotados, como cores, tipografia, botões, ícones e demais elementos gráficos. O objetivo é garantir consistência visual, padronização e melhor experiência de uso durante o desenvolvimento e evolução da solução.
 
 <div align="center">
-    <p>Figura 16: Guia de estilo</p>
-    <img src="outros/guia_de_estilos 1.png">
+    <p>Figura 16: Guia de estilos</p>
+    <img src="outros/guia_de_estilos.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
 ### 3.4.1 Cores
 
-*Apresente aqui a paleta de cores, com seus códigos de aplicação e suas respectivas funções*
+A a paleta de cores pensada para a prototipação foi inspirada na logo oficial da própria Defesa Civil de Santo André e do CREDEC-SA (Centro de Resiliência às Emergências de Defesa Civil de Santo André). Logos: 
+
+<div align="center">
+    <p>Figura 17: Logo da Defesa Civil de Santo André</p>
+    <img src="outros/logoSantoAndre.png" width="200">
+    <p>Defesa Civil de Santo André</p>
+</div>
+
+<div align="center">
+    <p>Figura 18: Logo do CREDEC-SA</p>
+    <img src="outros/logoCREDEC.png" width="200">
+    <p>CREDEC-SA</p>
+</div>
+
+A equipe decidiu usar dois tons de azul, um de laranja e três cores neutras. A composição da paleta ficou assim: 
+
+- Azul Escuro: #182C4C
+- Azul Claro: #004ea1
+- Laranja: #ff7500
+- Cinza Escuro: #5e5e5e
+- Cinza Claro: #9f9f9f
+- Branco: #ffffff 
+
 
 ### 3.4.2 Tipografia
 
@@ -813,14 +835,90 @@ A solução utiliza um conjunto de ícones de linha (outline) com estilo geomét
 
 ## 3.5. Protótipo de alta fidelidade (sprint 3)
 
-*posicione aqui algumas imagens demonstrativas de seu protótipo de alta fidelidade e o link para acesso ao protótipo completo (mantenha o link sempre público para visualização)*
+
+### Protótipos das telas de Cadastro
+
+Estes protótipos apresentam grandes semelhanças entre eles, visto que possuem quase que a mesma funcionalidade. Entre elas estão, barra azul superior, barra de navegação entre seções, título indicando seção, menu de navegação inferior, botão "Próximo" (embora na seção 2 não seja possível ver), campos para preenchimento de informações, sinalização de obrigatoriedade (* vermelho) e barra lateral indicando possível arraste da página ("scroll up" e "scroll down")
+
+Além disso, os protótipos apresentam funcionalidades em comum, sendo elas: a barra de navegação entre seções indica em qual seção o usuário está (deixando o bloco referente à seção atual azul); o botão "Concluir", apesar de ausente, é exibido assim que o usuário completar todos os campos obrigatórios em qualquer seção; campos preenchíveis por digitação, seleção múltipla, "sim ou não", seleção de data e adição de imagens. 
+
+---
+
+<div align="center">
+    <p>Figura 19: Mockup da Seção 1 de Cadastro </p>
+    <img src="outros/formularioMoradia.png" width="400">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
+A primeira tela ao clicar no botão "Cadastro" da tela inicial é a seção 1, referente à entrada dos dados da moradia. A partir daqui, o usuário fica livre para navegar entre as seções de cadastro conforme o contexto da entrevista com os moradores evolui. 
+
+A primeira seção engloba todos os dados necessários para o cadastro da moradia visitada. 
+
+Um detalhe bastante importante sobre a mudança dos wireframes para os mockups é a disposição da barra superior da tela. As mudanças citadas a seguir se aplicam à todas as telas de cadastro: exclusão do botão de configurações; exclusão da imagem de logo à esquerda; reposicionamento da logo da Defesa Civil de Santo André; exclusão do pequeno texto acompanhado da logo; adição do ícone de casa (redireciona para a tela inicial). 
+
+Este protótipo já apresenta exemplos de informações a serem adicionadas nos campos e como ficaria com todos preenchidos, incluindo a imagem de referência minimizada.
+
+---
+
+<div align="center">
+    <p>Figura 20: Mockup da Seção 2 de Cadastro </p>
+    <img src="outros/formularioResponsavel.png" width="400">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
+A segunda seção engloba todos os dados necessários para o cadastro do responsável pela família/moradia. 
+
+Este protótipo, diferente do anterior, mostra como são os campos de resposta "sim ou não" (boolean) e sinaliza exatamente como o menu inferior interage com o restante dos elementos na tela: opacidade parcial. Além disso, esta tela, por conter uma quantidade maior de informações, não mostra os campos de problema crônico, medicamento e prioridade que, por sua vez, estão ocultos juntos do botão de próximo. Todo o conteúdo poderá ser visualizado com um simples arraste na tela para baixo.
+
+Este protótipo já apresenta exemplos de informações a serem adicionadas nos campos e como ficaria com todos preenchidos.
+
+---
+
+<div align="center">
+    <p>Figura 21: Mockup da Seção 3 de Cadastro </p>
+    <img src="outros/formularioMoradores.png" width="400">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
+A terceira seção engloba todos os dados necessários para o cadastro de todos os moradores da moradia visitada. 
+
+Este protótipo, basicamente imita a estrutura dos dois anteriores e indica todas as informações obrigatórias ou não e o tipo de preenchimento. Por outro lado, esta seção e a próxima apresentam um novo grande botão tracejado. No caso dessa página, ao clicar, o usuário adicionará mais um morador. Além disso, os dados preenchidos do primeiro morador devem ser ocultos e compactados para uma longa barra horizontal que, se clicada, expandirá todos os dados do morador cadastrado. O botão "+Adicionar Morador" estará sempre visível abaixo do último formulário incompleto ou expandido. 
+
+Vale a pena ressaltar que os dados de moradores, selecionados pela equipe, também estão presentes na seção 2 (Responsável), mas apenas os dados que foram julgados essenciais ficaram para a seção 3.
+
+Este protótipo já apresenta exemplos de informações a serem adicionadas nos campos e como ficaria com todos preenchidos.
+
+---
+
+<div align="center">
+    <p>Figura 22: Mockup da Seção 4 de Cadastro </p>
+    <img src="outros/formularioPets.png" width="400">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
+A quarta seção engloba todos os dados necessários para o cadastro de todos os pets/animais vinculados à moradia visitada. 
+
+Este protótipo é bastante semelhante ao anterior em termos de estrutura, porém apresenta informações diferentes a serem preenchidas, já que aqui o assunto é um animal, e não uma pessoa. 
+
+A funcionalidade de adicionar mais de um cadastro também está presente aqui e, assim como na seção 1 (Moradia), existe a possibilidade de ser cadastrada uma imagem de referência do(s) animal(is), mas agora com um campo que indique o nome do arquivo inserido.
+
+Por fim, é apenas nesse protótipo que o botão "Concluir" está representado porque entende-se que, mesmo com a liberdade de escolha para a ordem de preenchimento dos dados, a seção de pets muitas vezes será a última.
+
+Este protótipo já apresenta exemplos de informações a serem adicionadas nos campos e como ficaria com todos preenchidos, incluindo com imagens.
+
+
+---
+
+[Link para visualização do protótipo](https://www.figma.com/design/9C6LICPO1RCl5y9UaVsCQo/Mockups?node-id=0-1&p=f&t=KbpgFnX3YR4LP3ui-0)
+
+---
 
 ## 3.6. Modelagem do banco de dados (sprints 2 e 4)
 
 ### 3.6.1. Modelo Entidade-Relacionamento (ER) (sprint 2)
 
 <div align="center">
-    <p>Figura 16: Modelo Entidade Relacionamento- </p>
+    <p>Figura 23: Modelo Entidade Relacionamento</p>
     <img src="outros/MER.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -857,7 +955,7 @@ Em conformidade com a LGPD e regras de auditoria pública, **nenhum dado é dele
 
 O Diagrama Entidade-Relacionamento (DER) representa a modelagem conceitual do banco de dados da aplicação, demonstrando as entidades do sistema, seus atributos, chaves primárias e estrangeiras, além dos relacionamentos e cardinalidades existentes. O diagrama serve como base para a implementação da estrutura relacional no banco de dados.
 
-<p>Figura 17: Diagrama Entidade-Relacionamento - </p>
+<p>Figura 24: Diagrama Entidade-Relacionamento - </p>
 <img src="/assets/der-logico.png">
 <p>Feito pela própria equipe (2026)</p>
 
