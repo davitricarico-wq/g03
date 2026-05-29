@@ -925,7 +925,7 @@ Em conformidade com a LGPD e regras de auditoria pública, **nenhum dado é dele
 
 O Diagrama Entidade-Relacionamento (DER) representa a modelagem conceitual do banco de dados da aplicação, demonstrando as entidades do sistema, seus atributos, chaves primárias e estrangeiras, além dos relacionamentos e cardinalidades existentes. O diagrama serve como base para a implementação da estrutura relacional no banco de dados.
 
-<p>Figura 17: Diagrama Entidade-Relacionamento - </p>
+<p>Figura 24: Diagrama Entidade-Relacionamento - </p>
 <img src="/assets/der-logico.png">
 <p>Feito pela própria equipe (2026)</p>
 
