@@ -835,6 +835,76 @@ A solução utiliza um conjunto de ícones de linha (outline) com estilo geomét
 
 ## 3.5. Protótipo de alta fidelidade (sprint 3)
 
+### Protótipo Tela Inicial
+
+A tela inicial apresenta o logotipo da Defesa Civil de Santo André centralizado
+no topo, sobre um fundo azul gradiente, seguido da saudação **"Bem vindo, Agente."**
+com destaque em laranja no nome do perfil.
+
+O conteúdo principal exibe três opções de navegação em formato de cards:
+
+- **Cadastro** — card destacado com fundo azul e borda laranja, indicando a ação
+  primária da tela. Contém ícone de documento à esquerda e seta de navegação à direita.
+- **Busca** — card secundário com fundo branco, ícone de lupa e seta de navegação.
+- **Mapa** — card secundário com fundo branco, ícone de localização e seta de navegação.
+
+Na parte inferior, uma barra de navegação fixa exibe os três atalhos principais:
+**Cadastro**, **Mapa** (ativo) e **Busca**, com ícones e rótulos de texto.
+
+---
+
+<div align="center">
+    <p>Figura 18: Mockup da Tela Inicial </p>
+    <img src="outros/inicial v2.png" width="400">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
+### Protótipos da Tela de Mapa
+
+A tela de mapa exibe um cabeçalho azul escuro com o logotipo da Defesa Civil à
+esquerda, o título **"Visualização"** centralizado e um ícone de home à direita
+para retornar à tela inicial.
+
+O conteúdo principal é ocupado por um mapa interativo da região de Santo André,
+sobre o qual é sobreposto um painel lateral de **Filtros** no canto esquerdo.
+O painel possui borda laranja, fundo branco e lista categorias de ocorrências
+selecionáveis via checkbox. Um botão com seta **"<"** permite recolher o painel,
+expandindo a área visível do mapa.
+
+A barra de navegação inferior mantém o padrão da aplicação com os atalhos
+**Cadastro**, **Mapa** (ativo) e **Busca**.
+
+ <div align="center">
+    <p>Figura 19: Mockup Tela de Mapa </p>
+    <img src="outros/mapa v2.png" width="400">
+    <p>Feito pela própria equipe (2026)</p>
+</div> 
+
+### Protótipos da Tela de Busca
+
+A tela de busca mantém o cabeçalho padrão com logotipo, título **"Busca"** e
+ícone de home. Abaixo, um campo de texto com ícone de lupa permite inserir termos
+de pesquisa, acompanhado de um botão de filtro à direita.
+
+Os resultados são exibidos abaixo do label **"Resultados:"** em azul, com um
+contador de registros encontrados ("4 encontrados") alinhado à direita.
+
+Cada resultado é apresentado em um card com borda arredondada contendo:
+- **Nome completo** em destaque e CPF como subtítulo
+- **Localização** (bairro), **quantidade de pessoas** e **quantidade de pets**
+  com ícones correspondentes
+- **Tags coloridas** indicando vulnerabilidades do cadastro (ex.: Gestante,
+  Criança, Idoso, Doença Crônica), cada uma com cor própria
+- Botão **"Editar"** com ícone à direita e botão de **exclusão** (lixeira) abaixo
+
+A barra de navegação inferior mantém o padrão com **Cadastro**, **Mapa** (ativo)
+e **Busca**.
+
+ <div align="center">
+    <p>Figura 20: Mockup Tela de Busca </p>
+    <img src="outros/busca v2.png" width="400">
+    <p>Feito pela própria equipe (2026)</p>
+</div> 
 
 ### Protótipos das telas de Cadastro
 
