@@ -771,13 +771,45 @@ Esta seção apresenta o guia de estilos utilizado no desenvolvimento da aplica�
 
 ### 3.4.2 Tipografia
 
-*Apresente aqui a tipografia da solução, com famílias de fontes e suas respectivas funções*
+A família tipográfica utilizada na solução é a **DM Sans**, uma fonte geométrica sem serifa (sans-serif) de baixo contraste, projetada pela Colophon Foundry. É ideal para textos legíveis em tamanhos menores e apresenta formas geométricas claras que transmitem um tom neutro e objetivo.
 
-### 3.4.3 Iconografia e imagens 
+| Estilo | Peso | Tamanho | Uso |
+|---|---|---|---|
+| Título | DM Sans Bold | 64px | Títulos principais de página |
+| Header 1 | DM Sans Regular | 48px | Cabeçalhos de seção primária |
+| Header 2 | DM Sans Regular | 40px | Cabeçalhos de seção secundária |
+| Header 3 | DM Sans Regular | 36px | Cabeçalhos terciários |
+| Header 4 | DM Sans Regular | 32px | Cabeçalhos quaternários |
+| Header 5 | DM Sans Regular | 24px | Cabeçalhos de menor hierarquia |
+| Corpo / Label | DM Sans Light | 16px | Textos descritivos, legendas e rótulos de componentes |
 
-*(esta subseção é opcional, caso não existam ícones e imagens, apague esta subseção)*
+A cor de texto primária é `#1a1a2e`, utilizada em headers e corpo sobre fundo branco ou claro. Em fundos coloridos, aplica-se texto branco (`#ffffff`).
 
-*posicione aqui imagens e textos contendo exemplos padronizados de ícones e imagens, com seus respectivos atributos de aplicação, utilizadas na solução*
+### 3.4.3 Iconografia e Imagens
+
+A solução utiliza um conjunto de ícones de linha (outline) com estilo geométrico, coerente com a tipografia DM Sans.
+
+**Atributos de aplicação:**
+
+- **Cor padrão:** `#5e5e5e` — ícones em estado neutro
+- **Cor ativa:** `#004ea1` — ícones em estado selecionado ou ação principal
+- **Cor sobre fundo escuro:** `#ffffff` — sobre fundos `#182C4C` ou `#004ea1`
+- **Tamanho padrão:** 24×24px
+
+| Ícone | Função |
+|---|---|
+| Documento | Representar arquivos ou conteúdos |
+| Casa | Navegação para a tela inicial |
+| Lupa | Acionar campo de pesquisa |
+| Copiar | Duplicar conteúdo ou elemento |
+| Editar | Editar informações |
+| Diamante | Indicar item especial ou favorito |
+| Localização | Indicar endereço ou mapa |
+| Upload | Enviar ou exportar conteúdo |
+| Lixeira | Excluir item |
+| Grade | Visualização em formato de tabela |
+| Filtro | Filtrar listagens ou resultados |
+| Seta | Navegar para o próximo passo ou página |
 
 ## 3.5. Protótipo de alta fidelidade (sprint 3)
 
