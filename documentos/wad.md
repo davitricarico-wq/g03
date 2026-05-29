@@ -438,11 +438,27 @@ O sistema atende primordialmente ao Agente de Campo (A01) no que tange à operat
 
 ### 3.1.5. Matriz RF → RN → Endpoint (sprints 3 a 5)
 
-Matriz de cobertura que demonstra quais RN (Regras de Negócio) e endpoints implementam cada RF (Requisito Funcional).
+Matriz de cobertura que demonstra quais RN (Regras de Negócio) e endpoints implementam cada RF (Requisito Funcional). Os endpoints listados abaixo estão formalizados no documento `documentos/outros/endpoints.md`.
 
-| RF    | RN associadas | Endpoint    | Método |
-|-------|---------------|-------------|--------|
-| RF001 | RN01, RN02    | `/usuarios` | POST   |
+| RF    | RN associadas | Endpoint | Método |
+|-------|---------------|----------|--------|
+| RF001 | RN01, RN02    | `/api/cadastros-completos` | POST |
+| RF002 | RN01, RN04    | `/api/cadastros-completos` | POST |
+| RF003 | RN01, RN04    | `/api/cadastros-completos` | POST |
+| RF004 | N/A           | `/api/moradias/mapa` | GET |
+| RF005 | RN01, RN05    | `/api/moradias/{id_moradia}/consulta-integrada` | GET |
+| RF006 | RN02          | `/api/moradias` | GET |
+| RF006 | RN02          | `/api/moradias/exportar` | GET |
+| RF007 | N/A           | `/api/familias/{id_familia}/pets` | GET |
+| RF007 | N/A           | `/api/familias/{id_familia}/pets` | POST |
+| RF007 | N/A           | `/api/pets/{id_pet}` | PUT |
+| RF008 | RN01          | `/api/indicadores/mapa-calor` | GET |
+| RF009 | RN03          | `/api/moradias/{id_moradia}/status` | PATCH |
+| RF009 | RN03          | `/api/familias/{id_familia}/realocacoes` | POST |
+| RF010 | RN03          | `/api/cidadaos/{id_cidadao}/arquivar` | PATCH |
+| RF011 | RN02          | `/api/indicadores/recadastro` | GET |
+| RF012 | RN02          | `/api/familias/{id_familia}/cadastro-completo` | GET |
+| RF012 | RN01, RN02, RN04 | `/api/familias/{id_familia}/cadastro-completo` | PUT |
 
 ## 3.2. Arquitetura (sprints 1 a 5)
 A arquitetura projetada para o sistema é, em suma, baseada na Arquitetura de Camadas (Layered Architecture), porém com a aplicação de: Arquitetura de Seis Camadas (6-Tier Architecture) com base em princípios SOLID e de separação de conceitos (Separation of Concerns). Dividindo a aplicação em componentes especializados e com responsabilidades muito bem definidas.
