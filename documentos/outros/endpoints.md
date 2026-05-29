@@ -1,8 +1,8 @@
 # Documentacao de Endpoints - GeoRisco Santo Andre
 
-Este documento descreve os endpoints propostos a partir dos fluxos de sequencia UML atualizados e do WAD do projeto GeoRisco Santo Andre. Ele foi separado do `wad.md` para facilitar revisao, manutencao e posterior incorporacao na secao 3.7 do WAD.
+Este documento descreve os endpoints do projeto GeoRisco Santo Andre, incluindo aqueles já implementados e os planejados para futuras versões.
 
-> Observacao: como a secao de WebAPI do WAD ainda nao formalizava todos os contratos, os endpoints abaixo representam uma proposta coerente com os fluxos, requisitos funcionais, regras de negocio e modelo de dados atual.
+> **Nota Importante**: Como o código está em desenvolvimento, esta documentação reflete tanto os endpoints já funcionais no código quanto aqueles ainda em desenvolvimento. Os endpoints implementados foram extraídos diretamente do código-fonte do projeto.
 
 ## Padroes Gerais
 
@@ -15,7 +15,7 @@ Este documento descreve os endpoints propostos a partir dos fluxos de sequencia 
 Exemplo:
 
 ```txt
-/api/cadastros-completos
+/api/pessoas
 ```
 
 ### Headers Padrao
@@ -50,54 +50,341 @@ Exemplo:
 
 ---
 
-## 1. Criar Cadastro Completo
+## Pessoas
 
-Cria um cadastro completo em uma unica operacao transacional, incluindo `localizacao`, `moradia`, `familia`, `historico_ocupacao`, `responsavel`, `cidadaos`, `grupos_prioritarios`, `gestantes`, `pets` e `fotos`.
+### 1. Listar Todas as Pessoas
+
+Lista todas as pessoas cadastradas no sistema.
+
+| Campo | Valor |
+|---|---|
+| Metodo | `GET` |
+| Endpoint | `/api/pessoas` |
+| Atores | A02, A03 |
+| RF/RN relacionados | RF012 |
+
+### Request
+
+```txt
+GET /api/pessoas
+```
+
+### Response `200 OK`
+
+```json
+[
+  {
+    "id_cidadao": 1,
+    "nome_completo": "Maria Silva",
+    "nome_social": null,
+    "data_nascimento": "1980-05-10",
+    "situacao_ocupacional": "Empregado",
+    "doencas_cronicas": "Hipertensao",
+    "medicamentos": "Losartana",
+    "grau_parentesco_responsavel": "Responsavel",
+    "escolaridade": "Ensino Medio Completo",
+    "status_cadastro": true
+  }
+]
+```
+
+### Status Possiveis
+
+| Status | Explicacao |
+|---:|---|
+| `200` | Pessoas retornadas com sucesso. |
+| `401` | Usuario nao autenticado. |
+| `500` | Falha ao consultar pessoas. |
+
+---
+
+### 2. Buscar Pessoas
+
+Busca pessoas por critério textual.
+
+| Campo | Valor |
+|---|---|
+| Metodo | `GET` |
+| Endpoint | `/api/pessoas/busca` |
+| Atores | A02, A03 |
+| RF/RN relacionados | RF012 |
+
+### Query Params
+
+| Parametro | Obrigatorio | Exemplo | Descricao |
+|---|---:|---|---|
+| `q` | Nao | `Maria` | Termo de busca por nome ou identificador. |
+
+### Request
+
+```txt
+GET /api/pessoas/busca?q=Maria
+```
+
+### Response `200 OK`
+
+```json
+[
+  {
+    "id_cidadao": 1,
+    "nome_completo": "Maria Silva",
+    "data_nascimento": "1980-05-10",
+    "status_cadastro": true
+  }
+]
+```
+
+### Status Possiveis
+
+| Status | Explicacao |
+|---:|---|
+| `200` | Resultados da busca retornados. Pode retornar array vazio. |
+| `401` | Usuario nao autenticado. |
+| `500` | Falha ao executar busca. |
+
+---
+
+### 3. Listar Pessoas Inativas
+
+Lista pessoas com status de cadastro inativo (falecidas, arquivadas, etc).
+
+| Campo | Valor |
+|---|---|
+| Metodo | `GET` |
+| Endpoint | `/api/pessoas/inativas` |
+| Atores | A02, A03 |
+| RF/RN relacionados | RF010 |
+
+### Request
+
+```txt
+GET /api/pessoas/inativas
+```
+
+### Response `200 OK`
+
+```json
+[
+  {
+    "id_cidadao": 5,
+    "nome_completo": "Jose Santos",
+    "data_nascimento": "1945-03-15",
+    "status_cadastro": false
+  }
+]
+```
+
+### Status Possiveis
+
+| Status | Explicacao |
+|---:|---|
+| `200` | Pessoas inativas retornadas com sucesso. |
+| `401` | Usuario nao autenticado. |
+| `500` | Falha ao consultar. |
+
+---
+
+### 4. Obter Pessoa por ID
+
+Obtém os dados de uma pessoa específica pelo ID.
+
+| Campo | Valor |
+|---|---|
+| Metodo | `GET` |
+| Endpoint | `/api/pessoas/{id_cidadao}` |
+| Atores | A02, A03 |
+| RF/RN relacionados | RF012 |
+
+### Request
+
+```txt
+GET /api/pessoas/1
+```
+
+### Response `200 OK`
+
+```json
+{
+  "id_cidadao": 1,
+  "nome_completo": "Maria Silva",
+  "nome_social": null,
+  "data_nascimento": "1980-05-10",
+  "situacao_ocupacional": "Empregado",
+  "doencas_cronicas": "Hipertensao",
+  "medicamentos": "Losartana",
+  "grau_parentesco_responsavel": "Responsavel",
+  "escolaridade": "Ensino Medio Completo",
+  "status_cadastro": true
+}
+```
+
+### Status Possiveis
+
+| Status | Explicacao |
+|---:|---|
+| `200` | Pessoa retornada com sucesso. |
+| `401` | Usuario nao autenticado. |
+| `404` | Pessoa nao encontrada. |
+| `500` | Falha ao consultar. |
+
+---
+
+### 5. Criar Pessoa
+
+Cria um novo registro de pessoa no sistema.
 
 | Campo | Valor |
 |---|---|
 | Metodo | `POST` |
-| Endpoint | `/api/cadastros-completos` |
+| Endpoint | `/api/pessoas` |
 | Atores | A01, A03 |
-| RF/RN relacionados | RF001, RF002, RF003 / RN01, RN04 |
+| RF/RN relacionados | RF001, RF012 |
 
 ### Request
 
 ```json
 {
-  "uuid_local": "cadastro-local-uuid-001",
-  "localizacao": {
-    "coordenadas_latitude": -23.6632,
-    "coordenadas_longitude": -46.5381,
-    "cep": "09000000",
-    "logradouro": "Rua Exemplo",
-    "bairro": "Centro",
-    "numero": 100,
-    "cidade": "Santo Andre",
-    "uf": "SP",
-    "ponto_referencia": "Proximo a escola municipal"
-  },
-  "moradia": {
-    "tipo_construcao": "Alvenaria",
-    "condicao_ocupacao": "Cedida",
-    "tipo_uso_imovel": "Residencial",
-    "telefone": "11999999999",
-    "observacoes": "Imovel em area com sinais de umidade"
-  },
-  "familia": {
-    "status_ativo": true
-  },
-  "responsavel": {
-    "cidadao": {
-      "nome_completo": "Maria Silva",
-      "nome_social": null,
-      "data_nascimento": "1980-05-10",
-      "situacao_ocupacional": "Empregado",
-      "doencas_cronicas": "Hipertensao",
-      "medicamentos": "Losartana",
-      "grau_parentesco_responsavel": "Responsavel",
-      "escolaridade": "Ensino Medio Completo"
-    },
+  "nome_completo": "Maria Silva",
+  "nome_social": null,
+  "data_nascimento": "1980-05-10",
+  "situacao_ocupacional": "Empregado",
+  "doencas_cronicas": "Hipertensao",
+  "medicamentos": "Losartana",
+  "grau_parentesco_responsavel": "Responsavel",
+  "escolaridade": "Ensino Medio Completo"
+}
+```
+
+### Response `201 Created`
+
+```json
+{
+  "message": "Pessoa criada com sucesso",
+  "id_cidadao": 1
+}
+```
+
+### Status Possiveis
+
+| Status | Explicacao |
+|---:|---|
+| `201` | Pessoa criada com sucesso. |
+| `400` | JSON malformado. |
+| `401` | Usuario nao autenticado. |
+| `422` | Campos obrigatorios ausentes ou invalidos. |
+| `500` | Falha ao criar pessoa. |
+
+---
+
+### 6. Atualizar Pessoa
+
+Atualiza dados de uma pessoa existente.
+
+| Campo | Valor |
+|---|---|
+| Metodo | `PUT` |
+| Endpoint | `/api/pessoas/{id_cidadao}` |
+| Atores | A01, A03 |
+| RF/RN relacionados | RF012 |
+
+### Request
+
+```json
+{
+  "nome_completo": "Maria Silva",
+  "situacao_ocupacional": "Autônomo",
+  "doencas_cronicas": "Hipertensao, Diabetes",
+  "medicamentos": "Losartana, Metformina",
+  "escolaridade": "Ensino Medio Completo"
+}
+```
+
+### Response `200 OK`
+
+```json
+{
+  "message": "Pessoa atualizada com sucesso",
+  "id_cidadao": 1
+}
+```
+
+### Status Possiveis
+
+| Status | Explicacao |
+|---:|---|
+| `200` | Pessoa atualizada com sucesso. |
+| `400` | JSON malformado. |
+| `401` | Usuario nao autenticado. |
+| `404` | Pessoa nao encontrada. |
+| `422` | Campos com valores invalidos. |
+| `500` | Falha ao atualizar. |
+
+---
+
+### 7. Remover Pessoa
+
+Remove (deleta) um registro de pessoa do sistema.
+
+| Campo | Valor |
+|---|---|
+| Metodo | `DELETE` |
+| Endpoint | `/api/pessoas/{id_cidadao}` |
+| Atores | A03 |
+| RF/RN relacionados | RF010 |
+
+### Request
+
+```txt
+DELETE /api/pessoas/1
+```
+
+### Response `200 OK`
+
+```json
+{
+  "message": "Pessoa removida com sucesso",
+  "id_cidadao": 1
+}
+```
+
+### Status Possiveis
+
+| Status | Explicacao |
+|---:|---|
+| `200` | Pessoa removida com sucesso. |
+| `401` | Usuario nao autenticado. |
+| `403` | Usuario sem permissao para remover. |
+| `404` | Pessoa nao encontrada. |
+| `500` | Falha ao remover. |
+
+---
+
+## Responsaveis
+
+### 8. Listar Todos os Responsaveis
+
+Lista todos os responsáveis de família cadastrados.
+
+| Campo | Valor |
+|---|---|
+| Metodo | `GET` |
+| Endpoint | `/api/responsaveis` |
+| Atores | A02, A03 |
+| RF/RN relacionados | RF012 |
+
+### Request
+
+```txt
+GET /api/responsaveis
+```
+
+### Response `200 OK`
+
+```json
+[
+  {
+    "id_responsavel": 1,
+    "id_cidadao": 1,
     "cpf": "12345678901",
     "email": "maria@example.com",
     "celular": "11999999999",
@@ -109,59 +396,47 @@ Cria um cadastro completo em uma unica operacao transacional, incluindo `localiz
     "nis": "12345678900",
     "veiculo": false,
     "local_nascimento": "Santo Andre"
-  },
-  "moradores": [
-    {
-      "nome_completo": "Joao Silva",
-      "nome_social": null,
-      "data_nascimento": "2015-03-20",
-      "situacao_ocupacional": null,
-      "doencas_cronicas": null,
-      "medicamentos": null,
-      "grau_parentesco_responsavel": "Filho/Filha",
-      "escolaridade": "Ensino Fundamental Incompleto",
-      "grupos_prioritarios": [1]
-    }
-  ],
-  "gestantes": [
-    {
-      "indice_morador": 0,
-      "data_prevista": "2026-10-15",
-      "data_inicio": "2026-01-15"
-    }
-  ],
-  "pets": [
-    {
-      "tipo_pet": "Cao",
-      "porte_pet": "Pequeno",
-      "nome": "Rex",
-      "cor": "Caramelo",
-      "observacoes": "Animal acompanha a familia em evacuacao"
-    }
-  ],
-  "fotos": [
-    {
-      "tipo_foto": "Frente",
-      "url": "https://storage.example.com/foto-frente.jpg"
-    },
-    {
-      "tipo_foto": "Redor",
-      "url": "https://storage.example.com/foto-redor.jpg"
-    }
-  ]
-}
+  }
+]
 ```
 
-### Response `201 Created`
+### Status Possiveis
+
+| Status | Explicacao |
+|---:|---|
+| `200` | Responsaveis retornados com sucesso. |
+| `401` | Usuario nao autenticado. |
+| `500` | Falha ao consultar. |
+
+---
+
+### 9. Obter Responsavel por ID
+
+Obtém os dados de um responsável específico.
+
+| Campo | Valor |
+|---|---|
+| Metodo | `GET` |
+| Endpoint | `/api/responsaveis/{id_responsavel}` |
+| Atores | A02, A03 |
+| RF/RN relacionados | RF012 |
+
+### Request
+
+```txt
+GET /api/responsaveis/1
+```
+
+### Response `200 OK`
 
 ```json
 {
-  "message": "Cadastro completo criado com sucesso",
-  "id_localizacao": 1,
-  "id_moradia": 1,
-  "id_familia": 1,
   "id_responsavel": 1,
-  "id_historico_ocupacao": 1
+  "id_cidadao": 1,
+  "cpf": "12345678901",
+  "email": "maria@example.com",
+  "celular": "11999999999",
+  "renda": 1500.00
 }
 ```
 
@@ -169,37 +444,528 @@ Cria um cadastro completo em uma unica operacao transacional, incluindo `localiz
 
 | Status | Explicacao |
 |---:|---|
-| `201` | Cadastro completo criado com sucesso. |
-| `400` | JSON malformado ou estrutura principal ausente. |
+| `200` | Responsavel retornado com sucesso. |
 | `401` | Usuario nao autenticado. |
-| `403` | Usuario nao possui permissao para cadastrar. |
-| `409` | CPF, email, NIS ou `uuid_local` ja cadastrado. |
-| `422` | Campos obrigatorios invalidos ou violacao da RN04 sobre fotos. |
-| `500` | Falha inesperada ao gravar a transacao. |
+| `404` | Responsavel nao encontrado. |
+| `500` | Falha ao consultar. |
 
 ---
 
-## 2. Listar Marcadores de Moradias no Mapa
+### 10. Criar Responsavel
 
-Retorna marcadores de moradias para plotagem no mapa georreferenciado.
+Cria um novo responsável de família.
 
 | Campo | Valor |
 |---|---|
-| Metodo | `GET` |
-| Endpoint | `/api/moradias/mapa` |
-| Atores | A02, A03 |
-| RF/RN relacionados | RF004 |
+| Metodo | `POST` |
+| Endpoint | `/api/responsaveis` |
+| Atores | A01, A03 |
+| RF/RN relacionados | RF001 |
 
-### Query Params
+### Request
 
-| Parametro | Obrigatorio | Exemplo | Descricao |
-|---|---:|---|---|
-| `status` | Nao | `Ativa` | Filtra moradias por status operacional. |
+```json
+{
+  "id_cidadao": 1,
+  "cpf": "12345678901",
+  "email": "maria@example.com",
+  "celular": "11999999999",
+  "renda": 1500.00,
+  "raca": "Pardo",
+  "sexo": "Feminino",
+  "estado_civil": "Solteiro",
+  "programas_sociais": true,
+  "nis": "12345678900",
+  "veiculo": false,
+  "local_nascimento": "Santo Andre"
+}
+```
+
+### Response `201 Created`
+
+```json
+{
+  "message": "Responsavel criado com sucesso",
+  "id_responsavel": 1
+}
+```
+
+### Status Possiveis
+
+| Status | Explicacao |
+|---:|---|
+| `201` | Responsavel criado com sucesso. |
+| `400` | JSON malformado. |
+| `401` | Usuario nao autenticado. |
+| `409` | CPF ou email já cadastrado. |
+| `422` | Campos obrigatorios ausentes ou invalidos. |
+| `500` | Falha ao criar. |
+
+---
+
+### 11. Atualizar Responsavel
+
+Atualiza dados de um responsável existente.
+
+| Campo | Valor |
+|---|---|
+| Metodo | `PUT` |
+| Endpoint | `/api/responsaveis/{id_responsavel}` |
+| Atores | A01, A03 |
+| RF/RN relacionados | RF012 |
+
+### Request
+
+```json
+{
+  "cpf": "12345678901",
+  "email": "maria.novo@example.com",
+  "celular": "11988888888",
+  "renda": 1800.00,
+  "programas_sociais": false
+}
+```
+
+### Response `200 OK`
+
+```json
+{
+  "message": "Responsavel atualizado com sucesso",
+  "id_responsavel": 1
+}
+```
+
+### Status Possiveis
+
+| Status | Explicacao |
+|---:|---|
+| `200` | Responsavel atualizado com sucesso. |
+| `400` | JSON malformado. |
+| `401` | Usuario nao autenticado. |
+| `404` | Responsavel nao encontrado. |
+| `422` | Campos com valores invalidos. |
+| `500` | Falha ao atualizar. |
+
+---
+
+### 12. Remover Responsavel
+
+Remove um responsável do sistema.
+
+| Campo | Valor |
+|---|---|
+| Metodo | `DELETE` |
+| Endpoint | `/api/responsaveis/{id_responsavel}` |
+| Atores | A03 |
+| RF/RN relacionados | RF010 |
 
 ### Request
 
 ```txt
-GET /api/moradias/mapa?status=Ativa
+DELETE /api/responsaveis/1
+```
+
+### Response `200 OK`
+
+```json
+{
+  "message": "Responsavel removido com sucesso",
+  "id_responsavel": 1
+}
+```
+
+### Status Possiveis
+
+| Status | Explicacao |
+|---:|---|
+| `200` | Responsavel removido com sucesso. |
+| `401` | Usuario nao autenticado. |
+| `403` | Usuario sem permissao. |
+| `404` | Responsavel nao encontrado. |
+| `500` | Falha ao remover. |
+
+---
+
+## Familias
+
+### 13. Listar Todas as Familias
+
+Lista todas as famílias cadastradas.
+
+| Campo | Valor |
+|---|---|
+| Metodo | `GET` |
+| Endpoint | `/api/familias` |
+| Atores | A02, A03 |
+| RF/RN relacionados | RF012 |
+
+### Request
+
+```txt
+GET /api/familias
+```
+
+### Response `200 OK`
+
+```json
+[
+  {
+    "id_familia": 1,
+    "status_ativo": true,
+    "data_cadastro": "2026-05-25"
+  }
+]
+```
+
+### Status Possiveis
+
+| Status | Explicacao |
+|---:|---|
+| `200` | Familias retornadas com sucesso. |
+| `401` | Usuario nao autenticado. |
+| `500` | Falha ao consultar. |
+
+---
+
+### 14. Obter Familia por ID
+
+Obtém dados de uma família específica.
+
+| Campo | Valor |
+|---|---|
+| Metodo | `GET` |
+| Endpoint | `/api/familias/{id_familia}` |
+| Atores | A02, A03 |
+| RF/RN relacionados | RF012 |
+
+### Request
+
+```txt
+GET /api/familias/1
+```
+
+### Response `200 OK`
+
+```json
+{
+  "id_familia": 1,
+  "status_ativo": true,
+  "data_cadastro": "2026-05-25"
+}
+```
+
+### Status Possiveis
+
+| Status | Explicacao |
+|---:|---|
+| `200` | Familia retornada com sucesso. |
+| `401` | Usuario nao autenticado. |
+| `404` | Familia nao encontrada. |
+| `500` | Falha ao consultar. |
+
+---
+
+### 15. Criar Familia
+
+Cria uma nova família.
+
+| Campo | Valor |
+|---|---|
+| Metodo | `POST` |
+| Endpoint | `/api/familias` |
+| Atores | A01, A03 |
+| RF/RN relacionados | RF001 |
+
+### Request
+
+```json
+{
+  "status_ativo": true
+}
+```
+
+### Response `201 Created`
+
+```json
+{
+  "message": "Familia criada com sucesso",
+  "id_familia": 1
+}
+```
+
+### Status Possiveis
+
+| Status | Explicacao |
+|---:|---|
+| `201` | Familia criada com sucesso. |
+| `400` | JSON malformado. |
+| `401` | Usuario nao autenticado. |
+| `422` | Campos invalidos. |
+| `500` | Falha ao criar. |
+
+---
+
+### 16. Remover Familia
+
+Remove uma família do sistema.
+
+| Campo | Valor |
+|---|---|
+| Metodo | `DELETE` |
+| Endpoint | `/api/familias/{id_familia}` |
+| Atores | A03 |
+| RF/RN relacionados | RF010 |
+
+### Request
+
+```txt
+DELETE /api/familias/1
+```
+
+### Response `200 OK`
+
+```json
+{
+  "message": "Familia removida com sucesso",
+  "id_familia": 1
+}
+```
+
+### Status Possiveis
+
+| Status | Explicacao |
+|---:|---|
+| `200` | Familia removida com sucesso. |
+| `401` | Usuario nao autenticado. |
+| `403` | Usuario sem permissao. |
+| `404` | Familia nao encontrada. |
+| `500` | Falha ao remover. |
+
+---
+
+### 17. Cadastrar Nucleo Familiar
+
+Cadastra um núcleo familiar (agrupamento de pessoas em uma família).
+
+| Campo | Valor |
+|---|---|
+| Metodo | `POST` |
+| Endpoint | `/api/familias/nucleo` |
+| Atores | A01, A03 |
+| RF/RN relacionados | RF001 |
+
+### Request
+
+```json
+{
+  "id_familia": 1,
+  "pessoas": [1, 2, 3]
+}
+```
+
+### Response `201 Created`
+
+```json
+{
+  "message": "Nucleo familiar cadastrado com sucesso",
+  "id_familia": 1,
+  "pessoas_vinculadas": 3
+}
+```
+
+### Status Possiveis
+
+| Status | Explicacao |
+|---:|---|
+| `201` | Nucleo cadastrado com sucesso. |
+| `400` | JSON malformado. |
+| `401` | Usuario nao autenticado. |
+| `404` | Familia nao encontrada. |
+| `422` | IDs de pessoas invalidos. |
+| `500` | Falha ao cadastrar. |
+
+---
+
+### 18. Listar Pessoas da Familia
+
+Lista todas as pessoas vinculadas a uma família.
+
+| Campo | Valor |
+|---|---|
+| Metodo | `GET` |
+| Endpoint | `/api/familias/{id_familia}/pessoas` |
+| Atores | A02, A03 |
+| RF/RN relacionados | RF012 |
+
+### Request
+
+```txt
+GET /api/familias/1/pessoas
+```
+
+### Response `200 OK`
+
+```json
+[
+  {
+    "id_cidadao": 1,
+    "nome_completo": "Maria Silva",
+    "data_nascimento": "1980-05-10",
+    "grau_parentesco_responsavel": "Responsavel"
+  }
+]
+```
+
+### Status Possiveis
+
+| Status | Explicacao |
+|---:|---|
+| `200` | Pessoas retornadas com sucesso. |
+| `401` | Usuario nao autenticado. |
+| `404` | Familia nao encontrada. |
+| `500` | Falha ao consultar. |
+
+---
+
+### 19. Obter Historico de Pessoas da Familia
+
+Obtém o histórico de pessoas vinculadas à família.
+
+| Campo | Valor |
+|---|---|
+| Metodo | `GET` |
+| Endpoint | `/api/familias/{id_familia}/pessoas/historico` |
+| Atores | A02, A03 |
+| RF/RN relacionados | RF012 |
+
+### Request
+
+```txt
+GET /api/familias/1/pessoas/historico
+```
+
+### Response `200 OK`
+
+```json
+[
+  {
+    "id_cidadao": 1,
+    "nome_completo": "Maria Silva",
+    "data_vinculacao": "2026-05-25",
+    "data_desvinculacao": null
+  }
+]
+```
+
+### Status Possiveis
+
+| Status | Explicacao |
+|---:|---|
+| `200` | Historico retornado com sucesso. |
+| `401` | Usuario nao autenticado. |
+| `404` | Familia nao encontrada. |
+| `500` | Falha ao consultar. |
+
+---
+
+### 20. Vincular Pessoa a Familia
+
+Vincula uma pessoa a uma família.
+
+| Campo | Valor |
+|---|---|
+| Metodo | `POST` |
+| Endpoint | `/api/familias/{id_familia}/pessoas` |
+| Atores | A01, A03 |
+| RF/RN relacionados | RF001 |
+
+### Request
+
+```json
+{
+  "id_cidadao": 2,
+  "grau_parentesco": "Filho/Filha"
+}
+```
+
+### Response `201 Created`
+
+```json
+{
+  "message": "Pessoa vinculada com sucesso",
+  "id_familia": 1,
+  "id_cidadao": 2
+}
+```
+
+### Status Possiveis
+
+| Status | Explicacao |
+|---:|---|
+| `201` | Pessoa vinculada com sucesso. |
+| `400` | JSON malformado. |
+| `401` | Usuario nao autenticado. |
+| `404` | Familia ou pessoa nao encontrada. |
+| `409` | Pessoa ja vinculada a esta familia. |
+| `422` | Dados invalidos. |
+| `500` | Falha ao vincular. |
+
+---
+
+### 21. Remover Pessoa da Familia
+
+Remove uma pessoa de uma família.
+
+| Campo | Valor |
+|---|---|
+| Metodo | `DELETE` |
+| Endpoint | `/api/familias/{id_familia}/pessoas/{id_cidadao}` |
+| Atores | A03 |
+| RF/RN relacionados | RF010 |
+
+### Request
+
+```txt
+DELETE /api/familias/1/pessoas/2
+```
+
+### Response `200 OK`
+
+```json
+{
+  "message": "Pessoa removida da familia com sucesso",
+  "id_familia": 1,
+  "id_cidadao": 2
+}
+```
+
+### Status Possiveis
+
+| Status | Explicacao |
+|---:|---|
+| `200` | Pessoa removida com sucesso. |
+| `401` | Usuario nao autenticado. |
+| `403` | Usuario sem permissao. |
+| `404` | Familia ou pessoa nao encontrada. |
+| `500` | Falha ao remover. |
+
+---
+
+### 22. Listar Moradias da Familia
+
+Lista todas as moradias vinculadas a uma família.
+
+| Campo | Valor |
+|---|---|
+| Metodo | `GET` |
+| Endpoint | `/api/familias/{id_familia}/moradias` |
+| Atores | A02, A03 |
+| RF/RN relacionados | RF012 |
+
+### Request
+
+```txt
+GET /api/familias/1/moradias
 ```
 
 ### Response `200 OK`
@@ -208,14 +974,8 @@ GET /api/moradias/mapa?status=Ativa
 [
   {
     "id_moradia": 1,
-    "latitude": -23.6632,
-    "longitude": -46.5381,
-    "status": "Ativa"
-  },
-  {
-    "id_moradia": 2,
-    "latitude": -23.6641,
-    "longitude": -46.5395,
+    "tipo_construcao": "Alvenaria",
+    "condicao_ocupacao": "Cedida",
     "status": "Ativa"
   }
 ]
@@ -225,109 +985,82 @@ GET /api/moradias/mapa?status=Ativa
 
 | Status | Explicacao |
 |---:|---|
-| `200` | Marcadores retornados com sucesso. Pode retornar array vazio. |
-| `400` | Parametro de status invalido. |
+| `200` | Moradias retornadas com sucesso. |
 | `401` | Usuario nao autenticado. |
-| `403` | Usuario sem permissao para visualizar o mapa. |
-| `500` | Falha ao consultar as moradias. |
+| `404` | Familia nao encontrada. |
+| `500` | Falha ao consultar. |
 
 ---
 
-## 3. Consultar Ficha Integrada da Moradia
+### 23. Obter Historico de Moradias da Familia
 
-Retorna a ficha integrada de uma moradia, incluindo localizacao, ocupacao ativa, familia, responsavel, moradores, grupos prioritarios, gestantes, pets, fotos e flag de risco critico.
+Obtém o histórico de moradias ocupadas pela família.
 
 | Campo | Valor |
 |---|---|
 | Metodo | `GET` |
-| Endpoint | `/api/moradias/{id_moradia}/consulta-integrada` |
+| Endpoint | `/api/familias/{id_familia}/moradias/historico` |
 | Atores | A02, A03 |
-| RF/RN relacionados | RF005 / RN01, RN05 |
+| RF/RN relacionados | RF012 |
 
 ### Request
 
 ```txt
-GET /api/moradias/1/consulta-integrada
+GET /api/familias/1/moradias/historico
 ```
 
 ### Response `200 OK`
 
 ```json
-{
-  "moradia": {
+[
+  {
     "id_moradia": 1,
-    "tipo_construcao": "Alvenaria",
-    "condicao_ocupacao": "Cedida",
-    "tipo_uso_imovel": "Residencial",
-    "telefone": "11999999999",
-    "observacoes": "Imovel em area com sinais de umidade",
-    "status": "Ativa",
-    "data_cadastro": "2026-05-25",
-    "ultima_atualizacao": "2026-05-25"
-  },
-  "localizacao": {
-    "id_localizacao": 1,
-    "coordenadas_latitude": -23.6632,
-    "coordenadas_longitude": -46.5381,
-    "cep": "09000000",
-    "logradouro": "Rua Exemplo",
-    "bairro": "Centro",
-    "numero": 100,
-    "cidade": "Santo Andre",
-    "uf": "SP",
-    "ponto_referencia": "Proximo a escola municipal"
-  },
-  "ocupacao_atual": {
-    "id_historico_ocupacao": 1,
-    "id_familia": 1,
     "data_entrada": "2026-05-25",
     "data_saida": null,
     "status": "Regular"
-  },
-  "familia": {
-    "id_familia": 1,
-    "status_ativo": true,
-    "data_cadastro": "2026-05-25"
-  },
-  "responsavel": {
-    "id_responsavel": 1,
-    "id_cidadao": 1,
-    "nome_completo": "Maria Silva",
-    "cpf": "12345678901",
-    "celular": "11999999999",
-    "renda": 1500.00
-  },
-  "moradores": [
-    {
-      "id_cidadao": 2,
-      "nome_completo": "Joao Silva",
-      "data_nascimento": "2015-03-20",
-      "status_cadastro": true,
-      "grupos_prioritarios": [
-        {
-          "id_grupo_prioritario": 1,
-          "nome": "Crianca"
-        }
-      ]
-    }
-  ],
-  "pets": [
-    {
-      "id_pet": 1,
-      "tipo_pet": "Cao",
-      "porte_pet": "Pequeno",
-      "nome": "Rex"
-    }
-  ],
-  "fotos": [
-    {
-      "id_foto_moradia": 1,
-      "tipo_foto": "Frente",
-      "url": "https://storage.example.com/foto-frente.jpg"
-    }
-  ],
-  "prioridade": "Alto",
-  "risco_critico": false
+  }
+]
+```
+
+### Status Possiveis
+
+| Status | Explicacao |
+|---:|---|
+| `200` | Historico retornado com sucesso. |
+| `401` | Usuario nao autenticado. |
+| `404` | Familia nao encontrada. |
+| `500` | Falha ao consultar. |
+
+---
+
+### 24. Vincular Moradia a Familia
+
+Vincula uma moradia a uma família.
+
+| Campo | Valor |
+|---|---|
+| Metodo | `POST` |
+| Endpoint | `/api/familias/{id_familia}/moradias` |
+| Atores | A01, A03 |
+| RF/RN relacionados | RF001 |
+
+### Request
+
+```json
+{
+  "id_moradia": 2,
+  "data_entrada": "2026-05-25",
+  "status": "Regular"
+}
+```
+
+### Response `201 Created`
+
+```json
+{
+  "message": "Moradia vinculada com sucesso",
+  "id_familia": 1,
+  "id_moradia": 2
 }
 ```
 
@@ -335,17 +1068,60 @@ GET /api/moradias/1/consulta-integrada
 
 | Status | Explicacao |
 |---:|---|
-| `200` | Ficha integrada retornada com sucesso. |
+| `201` | Moradia vinculada com sucesso. |
+| `400` | JSON malformado. |
 | `401` | Usuario nao autenticado. |
-| `403` | Usuario sem permissao para consultar dados sensiveis. |
-| `404` | Moradia nao encontrada. |
-| `500` | Falha ao montar a consulta integrada. |
+| `404` | Familia ou moradia nao encontrada. |
+| `409` | Moradia ja ocupada ou conflito de ocupacao. |
+| `422` | Dados invalidos. |
+| `500` | Falha ao vincular. |
 
 ---
 
-## 4. Listar Moradias com Busca e Filtros
+### 25. Remover Moradia da Familia
 
-Lista moradias, ocupacoes e assistidos a partir de filtros de busca, status, vulnerabilidade ou recadastro.
+Remove a vinculação de uma moradia com uma família.
+
+| Campo | Valor |
+|---|---|
+| Metodo | `DELETE` |
+| Endpoint | `/api/familias/{id_familia}/moradias/{id_moradia}` |
+| Atores | A03 |
+| RF/RN relacionados | RF010 |
+
+### Request
+
+```txt
+DELETE /api/familias/1/moradias/1
+```
+
+### Response `200 OK`
+
+```json
+{
+  "message": "Moradia desvinculada com sucesso",
+  "id_familia": 1,
+  "id_moradia": 1
+}
+```
+
+### Status Possiveis
+
+| Status | Explicacao |
+|---:|---|
+| `200` | Moradia desvinculada com sucesso. |
+| `401` | Usuario nao autenticado. |
+| `403` | Usuario sem permissao. |
+| `404` | Familia ou moradia nao encontrada. |
+| `500` | Falha ao desvincular. |
+
+---
+
+## Moradias
+
+### 26. Listar Moradias
+
+Lista todas as moradias cadastradas com opção de filtros.
 
 | Campo | Valor |
 |---|---|
@@ -358,16 +1134,12 @@ Lista moradias, ocupacoes e assistidos a partir de filtros de busca, status, vul
 
 | Parametro | Obrigatorio | Exemplo | Descricao |
 |---|---:|---|---|
-| `busca` | Nao | `Centro` | Busca textual por localizacao, bairro ou identificador. |
-| `status` | Nao | `Ativa` | Filtra pelo status da moradia. |
-| `desatualizado` | Nao | `true` | Retorna cadastros sem atualizacao ha mais de 365 dias. |
-| `grupo_prioritario` | Nao | `Acamado` | Filtra por grupo prioritario do morador. |
-| `condicao_ocupacao` | Nao | `Cedida` | Filtra pela condicao de ocupacao. |
+| `status` | Nao | `Ativa` | Filtra moradias por status. |
 
 ### Request
 
 ```txt
-GET /api/moradias?status=Ativa&grupo_prioritario=Acamado
+GET /api/moradias?status=Ativa
 ```
 
 ### Response `200 OK`
@@ -376,13 +1148,10 @@ GET /api/moradias?status=Ativa&grupo_prioritario=Acamado
 [
   {
     "id_moradia": 1,
-    "id_familia": 1,
-    "bairro": "Centro",
-    "status": "Ativa",
+    "tipo_construcao": "Alvenaria",
     "condicao_ocupacao": "Cedida",
-    "ultima_atualizacao": "2025-04-10",
-    "desatualizado": true,
-    "risco_critico": true
+    "status": "Ativa",
+    "data_cadastro": "2026-05-25"
   }
 ]
 ```
@@ -391,65 +1160,363 @@ GET /api/moradias?status=Ativa&grupo_prioritario=Acamado
 
 | Status | Explicacao |
 |---:|---|
-| `200` | Lista retornada com sucesso. Pode retornar array vazio. |
-| `400` | Filtro informado possui valor invalido. |
+| `200` | Moradias retornadas com sucesso. |
 | `401` | Usuario nao autenticado. |
-| `403` | Usuario sem permissao para listar dados. |
-| `500` | Falha ao executar consulta filtrada. |
+| `500` | Falha ao consultar. |
 
 ---
 
-## 5. Exportar Moradias Filtradas
+### 27. Obter Moradia por ID
 
-Exporta os resultados filtrados em CSV ou PDF.
+Obtém dados de uma moradia específica.
 
 | Campo | Valor |
 |---|---|
 | Metodo | `GET` |
-| Endpoint | `/api/moradias/exportar` |
+| Endpoint | `/api/moradias/{id_moradia}` |
 | Atores | A02, A03 |
-| RF/RN relacionados | RF006 |
-
-### Query Params
-
-| Parametro | Obrigatorio | Exemplo | Descricao |
-|---|---:|---|---|
-| `formato` | Nao | `csv` | Formato de exportacao. Valores: `csv` ou `pdf`. |
-| `status` | Nao | `Ativa` | Mesmo filtro usado na listagem. |
-| `grupo_prioritario` | Nao | `Idoso` | Mesmo filtro usado na listagem. |
+| RF/RN relacionados | RF005 |
 
 ### Request
 
 ```txt
-GET /api/moradias/exportar?formato=csv&status=Ativa
+GET /api/moradias/1
 ```
 
 ### Response `200 OK`
 
-Arquivo para download.
-
-Headers esperados:
-
-```txt
-Content-Type: text/csv
-Content-Disposition: attachment; filename="moradias.csv"
+```json
+{
+  "id_moradia": 1,
+  "tipo_construcao": "Alvenaria",
+  "condicao_ocupacao": "Cedida",
+  "tipo_uso_imovel": "Residencial",
+  "telefone": "11999999999",
+  "observacoes": "Imovel em area com sinais de umidade",
+  "status": "Ativa",
+  "data_cadastro": "2026-05-25"
+}
 ```
 
 ### Status Possiveis
 
 | Status | Explicacao |
 |---:|---|
-| `200` | Arquivo gerado com sucesso. |
-| `400` | Formato de exportacao ou filtro invalido. |
+| `200` | Moradia retornada com sucesso. |
 | `401` | Usuario nao autenticado. |
-| `403` | Usuario sem permissao para exportar dados. |
-| `500` | Falha ao gerar arquivo. |
+| `404` | Moradia nao encontrada. |
+| `500` | Falha ao consultar. |
 
 ---
 
-## 6. Listar Pets da Familia
+### 28. Obter Detalhes da Moradia
 
-Lista pets vinculados a uma familia.
+Obtém detalhes completos de uma moradia, incluindo localização e ocupantes.
+
+| Campo | Valor |
+|---|---|
+| Metodo | `GET` |
+| Endpoint | `/api/moradias/{id_moradia}/detalhes` |
+| Atores | A02, A03 |
+| RF/RN relacionados | RF005 |
+
+### Request
+
+```txt
+GET /api/moradias/1/detalhes
+```
+
+### Response `200 OK`
+
+```json
+{
+  "id_moradia": 1,
+  "tipo_construcao": "Alvenaria",
+  "condicao_ocupacao": "Cedida",
+  "localizacao": {
+    "id_localizacao": 1,
+    "coordenadas_latitude": -23.6632,
+    "coordenadas_longitude": -46.5381,
+    "cep": "09000000",
+    "logradouro": "Rua Exemplo",
+    "bairro": "Centro"
+  },
+  "ocupantes": [
+    {
+      "id_cidadao": 1,
+      "nome_completo": "Maria Silva"
+    }
+  ]
+}
+```
+
+### Status Possiveis
+
+| Status | Explicacao |
+|---:|---|
+| `200` | Detalhes retornados com sucesso. |
+| `401` | Usuario nao autenticado. |
+| `404` | Moradia nao encontrada. |
+| `500` | Falha ao consultar. |
+
+---
+
+### 29. Obter Historico de Familias da Moradia
+
+Obtém o histórico de famílias que ocuparam a moradia.
+
+| Campo | Valor |
+|---|---|
+| Metodo | `GET` |
+| Endpoint | `/api/moradias/{id_moradia}/familias/historico` |
+| Atores | A02, A03 |
+| RF/RN relacionados | RF012 |
+
+### Request
+
+```txt
+GET /api/moradias/1/familias/historico
+```
+
+### Response `200 OK`
+
+```json
+[
+  {
+    "id_familia": 1,
+    "data_entrada": "2026-05-25",
+    "data_saida": null,
+    "status": "Regular"
+  }
+]
+```
+
+### Status Possiveis
+
+| Status | Explicacao |
+|---:|---|
+| `200` | Historico retornado com sucesso. |
+| `401` | Usuario nao autenticado. |
+| `404` | Moradia nao encontrada. |
+| `500` | Falha ao consultar. |
+
+---
+
+### 30. Criar Moradia
+
+Cria uma nova moradia no sistema.
+
+| Campo | Valor |
+|---|---|
+| Metodo | `POST` |
+| Endpoint | `/api/moradias` |
+| Atores | A01, A03 |
+| RF/RN relacionados | RF001 |
+
+### Request
+
+```json
+{
+  "tipo_construcao": "Alvenaria",
+  "condicao_ocupacao": "Cedida",
+  "tipo_uso_imovel": "Residencial",
+  "telefone": "11999999999",
+  "observacoes": "Imovel em area com sinais de umidade"
+}
+```
+
+### Response `201 Created`
+
+```json
+{
+  "message": "Moradia criada com sucesso",
+  "id_moradia": 1
+}
+```
+
+### Status Possiveis
+
+| Status | Explicacao |
+|---:|---|
+| `201` | Moradia criada com sucesso. |
+| `400` | JSON malformado. |
+| `401` | Usuario nao autenticado. |
+| `422` | Campos obrigatorios ausentes ou invalidos. |
+| `500` | Falha ao criar. |
+
+---
+
+### 31. Atualizar Moradia
+
+Atualiza dados de uma moradia existente.
+
+| Campo | Valor |
+|---|---|
+| Metodo | `PUT` |
+| Endpoint | `/api/moradias/{id_moradia}` |
+| Atores | A01, A03 |
+| RF/RN relacionados | RF012 |
+
+### Request
+
+```json
+{
+  "tipo_construcao": "Alvenaria",
+  "condicao_ocupacao": "Cedida",
+  "tipo_uso_imovel": "Residencial",
+  "telefone": "11988888888",
+  "observacoes": "Atualizacao cadastral"
+}
+```
+
+### Response `200 OK`
+
+```json
+{
+  "message": "Moradia atualizada com sucesso",
+  "id_moradia": 1
+}
+```
+
+### Status Possiveis
+
+| Status | Explicacao |
+|---:|---|
+| `200` | Moradia atualizada com sucesso. |
+| `400` | JSON malformado. |
+| `401` | Usuario nao autenticado. |
+| `404` | Moradia nao encontrada. |
+| `422` | Campos com valores invalidos. |
+| `500` | Falha ao atualizar. |
+
+---
+
+### 32. Remover Moradia
+
+Remove uma moradia do sistema.
+
+| Campo | Valor |
+|---|---|
+| Metodo | `DELETE` |
+| Endpoint | `/api/moradias/{id_moradia}` |
+| Atores | A03 |
+| RF/RN relacionados | RF010 |
+
+### Request
+
+```txt
+DELETE /api/moradias/1
+```
+
+### Response `200 OK`
+
+```json
+{
+  "message": "Moradia removida com sucesso",
+  "id_moradia": 1
+}
+```
+
+### Status Possiveis
+
+| Status | Explicacao |
+|---:|---|
+| `200` | Moradia removida com sucesso. |
+| `401` | Usuario nao autenticado. |
+| `403` | Usuario sem permissao. |
+| `404` | Moradia nao encontrada. |
+| `500` | Falha ao remover. |
+
+---
+
+## Pets
+### 33. Listar Todos os Pets
+
+Lista todos os pets cadastrados no sistema.
+
+| Campo | Valor |
+|---|---|
+| Metodo | `GET` |
+| Endpoint | `/api/pets` |
+| Atores | A02, A03 |
+| RF/RN relacionados | RF007 |
+
+### Request
+
+```txt
+GET /api/pets
+```
+
+### Response `200 OK`
+
+```json
+[
+  {
+    "id_pet": 1,
+    "tipo_pet": "Cao",
+    "porte_pet": "Pequeno",
+    "nome": "Rex",
+    "cor": "Caramelo",
+    "observacoes": "Animal acompanha a familia em evacuacao"
+  }
+]
+```
+
+### Status Possiveis
+
+| Status | Explicacao |
+|---:|---|
+| `200` | Pets retornados com sucesso. |
+| `401` | Usuario nao autenticado. |
+| `500` | Falha ao consultar. |
+
+---
+
+### 34. Obter Pet por ID
+
+Obtém dados de um pet específico.
+
+| Campo | Valor |
+|---|---|
+| Metodo | `GET` |
+| Endpoint | `/api/pets/{id_pet}` |
+| Atores | A02, A03 |
+| RF/RN relacionados | RF007 |
+
+### Request
+
+```txt
+GET /api/pets/1
+```
+
+### Response `200 OK`
+
+```json
+{
+  "id_pet": 1,
+  "id_familia": 1,
+  "tipo_pet": "Cao",
+  "porte_pet": "Pequeno",
+  "nome": "Rex",
+  "cor": "Caramelo",
+  "observacoes": "Animal acompanha a familia em evacuacao"
+}
+```
+
+### Status Possiveis
+
+| Status | Explicacao |
+|---:|---|
+| `200` | Pet retornado com sucesso. |
+| `401` | Usuario nao autenticado. |
+| `404` | Pet nao encontrado. |
+| `500` | Falha ao consultar. |
+
+---
+
+### 35. Listar Pets da Familia
+
+Obtém todos os pets vinculados a uma família específica.
 
 | Campo | Valor |
 |---|---|
@@ -474,8 +1541,7 @@ GET /api/familias/1/pets
     "tipo_pet": "Cao",
     "porte_pet": "Pequeno",
     "nome": "Rex",
-    "cor": "Caramelo",
-    "observacoes": "Animal acompanha a familia em evacuacao"
+    "cor": "Caramelo"
   }
 ]
 ```
@@ -486,21 +1552,20 @@ GET /api/familias/1/pets
 |---:|---|
 | `200` | Pets retornados com sucesso. Pode retornar array vazio. |
 | `401` | Usuario nao autenticado. |
-| `403` | Usuario sem permissao para visualizar pets. |
 | `404` | Familia nao encontrada. |
-| `500` | Falha ao consultar pets. |
+| `500` | Falha ao consultar. |
 
 ---
 
-## 7. Cadastrar Pet
+### 36. Criar Pet
 
-Cadastra um novo pet vinculado a uma familia.
+Cria um novo pet no sistema.
 
 | Campo | Valor |
 |---|---|
 | Metodo | `POST` |
-| Endpoint | `/api/familias/{id_familia}/pets` |
-| Atores | A01 |
+| Endpoint | `/api/pets` |
+| Atores | A01, A03 |
 | RF/RN relacionados | RF007 |
 
 ### Request
@@ -511,8 +1576,51 @@ Cadastra um novo pet vinculado a uma familia.
   "porte_pet": "Pequeno",
   "nome": "Rex",
   "cor": "Caramelo",
-  "observacoes": "Animal acompanha a familia em evacuacao",
-  "foto_url": "https://storage.example.com/pet-rex.jpg"
+  "observacoes": "Animal acompanha a familia em evacuacao"
+}
+```
+
+### Response `201 Created`
+
+```json
+{
+  "message": "Pet criado com sucesso",
+  "id_pet": 1
+}
+```
+
+### Status Possiveis
+
+| Status | Explicacao |
+|---:|---|
+| `201` | Pet criado com sucesso. |
+| `400` | JSON malformado. |
+| `401` | Usuario nao autenticado. |
+| `422` | Campos obrigatorios ausentes ou invalidos. |
+| `500` | Falha ao criar. |
+
+---
+
+### 37. Criar Pet na Familia
+
+Cria um novo pet vinculado a uma família específica.
+
+| Campo | Valor |
+|---|---|
+| Metodo | `POST` |
+| Endpoint | `/api/familias/{id_familia}/pets` |
+| Atores | A01, A03 |
+| RF/RN relacionados | RF007 |
+
+### Request
+
+```json
+{
+  "tipo_pet": "Cao",
+  "porte_pet": "Pequeno",
+  "nome": "Rex",
+  "cor": "Caramelo",
+  "observacoes": "Animal acompanha a familia em evacuacao"
 }
 ```
 
@@ -533,14 +1641,14 @@ Cadastra um novo pet vinculado a uma familia.
 | `201` | Pet criado com sucesso. |
 | `400` | JSON malformado. |
 | `401` | Usuario nao autenticado. |
-| `403` | Usuario sem permissao para cadastrar pet. |
+| `403` | Usuario sem permissao. |
 | `404` | Familia nao encontrada. |
-| `422` | `tipo_pet` ausente ou valor invalido. |
-| `500` | Falha ao criar pet. |
+| `422` | Campos invalidos. |
+| `500` | Falha ao criar. |
 
 ---
 
-## 8. Atualizar Pet
+### 38. Atualizar Pet
 
 Atualiza dados de um pet existente.
 
@@ -579,35 +1687,67 @@ Atualiza dados de um pet existente.
 | `200` | Pet atualizado com sucesso. |
 | `400` | JSON malformado. |
 | `401` | Usuario nao autenticado. |
-| `403` | Usuario sem permissao para atualizar pet. |
 | `404` | Pet nao encontrado. |
-| `422` | Campos enviados possuem valores invalidos. |
-| `500` | Falha ao atualizar pet. |
+| `422` | Campos invalidos. |
+| `500` | Falha ao atualizar. |
 
 ---
 
-## 9. Consultar Dados do Mapa de Calor
+### 39. Remover Pet
 
-Retorna dados agregados para renderizacao do mapa de calor.
+Remove um pet do sistema.
 
 | Campo | Valor |
 |---|---|
-| Metodo | `GET` |
-| Endpoint | `/api/indicadores/mapa-calor` |
-| Atores | A02, A03 |
-| RF/RN relacionados | RF008 / RN01 |
-
-### Query Params
-
-| Parametro | Obrigatorio | Exemplo | Descricao |
-|---|---:|---|---|
-| `filtro` | Nao | `Idoso` | Grupo ou criterio usado no mapa de calor. |
-| `zoom` | Nao | `14` | Nivel de zoom usado para recalculo de clusters. |
+| Metodo | `DELETE` |
+| Endpoint | `/api/pets/{id_pet}` |
+| Atores | A03 |
+| RF/RN relacionados | RF010 |
 
 ### Request
 
 ```txt
-GET /api/indicadores/mapa-calor?filtro=Acamado&zoom=14
+DELETE /api/pets/1
+```
+
+### Response `200 OK`
+
+```json
+{
+  "message": "Pet removido com sucesso",
+  "id_pet": 1
+}
+```
+
+### Status Possiveis
+
+| Status | Explicacao |
+|---:|---|
+| `200` | Pet removido com sucesso. |
+| `401` | Usuario nao autenticado. |
+| `403` | Usuario sem permissao. |
+| `404` | Pet nao encontrado. |
+| `500` | Falha ao remover. |
+
+---
+
+## Fotos
+
+### 40. Listar Todas as Fotos
+
+Lista todas as fotos cadastradas no sistema.
+
+| Campo | Valor |
+|---|---|
+| Metodo | `GET` |
+| Endpoint | `/api/fotos` |
+| Atores | A02, A03 |
+| RF/RN relacionados | RF004 |
+
+### Request
+
+```txt
+GET /api/fotos
 ```
 
 ### Response `200 OK`
@@ -615,14 +1755,9 @@ GET /api/indicadores/mapa-calor?filtro=Acamado&zoom=14
 ```json
 [
   {
-    "latitude": -23.6632,
-    "longitude": -46.5381,
-    "intensidade": 8
-  },
-  {
-    "latitude": -23.6641,
-    "longitude": -46.5395,
-    "intensidade": 3
+    "id_foto": 1,
+    "tipo_foto": "Frente",
+    "url": "https://storage.example.com/foto-frente.jpg"
   }
 ]
 ```
@@ -631,52 +1766,36 @@ GET /api/indicadores/mapa-calor?filtro=Acamado&zoom=14
 
 | Status | Explicacao |
 |---:|---|
-| `200` | Dataset do mapa de calor retornado com sucesso. Pode retornar array vazio. |
-| `400` | Filtro ou zoom invalido. |
+| `200` | Fotos retornadas com sucesso. |
 | `401` | Usuario nao autenticado. |
-| `403` | Usuario sem permissao para visualizar indicadores. |
-| `500` | Falha ao calcular agregacoes. |
+| `500` | Falha ao consultar. |
 
 ---
 
-## 10. Atualizar Status da Moradia
+### 41. Obter Foto por ID
 
-Atualiza o status operacional da moradia. Pode representar arquivamento logico para moradias demolidas, interditadas ou evacuadas.
+Obtém dados de uma foto específica.
 
 | Campo | Valor |
 |---|---|
-| Metodo | `PATCH` |
-| Endpoint | `/api/moradias/{id_moradia}/status` |
-| Atores | A03 |
-| RF/RN relacionados | RF009 / RN03 |
+| Metodo | `GET` |
+| Endpoint | `/api/fotos/{id_foto}` |
+| Atores | A02, A03 |
+| RF/RN relacionados | RF004 |
 
 ### Request
 
-```json
-{
-  "status": "Demolida",
-  "motivo": "Imovel destruido por deslizamento"
-}
+```txt
+GET /api/fotos/1
 ```
 
 ### Response `200 OK`
 
 ```json
 {
-  "message": "Status da moradia atualizado com sucesso",
-  "id_moradia": 1,
-  "status": "Demolida"
-}
-```
-
-### Response `409 Conflict`
-
-```json
-{
-  "error": "Moradia possui ocupacao ativa",
-  "details": "Realocar ou inativar a familia antes de arquivar a moradia",
-  "requer_realocacao": true,
-  "id_familia": 1
+  "id_foto": 1,
+  "tipo_foto": "Frente",
+  "url": "https://storage.example.com/foto-frente.jpg"
 }
 ```
 
@@ -684,35 +1803,148 @@ Atualiza o status operacional da moradia. Pode representar arquivamento logico p
 
 | Status | Explicacao |
 |---:|---|
-| `200` | Status atualizado com sucesso. |
-| `400` | JSON malformado. |
+| `200` | Foto retornada com sucesso. |
 | `401` | Usuario nao autenticado. |
-| `403` | Usuario sem permissao para arquivar moradia. |
-| `404` | Moradia nao encontrada. |
-| `409` | Moradia possui familia ativa vinculada e exige realocacao ou inativacao previa. |
-| `422` | Status ou motivo ausente/invalido. |
-| `500` | Falha ao atualizar status da moradia. |
+| `404` | Foto nao encontrada. |
+| `500` | Falha ao consultar. |
 
 ---
 
-## 11. Realocar Familia
+### 42. Obter URL Assinada da Foto
 
-Encerra a ocupacao atual de uma familia e cria novo registro em `historico_ocupacao` para a nova moradia.
+Obtém uma URL assinada para acessar a foto armazenada em storage.
+
+| Campo | Valor |
+|---|---|
+| Metodo | `GET` |
+| Endpoint | `/api/fotos/{id_foto}/signed-url` |
+| Atores | A02, A03 |
+| RF/RN relacionados | RF004 |
+
+### Request
+
+```txt
+GET /api/fotos/1/signed-url
+```
+
+### Response `200 OK`
+
+```json
+{
+  "id_foto": 1,
+  "signed_url": "https://storage.example.com/foto-frente.jpg?signature=xyz123"
+}
+```
+
+### Status Possiveis
+
+| Status | Explicacao |
+|---:|---|
+| `200` | URL assinada retornada com sucesso. |
+| `401` | Usuario nao autenticado. |
+| `404` | Foto nao encontrada. |
+| `500` | Falha ao gerar URL. |
+
+---
+
+### 43. Listar Fotos da Moradia
+
+Obtém todas as fotos vinculadas a uma moradia.
+
+| Campo | Valor |
+|---|---|
+| Metodo | `GET` |
+| Endpoint | `/api/moradias/{id_moradia}/fotos` |
+| Atores | A02, A03 |
+| RF/RN relacionados | RF004 |
+
+### Request
+
+```txt
+GET /api/moradias/1/fotos
+```
+
+### Response `200 OK`
+
+```json
+[
+  {
+    "id_foto": 1,
+    "tipo_foto": "Frente",
+    "url": "https://storage.example.com/foto-frente.jpg"
+  }
+]
+```
+
+### Status Possiveis
+
+| Status | Explicacao |
+|---:|---|
+| `200` | Fotos retornadas com sucesso. |
+| `401` | Usuario nao autenticado. |
+| `404` | Moradia nao encontrada. |
+| `500` | Falha ao consultar. |
+
+---
+
+### 44. Criar URL de Upload para Moradia
+
+Cria uma URL de upload para adicionar foto a uma moradia.
 
 | Campo | Valor |
 |---|---|
 | Metodo | `POST` |
-| Endpoint | `/api/familias/{id_familia}/realocacoes` |
-| Atores | A03 |
-| RF/RN relacionados | RF009, RF012 / RN03 |
+| Endpoint | `/api/moradias/{id_moradia}/fotos/upload-url` |
+| Atores | A01, A03 |
+| RF/RN relacionados | RF003 |
 
 ### Request
 
 ```json
 {
-  "id_nova_moradia": 2,
-  "status_saida": "Evacuada por deslizamento",
-  "data_entrada": "2026-05-25"
+  "tipo_foto": "Frente",
+  "nome_arquivo": "moradia_1_frente.jpg"
+}
+```
+
+### Response `200 OK`
+
+```json
+{
+  "upload_url": "https://storage.example.com/upload?token=xyz123",
+  "id_foto": 1
+}
+```
+
+### Status Possiveis
+
+| Status | Explicacao |
+|---:|---|
+| `200` | URL de upload criada com sucesso. |
+| `400` | JSON malformado. |
+| `401` | Usuario nao autenticado. |
+| `404` | Moradia nao encontrada. |
+| `500` | Falha ao criar URL. |
+
+---
+
+### 45. Criar Foto na Moradia
+
+Cria um registro de foto para uma moradia.
+
+| Campo | Valor |
+|---|---|
+| Metodo | `POST` |
+| Endpoint | `/api/moradias/{id_moradia}/fotos` |
+| Atores | A01, A03 |
+| RF/RN relacionados | RF003 |
+
+### Request
+
+```json
+{
+  "tipo_foto": "Frente",
+  "url": "https://storage.example.com/foto-frente.jpg"
 }
 ```
 
@@ -720,11 +1952,9 @@ Encerra a ocupacao atual de uma familia e cria novo registro em `historico_ocupa
 
 ```json
 {
-  "message": "Familia realocada com sucesso",
-  "id_familia": 1,
-  "id_moradia_anterior": 1,
-  "id_nova_moradia": 2,
-  "id_historico_ocupacao": 10
+  "message": "Foto cadastrada com sucesso",
+  "id_foto": 1,
+  "id_moradia": 1
 }
 ```
 
@@ -732,242 +1962,39 @@ Encerra a ocupacao atual de uma familia e cria novo registro em `historico_ocupa
 
 | Status | Explicacao |
 |---:|---|
-| `201` | Realocacao criada com sucesso. |
+| `201` | Foto criada com sucesso. |
 | `400` | JSON malformado. |
 | `401` | Usuario nao autenticado. |
-| `403` | Usuario sem permissao para realocar familia. |
-| `404` | Familia ou nova moradia nao encontrada. |
-| `409` | Familia nao possui ocupacao ativa ou nova moradia nao esta apta. |
-| `422` | Data de entrada ou status de saida invalido. |
-| `500` | Falha ao processar realocacao. |
+| `404` | Moradia nao encontrada. |
+| `422` | Campos invalidos. |
+| `500` | Falha ao criar. |
 
 ---
 
-## 12. Arquivar Morador Falecido
+### 46. Remover Foto da Moradia
 
-Inativa logicamente o cadastro de um cidadao falecido, preservando o historico para auditoria e relatorios historicos.
-
-| Campo | Valor |
-|---|---|
-| Metodo | `PATCH` |
-| Endpoint | `/api/cidadaos/{id_cidadao}/arquivar` |
-| Atores | A02, A03 |
-| RF/RN relacionados | RF010 / RN03 |
-
-### Request
-
-```json
-{
-  "motivo": "Falecimento",
-  "data_falecimento": "2026-05-20",
-  "confirmado": true
-}
-```
-
-### Response `200 OK`
-
-```json
-{
-  "message": "Cidadao arquivado com sucesso",
-  "id_cidadao": 1,
-  "status_cadastro": false
-}
-```
-
-### Response `409 Conflict`
-
-Quando o cidadao arquivado for o responsavel da familia:
-
-```json
-{
-  "error": "Cidadao e responsavel da familia",
-  "details": "E necessario definir novo responsavel antes de concluir o arquivamento",
-  "requer_novo_responsavel": true,
-  "candidatos": [
-    {
-      "id_cidadao": 2,
-      "nome_completo": "Joao Silva"
-    }
-  ]
-}
-```
-
-### Status Possiveis
-
-| Status | Explicacao |
-|---:|---|
-| `200` | Cidadao arquivado com sucesso. |
-| `400` | JSON malformado. |
-| `401` | Usuario nao autenticado. |
-| `403` | Usuario sem permissao para arquivar cidadao. |
-| `404` | Cidadao nao encontrado. |
-| `409` | Cidadao e responsavel da familia e exige substituicao antes da conclusao. |
-| `422` | Data de falecimento ausente/invalida ou motivo invalido. |
-| `500` | Falha ao arquivar cidadao. |
-
----
-
-## 13. Consultar Indicadores de Recadastro
-
-Retorna totais de cadastros atualizados e desatualizados, conforme RN02.
+Remove uma foto vinculada a uma moradia.
 
 | Campo | Valor |
 |---|---|
-| Metodo | `GET` |
-| Endpoint | `/api/indicadores/recadastro` |
-| Atores | A02, A03 |
-| RF/RN relacionados | RF011 / RN02 |
+| Metodo | `DELETE` |
+| Endpoint | `/api/moradias/{id_moradia}/fotos/{id_foto}` |
+| Atores | A03 |
+| RF/RN relacionados | RF010 |
 
 ### Request
 
 ```txt
-GET /api/indicadores/recadastro
+DELETE /api/moradias/1/fotos/1
 ```
 
 ### Response `200 OK`
 
 ```json
 {
-  "total": 120,
-  "atualizados": 95,
-  "desatualizados": 25
-}
-```
-
-### Status Possiveis
-
-| Status | Explicacao |
-|---:|---|
-| `200` | Indicadores retornados com sucesso. |
-| `401` | Usuario nao autenticado. |
-| `403` | Usuario sem permissao para consultar indicadores. |
-| `500` | Falha ao calcular indicadores. |
-
----
-
-## 14. Buscar Cadastro Completo da Familia
-
-Retorna todos os dados de uma familia para revisao ou atualizacao anual.
-
-| Campo | Valor |
-|---|---|
-| Metodo | `GET` |
-| Endpoint | `/api/familias/{id_familia}/cadastro-completo` |
-| Atores | A01, A03 |
-| RF/RN relacionados | RF012 / RN02 |
-
-### Request
-
-```txt
-GET /api/familias/1/cadastro-completo
-```
-
-### Response `200 OK`
-
-```json
-{
-  "familia": {
-    "id_familia": 1,
-    "data_cadastro": "2026-05-25",
-    "status_ativo": true
-  },
-  "moradia_atual": {
-    "id_moradia": 1,
-    "status": "Ativa",
-    "ultima_atualizacao": "2025-04-10"
-  },
-  "historico_ocupacao": {
-    "id_historico_ocupacao": 1,
-    "data_entrada": "2026-05-25",
-    "data_saida": null,
-    "status": "Regular"
-  },
-  "responsavel": {
-    "id_responsavel": 1,
-    "id_cidadao": 1,
-    "nome_completo": "Maria Silva"
-  },
-  "moradores": [],
-  "pets": [],
-  "fotos": []
-}
-```
-
-### Status Possiveis
-
-| Status | Explicacao |
-|---:|---|
-| `200` | Cadastro completo retornado com sucesso. |
-| `401` | Usuario nao autenticado. |
-| `403` | Usuario sem permissao para consultar o cadastro. |
-| `404` | Familia nao encontrada. |
-| `500` | Falha ao carregar cadastro completo. |
-
----
-
-## 15. Atualizar Cadastro Completo da Familia
-
-Atualiza o cadastro completo de uma familia, incluindo dados sociais, estruturais e historico de ocupacao quando houver realocacao.
-
-| Campo | Valor |
-|---|---|
-| Metodo | `PUT` |
-| Endpoint | `/api/familias/{id_familia}/cadastro-completo` |
-| Atores | A01, A03 |
-| RF/RN relacionados | RF012 / RN01, RN02, RN04 |
-
-### Request
-
-```json
-{
-  "uuid_local": "atualizacao-local-uuid-001",
-  "localizacao": {
-    "id_localizacao": 1,
-    "coordenadas_latitude": -23.6632,
-    "coordenadas_longitude": -46.5381,
-    "cep": "09000000",
-    "logradouro": "Rua Exemplo",
-    "bairro": "Centro",
-    "numero": 100,
-    "cidade": "Santo Andre",
-    "uf": "SP",
-    "ponto_referencia": "Proximo a escola municipal"
-  },
-  "moradia": {
-    "id_moradia": 1,
-    "tipo_construcao": "Alvenaria",
-    "condicao_ocupacao": "Cedida",
-    "tipo_uso_imovel": "Residencial",
-    "telefone": "11999999999",
-    "observacoes": "Cadastro revisado em campo"
-  },
-  "responsavel": {
-    "id_responsavel": 1,
-    "id_cidadao": 1,
-    "celular": "11988888888",
-    "renda": 1800.00
-  },
-  "moradores": [
-    {
-      "id_cidadao": 2,
-      "nome_completo": "Joao Silva",
-      "status_cadastro": true,
-      "grupos_prioritarios": [1, 3]
-    }
-  ],
-  "pets": [],
-  "fotos": []
-}
-```
-
-### Response `200 OK`
-
-```json
-{
-  "message": "Cadastro atualizado com sucesso",
-  "id_familia": 1,
+  "message": "Foto removida com sucesso",
   "id_moradia": 1,
-  "ultima_atualizacao": "2026-05-25"
+  "id_foto": 1
 }
 ```
 
@@ -975,40 +2002,31 @@ Atualiza o cadastro completo de uma familia, incluindo dados sociais, estruturai
 
 | Status | Explicacao |
 |---:|---|
-| `200` | Cadastro atualizado com sucesso. |
-| `400` | JSON malformado ou estrutura invalida. |
+| `200` | Foto removida com sucesso. |
 | `401` | Usuario nao autenticado. |
-| `403` | Usuario sem permissao para atualizar. |
-| `404` | Familia, moradia ou registro relacionado nao encontrado. |
-| `409` | Atualizacao deixaria familia ativa sem responsavel ou sem moradia ativa. |
-| `422` | Campo obrigatorio invalido ou foto em desacordo com RN04. |
-| `500` | Falha inesperada durante a transacao. |
+| `403` | Usuario sem permissao. |
+| `404` | Moradia ou foto nao encontrada. |
+| `500` | Falha ao remover. |
 
 ---
 
-## 16. Definir ou Substituir Responsavel da Familia
+### 47. Atualizar Foto
 
-Define ou substitui o responsavel ativo de uma familia.
+Atualiza os dados de uma foto.
 
 | Campo | Valor |
 |---|---|
 | Metodo | `PUT` |
-| Endpoint | `/api/familias/{id_familia}/responsavel` |
-| Atores | A02, A03 |
-| RF/RN relacionados | US13 / RN03 |
+| Endpoint | `/api/fotos/{id_foto}` |
+| Atores | A01, A03 |
+| RF/RN relacionados | RF004 |
 
 ### Request
 
 ```json
 {
-  "id_cidadao_novo": 2,
-  "cpf": "12345678901",
-  "email": "novo.responsavel@example.com",
-  "celular": "11999999999",
-  "renda": 1800.00,
-  "nis": "12345678900",
-  "programas_sociais": true,
-  "veiculo": false
+  "tipo_foto": "Redor",
+  "url": "https://storage.example.com/foto-redor.jpg"
 }
 ```
 
@@ -1016,10 +2034,8 @@ Define ou substitui o responsavel ativo de uma familia.
 
 ```json
 {
-  "message": "Responsavel atualizado com sucesso",
-  "id_familia": 1,
-  "id_cidadao_responsavel": 2,
-  "id_responsavel": 3
+  "message": "Foto atualizada com sucesso",
+  "id_foto": 1
 }
 ```
 
@@ -1027,29 +2043,359 @@ Define ou substitui o responsavel ativo de uma familia.
 
 | Status | Explicacao |
 |---:|---|
-| `200` | Responsavel definido ou substituido com sucesso. |
+| `200` | Foto atualizada com sucesso. |
 | `400` | JSON malformado. |
 | `401` | Usuario nao autenticado. |
-| `403` | Usuario sem permissao para alterar responsavel. |
-| `404` | Familia ou cidadao informado nao encontrado. |
-| `409` | Cidadao informado nao pertence a familia ou esta inativo. |
-| `422` | CPF, email, NIS ou dados obrigatorios invalidos. |
-| `500` | Falha ao atualizar responsavel. |
+| `404` | Foto nao encontrada. |
+| `422` | Campos invalidos. |
+| `500` | Falha ao atualizar. |
 
 ---
+
+### 48. Remover Foto
+
+Remove uma foto do sistema.
+
+| Campo | Valor |
+|---|---|
+| Metodo | `DELETE` |
+| Endpoint | `/api/fotos/{id_foto}` |
+| Atores | A03 |
+| RF/RN relacionados | RF010 |
+
+### Request
+
+```txt
+DELETE /api/fotos/1
+```
+
+### Response `200 OK`
+
+```json
+{
+  "message": "Foto removida com sucesso",
+  "id_foto": 1
+}
+```
+
+### Status Possiveis
+
+| Status | Explicacao |
+|---:|---|
+| `200` | Foto removida com sucesso. |
+| `401` | Usuario nao autenticado. |
+| `403` | Usuario sem permissao. |
+| `404` | Foto nao encontrada. |
+| `500` | Falha ao remover. |
+
+---
+
+### 49. Listar Fotos do Pet
+
+Obtém todas as fotos vinculadas a um pet.
+
+| Campo | Valor |
+|---|---|
+| Metodo | `GET` |
+| Endpoint | `/api/pets/{id_pet}/fotos` |
+| Atores | A02, A03 |
+| RF/RN relacionados | RF007 |
+
+### Request
+
+```txt
+GET /api/pets/1/fotos
+```
+
+### Response `200 OK`
+
+```json
+[
+  {
+    "id_foto": 1,
+    "tipo_foto": "Perfil",
+    "url": "https://storage.example.com/pet-rex.jpg"
+  }
+]
+```
+
+### Status Possiveis
+
+| Status | Explicacao |
+|---:|---|
+| `200` | Fotos retornadas com sucesso. |
+| `401` | Usuario nao autenticado. |
+| `404` | Pet nao encontrado. |
+| `500` | Falha ao consultar. |
+
+---
+
+### 50. Criar URL de Upload para Pet
+
+Cria uma URL de upload para adicionar foto a um pet.
+
+| Campo | Valor |
+|---|---|
+| Metodo | `POST` |
+| Endpoint | `/api/pets/{id_pet}/fotos/upload-url` |
+| Atores | A01, A03 |
+| RF/RN relacionados | RF007 |
+
+### Request
+
+```json
+{
+  "tipo_foto": "Perfil",
+  "nome_arquivo": "pet_1_perfil.jpg"
+}
+```
+
+### Response `200 OK`
+
+```json
+{
+  "upload_url": "https://storage.example.com/upload?token=xyz123",
+  "id_foto": 1
+}
+```
+
+### Status Possiveis
+
+| Status | Explicacao |
+|---:|---|
+| `200` | URL de upload criada com sucesso. |
+| `400` | JSON malformado. |
+| `401` | Usuario nao autenticado. |
+| `404` | Pet nao encontrado. |
+| `500` | Falha ao criar URL. |
+
+---
+
+### 51. Criar Foto no Pet
+
+Cria um registro de foto para um pet.
+
+| Campo | Valor |
+|---|---|
+| Metodo | `POST` |
+| Endpoint | `/api/pets/{id_pet}/fotos` |
+| Atores | A01, A03 |
+| RF/RN relacionados | RF007 |
+
+### Request
+
+```json
+{
+  "tipo_foto": "Perfil",
+  "url": "https://storage.example.com/pet-rex.jpg"
+}
+```
+
+### Response `201 Created`
+
+```json
+{
+  "message": "Foto cadastrada com sucesso",
+  "id_foto": 1,
+  "id_pet": 1
+}
+```
+
+### Status Possiveis
+
+| Status | Explicacao |
+|---:|---|
+| `201` | Foto criada com sucesso. |
+| `400` | JSON malformado. |
+| `401` | Usuario nao autenticado. |
+| `404` | Pet nao encontrado. |
+| `422` | Campos invalidos. |
+| `500` | Falha ao criar. |
+
+---
+
+### 52. Remover Foto do Pet
+
+Remove uma foto vinculada a um pet.
+
+| Campo | Valor |
+|---|---|
+| Metodo | `DELETE` |
+| Endpoint | `/api/pets/{id_pet}/fotos/{id_foto}` |
+| Atores | A03 |
+| RF/RN relacionados | RF010 |
+
+### Request
+
+```txt
+DELETE /api/pets/1/fotos/1
+```
+
+### Response `200 OK`
+
+```json
+{
+  "message": "Foto removida com sucesso",
+  "id_pet": 1,
+  "id_foto": 1
+}
+```
+
+### Status Possiveis
+
+| Status | Explicacao |
+|---:|---|
+| `200` | Foto removida com sucesso. |
+| `401` | Usuario nao autenticado. |
+| `403` | Usuario sem permissao. |
+| `404` | Pet ou foto nao encontrada. |
+| `500` | Falha ao remover. |
+
+---
+
+## Endpoints Planejados (Em Desenvolvimento) ⏱️
+
+Os seguintes endpoints estão documentados e serão implementados em futuras versões do projeto:
+
+### Cadastro Completo
+
+- `POST /api/cadastros-completos` - Criar cadastro completo de moradia, familia, ocupacao, pessoas e pets em uma operacao transacional.
+
+### Consultas Avancadas
+
+- `GET /api/moradias/mapa` - Listar marcadores de moradias para plotagem no mapa georreferenciado.
+- `GET /api/moradias/{id_moradia}/consulta-integrada` - Consultar ficha integrada completa da moradia.
+- `GET /api/moradias/exportar` - Exportar lista filtrada de moradias em CSV ou PDF.
+
+### Cadastro Familiar
+
+- `GET /api/familias/{id_familia}/cadastro-completo` - Buscar cadastro completo da familia para revisao anual.
+- `PUT /api/familias/{id_familia}/cadastro-completo` - Atualizar cadastro completo da familia.
+- `PUT /api/familias/{id_familia}/responsavel` - Definir ou substituir responsavel da familia.
+
+### Indicadores e Relatorios
+
+- `GET /api/indicadores/mapa-calor` - Consultar dados agregados para mapa de calor.
+- `GET /api/indicadores/recadastro` - Consultar indicadores de recadastro (atualizados vs desatualizados).
+
+### Gerenciamento Avancado
+
+- `PATCH /api/moradias/{id_moradia}/status` - Atualizar status operacional da moradia (arquivamento).
+- `POST /api/familias/{id_familia}/realocacoes` - Realocar familia entre moradias.
+- `PATCH /api/cidadaos/{id_cidadao}/arquivar` - Arquivar morador falecido, preservando histórico.
+
+---
+
+## Resumo Geral
+
+**Total de endpoints implementados**: 52 ✅
+
+**Total de endpoints planejados**: 12 ⏱️
+
+**Categorias de endpoints**:
+- Pessoas: 7 endpoints
+- Responsáveis: 5 endpoints  
+- Famílias: 13 endpoints
+- Moradias: 7 endpoints
+- Pets: 7 endpoints
+- Fotos: 13 endpoints
+
+Todos os endpoints implementados seguem os padrões RESTful e utilizam versionamento através da base URL `/api`. A documentação será continuamente atualizada conforme novos endpoints forem implementados.
 
 ## 17. Resumo dos Endpoints
+
+### Endpoints Implementados
+
+#### Pessoas
+
+| Metodo | Endpoint | Finalidade |
+|---|---|---|
+| `GET` | `/api/pessoas` | Listar todas as pessoas cadastradas. |
+| `GET` | `/api/pessoas/busca` | Buscar pessoas por critério textual. |
+| `GET` | `/api/pessoas/inativas` | Listar pessoas com status inativo. |
+| `GET` | `/api/pessoas/{id}` | Obter dados de uma pessoa específica. |
+| `POST` | `/api/pessoas` | Criar nova pessoa no sistema. |
+| `PUT` | `/api/pessoas/{id}` | Atualizar dados de uma pessoa. |
+| `DELETE` | `/api/pessoas/{id}` | Remover uma pessoa do sistema. |
+
+#### Responsaveis
+
+| Metodo | Endpoint | Finalidade |
+|---|---|---|
+| `GET` | `/api/responsaveis` | Listar todos os responsáveis de familia. |
+| `GET` | `/api/responsaveis/{id}` | Obter dados de um responsável específico. |
+| `POST` | `/api/responsaveis` | Criar novo responsável. |
+| `PUT` | `/api/responsaveis/{id}` | Atualizar dados de um responsável. |
+| `DELETE` | `/api/responsaveis/{id}` | Remover um responsável do sistema. |
+
+#### Familias
+
+| Metodo | Endpoint | Finalidade |
+|---|---|---|
+| `GET` | `/api/familias` | Listar todas as famílias cadastradas. |
+| `GET` | `/api/familias/{id}` | Obter dados de uma família específica. |
+| `POST` | `/api/familias` | Criar nova família. |
+| `DELETE` | `/api/familias/{id}` | Remover uma família do sistema. |
+| `POST` | `/api/familias/nucleo` | Cadastrar núcleo familiar (agrupamento de pessoas). |
+| `GET` | `/api/familias/{id}/pessoas` | Listar pessoas vinculadas à família. |
+| `GET` | `/api/familias/{id}/pessoas/historico` | Obter histórico de pessoas vinculadas. |
+| `POST` | `/api/familias/{id}/pessoas` | Vincular pessoa à família. |
+| `DELETE` | `/api/familias/{id}/pessoas/{pessoaId}` | Remover pessoa da família. |
+| `GET` | `/api/familias/{id}/moradias` | Listar moradias vinculadas à família. |
+| `GET` | `/api/familias/{id}/moradias/historico` | Obter histórico de moradias ocupadas. |
+| `POST` | `/api/familias/{id}/moradias` | Vincular moradia à família. |
+| `DELETE` | `/api/familias/{id}/moradias/{moradiaId}` | Remover moradia da família. |
+
+#### Moradias
+
+| Metodo | Endpoint | Finalidade |
+|---|---|---|
+| `GET` | `/api/moradias` | Listar moradias com busca e filtros. |
+| `GET` | `/api/moradias/{id}` | Obter dados de uma moradia específica. |
+| `GET` | `/api/moradias/{id}/detalhes` | Obter detalhes completos da moradia com localização. |
+| `GET` | `/api/moradias/{id}/familias/historico` | Obter histórico de famílias que ocuparam a moradia. |
+| `POST` | `/api/moradias` | Criar nova moradia no sistema. |
+| `PUT` | `/api/moradias/{id}` | Atualizar dados de uma moradia. |
+| `DELETE` | `/api/moradias/{id}` | Remover uma moradia do sistema. |
+
+#### Pets
+
+| Metodo | Endpoint | Finalidade |
+|---|---|---|
+| `GET` | `/api/pets` | Listar todos os pets cadastrados. |
+| `GET` | `/api/pets/{id}` | Obter dados de um pet específico. |
+| `GET` | `/api/familias/{id_familia}/pets` | Listar pets da familia. |
+| `POST` | `/api/pets` | Criar novo pet no sistema. |
+| `POST` | `/api/familias/{id_familia}/pets` | Cadastrar pet na familia. |
+| `PUT` | `/api/pets/{id_pet}` | Atualizar pet. |
+| `DELETE` | `/api/pets/{id}` | Remover um pet do sistema. |
+
+#### Fotos
+
+| Metodo | Endpoint | Finalidade |
+|---|---|---|
+| `GET` | `/api/fotos` | Listar todas as fotos cadastradas. |
+| `GET` | `/api/fotos/{id}` | Obter dados de uma foto específica. |
+| `GET` | `/api/fotos/{id}/signed-url` | Obter URL assinada para acesso seguro à foto. |
+| `PUT` | `/api/fotos/{id}` | Atualizar dados de uma foto. |
+| `DELETE` | `/api/fotos/{id}` | Remover uma foto do sistema. |
+| `GET` | `/api/moradias/{id}/fotos` | Listar fotos vinculadas à moradia. |
+| `POST` | `/api/moradias/{id}/fotos/upload-url` | Gerar URL de upload para fotos de moradia. |
+| `POST` | `/api/moradias/{id}/fotos` | Criar registro de foto para moradia. |
+| `DELETE` | `/api/moradias/{id}/fotos/{fotoId}` | Remover foto da moradia. |
+| `GET` | `/api/pets/{id}/fotos` | Listar fotos vinculadas ao pet. |
+| `POST` | `/api/pets/{id}/fotos/upload-url` | Gerar URL de upload para fotos de pet. |
+| `POST` | `/api/pets/{id}/fotos` | Criar registro de foto para pet. |
+| `DELETE` | `/api/pets/{id}/fotos/{fotoId}` | Remover foto do pet. |
+
+### Endpoints Planejados
 
 | Metodo | Endpoint | Finalidade |
 |---|---|---|
 | `POST` | `/api/cadastros-completos` | Criar cadastro completo de moradia, familia e ocupacao. |
 | `GET` | `/api/moradias/mapa` | Listar marcadores para mapa georreferenciado. |
 | `GET` | `/api/moradias/{id_moradia}/consulta-integrada` | Consultar ficha integrada da moradia. |
-| `GET` | `/api/moradias` | Listar moradias com busca e filtros. |
 | `GET` | `/api/moradias/exportar` | Exportar lista filtrada. |
-| `GET` | `/api/familias/{id_familia}/pets` | Listar pets da familia. |
-| `POST` | `/api/familias/{id_familia}/pets` | Cadastrar pet. |
-| `PUT` | `/api/pets/{id_pet}` | Atualizar pet. |
 | `GET` | `/api/indicadores/mapa-calor` | Consultar dados do mapa de calor. |
 | `PATCH` | `/api/moradias/{id_moradia}/status` | Atualizar status/arquivar moradia. |
 | `POST` | `/api/familias/{id_familia}/realocacoes` | Realocar familia entre moradias. |
