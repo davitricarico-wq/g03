@@ -1776,8 +1776,87 @@ A consulta #4 só realiza a atualização quando o registro informado existe no 
 
 
 ## 3.7. WebAPI e endpoints (sprints 3 e 4)
-
-A documentação completa dos endpoints propostos para a WebAPI está disponível em [documentos/outros/endpoints.md](outros/endpoints.md). O arquivo descreve a base URL, headers, formato padrão de erro, métodos HTTP, endpoints, atores, RF/RN relacionados, exemplos de request/response e status codes possíveis.
+ 
+A documentação completa dos endpoints implementados está disponível em [`documentos/outros/webapi-docs.html`](outros/webapi-docs.html). O arquivo descreve a base URL, headers, formato padrão de erro, métodos HTTP, endpoints, atores, RF/RN relacionados, exemplos de request/response e status codes possíveis.
+ 
+### Endpoints implementados por domínio
+ 
+#### Pessoas e Responsáveis
+ 
+| Método | Endpoint | Descrição | RF |
+|--------|----------|-----------|-----|
+| GET | `/api/pessoas` | Lista todas as pessoas | RF001, RF006 |
+| GET | `/api/pessoas/busca` | Busca pessoas por nome ou CPF | RF006 |
+| GET | `/api/pessoas/inativas` | Lista pessoas inativas | RF010 |
+| GET | `/api/pessoas/{id}` | Retorna pessoa por ID | RF001 |
+| POST | `/api/pessoas` | Cadastra nova pessoa | RF001 |
+| PUT | `/api/pessoas/{id}` | Atualiza dados de uma pessoa | RF012 |
+| DELETE | `/api/pessoas/{id}` | Remove pessoa | RF010 |
+| GET | `/api/responsaveis` | Lista todos os responsáveis | RF001 |
+| GET | `/api/responsaveis/{id}` | Retorna responsável por ID | RF001 |
+| POST | `/api/responsaveis` | Cadastra novo responsável | RF001 |
+| PUT | `/api/responsaveis/{id}` | Atualiza dados de um responsável | RF012 |
+| DELETE | `/api/responsaveis/{id}` | Remove responsável | RF010 |
+ 
+#### Famílias
+ 
+| Método | Endpoint | Descrição | RF |
+|--------|----------|-----------|-----|
+| GET | `/api/familias` | Lista todas as famílias | RF001 |
+| GET | `/api/familias/{id}` | Retorna família por ID | RF001 |
+| POST | `/api/familias` | Cria nova família | RF001 |
+| DELETE | `/api/familias/{id}` | Remove família | RF009 |
+| POST | `/api/familias/nucleo` | Cadastra núcleo familiar completo | RF001 |
+| GET | `/api/familias/{id}/pessoas` | Lista pessoas de uma família | RF001 |
+| POST | `/api/familias/{id}/pessoas` | Vincula pessoa à família | RF001 |
+| DELETE | `/api/familias/{id}/pessoas/{pessoaId}` | Remove vínculo de pessoa da família | RF010 |
+| GET | `/api/familias/{id}/pessoas/historico` | Histórico de pessoas da família | RF005, RF012 |
+| GET | `/api/familias/{id}/moradias` | Lista moradias vinculadas à família | RF009, RF012 |
+| POST | `/api/familias/{id}/moradias` | Vincula moradia à família | RF002, RF003 |
+| DELETE | `/api/familias/{id}/moradias/{moradiaId}` | Remove vínculo de moradia da família | RF009 |
+| GET | `/api/familias/{id}/moradias/historico` | Histórico de ocupações da família | RF009, RF012 |
+| GET | `/api/familias/{id}/pets` | Lista pets da família | RF007 |
+| POST | `/api/familias/{id}/pets` | Cadastra novo pet na família | RF007 |
+ 
+#### Moradias
+ 
+| Método | Endpoint | Descrição | RF |
+|--------|----------|-----------|-----|
+| GET | `/api/moradias` | Lista moradias com filtros avançados | RF004, RF006 |
+| GET | `/api/moradias/{id}` | Retorna moradia por ID | RF005 |
+| GET | `/api/moradias/{id}/detalhes` | Retorna moradia com localização e ocupantes | RF005 |
+| GET | `/api/moradias/{id}/familias/historico` | Histórico de famílias que ocuparam a moradia | RF005, RF009 |
+| POST | `/api/moradias` | Cria nova moradia | RF002, RF003 |
+| PUT | `/api/moradias/{id}` | Atualiza dados da moradia | RF012 |
+| DELETE | `/api/moradias/{id}` | Remove moradia | RF009 |
+ 
+#### Fotos
+ 
+| Método | Endpoint | Descrição | RF |
+|--------|----------|-----------|-----|
+| GET | `/api/fotos` | Lista todas as fotos | RF002, RF007 |
+| GET | `/api/fotos/{id}` | Retorna foto por ID | RF002, RF007 |
+| GET | `/api/fotos/{id}/signed-url` | Gera URL assinada para acesso seguro | RF002, RF007 |
+| PUT | `/api/fotos/{id}` | Atualiza metadados de uma foto | RF002, RF007 |
+| DELETE | `/api/fotos/{id}` | Remove foto | RF002 |
+| GET | `/api/moradias/{id}/fotos` | Lista fotos de uma moradia | RF002 |
+| POST | `/api/moradias/{id}/fotos/upload-url` | Gera URL pré-assinada para upload | RF002 |
+| POST | `/api/moradias/{id}/fotos` | Registra metadados da foto após upload | RF002 |
+| DELETE | `/api/moradias/{id}/fotos/{fotoId}` | Remove foto de uma moradia | RF002 |
+| GET | `/api/pets/{id}/fotos` | Lista fotos de um pet | RF007 |
+| POST | `/api/pets/{id}/fotos/upload-url` | Gera URL pré-assinada para upload de foto de pet | RF007 |
+| POST | `/api/pets/{id}/fotos` | Registra metadados da foto do pet após upload | RF007 |
+| DELETE | `/api/pets/{id}/fotos/{fotoId}` | Remove foto de um pet | RF007 |
+ 
+#### Pets
+ 
+| Método | Endpoint | Descrição | RF |
+|--------|----------|-----------|-----|
+| GET | `/api/pets` | Lista todos os pets | RF007 |
+| GET | `/api/pets/{id}` | Retorna pet por ID | RF007 |
+| POST | `/api/pets` | Cria novo pet | RF007 |
+| PUT | `/api/pets/{id}` | Atualiza dados de um pet | RF007 |
+| DELETE | `/api/pets/{id}` | Remove pet | RF007 |
 
 ## 3.8. Autenticação, Autorização e Resiliência (sprint 5)
 
