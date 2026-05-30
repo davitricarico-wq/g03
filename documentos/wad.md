@@ -436,29 +436,57 @@ O sistema atende primordialmente ao Agente de Campo (A01) no que tange à operat
 | RNF007 | **Compatibilidade** | O sistema deve separar o armazenamento de metadados do armazenamento de arquivos, permitindo integração entre PostgreSQL e serviço externo de storage. | Derivado da necessidade de registrar fotos de moradias e pets sem sobrecarregar o banco relacional com arquivos binários. | O requisito evoluiu para endpoints próprios de fotos e upload mediado por Supabase Storage. O banco mantém vínculos e metadados, enquanto o storage externo armazena os arquivos. | O sistema deve permitir gerar URL assinada, cadastrar metadados da foto e vincular o arquivo à moradia ou ao pet correspondente. | RF002, RF007 | Testar criação de URL assinada, cadastro de foto e vínculo com moradia ou pet, verificando integração entre API, banco e storage. |
 | RNF008 | **Manutenibilidade** | O projeto deve manter uma estrutura organizada, auditável e segura para evolução, testes e uso de dados fictícios durante o desenvolvimento. | Derivado da necessidade de evolução contínua do projeto em sprints, com separação clara de responsabilidades e redução do risco de uso indevido de dados reais. | O requisito evoluiu para a organização do backend em `controllers`, `services`, `repositories`, `dtos`, `models`, `validations`, `errors`, `db` e `storage`, além do uso de variáveis de ambiente para configurações sensíveis. | A estrutura do código deve permitir manutenção por módulos e facilitar auditoria do que é regra de negócio, persistência, validação ou infraestrutura. | Todos os RFs | Revisar estrutura de pastas, testes e dados utilizados em desenvolvimento, garantindo que a evolução do sistema não dependa de dados reais. |
 
-### 3.1.5. Matriz RF → RN → Endpoint (sprints 3 a 5)
-
-Matriz de cobertura que demonstra quais RN (Regras de Negócio) e endpoints implementam cada RF (Requisito Funcional). Os endpoints listados abaixo estão formalizados no documento `documentos/outros/endpoints.md`.
-
-| RF    | RN associadas | Endpoint | Método |
-|-------|---------------|----------|--------|
-| RF001 | RN01, RN02    | `/api/cadastros-completos` | POST |
-| RF002 | RN01, RN04    | `/api/cadastros-completos` | POST |
-| RF003 | RN01, RN04    | `/api/cadastros-completos` | POST |
-| RF004 | N/A           | `/api/moradias/mapa` | GET |
-| RF005 | RN01, RN05    | `/api/moradias/{id_moradia}/consulta-integrada` | GET |
-| RF006 | RN02          | `/api/moradias` | GET |
-| RF006 | RN02          | `/api/moradias/exportar` | GET |
-| RF007 | N/A           | `/api/familias/{id_familia}/pets` | GET |
-| RF007 | N/A           | `/api/familias/{id_familia}/pets` | POST |
-| RF007 | N/A           | `/api/pets/{id_pet}` | PUT |
-| RF008 | RN01          | `/api/indicadores/mapa-calor` | GET |
-| RF009 | RN03          | `/api/moradias/{id_moradia}/status` | PATCH |
-| RF009 | RN03          | `/api/familias/{id_familia}/realocacoes` | POST |
-| RF010 | RN03          | `/api/cidadaos/{id_cidadao}/arquivar` | PATCH |
-| RF011 | RN02          | `/api/indicadores/recadastro` | GET |
-| RF012 | RN02          | `/api/familias/{id_familia}/cadastro-completo` | GET |
-| RF012 | RN01, RN02, RN04 | `/api/familias/{id_familia}/cadastro-completo` | PUT |
+## 3.1.5. Matriz RF → RN → Endpoint (sprints 3 a 5)
+ 
+Matriz de cobertura que demonstra quais RN (Regras de Negócio) e endpoints implementam cada RF (Requisito Funcional). Os endpoints marcados como ✅ estão implementados no backend. Os marcados como ⏳ estão documentados e planejados, mas ainda não implementados.
+ 
+| RF | RN associadas | Endpoint | Método | Status |
+|----|---------------|----------|--------|--------|
+| RF001 | RN01, RN02 | `/api/pessoas` | POST | ✅ Implementado |
+| RF001 | RN01, RN02 | `/api/responsaveis` | POST | ✅ Implementado |
+| RF001 | RN01, RN02 | `/api/familias` | POST | ✅ Implementado |
+| RF001 | RN01, RN02 | `/api/familias/nucleo` | POST | ✅ Implementado |
+| RF001 | RN01, RN02 | `/api/familias/{id_familia}/pessoas` | POST | ✅ Implementado |
+| RF001 | RN01, RN04 | `/api/cadastros-completos` | POST | ⏳ Planejado |
+| RF002 | RN01, RN04 | `/api/moradias` | POST | ✅ Implementado |
+| RF002 | RN01, RN04 | `/api/familias/{id_familia}/moradias` | POST | ✅ Implementado |
+| RF002 | RN04 | `/api/moradias/{id_moradia}/fotos` | POST | ✅ Implementado |
+| RF002 | RN04 | `/api/moradias/{id_moradia}/fotos/upload-url` | POST | ✅ Implementado |
+| RF002 | RN04 | `/api/moradias/{id_moradia}/fotos` | GET | ✅ Implementado |
+| RF002 | RN01, RN04 | `/api/cadastros-completos` | POST | ⏳ Planejado |
+| RF003 | RN01, RN04 | `/api/moradias` | POST | ✅ Implementado |
+| RF003 | RN01, RN04 | `/api/cadastros-completos` | POST | ⏳ Planejado |
+| RF004 | N/A | `/api/moradias` | GET | ✅ Implementado (parcial — sem filtro de coordenadas para mapa) |
+| RF004 | N/A | `/api/moradias/mapa` | GET | ⏳ Planejado |
+| RF005 | RN01, RN05 | `/api/moradias/{id_moradia}` | GET | ✅ Implementado (parcial) |
+| RF005 | RN01, RN05 | `/api/moradias/{id_moradia}/detalhes` | GET | ✅ Implementado (parcial) |
+| RF005 | RN01, RN05 | `/api/moradias/{id_moradia}/consulta-integrada` | GET | ⏳ Planejado |
+| RF006 | RN02 | `/api/moradias` | GET | ✅ Implementado |
+| RF006 | RN02 | `/api/pessoas/busca` | GET | ✅ Implementado |
+| RF006 | RN02 | `/api/moradias/exportar` | GET | ⏳ Planejado |
+| RF007 | N/A | `/api/familias/{id_familia}/pets` | GET | ✅ Implementado |
+| RF007 | N/A | `/api/familias/{id_familia}/pets` | POST | ✅ Implementado |
+| RF007 | N/A | `/api/pets/{id_pet}` | PUT | ✅ Implementado |
+| RF007 | N/A | `/api/pets/{id_pet}` | GET | ✅ Implementado |
+| RF007 | N/A | `/api/pets/{id_pet}/fotos` | GET | ✅ Implementado |
+| RF007 | N/A | `/api/pets/{id_pet}/fotos/upload-url` | POST | ✅ Implementado |
+| RF007 | N/A | `/api/pets/{id_pet}/fotos` | POST | ✅ Implementado |
+| RF008 | RN01 | `/api/indicadores/mapa-calor` | GET | ⏳ Planejado |
+| RF009 | RN03 | `/api/moradias/{id_moradia}` | DELETE | ✅ Implementado (hard delete — soft delete planejado) |
+| RF009 | RN03 | `/api/moradias/{id_moradia}/status` | PATCH | ⏳ Planejado |
+| RF009 | RN03 | `/api/familias/{id_familia}/moradias/{id_moradia}` | DELETE | ✅ Implementado |
+| RF009 | RN03 | `/api/familias/{id_familia}/realocacoes` | POST | ⏳ Planejado |
+| RF010 | RN03 | `/api/pessoas/{id_pessoa}` | DELETE | ✅ Implementado (hard delete — soft delete planejado) |
+| RF010 | RN03 | `/api/pessoas/inativas` | GET | ✅ Implementado |
+| RF010 | RN03 | `/api/cidadaos/{id_cidadao}/arquivar` | PATCH | ⏳ Planejado |
+| RF011 | RN02 | `/api/indicadores/recadastro` | GET | ⏳ Planejado |
+| RF012 | RN01, RN02, RN04 | `/api/pessoas/{id_pessoa}` | PUT | ✅ Implementado |
+| RF012 | RN01, RN02, RN04 | `/api/responsaveis/{id_responsavel}` | PUT | ✅ Implementado |
+| RF012 | RN01, RN02, RN04 | `/api/moradias/{id_moradia}` | PUT | ✅ Implementado |
+| RF012 | RN01, RN02, RN04 | `/api/familias/{id_familia}/cadastro-completo` | GET | ⏳ Planejado |
+| RF012 | RN01, RN02, RN04 | `/api/familias/{id_familia}/cadastro-completo` | PUT | ⏳ Planejado |
+ 
+---
 
 ## 3.2. Arquitetura (sprints 1 a 5)
 A arquitetura projetada para o sistema é, em suma, baseada na Arquitetura de Camadas (Layered Architecture), porém com a aplicação de: Arquitetura de Seis Camadas (6-Tier Architecture) com base em princípios SOLID e de separação de conceitos (Separation of Concerns). Dividindo a aplicação em componentes especializados e com responsabilidades muito bem definidas.
