@@ -1523,12 +1523,6 @@ Dentre as dificuldades, encontramos problemas diversos considerando o prazo de e
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
-<div align="center">
-    <p>Arquitetura de pastas e classes</p>
-    <img src="outros/arquitetura-pastas.png" height="800">
-    <p>Feito pela própria equipe (2026)</p>
-</div>
-
 
 
 ## 4.2. Segunda versão da aplicação web (sprint 4)
