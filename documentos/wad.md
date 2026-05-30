@@ -1005,763 +1005,235 @@ Este protótipo já apresenta exemplos de informações a serem adicionadas nos 
 
 ## 3.6. Modelagem do banco de dados (sprints 2 e 4)
 
-### 3.6.1. Modelo Entidade-Relacionamento (ER) (sprint 2)
+### 3.6.1. Modelo Entidade-Relacionamento (MER)
+
+O **Modelo Entidade-Relacionamento (MER)** é uma abordagem conceitual que representa a estrutura de dados de um sistema através da identificação de entidades (objetos do mundo real), seus atributos e os relacionamentos entre elas. Para este projeto, adotamos a **notação Chen**, que utiliza retângulos para entidades, losangos para relacionamentos, elipses para atributos e triângulos para especializações, oferecendo clareza visual e conformidade com padrões acadêmicos e profissionais.
 
 <div align="center">
-    <p>Figura 23: Modelo Entidade Relacionamento</p>
-    <img src="outros/MER.png">
+    <p>Figura 16: Modelo Entidade-Relacionamento</p>
+    <img src="outros/MER.jpg">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
 O modelo de dados foi estruturado seguindo as melhores práticas de normalização, rastreabilidade e integridade referencial, com foco em sistemas governamentais. As principais decisões arquiteturais refletidas no diagrama são:
 
-#### 1. Herança e Especialização (Pessoa, Responsável e Grávida)
-Para evitar redundância de dados e focar no Responsável da Família sem perder o mapeamento de vulnerabilidade dos dependentes, adotamos o padrão de herança (representado pelo triângulo).
-* **`Pessoa` (Superclasse):** Centraliza os atributos universais (Nome, Escolaridade, Situação Ocupacional, Doenças Crônicas).
-* **`Responsável` e `Grávida` (Subclasses):** Herdam os atributos de Pessoa, mas agregam dados específicos de suas funções no sistema. O `Responsável` carrega a carga burocrática (CPF, NIS, Renda, Programas Sociais), enquanto a `Grávida` guarda dados vitais de saúde para prioridade em resgates (Data Prevista de Parto).
+#### 1. Herança e Especialização (Pessoa e Responsável)
+Para evitar redundância de dados e focar no Responsável da Família, adotamos o padrão de herança (representado pelo triângulo na notação Chen).
+* **`Pessoa` (Superclasse):** Centraliza os atributos universais (Nome Social, Data de Nascimento, Escolaridade, Situação Ocupacional, Medicação, Status).
+* **`Responsável` (Subclasse):** Herda atributos de Pessoa e agrega dados específicos de gestão familiar: CPF, NIS, Renda, Programas Sociais, dados de contato (Telefone, Email) e informações de residência.
 
 #### 2. Agrupamento Lógico por `Família`
-Em vez de vincular dezenas de indivíduos diretamente a uma casa de forma solta, criamos a entidade agrupadeira **`Família`**.
-* Toda `Pessoa` está vinculada a uma `Família` (relacionamento *Pertence*).
-* A `Família` possui obrigatoriamente um `Responsável`.
-* **Vantagem Técnica:** Essa decisão facilita o trânsito de dados. Se uma enchente desalojar 6 pessoas de uma casa, o sistema precisa atualizar apenas o endereço da entidade `Família`, e todos os membros (incluindo os `Pets` associados a ela) herdam a mudança automaticamente.
+Em vez de vincular dezenas de indivíduos diretamente a uma moradia de forma solta, criamos a entidade agrupadeira **`Família`**.
+* Toda `Pessoa` está vinculada a uma `Família` (relacionamento *Pertence*) com cardinalidade (0, n).
+* A `Família` possui obrigatoriamente um `Responsável` com cardinalidade (1, n).
+* **Vantagem Técnica:** Essa decisão facilita o trânsito de dados. Se uma enchente desalojar 6 pessoas de uma casa, o sistema precisa atualizar apenas o registro da entidade `Família` na tabela `ocupa`, e todos os membros herdam a mudança automaticamente.
 
-#### 3. Rastreabilidade e Histórico (Relacionamento N:N "Ocupa")
-O maior desafio resolvido neste modelo foi a preservação do histórico de ocupação sem duplicar dados físicos. A estrutura da **`Moradia`** (Latitude, Longitude, CEP) é imutável. O que muda é quem mora lá.
-* Criamos o relacionamento **Muitos-para-Muitos (N:N)** chamado **`Ocupa`** entre `Família` e `Moradia`.
-* Este relacionamento gera uma tabela associativa contendo atributos temporais: **`DataEntrada`**, **`DataSaida`** e **`Status`**.
-* **Como funciona:** Quando uma família se muda ou é evacuada, preenchemos a `DataSaida` do vínculo atual e criamos um novo vínculo com a nova moradia. Assim, temos a linha do tempo exata de por quais casas a família passou e quais famílias já ocuparam um determinado terreno de risco. Por isso dizemos que uma família ocupa N casas ao longo do tempo, e uma casa é ocupada por N famílias ao longo do tempo, sem perder nenhum dado histórico.
+#### 3. Rastreabilidade e Histórico (Relacionamento N:N "ocupa")
+O maior desafio resolvido neste modelo foi a preservação do histórico de ocupação sem duplicar dados físicos. A estrutura da **`Moradia`** (localização geográfica, CEP, características construtivas) é imutável. O que muda é quem mora lá.
+* Criamos o relacionamento **Muitos-para-Muitos (N:N)** chamado **`ocupa`** entre `Família` e `Moradia`, com cardinalidade (0, n) em ambas as extremidades.
+* Este relacionamento gera uma tabela associativa contendo atributos temporais: **`DataEntrada`** e **`DataSaida`**, permitindo rastrear períodos de ocupação.
+* **Como funciona:** Quando uma família se muda ou é evacuada, preenchemos a `DataSaida` do vínculo atual e criamos um novo vínculo com a nova moradia. Assim, temos a linha do tempo exata de por quais imóveis a família passou e quais famílias já ocuparam determinadas moradias de risco, sem perder nenhum dado histórico.
 
 #### 4. Exclusão Lógica (Soft Delete) e Estados Operacionais
 Em conformidade com a LGPD e regras de auditoria pública, **nenhum dado é deletado fisicamente (DROP/DELETE)**.
 * Inserimos o atributo **`Status`** nas entidades vitais (`Pessoa` e `Moradia`).
-* Se um morador sai do município, o status da `Pessoa` fica inativo. Se uma casa de risco desaba, o status da `Moradia` é atualizado para "Demolida". O histórico do que aconteceu ali permanece intacto.
+* Se um morador sai do município, o status da `Pessoa` fica inativo. Se uma moradia é desapropriada ou demolida, o status é atualizado para o estado correspondente. O histórico permanece intacto para auditoria.
 
 #### 5. Entidades Satélites Flexíveis
-* **`Foto`:** Ligada em uma relação (1:N) com a `Moradia`, permitindo criar uma galeria de fotos para identificação da moradia.
-* **`GrupoPrioritario`:** Permite associar cidadãos a listas de vulnerabilidade (ex: Acamados, Deficientes Visuais), agilizando a logística humanitária em emergências.
+* **`Foto`:** Ligada em uma relação (0, n) com `Moradia`, permitindo criar uma galeria de fotos para identificação e documentação visual da moradia.
+* **`Pet`:** Relacionada a `Pessoa` (0, n), registrando animais de estimação dependentes para logística humanitária em evacuações.
+* **`GrupoPrioritario`:** Relacionada a `Pessoa` (0, n), permitindo associar cidadãos a listas de vulnerabilidade (ex: Acamados, Deficientes Visuais), agilizando a logística de resgates em emergências.
 
-### 3.6.2. Diagrama Entidade-Relacionamento (DER) (sprint 2)
+#### 6. Localização Geográfica e Referência Endereçal
+A entidade **`localizacao`** centraliza dados geográficos e endereçais:
+* Relacionada a `Moradia` (1, 1), garantindo que cada imóvel possui uma localização única e imutável.
+* Armazena **Latitude**, **Longitude**, **CEP**, **Logradouro**, **Bairro**, **Cidade**, **Estado**, **Número**, **Referência** e **Complemento**, permitindo georreferenciamento preciso e retroação em mapas de risco.
 
-O Diagrama Entidade-Relacionamento (DER) representa a modelagem conceitual do banco de dados da aplicação, demonstrando as entidades do sistema, seus atributos, chaves primárias e estrangeiras, além dos relacionamentos e cardinalidades existentes. O diagrama serve como base para a implementação da estrutura relacional no banco de dados.
+### 3.6.2. Modelo Lógico
 
-<p>Figura 24: Diagrama Entidade-Relacionamento - </p>
-<img src="/assets/der-logico.png">
-<p>Feito pela própria equipe (2026)</p>
+O modelo lógico traduz o modelo conceptual para a estrutura de um banco de dados relacional, definindo as tabelas, as chaves primárias (PK), as chaves estrangeiras (FK) e a multiplicidade dos relacionamentos. Esta versão está rigorosamente alinhada com as decisões arquiteturais adotadas para a plataforma Supabase, com ênfase na rastreabilidade temporal, na conformidade com as leis de proteção de dados (deleção lógica) e na especialização das entidades.
 
-Cada **retângulo** no diagrama representa uma tabela do banco de dados. Cada **linha** dentro do retângulo representa uma coluna dessa tabela. As **linhas que conectam** os retângulos representam os relacionamentos entre as tabelas.
+#### Diagrama de Entidade-Relacionamento (DER)
 
+Abaixo é apresentado o esquema visual do banco de dados, ilustrando as tabelas físicas, os seus atributos e os relacionamentos implementados.
 
-## Tipos de Dados Utilizados
+<div align="center">
+    <p>Figura 17: Diagrama Entidade-Relacionamento Lógico</p>
+    <img src="outros/DER.png">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+---
 
-| Tipo | Significado |
-|------|-------------|
-| `INT` | Número inteiro. Usado para identificadores, contagens e chaves. Ex: `1`, `42`, `1000`. |
-| `VARCHAR(n)` | Texto de tamanho **variável** com até *n* caracteres. Só ocupa o espaço que o texto realmente utilizar. Ex: nome de uma pessoa. |
-| `CHAR(n)` | Texto de tamanho **fixo** com exatamente *n* caracteres. Usado quando o valor tem sempre o mesmo tamanho. Ex: CPF (sempre 11 dígitos), CEP (sempre 8 dígitos), UF (sempre 2 letras). |
-| `TEXT` | Texto longo **sem limite de tamanho** definido. Usado para observações, descrições livres e campos abertos. |
-| `DATE` | Data no formato `AAAA-MM-DD`. Armazena apenas a data, sem horário. Ex: `1990-05-20`. |
-| `TIMESTAMP` | Data e hora completas. Armazena dia, mês, ano, hora, minuto e segundo. Ex: `2024-03-15 14:32:00`. |
-| `DECIMAL(p, s)` | Número com casas decimais. `p` é o total de dígitos e `s` são as casas após a vírgula. Ex: `DECIMAL(10,2)` permite valores como `99999999.99`. Usado para renda e coordenadas geográficas. |
-| `BOOLEAN` | Valor lógico **verdadeiro ou falso** (sim/não). Ex: possui veículo? sim ou não. |
-| `ENUM(valores)` | **Lista fechada** de valores permitidos. O campo só aceita um dos valores definidos previamente. Garante a consistência e evita erros de digitação. Ex: `ENUM(estado_civil)` aceita apenas `"Solteiro"`, `"Casado"`, `"Divorciado"`, etc. |
-| `PK` | ***Primary Key* — Chave Primária.** Identifica de forma única cada registro da tabela. Não pode se repetir nem ser nulo. |
-| `FK` | ***Foreign Key* — Chave Estrangeira.** Referencia a chave primária de outra tabela, criando o vínculo entre elas. |
+#### 1. Entidades Principais e Especializações
+
+**Pessoa**
+Entidade base (superclasse) que guarda os dados demográficos e de saúde básicos de qualquer morador ou cidadão assistido.
+* **Campos:** `id` (PK), `nome`, `nome_social`, `data_de_nascimento`, `parentesco`, `situacao_ocupacional`, `escolaridade`, `cronico`, `medicacao`, `status`, `deleted_at`.
+
+**Responsável**
+Subclasse de `Pessoa` (Herança 1:1), responsável por isolar e armazenar os dados burocráticos, financeiros e de contacto (dados sensíveis) do chefe de família.
+* **Campos:** `id_pessoa` (PK, FK para `pessoa`), `cpf`, `nis`, `renda`, `sexo`, `raca`, `estado_civil`, `veiculo`, `programa_social`, `email`, `telefone`, `nome_do_pai`, `nome_da_mae`, `local_de_nascimento`, `data_residencia_estado`, `data_residencia_moradia`.
+
+**Família**
+Atua como a entidade agregadora central do sistema (*hub*), permitindo agrupar os cidadãos e os respetivos animais de estimação independentemente da moradia física, o que facilita sobremaneira as transições e relocalizações em casos de desalojamento.
+* **Campos:** `id` (PK), `status`, `deleted_at`.
+
+**Localização**
+Isola as coordenadas geográficas e o endereço do imóvel, viabilizando o processamento de dados espaciais e a geração de mapas de calor para a Defesa Civil.
+* **Campos:** `id` (PK), `logradouro`, `numero`, `bairro`, `cidade`, `estado`, `cep`, `latitude`, `longitude`, `referencia`, `complemento`.
+
+**Moradia**
+Representa a infraestrutura residencial ou comercial atrelada a uma localização espacial unívoca.
+* **Campos:** `id` (PK), `id_localizacao` (FK para `localizacao`, UNIQUE), `tipo_construcao`, `data_registro`, `status`, `uso_imovel`, `pavimentos`, `situacao_de_ocupacao`, `descricao`, `deleted_at`.
+
+**Pet**
+Registo dos animais associados à família, cuja informação é fundamental para as logísticas de evacuação e de acolhimento em abrigos.
+* **Campos:** `id` (PK), `id_familia` (FK para `familia`), `nome`, `porte`, `raca`, `cor`, `observacao`, `tipo`.
+
+**Grupo Prioritário**
+Cataloga as condições de vulnerabilidade ou necessidades especiais (físicas ou mentais), de modo a priorizar resgates ou assistências (ex: gestantes, acamados).
+* **Campos:** `id` (PK), `condicao`, `tipo`.
+
+**Foto**
+Registos visuais para atestar a condição estrutural e a avaliação de risco no terreno.
+* **Campos:** `id` (PK), `id_moradia` (FK para `moradia`), `url`.
 
 ---
 
-## Entidades e seus Atributos
+#### 2. Entidades Associativas e de Histórico (Relacionamentos N:N)
 
-### 1. Família (Núcleo Familiar)
+Para garantir a preservação do histórico de ocupações (auditoria pós-desastre e acompanhamento ao longo dos anos), foram modeladas tabelas associativas cuja chave primária composta incorpora sempre uma dimensão temporal (`data_entrada`).
 
-Entidade **agrupadora central**. Representa o núcleo familiar como um todo. É esta entidade que transita entre diferentes moradias, levando consigo todos os cidadãos e animais de estimação associados.
+**Pessoa_Família**
+Vincula os indivíduos aos núcleos familiares e regista o seu período de permanência.
+* **Campos:** `id_pessoa` (PK, FK), `id_familia` (PK, FK), `data_entrada` (PK), `data_saida`.
 
-| Atributo | Tipo | Descrição |
-|----------|------|-----------|
-| `id_familia` | `INT PK` | Identificador único da família. |
-| `data_cadastro` | `DATE` | Data em que a família foi cadastrada no sistema. |
-| `status_ativo` | `BOOLEAN` | Controle de exclusão lógica (*Soft Delete*). Se `false`, a família está inativada no sistema. |
+**Família_Moradia**
+Regista quando um agregado familiar entra ou desocupa uma residência, possibilitando a total rastreabilidade da habitação territorial no município.
+* **Campos:** `id_familia` (PK, FK), `id_moradia` (PK, FK), `data_entrada` (PK), `data_saida`, `status`.
 
----
-
-### 2. Cidadão (Pessoa)
-
-Representa qualquer indivíduo cadastrado no sistema. Contém os dados universais (saúde, escolaridade, etc.) e está sempre associado a uma `Família`.
-
-| Atributo | Tipo | Descrição |
-|----------|------|-----------|
-| `id_cidadao` | `INT PK` | Identificador único do cidadão. |
-| `id_familia` | `INT FK` | Referência à família à qual o cidadão pertence. |
-| `nome_completo` | `VARCHAR(150)` | Nome civil completo da pessoa. |
-| `nome_social` | `VARCHAR(150)` | Nome pelo qual a pessoa prefere ser chamada. |
-| `data_nascimento` | `DATE` | Data de nascimento no formato `AAAA-MM-DD`. |
-| `situacao_ocupacional` | `ENUM` | Situação de trabalho atual (ex: `Empregado`, `Desempregado`, `Aposentado`). |
-| `doencas_cronicas` | `TEXT` | Registro de doenças crônicas que a pessoa possui. |
-| `medicamentos` | `TEXT` | Lista de medicamentos de uso contínuo. |
-| `grau_parentesco_responsavel` | `ENUM` | Relação do cidadão com o responsável da família. |
-| `escolaridade` | `ENUM` | Nível de instrução escolar. |
-| `status_cadastro` | `BOOLEAN` | Controle de exclusão lógica individual, em conformidade com a LGPD. |
+**Pessoa_Grupo_Prioritario**
+Associação pura (sem temporalidade restrita) entre os indivíduos e os diversos grupos de prioridade a que podem simultaneamente pertencer.
+* **Campos:** `id_pessoa` (PK, FK), `id_grupo_prioritario` (PK, FK).
 
 ---
 
-### 3. Responsável (Especialização)
+#### 3. Domínios de Dados e Tipos Enumerados (ENUMs)
 
-Entidade que herda os dados de `Cidadão`, representando o **Chefe de Família**. Armazena a carga burocrática e os dados de contato do núcleo familiar.
+Por forma a padronizar as entradas de dados e evitar inconsistências nos formulários da aplicação (e também ao nível do banco de dados), as seguintes colunas foram restringidas a tipos de dados enumerados (*ENUMs*):
 
-| Atributo | Tipo | Descrição |
-|----------|------|-----------|
-| `id_responsavel` | `INT PK` | Identificador único do responsável. |
-| `id_cidadao` | `INT FK` | Referência ao registro base de cidadão (Relação de Herança). |
-| `email` | `VARCHAR(150)` | Endereço de e-mail para contato. |
-| `celular` | `VARCHAR(20)` | Número de celular com DDD. |
-| `renda` | `DECIMAL(10,2)` | Renda mensal em reais. |
-| `cpf` | `CHAR(11)` | Documento de identificação (CPF), sempre com 11 dígitos numéricos. |
-| `programas_sociais` | `BOOLEAN` | Indica se é beneficiário de algum programa de apoio social. |
-| `nis` | `VARCHAR(20)` | Número de Identificação Social. |
-| `veiculo` | `BOOLEAN` | Indica se possui veículo próprio, vital para planejamento de evacuações. |
+* **Controlo Lógico:** `status_familia_enum` (Ativo, Inativo), `status_pessoa_enum` (Ativo, Obito, Inativo), `status_moradia_enum` (Ativa, Interditada, Demolida, Em Risco, Excluída).
+* **Identificação Demográfica:** `sexo_enum`, `raca_enum`, `estado_civil_enum`, `escolaridade_enum`, `situacao_ocupacional_enum`, `parentesco_enum`.
+* **Infraestrutura e Ocupação:** `tipo_construcao_enum`, `uso_imovel_enum`, `situacao_ocupacao_moradia_enum`.
+* **Classificações Especiais:** `tipo_pet_enum` (cachorro, gato, reptil, ave, roedor, outros), `tipo_prioridade_enum` (Mental, Físico).
 
 ---
 
-### 4. Gestante (Especialização)
+#### 4. Regras e Restrições Estruturais
 
-Entidade que herda os dados de `Cidadão` para registrar informações de indivíduos em **período gestacional**, garantindo prioridade em resgates.
-
-| Atributo | Tipo | Descrição |
-|----------|------|-----------|
-| `id_gestante` | `INT PK` | Identificador único do registro de gestação. |
-| `id_cidadao` | `INT FK` | Referência ao registro base de cidadão. |
-| `data_prevista` | `DATE` | Data prevista para o parto. |
-
----
-
-### 5. Grupo Prioritário
-
-Tabela auxiliar que define os **grupos de vulnerabilidade** (ex: Idosos, Acamados, Deficientes).
-
-| Atributo | Tipo | Descrição |
-|----------|------|-----------|
-| `id_grupo_prioritario` | `INT PK` | Identificador único do grupo. |
-| `nome` | `VARCHAR(50)` | Nome do grupo prioritário. |
-| `tipo` | `ENUM` | Classificação do grupo (Saúde, Social, Etária). |
-
----
-
-### 6. Moradia
-
-A **estrutura física** no terreno. Uma vez mapeada, a moradia raramente muda ou é apagada, servindo como âncora fixa no Mapa de Calor.
-
-| Atributo | Tipo | Descrição |
-|----------|------|-----------|
-| `id_moradia` | `INT PK` | Identificador único da infraestrutura. |
-| `id_localizacao` | `INT FK` | Referência aos dados geográficos (coordenadas e endereço). |
-| `tipo_construcao` | `ENUM` | Material predominante (ex: `Alvenaria`, `Madeira`). |
-| `status` | `ENUM` | Estado operacional rápido para o mapa: `Ativa`, `Interditada`, `Demolida`. |
-| `data_cadastro` | `DATE` | Data da primeira vistoria no local. |
-
----
-
-### 7. Histórico de Ocupação (Tabela Associativa N:N)
-
-O "coração" do sistema de rastreabilidade. Registra a **linha do tempo** de qual família morou em qual casa, permitindo auditoria contínua sem perda de dados.
-
-| Atributo | Tipo | Descrição |
-|----------|------|-----------|
-| `id_historico_ocupacao` | `INT PK` | Identificador da relação de ocupação. |
-| `id_familia` | `INT FK` | Referência à família ocupante. |
-| `id_moradia` | `INT FK` | Referência à casa ocupada. |
-| `data_entrada` | `DATE` | Data em que a família se mudou para o local. |
-| `data_saida` | `DATE` | Data em que saíram. **Se nulo**, significa que ainda residem no local. |
-| `status` | `VARCHAR(50)` | Motivo/Situação do vínculo (ex: `Regular`, `Evacuada por Deslizamento`). |
-
----
-
-### 8. Pet (Animal de Estimação)
-
-Animais que pertencem a uma família. Mudam de casa automaticamente se a família for realojada.
-
-| Atributo | Tipo | Descrição |
-|----------|------|-----------|
-| `id_pet` | `INT PK` | Identificador único do animal. |
-| `id_familia` | `INT FK` | Referência à família tutora do animal. |
-| `tipo_pet` | `ENUM` | Espécie do animal (ex: `Cão`, `Gato`). |
-| `porte_pet` | `ENUM` | Tamanho (ex: `Pequeno`, `Médio`). |
-
----
-
-### 9. Localização e Foto Moradia
-
-Entidades satélites que armazenam, respectivamente, as coordenadas/endereço exato do lote e o arquivo de fotografias da estrutura.
-
----
-
-## Relacionamentos e Cardinalidades
-
-A **cardinalidade** define como os registros se interligam no banco de dados. Com a nova arquitetura focada no histórico, as ligações comportam-se da seguinte forma:
-
-### Família → Cidadão — `1:N` (Um para Muitos)
-Uma família é composta por um ou vários cidadãos. Cada cidadão pertence exclusivamente a uma única família. Se a família for realojada em um abrigo, todos os cidadãos associados deslocam-se logicamente com ela.
-
-### Família → Pet — `1:N` (Um para Muitos)
-A mesma lógica aplica-se aos animais. Um núcleo familiar pode possuir vários animais de estimação, e o sistema rastreia os animais através da família, facilitando as operações de resgate animal.
-
-### Cidadão → Responsável / Gestante — `Herança (Especialização)`
-Não se trata de um relacionamento tradicional, mas de uma extensão do cidadão. Todo o `Responsável` é obrigatoriamente um `Cidadão`, mas nem todo o cidadão é um responsável. A ligação é de `1:1` no banco de dados (o ID do responsável aponta para o ID do cidadão correspondente).
-
-### Cidadão → Grupo Prioritário — `N:N` (Muitos para Muitos)
-Um cidadão pode possuir múltiplas vulnerabilidades (ex: Idoso e Acamado simultaneamente), e um grupo contém múltiplos cidadãos. Isso é resolvido através da tabela associativa `cidadao_grupo_prioritario`.
-
-### Família → Moradia — `N:N` (Muitos para Muitos através de Histórico)
-**A alteração mais importante do sistema.** Uma família pode passar por várias casas ao longo do tempo (ex: casa antiga → abrigo → casa nova), e uma casa pode ser habitada por diferentes famílias ao longo dos anos. Esta relação gera a entidade **`Histórico de Ocupação`**, garantindo que nenhum dado do passado seja reescrito ou perdido.
+* **Integridade Referencial:** Todas as *Foreign Keys* estão acompanhadas da ação `ON DELETE CASCADE`. Deste modo, assegura-se que a base de dados não manterá registos órfãos quando entidades de nível superior (ex: localização ou moradia real) forem limpas.
+* **Exclusão Lógica (*Soft Delete*):** A eliminação física de Famílias, Moradias e Pessoas não ocorre. Qualquer interrogação de `DELETE` ao nível da aplicação é intercetada de modo transparente pelo PostgreSQL (através de `RULES`), passando apenas a atualizar as colunas de estado e preenchendo o campo `deleted_at`.
+* **Unicidade Restrita (`UNIQUE`):** Implementada para impossibilitar redundâncias em documentos de alta criticidade na entidade `responsavel` (`cpf`, `email`, `telefone`) e para garantir o relacionamento um-para-um (1:1) rigoroso do campo `id_localizacao` alocado a cada `moradia`.
 
 ### 3.6.3. Modelo Físico
 
-### Diagrama Entidade-Relacionamento (DER) — Modelo Físico
+#### Diagrama Entidade-Relacionamento (DER) — Modelo Físico
 
-O modelo físico apresentado implementa a arquitetura conceitual descrita em 3.6.1 e 3.6.2 utilizando PostgreSQL como SGBD. As principais decisões de implementação refletem os requisitos de rastreabilidade, integridade referencial, conformidade com LGPD e otimização para mapeamento geográfico de áreas de risco.
-
----
-
-### Decisões Arquiteturais do Modelo Físico
-
-#### 1. Família como Entidade Agrupadeira Central
-
-A entidade **`familia`** é o núcleo organizador do sistema. Todos os cidadãos e pets vinculam-se a uma família, não diretamente a uma moradia. Isso permite:
-- Controle de ocupação histórica sem duplicação de dados
-- Transição de moradias em casos de desalojamento ou evacuação
-- Atualizações em massa (ex: toda a família se mudou)
-- Rastreamento de vulnerabilidade familiar ao longo do tempo
-
-#### 2. Herança de Cidadão: Responsável e Gestante
-
-A hierarquia `Cidadão` → (`Responsável`, `Gestante`) foi implementada usando **class-table inheritance**:
-- Tabela **`cidadao`** armazena atributos comuns (nome, data nascimento, situação ocupacional)
-- Tabelas **`responsavel`** e `gestante` herdam via `id_cidadao` como PK + FK
-- Cada subtipo adiciona dados específicos sem redundância
-
-**Vantagem:** Um cidadão pode ser responsável, gestante, ou apenas dependente sem conflitos.
-
-#### 3. Relacionamento N:N com Histórico Temporal (Historico_Ocupacao)
-
-O relacionamento **`historico_ocupacao`** entre `familia` e `moradia` preserva:
-- `data_entrada`: início da ocupação
-- `data_saida`: encerramento (NULL se ainda ocupa)
-- `status`: motivo da saída (Desalojado, Evacuado, Mudança Voluntária, etc.)
-
-Permite análises históricas completas: **qual familia morou onde, por quanto tempo, por quê**.
-
-#### 4. Soft Delete (Exclusão Lógica)
-
-Em conformidade com LGPD e auditoria pública:
-- **`cidadao.status_cadastro`** (BOOLEAN): ativa/inativa pessoa individual
-- **`familia.status_ativo`** (BOOLEAN): ativa/inativa núcleo familiar
-- **`moradia.status`** (ENUM): operacional (Ativa, Interditada, Demolida, Evacuada)
-
-Nenhum registro é fisicamente deletado; histórico é preservado para auditoria.
-
-#### 5. Pet Vinculado a Família (Não a Moradia)
-
-Pets relacionam-se a `familia` e não a `moradia` porque:
-- Quando uma família se muda, leva seus pets consigo
-- Evita dados órfãos quando moradia é evacuada
-- Facilita rastreamento de animais em emergências
-
-#### 6. Constraints e Validações
-
-- **NOT NULL** em campos obrigatórios (nomes, datas, coordenadas)
-- **UNIQUE** em CPF, email, NIS (sem duplicação)
-- **FOREIGN KEY** em todos os relacionamentos
-- **CHECK** para validações de range (renda, coordenadas geográficas)
+O modelo físico apresentado implementa a arquitetura conceitual descrita em 3.6.1 e 3.6.2 utilizando PostgreSQL como SGBD. As principais decisões de implementação refletem os requisitos de rastreabilidade, integridade referencial, conformidade com a LGPD e otimização para mapeamento geográfico de áreas de risco, rodando em ambiente Supabase.
 
 ---
 
-### Tipos Enumerados (ENUMs)
+#### Decisões Arquiteturais do Modelo Físico
+
+##### 1. Família como Entidade Agrupadeira Central
+A entidade **`familia`** é o núcleo organizador e o hub de conectividade do sistema. Diferente de arquiteturas tradicionais, as pessoas e os animais de estimação vinculam-se a uma família, e não diretamente a uma moradia física. Isso viabiliza:
+- Controle de ocupação histórica sem duplicação ou redundância de dados.
+- Transição simplificada de moradias em cenários de evacuação emergencial.
+- Atualizações cadastrais em massa (ex: o núcleo familiar inteiro mudou de endereço).
+
+##### 2. Herança de Pessoa: Responsável
+A hierarquia de especialização `Pessoa` → `Responsável` foi consolidada por meio da estratégia de **class-table inheritance**:
+- A tabela **`pessoa`** funciona como superclasse, armazenando atributos universais de qualquer cidadão cadastrado (nome, data de nascimento, escolaridade e situação ocupacional).
+- A tabela **`responsavel`** atua como a subclasse, estendendo a superclasse e compartilhando a mesma Primary Key (`id_pessoa`) como uma Foreign Key. Ela isola dados burocráticos, financeiros e de contato.
+
+##### 3. Relacionamento N:N com Histórico Temporal Desmembrado
+Para garantir auditoria governamental completa, as relações associativas foram desmembradas em duas frentes com persistência temporal:
+- **`pessoa_familia`**: Controla as transições de composição interna do núcleo familiar ao longo do tempo (entradas e saídas).
+- **`familia_moradia`**: Preserva o histórico de habitação territorial, armazenando dados críticos como `data_entrada`, `data_saida` e o `status` da ocupação.
+
+##### 4. Mecanismo de Soft Delete Integral via Rules
+Em estrita conformidade com a LGPD e com as necessidades de auditoria da Defesa Civil, nenhum registro crucial de pessoa, família ou moradia é fisicamente removido do banco. Implementou-se um mecanismo baseado no campo `deleted_at (TIMESTAMP)` controlado por `RULES` do PostgreSQL. Um comando `DELETE` padrão é interceptado pelo banco, que realiza uma exclusão lógica, atualizando o timestamp de remoção e alterando o estado da entidade para `'Inativo'` ou `'Excluída'`.
+
+##### 5. Pet Vinculado à Família
+Os animais domésticos relacionam-se diretamente com a tabela `familia`. Em caso de evacuação de áreas de risco, o sistema garante que os pets não fiquem atrelados a um imóvel destruído, facilitando a logística de abrigo.
+
+---
+
+#### Tipos Enumerados (ENUMs)
 
 ```sql
-CREATE TYPE grau_parentesco_enum AS ENUM (
-  'Responsável',
-  'Pai',
-  'Mãe',
-  'Avô/Avó',
-  'Tia/Tio',
-  'Irmã/Irmão',
-  'Sobrinho/Sobrinha',
-  'Filho/Filha',
-  'Outro'
-);
-
 CREATE TYPE escolaridade_enum AS ENUM (
-  'Analfabeto',
-  'Ensino Fundamental Incompleto',
-  'Ensino Fundamental Completo',
-  'Ensino Médio Incompleto',
-  'Ensino Médio Completo',
-  'Ensino Superior Incompleto',
-  'Ensino Superior Completo',
-  'Pós-Graduação'
-);
-
-CREATE TYPE situacao_ocupacional_enum AS ENUM (
-  'Empregado',
-  'Desempregado',
-  'Autônomo',
-  'Informal',
-  'Aposentado',
-  'Estudante',
-  'Do Lar',
-  'Outro'
-);
-
-CREATE TYPE tipo_grupo_prioritario_enum AS ENUM (
-  'Criança',
-  'Gestante',
-  'Idoso',
-  'Deficiente',
-  'Vulnerável',
-  'Acamado',
-  'Outro'
-);
-
-CREATE TYPE raca_enum AS ENUM (
-  'Branco',
-  'Preto',
-  'Pardo',
-  'Amarelo',
-  'Indígena',
-  'Outro'
-);
-
-CREATE TYPE sexo_enum AS ENUM (
-  'Masculino',
-  'Feminino',
-  'Outro'
-);
-
-CREATE TYPE porte_pet_enum AS ENUM (
-  'Pequeno',
-  'Médio',
-  'Grande'
-);
-
-CREATE TYPE tipo_pet_enum AS ENUM (
-  'Cão',
-  'Gato',
-  'Pássaro',
-  'Roedor',
-  'Réptil',
-  'Outro'
-);
-
-CREATE TYPE tipo_construcao_enum AS ENUM (
-  'Alvenaria',
-  'Madeira',
-  'Misto'
-);
-
-CREATE TYPE condicao_ocupacao_enum AS ENUM (
-  'Própria Quitada',
-  'Própria Financiada',
-  'Alugada',
-  'Cedida',
-  'Ocupação',
-  'Outro'
-);
-
-CREATE TYPE tipo_uso_imovel_enum AS ENUM (
-  'Residencial',
-  'Comercial',
-  'Misto'
+    'Analfabeto', 'Fundamental Incompleto', 'Fundamental Completo', 'Médio Incompleto', 'Médio Completo', 'Superior Incompleto', 'Superior Completo', 'Pós-graduação'
 );
 
 CREATE TYPE estado_civil_enum AS ENUM (
-  'Solteiro',
-  'Casado',
-  'Divorciado',
-  'Viúvo',
-  'União Estável',
-  'Outro'
+    'Solteiro', 'Casado', 'Divorciado', 'Viúvo', 'União Estável'
 );
 
-CREATE TYPE tipo_foto_enum AS ENUM (
-  'Frente',
-  'Redor'
+CREATE TYPE parentesco_enum AS ENUM (
+    'Responsável', 'Cônjuge', 'Filho(a)', 'Enteado(a)', 'Pai/Mãe', 'Outro'
+);
+
+CREATE TYPE raca_enum AS ENUM (
+    'Branca', 'Preta', 'Parda', 'Amarela', 'Indígena', 'Não Declarado'
+);
+
+CREATE TYPE sexo_enum AS ENUM (
+    'Masculino', 'Feminino', 'Outro', 'Não Declarado'
+);
+
+CREATE TYPE situacao_ocupacao_moradia_enum AS ENUM (
+    'Própria Quitada', 'Própria Financiada', 'Alugada', 'Cedida', 'Invasão', 'Outro'
+);
+
+CREATE TYPE situacao_ocupacional_enum AS ENUM (
+    'Empregado', 'Desempregado', 'Autônomo', 'Informal', 'Aposentado/Pensionista', 'Estudante', 'Do Lar', 'Outro'
+);
+
+CREATE TYPE status_familia_enum AS ENUM (
+    'Ativo', 'Inativo'
 );
 
 CREATE TYPE status_moradia_enum AS ENUM (
-  'Ativa',
-  'Interditada',
-  'Demolida',
-  'Área de Risco Evacuada'
-);
-```
-
----
-
-### Migrations DDL (Create Tables)
-
-#### Migration 001: Criar Tabela de Localização
-
-```sql
--- Armazena endereço e coordenadas geográficas
--- Base para plotagem em mapa e rastreamento de áreas de risco
-CREATE TABLE localizacao (
-  id_localizacao SERIAL PRIMARY KEY,
-  coordenadas_longitude DECIMAL(10, 8),
-  coordenadas_latitude DECIMAL(10, 8),
-  cep CHAR(8),
-  logradouro VARCHAR(80),
-  bairro VARCHAR(50),
-  numero INT,
-  cidade VARCHAR(50),
-  ponto_referencia VARCHAR(150),
-  uf CHAR(2)
+    'Ativa', 'Interditada', 'Demolida', 'Em Risco', 'Excluída'
 );
 
-CREATE INDEX idx_localizacao_cep ON localizacao(cep);
-```
-
-**Justificativa:** Coordenadas são opcionais pois podem ser preenchidas posterior. Índice em CEP para buscas geográficas rápidas.
-
----
-
-#### Migration 002: Criar Tabela de Moradia
-
-```sql
--- Representa o imóvel onde as famílias residem
--- Status permite rastreamento operacional (ativa, demolida, evacuada)
-CREATE TABLE moradia (
-  id_moradia SERIAL PRIMARY KEY,
-  id_localizacao INT REFERENCES localizacao(id_localizacao),
-  tipo_construcao tipo_construcao_enum,
-  condicao_ocupacao condicao_ocupacao_enum,
-  tipo_uso_imovel tipo_uso_imovel_enum,
-  telefone VARCHAR(20),
-  observacoes TEXT,
-  data_cadastro DATE,
-  ultima_atualizacao DATE,
-  status status_moradia_enum DEFAULT 'Ativa'
+CREATE TYPE status_pessoa_enum AS ENUM (
+    'Ativo', 'Obito', 'Inativo'
 );
 
-CREATE INDEX idx_moradia_localizacao ON moradia(id_localizacao);
-CREATE INDEX idx_moradia_status ON moradia(status);
-```
-
-**Justificativa:** Status permite soft delete operacional. Índices em FK e status para queries frequentes de mapeamento.
-
----
-
-#### Migration 003: Criar Tabela de Grupo Prioritário
-
-```sql
--- Define grupos de vulnerabilidade/prioridade para atendimento
--- Auxilia na logística de emergências e políticas públicas
-CREATE TABLE grupo_prioritario (
-  id_grupo_prioritario SERIAL PRIMARY KEY,
-  nome VARCHAR(50) NOT NULL UNIQUE,
-  tipo tipo_grupo_prioritario_enum NOT NULL
-);
-```
-
-**Justificativa:** Nome único evita duplicação de grupos (ex: não há dois grupos "Idoso").
-
----
-
-#### Migration 004: Criar Tabela de Família
-
-```sql
--- Entidade agrupadeira central do sistema
--- Organiza cidadãos sob um núcleo familiar
--- Facilita controle de ocupação histórica e mobilidade residencial
-CREATE TABLE familia (
-  id_familia SERIAL PRIMARY KEY,
-  data_cadastro DATE DEFAULT CURRENT_DATE,
-  status_ativo BOOLEAN DEFAULT TRUE
+CREATE TYPE tipo_construcao_enum AS ENUM (
+    'Alvenaria', 'Madeira', 'Mista', 'Taipa', 'Lona/Improvisada', 'Outro'
 );
 
-CREATE INDEX idx_familia_status ON familia(status_ativo);
-```
-
-**Justificativa:** Simples e flexível. Status permite desativar núcleo sem deletar dados. Crucial para rastreabilidade histórica.
-
----
-
-#### Migration 005: Criar Tabela de Cidadão (Superclasse)
-
-```sql
--- Superclasse que agrupa Responsável e Gestante
--- Armazena atributos comuns a todas as pessoas cadastradas
--- Soft delete individual via status_cadastro
-CREATE TABLE cidadao (
-  id_cidadao SERIAL PRIMARY KEY,
-  id_familia INT NOT NULL REFERENCES familia(id_familia),
-  nome_completo VARCHAR(150) NOT NULL,
-  nome_social VARCHAR(150),
-  data_nascimento DATE,
-  situacao_ocupacional situacao_ocupacional_enum,
-  doencas_cronicas TEXT,
-  medicamentos TEXT,
-  grau_parentesco_responsavel grau_parentesco_enum,
-  escolaridade escolaridade_enum,
-  status_cadastro BOOLEAN DEFAULT TRUE
+CREATE TYPE tipo_pet_enum AS ENUM (
+    'cachorro', 'gato', 'reptil', 'ave', 'roedor', 'outros'
 );
 
-CREATE INDEX idx_cidadao_familia ON cidadao(id_familia);
-CREATE INDEX idx_cidadao_status ON cidadao(status_cadastro);
-```
-
-**Justificativa:** Centraliza dados comuns. `status_cadastro` permite inativar pessoa individual (LGPD). Índices para buscas por família e status ativo.
-
----
-
-#### Migration 006: Criar Tabela de Responsável (Subclasse de Cidadão)
-
-```sql
--- Subclasse de Cidadão: acrescenta dados burocrático-sociais
--- Um Responsável é sempre um Cidadão previamente cadastrado
--- CPF, Email, NIS são únicos para evitar duplicação
-CREATE TABLE responsavel (
-  id_responsavel SERIAL PRIMARY KEY,
-  id_cidadao INT NOT NULL REFERENCES cidadao(id_cidadao) ON DELETE CASCADE,
-  email VARCHAR(150) UNIQUE,
-  celular VARCHAR(20),
-  renda DECIMAL(10, 2) CHECK (renda >= 0),
-  cpf CHAR(11) NOT NULL UNIQUE,
-  raca raca_enum,
-  sexo sexo_enum,
-  estado_civil estado_civil_enum,
-  nome_completo_mae VARCHAR(150),
-  nome_completo_pai VARCHAR(150),
-  data_residencia_domicilio DATE,
-  data_residencia_municipio DATE,
-  programas_sociais BOOLEAN,
-  nis VARCHAR(20) UNIQUE,
-  veiculo BOOLEAN,
-  local_nascimento VARCHAR(80)
+CREATE TYPE tipo_prioridade_enum AS ENUM (
+    'Mental', 'Físico'
 );
 
-CREATE INDEX idx_responsavel_cpf ON responsavel(cpf);
-CREATE INDEX idx_responsavel_email ON responsavel(email);
-CREATE INDEX idx_responsavel_nis ON responsavel(nis);
-```
-
-**Justificativa:** CPF, email, NIS são UNIQUE para integridade. Renda com CHECK não-negativa. Múltiplos índices para buscas por identidade.
-
----
-
-#### Migration 007: Criar Tabela de Gestante (Subclasse de Cidadão)
-
-```sql
--- Subclasse de Cidadão: registra gestações
--- Permite múltiplos registros por pessoa (histórico de gestações)
--- Atualizado a cada 1,5 a 2 anos conforme lógica de negócio
-CREATE TABLE gestante (
-  id_gestante SERIAL PRIMARY KEY,
-  id_cidadao INT NOT NULL REFERENCES cidadao(id_cidadao) ON DELETE CASCADE,
-  data_prevista DATE,
-  data_inicio DATE,
-  data_fim DATE
+CREATE TYPE uso_imovel_enum AS ENUM (
+    'Residencial', 'Comercial', 'Misto', 'Institucional', 'Abandonado'
 );
-
-CREATE INDEX idx_gestante_cidadao ON gestante(id_cidadao);
-CREATE INDEX idx_gestante_data_prevista ON gestante(data_prevista);
 ```
-
-**Justificativa:** Múltiplos registros por pessoa permitem histórico. Índice em `data_prevista` para priorização rápida de gestantes.
-
----
-
-#### Migration 008: Criar Tabela de Pet
-
-```sql
--- Registra animais de estimação residentes na família
--- Vinculado a familia e não moradia (pets acompanham família na mudança)
--- Relevante para controle de zoonoses e assistência social
-CREATE TABLE pet (
-  id_pet SERIAL PRIMARY KEY,
-  id_familia INT NOT NULL REFERENCES familia(id_familia),
-  nome VARCHAR(50),
-  porte_pet porte_pet_enum,
-  tipo_pet tipo_pet_enum NOT NULL,
-  cor VARCHAR(30),
-  observacoes TEXT,
-  foto_url VARCHAR(255)
-);
-
-CREATE INDEX idx_pet_familia ON pet(id_familia);
-```
-
-**Justificativa:** Pets vinculados a família (não moradia) porque acompanham família em evacuações. `tipo_pet` obrigatório.
-
----
-
-#### Migration 009: Criar Tabela de Foto Moradia
-
-```sql
--- Armazena fotos do imóvel para identificação visual
--- Uma moradia pode ter múltiplas fotos (frente, redor, lateral, etc.)
--- Fundamental para trabalho de campo da Defesa Civil
-CREATE TABLE foto_moradia (
-  id_foto_moradia SERIAL PRIMARY KEY,
-  id_moradia INT NOT NULL REFERENCES moradia(id_moradia) ON DELETE CASCADE,
-  tipo_foto tipo_foto_enum,
-  url VARCHAR(255) NOT NULL
-);
-
-CREATE INDEX idx_foto_moradia ON foto_moradia(id_moradia);
-```
-
-**Justificativa:** Permite galeria por moradia. Índice facilita buscar "todas as fotos de uma moradia" para validação de campo.
-
----
-
-#### Migration 010: Criar Tabela Histórico de Ocupação (N:N com Histórico Temporal)
-
-```sql
--- Relacionamento N:N entre Família e Moradia com atributos temporais
--- CORE da rastreabilidade do sistema
--- Preserva histórico completo de ocupações para análise de vulnerabilidade
--- Uma família pode ocupar N moradias ao longo do tempo
--- Uma moradia pode ser ocupada por N famílias ao longo do tempo
-CREATE TABLE historico_ocupacao (
-  id_historico_ocupacao SERIAL PRIMARY KEY,
-  id_familia INT NOT NULL REFERENCES familia(id_familia),
-  id_moradia INT NOT NULL REFERENCES moradia(id_moradia),
-  data_entrada DATE NOT NULL,
-  data_saida DATE,
-  status VARCHAR(50) DEFAULT 'Regular',
-  UNIQUE (id_familia, id_moradia, data_entrada),
-  CONSTRAINT chk_datas_ocupacao CHECK (data_saida IS NULL OR data_saida > data_entrada)
-);
-
-CREATE INDEX idx_hist_ocupacao_fam ON historico_ocupacao(id_familia);
-CREATE INDEX idx_hist_ocupacao_mor ON historico_ocupacao(id_moradia);
-CREATE INDEX idx_hist_ocupacao_ativo ON historico_ocupacao(data_saida);
-```
-
-**Justificativa:** Chave composta garante único vínculo por período. CHECK valida lógica temporal. Índices para buscas de histórico ativo/passado.
-
----
-
-#### Migration 011: Criar Tabela Associativa Cidadão-GrupoPrioritario (N:N)
-
-```sql
--- Relacionamento N:N: um cidadão pode pertencer a vários grupos prioritários
--- Um grupo pode incluir muitos cidadãos
--- Exemplo: uma pessoa pode ser Idosa E Deficiente simultaneamente
-CREATE TABLE cidadao_grupo_prioritario (
-  id_cidadao INT NOT NULL REFERENCES cidadao(id_cidadao) ON DELETE CASCADE,
-  id_grupo_prioritario INT NOT NULL REFERENCES grupo_prioritario(id_grupo_prioritario) ON DELETE CASCADE,
-  PRIMARY KEY (id_cidadao, id_grupo_prioritario)
-);
-
-CREATE INDEX idx_cid_grupo_cid ON cidadao_grupo_prioritario(id_cidadao);
-CREATE INDEX idx_cid_grupo_grupo ON cidadao_grupo_prioritario(id_grupo_prioritario);
-```
-
-**Justificativa:** Chave composta evita duplicatas. Índices permitem buscas eficientes: "todas as pessoas de um grupo" ou "todos os grupos de uma pessoa".
-
----
-
-#### Resumo de Constraints Implementados
-
-| Tipo | Aplicação |
-|------|-----------|
-| **NOT NULL** | id_familia (cidadao); id_cidadao (responsavel, gestante); id_moradia (foto_moradia, historico_ocupacao); nome_completo (cidadao); cpf (responsavel); tipo_pet (pet); data_entrada (historico_ocupacao) |
-| **UNIQUE** | cpf, email, nis (responsavel); nome (grupo_prioritario); (id_familia, id_moradia, data_entrada) (historico_ocupacao) |
-| **FOREIGN KEY** | Todas as referências entre tabelas com ON DELETE CASCADE onde apropriado |
-| **CHECK** | renda >= 0 (responsavel); data_saida > data_entrada (historico_ocupacao) |
-| **PRIMARY KEY** | Todas as tabelas com id_* SERIAL ou chaves compostas (associativas) |
-
----
-
-#### Índices Estratégicos para Performance
-
-Otimizados para operações mais frequentes:
-
-| Índice | Justificativa |
-|--------|---------------|
-| `idx_familia_status` | Filtrar famílias ativas vs inativas rapidamente |
-| `idx_cidadao_familia` | Listar todos os cidadãos de uma família |
-| `idx_cidadao_status` | Filtrar cadastros ativos para LGPD |
-| `idx_moradia_status` | Mostrar moradias ativas no mapa |
-| `idx_moradia_localizacao` | Buscar moradias por localização geográfica |
-| `idx_historico_ocupacao_ativo` | Encontrar ocupações ativas (data_saida IS NULL) |
-| `idx_gestante_data_prevista` | Priorizar gestantes para atendimento pré-natal |
-| `idx_responsavel_cpf` | Busca rápida por CPF (documentação) |
-| `idx_foto_moradia` | Galeria rápida de fotos por moradia |
-| `idx_cid_grupo_grupo` | Listar pessoas de um grupo de vulnerabilidade |
-
----
-
-#### Modelo de Dados Relacional — Garantias
-
-O modelo implementado assegura:
-
- **Integridade Referencial** — FKs garantem relacionamentos válidos  
- **Rastreabilidade Completa** — Histórico preservado via `historico_ocupacao`  
- **Exclusão Lógica (LGPD)** — Soft delete via `status_cadastro` e `status_ativo`  
- **Normalização 3FN** — Sem redundância estrutural  
- **Flexibilidade de Mudança** — Pets/pessoas acompanham família em mobilidade  
- **Performance em Mapeamento** — Índices estratégicos para geolocalização  
- **Suporte a Especialização** — Herança de Cidadão sem conflitos  
-
-
-### 3.6.4. Consultas SQL e lógica proposicional (sprint 2)
-
-A lógica proposicional é um ramo da Matemática e da Computação utilizado para representar e analisar condições lógicas por meio de proposições. No contexto de bancos de dados e consultas SQL, ela permite interpretar como diferentes condições presentes em comandos como `WHERE`, `AND`, `OR`, `NOT`, `LIKE` e `IN` influenciam o resultado final de uma consulta.
-
-Cada condição de uma instrução SQL pode ser representada por uma proposição lógica, normalmente identificada por letras como $A$, $B$ e $C$. Essas proposições assumem apenas dois valores possíveis: verdadeiro (V) ou falso (F). A partir disso, utilizam-se conectivos lógicos para combinar condições e construir expressões mais complexas. O operador `AND` corresponde à conjunção lógica ($\land$), exigindo que ambas as condições sejam verdadeiras; o operador `OR` representa a disjunção lógica ($\lor$), em que pelo menos uma condição deve ser verdadeira; e o operador `NOT` representa a negação lógica ($\neg$), invertendo o valor lógico da proposição.
-
-A tabela verdade é uma ferramenta utilizada para demonstrar todas as combinações possíveis entre proposições lógicas e seus respectivos resultados. Ela permite visualizar, de maneira organizada, como uma expressão lógica se comporta em diferentes cenários. Dessa forma, torna-se possível compreender com precisão quando uma consulta SQL retornará registros ou atualizará dados do banco.
-
-No desenvolvimento da aplicação web para a Defesa Civil, a lógica proposicional foi aplicada para estruturar consultas SQL mais robustas e coerentes, possibilitando a filtragem correta de dados relacionados a cidadãos, famílias, moradias, grupos prioritários, vínculos de ocupação e localização. As tabelas verdade auxiliam na validação dessas regras lógicas, garantindo maior clareza, previsibilidade e confiabilidade nas operações realizadas pelo sistema.
-
----
-
-#1 | SELECT
---- | ---
-**Expressão SQL** | SELECT m.id_moradia, m.id_localizacao, m.tipo_construcao, m.condicao_ocupacao, m.tipo_uso_imovel, m.telefone, m.observacoes, m.data_cadastro, m.ultima_atualizacao, m.status, l.logradouro, l.bairro, c.nome_completo AS responsavel FROM moradia m JOIN localizacao l ON m.id_localizacao = l.id_localizacao JOIN historico_ocupacao ho ON m.id_moradia = ho.id_moradia JOIN familia f ON ho.id_familia = f.id_familia JOIN cidadao c ON f.id_familia = c.id_familia JOIN responsavel r ON c.id_cidadao = r.id_cidadao WHERE m.status IN ('Interditada', 'Área de Risco Evacuada') AND ho.data_saida IS NULL AND f.status_ativo = TRUE AND c.status_cadastro = TRUE;
-**Descrição da consulta** | Buscar moradias em condição de risco operacional com seus responsáveis familiares ativos.
-**Proposições lógicas** | $A$: A moradia está em condição de risco operacional (`m.status IN ('Interditada', 'Área de Risco Evacuada')`) <br> $B$: A família ocupa atualmente a moradia (`ho.data_saida IS NULL`) <br> $C$: A família e o responsável estão ativos (`f.status_ativo = TRUE AND c.status_cadastro = TRUE`)
-**Expressão lógica proposicional** | $(A \land B) \land C$
-**Tabela Verdade** | <table> <thead> <tr> <th>$A$</th> <th>$B$</th> <th>$C$</th> <th>$(A \land B)$</th> <th>$(A \land B) \land C$</th> </tr> </thead> <tbody> <tr> <td>F</td> <td>F</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>F</td> <td>V</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>V</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>V</td> <td>V</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>F</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>F</td> <td>V</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>V</td> <td>F</td> <td>V</td> <td>F</td> </tr> <tr> <td>V</td> <td>V</td> <td>V</td> <td>V</td> <td>V</td> </tr> </tbody> </table>
-
-A consulta #1 só retorna resultado quando a moradia está em risco operacional, possui ocupação ativa e os cadastros da família e do responsável permanecem ativos.
-
-#2 | SELECT
---- | ---
-**Expressão SQL** | SELECT l.bairro, COUNT(c.id_cidadao) AS total_cronicos FROM cidadao c JOIN familia f ON c.id_familia = f.id_familia JOIN historico_ocupacao ho ON f.id_familia = ho.id_familia JOIN moradia m ON ho.id_moradia = m.id_moradia JOIN localizacao l ON m.id_localizacao = l.id_localizacao WHERE c.doencas_cronicas IS NOT NULL AND c.status_cadastro = TRUE AND f.status_ativo = TRUE AND ho.data_saida IS NULL GROUP BY l.bairro;
-**Descrição da consulta** | Contar quantas pessoas com doenças crônicas registradas existem por bairro.
-**Proposições lógicas** | $A$: A pessoa possui doença crônica registrada (`c.doencas_cronicas IS NOT NULL`) <br> $B$: O cidadão e sua família estão ativos (`c.status_cadastro = TRUE AND f.status_ativo = TRUE`) <br> $C$: O vínculo de ocupação da moradia está ativo (`ho.data_saida IS NULL`)
-**Expressão lógica proposicional** | $(A \land B) \land C$
-**Tabela Verdade** | <table> <thead> <tr> <th>$A$</th> <th>$B$</th> <th>$C$</th> <th>$(A \land B)$</th> <th>$(A \land B) \land C$</th> </tr> </thead> <tbody> <tr> <td>F</td> <td>F</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>F</td> <td>V</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>V</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>V</td> <td>V</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>F</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>F</td> <td>V</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>V</td> <td>F</td> <td>V</td> <td>F</td> </tr> <tr> <td>V</td> <td>V</td> <td>V</td> <td>V</td> <td>V</td> </tr> </tbody> </table>
-
-A consulta #2 só contabiliza o cidadão quando há doença crônica registrada, cadastro ativo e ocupação residencial vigente.
-
-#3 | SELECT
---- | ---
-**Expressão SQL** | SELECT c.nome_completo, gp.data_prevista, gp.nome AS grupo_prioritario FROM cidadao c JOIN cidadao_grupo_prioritario cgp ON c.id_cidadao = cgp.id_cidadao JOIN grupo_prioritario gp ON cgp.id_grupo_prioritario = gp.id_grupo_prioritario WHERE c.status_cadastro = TRUE AND gp.nome = 'Gestante';
-**Descrição da consulta** | Listar gestantes ativas cadastradas em grupos prioritários.
-**Proposições lógicas** | $A$: O cidadão está ativo (`c.status_cadastro = TRUE`) <br> $B$: O cidadão possui registro de gestante (`g.id_cidadao IS NOT NULL`) <br> $C$: O cidadão pertence ao grupo prioritário Gestante (`gp.nome = 'Gestante'`)
-**Expressão lógica proposicional** | $(A \land B) \land C$
-**Tabela Verdade** | <table> <thead> <tr> <th>$A$</th> <th>$B$</th> <th>$C$</th> <th>$(A \land B)$</th> <th>$(A \land B) \land C$</th> </tr> </thead> <tbody> <tr> <td>F</td> <td>F</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>F</td> <td>V</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>V</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>V</td> <td>V</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>F</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>F</td> <td>V</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>V</td> <td>F</td> <td>V</td> <td>F</td> </tr> <tr> <td>V</td> <td>V</td> <td>V</td> <td>V</td> <td>V</td> </tr> </tbody> </table>
-
-A consulta #3 só retorna resultado quando o cidadão está ativo, possui registro na tabela de gestantes e está associado ao grupo prioritário correspondente.
-
-#4 | UPDATE
---- | ---
-**Expressão SQL** | UPDATE moradia SET status = 'Ativa', ultima_atualizacao = CURRENT_DATE WHERE id_moradia = :id_moradia AND status IN ('Interditada', 'Área de Risco Evacuada');
-**Descrição da consulta** | Reativar uma moradia específica que estava em status não operacional reversível.
-**Proposições lógicas** | $A$: A moradia corresponde ao registro informado (`id_moradia = :id_moradia`) <br> $B$: A moradia está em status não operacional reversível (`status IN ('Interditada', 'Área de Risco Evacuada')`)
-**Expressão lógica proposicional** | $A \land B$
-**Tabela Verdade** | <table> <thead> <tr> <th>$A$</th> <th>$B$</th> <th>$A \land B$</th> </tr> </thead> <tbody> <tr> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>V</td> <td>F</td> </tr> <tr> <td>V</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>V</td> <td>V</td> </tr> </tbody> </table>
-
-A consulta #4 só realiza a atualização quando o registro informado existe no contexto da operação e a moradia está previamente classificada em um status não operacional reversível.
-
----
-
 
 ## 3.7. WebAPI e endpoints (sprints 3 e 4)
 
+*Utilize um link para outra página de documentação contendo a descrição completa de cada endpoint. Ou descreva aqui cada endpoint criado para seu sistema.*
+
+*Cada endpoint deve conter endereço, método (GET, POST, PUT, PATCH, DELETE), header, body, formatos de response e os status codes possíveis (200, 201, 204, 400, 401, 403, 404, 409, 422, 500).*
 A documentação completa dos endpoints propostos para a WebAPI está disponível em [documentos/outros/endpoints.md](outros/endpoints.md). O arquivo descreve a base URL, headers, formato padrão de erro, métodos HTTP, endpoints, atores, RF/RN relacionados, exemplos de request/response e status codes possíveis.
 
 ## 3.8. Autenticação, Autorização e Resiliência (sprint 5)
@@ -1894,7 +1366,7 @@ Descreva os principais segmentos de mercado a serem atendidos pela aplicação. 
 *b) Estratégia de Diferenciação (até 250 palavras)*
 *Explique como sua aplicação se destacará da concorrência, evidenciando a lógica por trás do posicionamento.*
 
-## 6.6. Estratégia de Marketing 
+## 6.6. Estratégia de Marketing
 
 *a) Produto/Serviço (até 200 palavras)*
 *Descreva as funcionalidades, benefícios e diferenciais da aplicação*
@@ -1931,7 +1403,7 @@ Tivemos alterações nas Personas (ambas), User Stories (todas), RF, RNF e RN. D
 
 *Relacione também quaisquer outras ideias que o grupo tenha para melhorias futuras*
 
-# <a name="c9"></a>9. Referências (sprints 1 a 5)
+# <a name="c8"></a>8. Referências (sprints 1 a 5)
 
 1. PORTER, Michael E. *Estratégia Competitiva: Técnicas para Análise de Indústrias e da Concorrência*. 2. ed. Rio de Janeiro: Campus, 2004.
 

@@ -103,6 +103,29 @@ dist
 # TernJS port file
 .tern-port
 
-.idea
-.vscode
+# IDE Configuration
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+
+# Mac OS
 .DS_Store
+.DS_Store?
+._*
+.AppleDouble
+.LSOverride
+.Spotlight-V100
+.Trashes
+
+# Editor/IDE Temporary Files
+*.swp
+*.swo
+*~
+*.bak
+.project
+.classpath
+.c9/
+*.sublime-workspace
+*.sublime-project
