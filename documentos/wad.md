@@ -1374,14 +1374,162 @@ A Matriz de Rastreabilidade (RTM - Requirements Traceability Matrix) consolida, 
 # <a name="c4"></a>4. Desenvolvimento da Aplicação Web
 
 ## 4.1. Primeira versão da aplicação web (sprint 3)
-
 Na primeira versão do sistema web, foi aplicado a estrutura de pastas juntamente com o desenvolvimento das funcionalidades CRUD base do sistema referente a moradia, moradores, responsáveis e pets, havendo já um protótipo de alta fidelidade com guia e identidade visual. Ademais, o código foi desenvolvido utilizando a metodologia TDD (Test Driven Design), onde o desenvolvimento é orientado a testes, garantindo um código já testado e comprovado.
 
 Assim, ainda não foi inserido métodos complexos e mais específicos, priorizando a entrega de um MVC visualizável e testável.
 
+### 4.1.1 O que foi implementado
+
+#### **Arquitetura em 6 Camadas**
+- **Controllers:** Recebem requisições HTTP, validam entrada, retornam respostas (suporte duplo a EJS e JSON)
+- **Services:** Implementam regras de negócio (RN01-RN04), validações, transações
+- **Repositories:** Encapsulam acesso ao PostgreSQL/Supabase, queries SQL otimizadas
+- **DTOs:** Tipagem de dados trafegados entre camadas
+- **Models:** Interfaces TypeScript para entidades
+- **Validations:** Validação centralizada de payloads
+- **Errors:** Classe `HttpError` para tratamento padronizado de erros
+
+#### **Endpoints Implementados (RF001-RF007)**
+
+**Pessoas (RF001):**
+- `GET /api/pessoas` — Lista todas as pessoas ativas
+- `GET /api/pessoas/busca` — Busca por nome, CPF, email, telefone
+- `GET /api/pessoas/inativas` — Lista pessoas inativas (soft delete)
+- `GET /api/pessoas/{id}` — Retorna pessoa por ID
+- `POST /api/pessoas` — Cria nova pessoa com validação RN01 (nome e data obrigatórios)
+- `PUT /api/pessoas/{id}` — Atualiza dados de pessoa
+- `DELETE /api/pessoas/{id}` — Remove logicamente pessoa (LGPD soft delete)
+
+**Responsáveis (RF001):**
+- `GET /api/responsaveis` — Lista todos os responsáveis
+- `GET /api/responsaveis/{id}` — Retorna responsável por ID
+- `POST /api/responsaveis` — Cadastra responsável com CPF, NIS, renda, programas sociais
+- `PUT /api/responsaveis/{id}` — Atualiza responsável
+- `DELETE /api/responsaveis/{id}` — Remove responsável
+
+**Moradias (RF002, RF003):**
+- `GET /api/moradias` — Lista moradias com filtros (status, tipo construção)
+- `GET /api/moradias/{id}` — Retorna moradia por ID
+- `GET /api/moradias/{id}/detalhes` — Detalhes com localização e histórico
+- `POST /api/moradias` — Cria moradia com tipo construção, pavimentos, localização
+- `PUT /api/moradias/{id}` — Atualiza moradia
+- `DELETE /api/moradias/{id}` — Remove moradia com soft delete
+
+**Famílias (RF001):**
+- `GET /api/familias` — Lista famílias
+- `GET /api/familias/{id}` — Retorna família por ID
+- `POST /api/familias` — Cria família
+- `POST /api/familias/nucleo` — Cadastro transacional completo (responsável + membros + moradia)
+- `GET /api/familias/{id}/pessoas` — Lista pessoas da família
+- `POST /api/familias/{id}/pessoas` — Vincula pessoa à família
+- `GET /api/familias/{id}/moradias` — Lista moradias da família
+- `POST /api/familias/{id}/moradias` — Vincula moradia com histórico de ocupação
+- `GET /api/familias/{id}/pets` — Lista pets da família
+- `POST /api/familias/{id}/pets` — Cadastra pet
+
+**Pets (RF007):**
+- `GET /api/pets` — Lista todos os pets
+- `GET /api/pets/{id}` — Retorna pet por ID
+- `POST /api/pets` — Cria novo pet (tipo obrigatório)
+- `PUT /api/pets/{id}` — Atualiza pet
+- `DELETE /api/pets/{id}` — Remove pet
+
+**Fotos (RF002, RF007):**
+- `GET /api/moradias/{id}/fotos` — Lista fotos da moradia
+- `POST /api/moradias/{id}/fotos/upload-url` — Gera URL pré-assinada Supabase Storage
+- `POST /api/moradias/{id}/fotos` — Registra metadados da foto
+- `GET /api/pets/{id}/fotos` — Lista fotos do pet
+- `POST /api/pets/{id}/fotos/upload-url` — URL de upload para foto de pet
+
+#### **Banco de Dados e Migrações**
+- **7 migrações versionadas** implementadas:
+  - `01_create_pessoas_sql.sql` — Criação tabela pessoas com ENUMs (parentesco, status, escolaridade, situação ocupacional)
+  - `02_add_familias.sql` — Tabela família com relacionamento 1:N com pessoa
+  - `03_allow_pet_photos.sql` — Adição suporte a fotos de pets
+  - `04_add_pet_status.sql` — Status para pets
+  - `05_enforce_responsavel_unico_familia.sql` — Constraint de responsável único por família
+  - `06_add_tipo_pet.sql` — Enum de tipos de pets
+  - `07_create_storage_bucket.sql` — Bucket Supabase para fotos
+
+- **Tabelas criadas:** `pessoas`, `responsavel`, `familia`, `pet`, `localizacao`, `moradia`, `foto`, `pessoa_familia`, `familia_moradia`
+- **ENUMs implementados:** tipo_parentesco, tipo_status, tipo_escolaridade, tipo_situacao_ocupacional, tipo_pet
+
+#### **Validações e Regras de Negócio (RN01-RN04)**
+- **RN01:** Nome e data de nascimento obrigatórios para Pessoa
+- **RN02:** Escolaridade e situação ocupacional obrigatórias
+- **RN03:** Parentesco obrigatório
+- **RN04:** Medicação e doença crônica não podem ser nulas
+- **RN - LGPD:** Soft delete com `deleted_at` e `status` para conformidade com LGPD
+
+#### **Views EJS e Interface Web**
+- `pessoa-novo.ejs` — Formulário de cadastro de pessoa com validação client-side
+- `pessoa-lista.ejs` — Tabela de listagem de pessoas com ícones de editar/deletar
+- `public/styles.css` — Estilos conforme guia (cores: Azul #182C4C, Laranja #ff7500, tipografia DM Sans)
+
+#### **Testes Automatizados (Jest + Supertest)**
+- `pessoa.persistence.spec.ts` — Testes de persistência DB validando RN01
+- Controller tests para validação de payloads, status codes, renderização de views
+- Cobertura básica de operações CRUD e fluxos de erro
+
+#### **Integração Supabase**
+- Classe `SupabaseStorageClient` implementada para upload de fotos
+- Geração de URLs pré-assinadas para acesso seguro
+- FotoStorageService como wrapper desacoplando detalhes de infraestrutura
+
+#### Reajustes e atualizações da documentação
+Foram realizadas as seguintes atualizações no WAD durante essa sprint de consolidação:
+
+- Seção 4.1 (Primeira versão da aplicação web)
+- Seção 3.4 (Guia de Estilos): criação do Guia de Estilos completa
+- Seção 3.5 (Protótipos de Alta Fidelidade): desenhado os protótipo de Alta Fidelidade do sistema
+- Seção 3.6 (Modelo Físico): reajustes conforme surgimento de necessidades de alterações do banco de dados
+- Seção 3.6.4 (Consultas SQL com Lógica Proposicional): Escrita das consultas SQL juntamento com a documentação da lógica proposicional do sistema
+- Documentação e aplicação geral da arquitetura utilizada (3.2)
+
+
+### 4.1.2 O que não foi concluído
+
+- **Mapa Georreferenciado (RF004):** Endpoints `/api/moradias/mapa` e visualização de marcadores não implementados
+- **Mapa de Calor (RF008):** Endpoint `/api/indicadores/mapa-calor` planejado, não finalizado
+- **Alerta de Recadastro (RF011):** Job agendado de detecção de fichas desatualizadas (>365 dias) não implementado
+- **Consulta Integrada com Flag Risco Crítico (RF005, RN05):** Endpoint `/api/moradias/{id}/consulta-integrada` com flag de risco crítico não finalizado
+- **Exportação de Relatórios (RF006):** Endpoints `/api/moradias/exportar` em CSV/PDF não implementados
+- **Realocação de Famílias Avançada (RF009):** Fluxo complexo de realocação com validação de integridade incompleto
+- **Frontend Mobile/Responsivo:** Apenas telas EJS básicas. Sem interface desktop.
+- **Geolocalização Multimodal (RF003):** Captura automática de GPS, CEP digital e referências visuais não totalmente testada
+- **Endpoints GET com agregação:** Endpoints de totalização por grupo prioritário, contadores de vulnerabilidade não implementados
+
+
+### 4.1.3 Dificuldades encontradas
 Dentre as dificuldades, encontramos problemas diversos considerando o prazo de entrega apertadíssimo, dificultando na possibilidade de aplicações de funcionalidades secundárias, porém úteis, como o alerta de atualização do cadastro de Gestantes após um prazo estimado de gravidez; diferenciação de pets para animais com fins funcionais (comerciais e reprodutivos). Sendo todas estas, inseridas como escopo extra que desejaríamos de implementar se fosse possível.
 
-*Descreva e ilustre aqui o desenvolvimento da primeira versão do sistema web. Utilize prints de tela para ilustrar. Indique obrigatoriamente: (a) o que foi implementado, (b) o que não foi concluído, (c) dificuldades técnicas enfrentadas e próximos passos.*
+
+### 4.1.4 Próximos passos
+**Sprint 4 (Consolidação e Features Críticas):**
+1. **Completar RF005:** Consulta integrada + flag RN05 de risco crítico
+2. **Implementar RF004/RF008:** Mapa com marcadores e heatmap de vulnerabilidades
+3. **Job de recadastro (RF011):** Scheduler para detectar fichas desatualizadas
+4. **Exportação (RF006):** CSV/PDF com filtros
+5. **Melhorar testes:** Aumentar cobertura para 80%+; testes e2e com Supertest
+6. **Frontend básico:** Começar interface React/Next.js para cadastro
+7. **Geolocalização:** Testar captura GPS completa em diferentes contextos
+
+### 4.1.5 Demonstrações visuais
+
+<!-- <p>Arquitetura de pastas e classes</p> -->
+<div align="center">
+    <p>Arquitetura de pastas e classes</p>
+    <img src="outros/arquitetura-pastas.png" height="800">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
+<div align="center">
+    <p>Arquitetura de pastas e classes</p>
+    <img src="outros/arquitetura-pastas.png" height="800">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
+
 
 ## 4.2. Segunda versão da aplicação web (sprint 4)
 
