@@ -436,29 +436,44 @@ O sistema atende primordialmente ao Agente de Campo (A01) no que tange à operat
 | RNF007 | **Compatibilidade** | O sistema deve separar o armazenamento de metadados do armazenamento de arquivos, permitindo integração entre PostgreSQL e serviço externo de storage. | Derivado da necessidade de registrar fotos de moradias e pets sem sobrecarregar o banco relacional com arquivos binários. | O requisito evoluiu para endpoints próprios de fotos e upload mediado por Supabase Storage. O banco mantém vínculos e metadados, enquanto o storage externo armazena os arquivos. | O sistema deve permitir gerar URL assinada, cadastrar metadados da foto e vincular o arquivo à moradia ou ao pet correspondente. | RF002, RF007 | Testar criação de URL assinada, cadastro de foto e vínculo com moradia ou pet, verificando integração entre API, banco e storage. |
 | RNF008 | **Manutenibilidade** | O projeto deve manter uma estrutura organizada, auditável e segura para evolução, testes e uso de dados fictícios durante o desenvolvimento. | Derivado da necessidade de evolução contínua do projeto em sprints, com separação clara de responsabilidades e redução do risco de uso indevido de dados reais. | O requisito evoluiu para a organização do backend em `controllers`, `services`, `repositories`, `dtos`, `models`, `validations`, `errors`, `db` e `storage`, além do uso de variáveis de ambiente para configurações sensíveis. | A estrutura do código deve permitir manutenção por módulos e facilitar auditoria do que é regra de negócio, persistência, validação ou infraestrutura. | Todos os RFs | Revisar estrutura de pastas, testes e dados utilizados em desenvolvimento, garantindo que a evolução do sistema não dependa de dados reais. |
 
-### 3.1.5. Matriz RF → RN → Endpoint (sprints 3 a 5)
-
-Matriz de cobertura que demonstra quais RN (Regras de Negócio) e endpoints implementam cada RF (Requisito Funcional). Os endpoints listados abaixo estão formalizados no documento `documentos/outros/endpoints.md`.
-
-| RF    | RN associadas | Endpoint | Método |
-|-------|---------------|----------|--------|
-| RF001 | RN01, RN02    | `/api/cadastros-completos` | POST |
-| RF002 | RN01, RN04    | `/api/cadastros-completos` | POST |
-| RF003 | RN01, RN04    | `/api/cadastros-completos` | POST |
-| RF004 | N/A           | `/api/moradias/mapa` | GET |
-| RF005 | RN01, RN05    | `/api/moradias/{id_moradia}/consulta-integrada` | GET |
-| RF006 | RN02          | `/api/moradias` | GET |
-| RF006 | RN02          | `/api/moradias/exportar` | GET |
-| RF007 | N/A           | `/api/familias/{id_familia}/pets` | GET |
-| RF007 | N/A           | `/api/familias/{id_familia}/pets` | POST |
-| RF007 | N/A           | `/api/pets/{id_pet}` | PUT |
-| RF008 | RN01          | `/api/indicadores/mapa-calor` | GET |
-| RF009 | RN03          | `/api/moradias/{id_moradia}/status` | PATCH |
-| RF009 | RN03          | `/api/familias/{id_familia}/realocacoes` | POST |
-| RF010 | RN03          | `/api/cidadaos/{id_cidadao}/arquivar` | PATCH |
-| RF011 | RN02          | `/api/indicadores/recadastro` | GET |
-| RF012 | RN02          | `/api/familias/{id_familia}/cadastro-completo` | GET |
-| RF012 | RN01, RN02, RN04 | `/api/familias/{id_familia}/cadastro-completo` | PUT |
+## 3.1.5. Matriz RF → RN → Endpoint (sprints 3 a 5)
+ 
+Matriz de cobertura que demonstra quais RN (Regras de Negócio) e endpoints implementam cada RF (Requisito Funcional). Os endpoints listados abaixo estão implementados no backend e formalizados no arquivo `documentos/outros/webapi-docs.html`.
+ 
+| RF | RN associadas | Endpoint | Método |
+|----|---------------|----------|--------|
+| RF001 | RN01, RN02 | `/api/pessoas` | POST |
+| RF001 | RN01, RN02 | `/api/responsaveis` | POST |
+| RF001 | RN01, RN02 | `/api/familias` | POST |
+| RF001 | RN01, RN02 | `/api/familias/nucleo` | POST |
+| RF001 | RN01, RN02 | `/api/familias/{id_familia}/pessoas` | POST |
+| RF002 | RN01, RN04 | `/api/moradias` | POST |
+| RF002 | RN01, RN04 | `/api/familias/{id_familia}/moradias` | POST |
+| RF002 | RN04 | `/api/moradias/{id_moradia}/fotos` | POST |
+| RF002 | RN04 | `/api/moradias/{id_moradia}/fotos/upload-url` | POST |
+| RF002 | RN04 | `/api/moradias/{id_moradia}/fotos` | GET |
+| RF003 | RN01, RN04 | `/api/moradias` | POST |
+| RF004 | N/A | `/api/moradias` | GET |
+| RF005 | RN01, RN05 | `/api/moradias/{id_moradia}` | GET |
+| RF005 | RN01, RN05 | `/api/moradias/{id_moradia}/detalhes` | GET |
+| RF006 | RN02 | `/api/moradias` | GET |
+| RF006 | RN02 | `/api/pessoas/busca` | GET |
+| RF007 | N/A | `/api/familias/{id_familia}/pets` | GET |
+| RF007 | N/A | `/api/familias/{id_familia}/pets` | POST |
+| RF007 | N/A | `/api/pets/{id_pet}` | PUT |
+| RF007 | N/A | `/api/pets/{id_pet}` | GET |
+| RF007 | N/A | `/api/pets/{id_pet}/fotos` | GET |
+| RF007 | N/A | `/api/pets/{id_pet}/fotos/upload-url` | POST |
+| RF007 | N/A | `/api/pets/{id_pet}/fotos` | POST |
+| RF009 | RN03 | `/api/moradias/{id_moradia}` | DELETE |
+| RF009 | RN03 | `/api/familias/{id_familia}/moradias/{id_moradia}` | DELETE |
+| RF010 | RN03 | `/api/pessoas/{id_pessoa}` | DELETE |
+| RF010 | RN03 | `/api/pessoas/inativas` | GET |
+| RF012 | RN01, RN02, RN04 | `/api/pessoas/{id_pessoa}` | PUT |
+| RF012 | RN01, RN02, RN04 | `/api/responsaveis/{id_responsavel}` | PUT |
+| RF012 | RN01, RN02, RN04 | `/api/moradias/{id_moradia}` | PUT |
+ 
+---
 
 ## 3.2. Arquitetura (sprints 1 a 5)
 A arquitetura projetada para o sistema é, em suma, baseada na Arquitetura de Camadas (Layered Architecture), porém com a aplicação de: Arquitetura de Seis Camadas (6-Tier Architecture) com base em princípios SOLID e de separação de conceitos (Separation of Concerns). Dividindo a aplicação em componentes especializados e com responsabilidades muito bem definidas.
@@ -1230,11 +1245,87 @@ CREATE TYPE uso_imovel_enum AS ENUM (
 ```
 
 ## 3.7. WebAPI e endpoints (sprints 3 e 4)
-
-*Utilize um link para outra página de documentação contendo a descrição completa de cada endpoint. Ou descreva aqui cada endpoint criado para seu sistema.*
-
-*Cada endpoint deve conter endereço, método (GET, POST, PUT, PATCH, DELETE), header, body, formatos de response e os status codes possíveis (200, 201, 204, 400, 401, 403, 404, 409, 422, 500).*
-A documentação completa dos endpoints propostos para a WebAPI está disponível em [documentos/outros/endpoints.md](outros/endpoints.md). O arquivo descreve a base URL, headers, formato padrão de erro, métodos HTTP, endpoints, atores, RF/RN relacionados, exemplos de request/response e status codes possíveis.
+ 
+A documentação completa dos endpoints implementados está disponível em [`documentos/outros/webapi-docs.html`](outros/webapi-docs.html). O arquivo descreve a base URL, headers, formato padrão de erro, métodos HTTP, endpoints, atores, RF/RN relacionados, exemplos de request/response e status codes possíveis.
+ 
+### Endpoints implementados por domínio
+ 
+#### Pessoas e Responsáveis
+ 
+| Método | Endpoint | Descrição | RF |
+|--------|----------|-----------|-----|
+| GET | `/api/pessoas` | Lista todas as pessoas | RF001, RF006 |
+| GET | `/api/pessoas/busca` | Busca pessoas por nome ou CPF | RF006 |
+| GET | `/api/pessoas/inativas` | Lista pessoas inativas | RF010 |
+| GET | `/api/pessoas/{id}` | Retorna pessoa por ID | RF001 |
+| POST | `/api/pessoas` | Cadastra nova pessoa | RF001 |
+| PUT | `/api/pessoas/{id}` | Atualiza dados de uma pessoa | RF012 |
+| DELETE | `/api/pessoas/{id}` | Remove pessoa | RF010 |
+| GET | `/api/responsaveis` | Lista todos os responsáveis | RF001 |
+| GET | `/api/responsaveis/{id}` | Retorna responsável por ID | RF001 |
+| POST | `/api/responsaveis` | Cadastra novo responsável | RF001 |
+| PUT | `/api/responsaveis/{id}` | Atualiza dados de um responsável | RF012 |
+| DELETE | `/api/responsaveis/{id}` | Remove responsável | RF010 |
+ 
+#### Famílias
+ 
+| Método | Endpoint | Descrição | RF |
+|--------|----------|-----------|-----|
+| GET | `/api/familias` | Lista todas as famílias | RF001 |
+| GET | `/api/familias/{id}` | Retorna família por ID | RF001 |
+| POST | `/api/familias` | Cria nova família | RF001 |
+| DELETE | `/api/familias/{id}` | Remove família | RF009 |
+| POST | `/api/familias/nucleo` | Cadastra núcleo familiar completo | RF001 |
+| GET | `/api/familias/{id}/pessoas` | Lista pessoas de uma família | RF001 |
+| POST | `/api/familias/{id}/pessoas` | Vincula pessoa à família | RF001 |
+| DELETE | `/api/familias/{id}/pessoas/{pessoaId}` | Remove vínculo de pessoa da família | RF010 |
+| GET | `/api/familias/{id}/pessoas/historico` | Histórico de pessoas da família | RF005, RF012 |
+| GET | `/api/familias/{id}/moradias` | Lista moradias vinculadas à família | RF009, RF012 |
+| POST | `/api/familias/{id}/moradias` | Vincula moradia à família | RF002, RF003 |
+| DELETE | `/api/familias/{id}/moradias/{moradiaId}` | Remove vínculo de moradia da família | RF009 |
+| GET | `/api/familias/{id}/moradias/historico` | Histórico de ocupações da família | RF009, RF012 |
+| GET | `/api/familias/{id}/pets` | Lista pets da família | RF007 |
+| POST | `/api/familias/{id}/pets` | Cadastra novo pet na família | RF007 |
+ 
+#### Moradias
+ 
+| Método | Endpoint | Descrição | RF |
+|--------|----------|-----------|-----|
+| GET | `/api/moradias` | Lista moradias com filtros avançados | RF004, RF006 |
+| GET | `/api/moradias/{id}` | Retorna moradia por ID | RF005 |
+| GET | `/api/moradias/{id}/detalhes` | Retorna moradia com localização e ocupantes | RF005 |
+| GET | `/api/moradias/{id}/familias/historico` | Histórico de famílias que ocuparam a moradia | RF005, RF009 |
+| POST | `/api/moradias` | Cria nova moradia | RF002, RF003 |
+| PUT | `/api/moradias/{id}` | Atualiza dados da moradia | RF012 |
+| DELETE | `/api/moradias/{id}` | Remove moradia | RF009 |
+ 
+#### Fotos
+ 
+| Método | Endpoint | Descrição | RF |
+|--------|----------|-----------|-----|
+| GET | `/api/fotos` | Lista todas as fotos | RF002, RF007 |
+| GET | `/api/fotos/{id}` | Retorna foto por ID | RF002, RF007 |
+| GET | `/api/fotos/{id}/signed-url` | Gera URL assinada para acesso seguro | RF002, RF007 |
+| PUT | `/api/fotos/{id}` | Atualiza metadados de uma foto | RF002, RF007 |
+| DELETE | `/api/fotos/{id}` | Remove foto | RF002 |
+| GET | `/api/moradias/{id}/fotos` | Lista fotos de uma moradia | RF002 |
+| POST | `/api/moradias/{id}/fotos/upload-url` | Gera URL pré-assinada para upload | RF002 |
+| POST | `/api/moradias/{id}/fotos` | Registra metadados da foto após upload | RF002 |
+| DELETE | `/api/moradias/{id}/fotos/{fotoId}` | Remove foto de uma moradia | RF002 |
+| GET | `/api/pets/{id}/fotos` | Lista fotos de um pet | RF007 |
+| POST | `/api/pets/{id}/fotos/upload-url` | Gera URL pré-assinada para upload de foto de pet | RF007 |
+| POST | `/api/pets/{id}/fotos` | Registra metadados da foto do pet após upload | RF007 |
+| DELETE | `/api/pets/{id}/fotos/{fotoId}` | Remove foto de um pet | RF007 |
+ 
+#### Pets
+ 
+| Método | Endpoint | Descrição | RF |
+|--------|----------|-----------|-----|
+| GET | `/api/pets` | Lista todos os pets | RF007 |
+| GET | `/api/pets/{id}` | Retorna pet por ID | RF007 |
+| POST | `/api/pets` | Cria novo pet | RF007 |
+| PUT | `/api/pets/{id}` | Atualiza dados de um pet | RF007 |
+| DELETE | `/api/pets/{id}` | Remove pet | RF007 |
 
 ## 3.8. Autenticação, Autorização e Resiliência (sprint 5)
 
