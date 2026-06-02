@@ -1626,16 +1626,7 @@ Dentre as dificuldades, encontramos problemas diversos considerando o prazo de e
 *c) Tendências de Mercado (até 300 palavras)*
 *Identifique e analise tendências relevantes (tecnológicas, comportamentais e mercadológicas) que influenciam o setor. Utilize fontes confiáveis.*
 
-## 6.3. Análise da Concorrência
-
-*a) Principais Concorrentes (até 250 palavras)*
-*Liste os concorrentes diretos e indiretos, destacando suas principais características e posicionamento no mercado.*
-
-*b) Vantagens Competitivas da Aplicação Web (até 250 palavras)*
-*Descreva os diferenciais da sua aplicação em relação aos concorrentes, sem necessidade de citação de fontes.*
-
-
-## 6.4. Público-Alvo
+## 6.3. Público-Alvo
 
 *a) Segmentação de Mercado (até 250 palavras)*
 Descreva os principais segmentos de mercado a serem atendidos pela aplicação. Utilize bases de dados e fontes confiáveis.*
@@ -1643,14 +1634,19 @@ Descreva os principais segmentos de mercado a serem atendidos pela aplicação. 
 *b) Perfil do Público-Alvo (até 250 palavras)*
 *Caracterize o público-alvo com dados demográficos, psicográficos e comportamentais, incluindo necessidades específicas. Utilize fontes obrigatórias.*
 
-
-## 6.5. Posicionamento
+## 6.4. Posicionamento e Branding
 
 *a) Proposta de Valor Única (até 250 palavras)*
 *Defina de maneira clara o que torna a sua aplicação única e valiosa para o mercado.*
 
 *b) Estratégia de Diferenciação (até 250 palavras)*
 *Explique como sua aplicação se destacará da concorrência, evidenciando a lógica por trás do posicionamento.*
+
+## 6.5. Business Model Canvas
+
+*Preencha os nove blocos do Business Model Canvas de forma coerente com as análises realizadas nas seções anteriores: Segmentos de clientes; Proposta de valor; Canais; Relacionamento com clientes; Fontes de receita;*
+
+*Recursos principais; Atividades principais; Parcerias principais; e estrutura de custos (somente se couber nesse momento da análise com o parceiro).*
 
 ## 6.6. Estratégia de Marketing
 
