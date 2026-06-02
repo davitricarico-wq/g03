@@ -1663,12 +1663,17 @@ Em **Produto/Serviço**, são descritas as funcionalidades, benefícios e difere
 O principal benefício da aplicação é centralizar dados antes dispersos em processos manuais, planilhas ou registros fragmentados, aumentando a agilidade, a confiabilidade e a rastreabilidade das informações. Seu diferencial está na adequação ao contexto real da Defesa Civil de Santo André, com foco em tomada de decisão rápida, priorização de grupos vulneráveis, apoio à evacuação e melhoria da gestão de abrigos. Assim, o GeoRisco fortalece a capacidade preventiva e operacional do município diante de eventos climáticos extremos.
 
 
-*b) **Preço**: O modelo de precificação proposto é B2G, voltado à contratação por órgãos públicos municipais, sem cobrança direta dos cidadãos ou dos agentes que utilizam a aplicação. Para Santo André, a solução pode iniciar como projeto piloto institucional, com custos associados à implantação, hospedagem, manutenção, treinamento e suporte técnico. Em uma etapa de expansão, recomenda-se uma licença institucional anual, ajustada ao porte do município, número de usuários, volume de cadastros e necessidade de módulos adicionais.
+*b) **Preço**: O modelo de precificação proposto é B2G (Business to Government), voltado à contratação por órgãos públicos municipais, sem cobrança direta dos cidadãos ou dos agentes que utilizam a aplicação. A solução pode ser implantada por meio de contratação institucional, contemplando custos relacionados à hospedagem, manutenção, suporte técnico e treinamento dos usuários.
 
-Esse modelo é justificado pelas análises anteriores, pois a Defesa Civil atua em um serviço público essencial, sem lógica de venda direta ao consumidor final. O valor da aplicação está na redução de ineficiências operacionais, na centralização das informações e na melhoria da resposta a emergências. Municípios menores poderiam adotar um plano básico, enquanto cidades maiores ou consórcios regionais poderiam contratar versões com relatórios avançados, integrações com outros órgãos e painéis analíticos para gestão estratégica. 
+Esse modelo é adequado porque a Defesa Civil presta um serviço público essencial, sem finalidade comercial voltada ao consumidor final. O valor da aplicação está na centralização das informações, na redução de processos manuais, no aumento da eficiência operacional e no apoio à tomada de decisão em situações de risco e emergência.
+
+Por se tratar de uma solução destinada ao setor público, não são definidos valores comerciais específicos nesta etapa. A precificação depende de fatores como porte do município, número de usuários, requisitos técnicos, disponibilidade orçamentária e processos de contratação pública. Dessa forma, a proposta prioriza a definição de um modelo de contratação sustentável e compatível com a realidade da administração pública.
 
 
-*c) **Praça**:
+
+*c) **Praça**: A distribuição do GeoRisco ocorrerá por canais digitais institucionais, com acesso seguro por navegador em celulares, tablets e computadores. A aplicação poderá ser disponibilizada em domínio oficial da Prefeitura ou da Defesa Civil, com perfis de permissão adequados às funções de agentes de campo, gestores e administradores. Dessa forma, o sistema atende tanto ao uso operacional em campo quanto à análise estratégica em ambiente de sede.
+
+A entrega da aplicação pode ser feita por infraestrutura em nuvem ou em ambiente tecnológico definido pelo município, garantindo disponibilidade, armazenamento centralizado e padronização dos dados. Para expansão, os canais de distribuição incluem parcerias com prefeituras, Defesa Civil estadual, consórcios intermunicipais, secretarias de meio ambiente, assistência social e tecnologia. Documentação técnica, manuais digitais, treinamentos online e APIs de integração podem apoiar a implantação em novos contextos, permitindo que a solução seja replicada para outros municípios com necessidades semelhantes.
 
 
 *d) **Promoção**:  
