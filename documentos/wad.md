@@ -1663,7 +1663,9 @@ Em **Produto/Serviço**, são descritas as funcionalidades, benefícios e difere
 O principal benefício da aplicação é centralizar dados antes dispersos em processos manuais, planilhas ou registros fragmentados, aumentando a agilidade, a confiabilidade e a rastreabilidade das informações. Seu diferencial está na adequação ao contexto real da Defesa Civil de Santo André, com foco em tomada de decisão rápida, priorização de grupos vulneráveis, apoio à evacuação e melhoria da gestão de abrigos. Assim, o GeoRisco fortalece a capacidade preventiva e operacional do município diante de eventos climáticos extremos.
 
 
-*b) **Preço**: 
+*b) **Preço**: O modelo de precificação proposto é B2G, voltado à contratação por órgãos públicos municipais, sem cobrança direta dos cidadãos ou dos agentes que utilizam a aplicação. Para Santo André, a solução pode iniciar como projeto piloto institucional, com custos associados à implantação, hospedagem, manutenção, treinamento e suporte técnico. Em uma etapa de expansão, recomenda-se uma licença institucional anual, ajustada ao porte do município, número de usuários, volume de cadastros e necessidade de módulos adicionais.
+
+Esse modelo é justificado pelas análises anteriores, pois a Defesa Civil atua em um serviço público essencial, sem lógica de venda direta ao consumidor final. O valor da aplicação está na redução de ineficiências operacionais, na centralização das informações e na melhoria da resposta a emergências. Municípios menores poderiam adotar um plano básico, enquanto cidades maiores ou consórcios regionais poderiam contratar versões com relatórios avançados, integrações com outros órgãos e painéis analíticos para gestão estratégica. 
 
 
 *c) **Praça**:
