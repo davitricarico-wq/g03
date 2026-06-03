@@ -272,8 +272,8 @@ Apresenta-se a seguir a lista de User Stories levantadas para o projeto GeoRisco
 | Identificação | US02 |
 |---|---|
 | Persona | João Silva (Agente de Campo) |
-| User Story | "Como agente de campo, quero cadastrar as sócioestruturais das moradias para que possamos mapear a infraestrutura da região e identificar possíveis vulnerabilidades." |
-| Critério de aceite 1 | CR1: `Dado que o agente está em campo em um núcleo de risco cadastrando famílias, quando for clicado o botão de marcar localização, então a plataforma deve anotar as coordenadas atuais do dispositivo utilizado.` | cadastro casa
+| User Story | "Como agente de campo, quero cadastrar as informações sócioestruturais das moradias para que possamos mapear a infraestrutura da região e identificar possíveis vulnerabilidades." |
+| Critério de aceite 1 | CR1: Dado que o agente está em campo em um núcleo de risco, quando estiver cadastrando famílias, então o sistema deve permitir o cadastro de todos os dados necessários referentes a moradia. |
 | Critério de aceite 2 | CR2: Dado que o agente está cadastrando a casa, quando for clicado o botão de marcar localização, então a plataforma deve anotar as coordenadas atuais do dispositivo utilizado. |
 | Critérios INVEST | Independente: A gestão de infraestrutura pode ser tratada de forma modular no banco de dados.; Negociável: A quantidade máxima de fotos por moradia pode ser discutida tecnicamente.; Valiosa: Essencial para calcular o risco de desabamento ou alagamento de uma edificação específica.; Estimável: Os atributos presentes na ficha física delimitam o escopo exato do front-end.; Pequena: O escopo limita-se à estrutura da edificação, separando-se da localização por GPS.; Testável: O sistema deve ser capaz de receber os uploads de imagem e retornar os atributos estruturais salvos em um GET. |
 
@@ -293,17 +293,19 @@ Apresenta-se a seguir a lista de User Stories levantadas para o projeto GeoRisco
 |---|---|
 | Persona | Wesley Souza (Gestor Operacional) |
 | User Story | "Como gestor operacional, quero poder buscar os dados das familias e moradias, para que eu possa consultar dados relacioandos à familias com informações especificas." |
-| Critério de aceite 1 | CR1: Dado que o gestor acessa o módulo de consultas, quando utiliza um dos parametros de pesquisa, então a tela deve mostrar os dados basicos sobre o responsável, moradia, moradores e pets relacionados à família. |
+| Critério de aceite 1 | CR1: Dado que o gestor acessa o módulo de consultas, quando utiliza um dos parametros de pesquisa, então a tela deve mostrar os dados basicos sobre o responsável, moradia, moradores e pets relacionados à(s) família(s) encontradas. |
 | Critério de aceite 2 | CR2: Dado que o gestor visualiza os dados de uma familia, quando a familia estiver sem uma moradia relacionada, então o sistema deve exibir uma flag visual de "cadastro incompleto" no cabeçalho da consulta. |
 | Critérios INVEST | Independente: Utiliza joins de dados já populados pelas US01 e US02.; Negociável: O layout de exibição e os níveis de alerta crítico podem ser ajustados.; Valiosa: Facilita o trabalho do gestor que não precisará cruzar tabelas manualmente em planilhas.; Estimável: A consulta a dados relacionados tem esforço facilmente mensurável.; Pequena: Trata-se de uma view (Visualização de dados) de leitura integrada.; Testável: O teste garante que as informações da ficha física batam com o que está sendo exibido digitalmente. |
 
+### edição
+
 | Identificação | US05 |
 |---|---|
-| Persona | Wesley Souza (Gestor Operacional) |
-| User Story | "Como gestor operacional, quero fazer buscas de familias e moradias por atributos específicos, para poder identificar de maneira prática uma pessoa, familia, moradia ou pet." |
-| Critério de aceite 1 | `CR1: Dado que o gerente está na tela de buscas, quando buscar de alguma maneira`XXXXXXXXX`, então `|
-| Critério de aceite 2 | `CR2: Dado que o gerente `XXXXXXXXXX`, quando `XXXXXXXXXX`, então `XXXXXXXXX`.` |
-| Critérios INVEST | Independente: A engine de busca e filtro roda independentemente das rotinas de inserção.; Negociável: Quais filtros exatos estarão disponíveis na V1 pode ser repriorizado.; Valiosa: Essencial para triagem rápida em cenários pre-desastre.; Estimável: A construção de queries dinâmicas no banco é uma tarefa de esforço previsível.; Pequena: Foca unicamente na filtragem de listagens textuais/tabelas.; Testável: O QA deve garantir que ao selecionar um filtro específico, nenhum dado fora do escopo selecionado vaze para a tela. |
+| Persona | João Silva (Agente de Campo) |
+| User Story | "Como agente de campo, quero, caso necessário, poder atualizar os dados das famílias para manter a integridade e acertividade dos dados cadastrados no sistema." |
+| Critério de aceite 1 | CR1: Dado que seja necessário, em outra situação após o cadastro inicial do núcleo familiar, atualizar os dados o sistema, quando ele encontra a família desejada no sistema de buscas ou mapa, então o modal deve possuir um botão de atualização/edição dos dados atuais que encaminhe o usuário para a página com de cadastro de dados, porém com os dados já preenchidos do núcleo familiar anteriormente. |
+| Critério de aceite 2 | CR2: Dado que o agente revisa e re-salva os dados de um núcleo familiar com dados faltando, quando o formulário é enviado com sucesso, então o indicador de dados faltando no painel de pesquisa deve desaparecer. |
+| Critérios INVEST | Independente: Atua apenas sobre registros já existentes fechando o ciclo de vida do dado.; Negociável: A necessidade de manter versionamento de histórico pode ser discutida.; Valiosa: Garante que o banco da Defesa Civil reflita sempre a realidade do ano vigente.; Estimável: É um reaproveitamento do formulário de criação adaptado para Update.; Pequena: Foca unicamente na ação de editar e limpar os alertas.; Testável: Atestar que a ação de salvar a edição atualiza a coluna correspondente no banco e zera a notificação. |
 
 ### cadastro
 
@@ -347,24 +349,14 @@ Apresenta-se a seguir a lista de User Stories levantadas para o projeto GeoRisco
 |---|---|
 | Persona | Wesley Souza (Gestor Operacional) |
 | User Story | "Como gestor operacional, quero ser `avisado a cada 12 meses de cadastro de cada usuário`, para que `surja um aviso para atualização das informações do mesmo`." |
-| Critério de aceite 1 | `CR1: Dado que o sistema possui uma rotina de checagem automatizada, quando a "Data de Atualização" de uma ficha completar 365 dias sem modificações, então o sistema deve informar o gestor.` |
+| Critério de aceite 1 | CR1: Dado que o agente revisa e re-salva os dados de um núcleo familiar com alerta de desatualização, quando o formulário é enviado com sucesso, então o indicador de "desatualizado" no painel do Gestor Operacional deve desaparecer. |
 | Critério de aceite 2 | `CR2: Dado que o gestor acessa a aba "Visualização/Mapa", quando as informações extras forem desatualizadas, então o número de cadastros desatualizados e atualizados deve aparecer.` |
 | Critérios INVEST | Independente: A rotina roda em background e não interfere no fluxo de cadastro diário.; Negociável: O prazo de aviso pode ser parametrizável.; Valiosa: Evita o sucateamento dos dados em áreas de risco dinâmico.; Estimável: Configuração de uma job e um painel de notificações são tarefas comuns.; Pequena: Apenas identifica e lista pendências.; Testável: Alterar a data de modificação de um teste no banco para "Data Atual - 366 dias" e validar se o alerta dispara. |
-
-### edição 1 ano?
-
-| Identificação | US11 |
-|---|---|
-| Persona | João Silva (Agente de Campo) |
-| User Story | "Como agente de campo, `quero atualizar os dados anualmente para validação informacional do banco de dados da Defesa Civil`." |
-| Critério de aceite 1 | CR1: `Dado que o agente revisita um domicílio marcado por alerta de desatualização, quando ele revisa e re-salva os dados estruturais e sociais, então o sistema deve sobrepor a data de atualização antiga com a atual.` |
-| Critério de aceite 2 | CR2: `Dado que o agente revisa e re-salva os dados de um domicílio com alerta de desatualização, quando o formulário é enviado com sucesso, então o indicador de "desatualizado" no painel do Gestor Operacional deve desaparecer`. |
-| Critérios INVEST | Independente: Atua apenas sobre registros já existentes fechando o ciclo de vida do dado.; Negociável: A necessidade de manter versionamento de histórico pode ser discutida.; Valiosa: Garante que o banco da Defesa Civil reflita sempre a realidade do ano vigente.; Estimável: É um reaproveitamento do formulário de criação adaptado para Update.; Pequena: Foca unicamente na ação de editar e limpar os alertas.; Testável: Atestar que a ação de salvar a edição atualiza a coluna correspondente no banco e zera a notificação. |
 
 ## transformar em regras de Negócio
 ### obrigatoriedade - responsavel na familia 
 
-| Identificação | US12 |
+| Identificação | US11 |
 |---|---|
 | Persona | Wesley Souza (Gestor Operacional) |
 | User Story | "Como gestor operacional, quero que toda moradia ativa possua obrigatoriamente um responsável e uma família vinculada, para garantir a integridade cadastral e facilitar a gestão operacional e social das famílias atendidas." |
@@ -374,7 +366,7 @@ Apresenta-se a seguir a lista de User Stories levantadas para o projeto GeoRisco
 
 ### obrigatoriedade - familia na moradia
 
-| Identificação | US13 |
+| Identificação | US12 |
 |---|---|
 | Persona | Wesley Souza (Gestor Operacional) |
 | User Story | "Como gestor operacional, quero que toda família ativa possua obrigatoriamente uma moradia vinculada, para garantir a integridade cadastral e facilitar a gestão operacional e social das famílias atendidas." |
