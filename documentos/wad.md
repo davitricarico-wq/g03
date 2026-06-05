@@ -331,16 +331,16 @@ Apresenta-se a seguir a lista de User Stories levantadas para o projeto GeoRisco
 |---|---|
 | Persona | Wesley Souza (Gestor Operacional) |
 | User Story | "Como gestor operacional, quero ter a opção de arquivar moradias cadastradas, para ocultá-las das buscas mantendo o histórico de moradias que não estão mais ativas." |
-| Critério de aceite 1 | CR1: Dado que um desastre natural ou tecnológico destruiu/evacuou uma moradia, quando `acessada a edição cadastro e clica em "Arquivar Imóvel"`, então o sistema deve `exigir a seleção de um motivo (Destruída, Evacuada, Desapropriada) antes de confirmar a ação`. |
-| Critério de aceite 2 | CR2: Dado que uma moradia foi arquivada, quando `acessados os painéis e o mapa geral de operações ativas`, então `esta moradia NÃO deve ser exibida, mantendo-se apenas na seção de "Histórico Inativo"`. |
+| Critério de aceite 1 | CR1: Dado que um desastre natural ou tecnológico destruiu/evacuou uma moradia, quando acessada a área de edição dos dados e clicado em "Arquivar moradia" na seção de moradia, então o sistema deve difinir aquela moradia como inativa no banco de dados e ocultá-la do sistema de busca e visualização por mapa normal, disponibilizando sua visualização apenas quando o filtro de "moradias inativas" estiver ativo nas telas. |
+| Critério de aceite 2 | CR2: Dado que uma moradia foi arquivada, quando acessado o painel de vizualiação dos dados da respectiva moradia, então deve estar disponível um botão. |
 | Critérios INVEST | Independente: A funcionalidade de inativação lógica (soft delete) não depende de novos registros.; Negociável: Os motivos do arquivamento podem ser populados a partir de um domínio expansível.; Valiosa: Mantém a integridade do banco de dados enquanto limpa a visão operacional.; Estimável: Requer a adição de flags booleanas e atualização das queries.; Pequena: Funcionalidade contida e de rápida implementação.; Testável: Garantir que imóveis com status "Arquivado" não retornem em chamadas de API ativas. |
 
 | Identificação | US09 |
 |---|---|
 | Persona | Wesley Souza (Gestor Operacional) |
 | User Story | "Como gestor operacional, quero ter a opção de arquivar moradores cadastrados, para ocultá-los das buscas mantendo o histórico de cidadãos que não estão mais ativos." |
-| Critério de aceite 1 | CR1: Dado que um morador veio a óbito ou de alguma maneira não está mais presente na família, quando `acessado o cadastro do indivíduo e clicado em "Arquivar Morador"`, então o sistema `deve exigir o preenchimento da data de falecimento e a confirmação da ação antes de concluir o arquivamento`. |
-| Critério de aceite 2 | CR2: Dado que um `morador foi arquivado como falecido`, quando o `gestor acessar buscas, relatórios ou operações ativas`, então `este morador NÃO deve ser exibido nos registros ativos, permanecendo apenas na seção de "Histórico de Moradores"`. |
+| Critério de aceite 1 | CR1: Dado que por alguma circunstacia um morador seja considerado inativo (morte, desaparecimento, mudança), quando acessada a área de edição dos dados e clicado em "Arquivar morador", na seção de cidadão, em um dos moradores, então o sistema deve difinir aquele morador como inativo no banco de dados e ocultá-lo do sistema de busca e estatísticas normal, disponibilizando sua visualização apenas quando o filtro de "moradores inativos" estiver ativo nas telas. |
+| Critério de aceite 2 | CR2: Dado que uma moradia foi arquivada, quando acessado o painel de vizualiação dos dados da respectiva moradia, então deve estar disponível um botão. |
 | Critérios INVEST | Independente: A funcionalidade de arquivamento lógico do morador pode ser implementada sem impactar o cadastro ativo.; Negociável: Os campos relacionados ao falecimento podem ser ajustados conforme as regras do sistema.; Valiosa: Mantém o histórico populacional preservado sem interferir nas operações correntes.; Estimável: Requer adição de status lógico, filtros de consulta e atualização das regras de exibição.; Pequena: Funcionalidade isolada e de baixa complexidade técnica.; Testável: Garantir que moradores arquivados não sejam retornados em consultas de moradores ativos e permaneçam acessíveis no histórico. |
 
 ### aviso 1 ano
@@ -348,9 +348,9 @@ Apresenta-se a seguir a lista de User Stories levantadas para o projeto GeoRisco
 | Identificação | US10 |
 |---|---|
 | Persona | Wesley Souza (Gestor Operacional) |
-| User Story | "Como gestor operacional, quero ser `avisado a cada 12 meses de cadastro de cada usuário`, para que `surja um aviso para atualização das informações do mesmo`." |
-| Critério de aceite 1 | CR1: Dado que o agente revisa e re-salva os dados de um núcleo familiar com alerta de desatualização, quando o formulário é enviado com sucesso, então o indicador de "desatualizado" no painel do Gestor Operacional deve desaparecer. |
-| Critério de aceite 2 | `CR2: Dado que o gestor acessa a aba "Visualização/Mapa", quando as informações extras forem desatualizadas, então o número de cadastros desatualizados e atualizados deve aparecer.` |
+| User Story | "Como gestor operacional, quero saber quais cadastros do sistema foram feitos a mais de 1 ano, para que eu possa guiar os agentes de campo para atualizar os dados de cadastro que tenham possívelmente mudado e manter a integridade das informações ." |
+| Critério de aceite 1 | CR1: Dado que um cadastro foi feito com sucesso, quando a data de cadastro for maior que 365 dias, então deve aparecer uma sinalização mostrando que o cadastro está desatualizado. |
+| Critério de aceite 2 | CR2: Dado que o agente revisa e re-salva os dados de um núcleo familiar com alerta de desatualização, quando o formulário é enviado com sucesso, então o indicador de "desatualizado" no painel do Gestor Operacional deve desaparecer. |
 | Critérios INVEST | Independente: A rotina roda em background e não interfere no fluxo de cadastro diário.; Negociável: O prazo de aviso pode ser parametrizável.; Valiosa: Evita o sucateamento dos dados em áreas de risco dinâmico.; Estimável: Configuração de uma job e um painel de notificações são tarefas comuns.; Pequena: Apenas identifica e lista pendências.; Testável: Alterar a data de modificação de um teste no banco para "Data Atual - 366 dias" e validar se o alerta dispara. |
 
 ## transformar em regras de Negócio
