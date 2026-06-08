@@ -1653,9 +1653,45 @@ Fontes utilizadas para realizar a pesquisa de segmentação de mercado:
 
 ### 6.3.2. Perfil do Público-Alvo
 
-*b) Perfil do Público-Alvo (até 250 palavras)*
-*Caracterize o público-alvo com dados demográficos, psicográficos e comportamentais, incluindo necessidades específicas. Utilize fontes obrigatórias.*
 
+O público-alvo principal do GeoRisco são os profissionais de Campo e Gerência Operacional da **Defesa Civil de Santo André**:
+
+**Agente da Defesa Civil (Campo)**
+
+| Aspecto              | Descrição                                                                                                                                                                                                                 |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Atuação              | Age diretamente nas ruas visitando as casas e coletando informações sobre as famílias de Santo André, em especial, as em áreas de risco.                                                                                  |
+| Dispositivo          | Usa a aplicação no dispositivo móvel independente da situação local.                                                                                                                                                      |
+| Perfil Tecnológico   | Tem conhecimento tecnológico intermediário — alguns têm facilidade, outros precisam de treinamento.                                                                                                                       |
+| Necessidades         | Precisa de um aplicativo de interface simples, fácil de usar mesmo em situações adversas e que funcione mesmo sem sinal.                                                                                                                                           |
+| Desafios     | O processo de coleta ocorre em diferentes contextos, como visitas domiciliares, campanhas e ações emergenciais. Nem todos os moradores fornecem todas as informações solicitadas, exigindo suporte a cadastros parciais. Além disso, há retrabalho devido à duplicidade de registros, uso de formulários em papel sujeitos a perdas, dificuldades para localizar moradias em áreas remotas e limitações de conectividade durante o trabalho de campo. |
+
+
+<br>
+
+**Gestor Operacional da Defesa Civil (Estratégico)**
+
+| Aspecto                    | Descrição                                                                                                                                                                             |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Atuação                    | Coordena as operações de forma estratégica, decide onde concentrar esforços, como alocar recursos e quais áreas precisam de ação imediata ou especializada como o de pessoas com baixa mobilidade, acamadas etc.                                            |
+| Dispositivo                | Usa a aplicação no computador e gerencia os parâmetros de monitoramento.                                                                                                              |
+| Perfil Tecnológico   | Familiaridade média da maioria dos profissionais com tecnologia.  |
+| Necessidades de Informação | Precisa de acesso aos dados dos moradores e moradias para gerenciamento, controle e tomadas estratégicas em operações e apoios.                                                                                                   |
+| Visualização e Análise     | Necessita de painéis que mostrem claramente os riscos, quantas pessoas estão em cada zona, relatórios detalhados e informações estratégicas para planejar evacuações e contingências. |
+| Desafios     | Necessita consolidar informações provenientes de diferentes equipes e regiões para apoiar decisões rápidas. A ausência de dados atualizados ou de uma visão consolidada dos riscos pode dificultar o planejamento de evacuações, a alocação de recursos e a coordenação das operações. |
+
+<br>
+<br>
+
+**Necessidades Comuns**
+
+| Aspecto                     | Descrição                                                                |
+| --------------------------- | ------------------------------------------------------------------------ |
+| Precisão dos Dados          | Todos precisam que os dados sejam precisos.                              |
+| Integridade das Informações | Não pode haver perda de informações.                                     |
+| Segurança e Privacidade     | As informações das famílias devem ser protegidas com segurança e sigilo. |
+
+<br>
 
 ## 6.4. Posicionamento e Branding
 
