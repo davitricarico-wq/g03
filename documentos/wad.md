@@ -1617,7 +1617,7 @@ Dentre as dificuldades, encontramos problemas diversos considerando o prazo de e
 
 ## 6.2. Análise de Mercado
 
-O GeoRisco Santo André está inserido no setor de GovTech, que se trasuz para um conjunto de soluções tecnológicas desenvolvidas por empresas privadas para modernizar a gestão pública e melhorar a entrega de serviços governamentais à população.
+O GeoRisco Santo André está inserido no setor de GovTech, que corresponde a um conjunto de soluções tecnológicas desenvolvidas por empresas privadas para modernizar a gestão pública e aprimorar a prestação de serviços à população.
 
 O setor surge da convergência entre a aceleração digital da sociedade e a defasagem histórica dos sistemas públicos, que ainda operam em grande parte com processos analógicos, fragmentados e pouco escaláveis. À medida que governos enfrentam demandas crescentes por eficiência, transparência e sustentabilidade, o GovTech se consolida como resposta estrutural, oferecendo ferramentas que automatizam processos, reduzem custos operacionais e reconstroem a confiança pública.
 
