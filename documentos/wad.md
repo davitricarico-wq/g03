@@ -1637,8 +1637,16 @@ No Brasil, o contexto é especialmente favorável. O setor público é o maior c
 *a) Segmentação de Mercado (até 250 palavras)*
 Descreva os principais segmentos de mercado a serem atendidos pela aplicação. Utilize bases de dados e fontes confiáveis.*
 
-*b) Perfil do Público-Alvo (até 250 palavras)*
-*Caracterize o público-alvo com dados demográficos, psicográficos e comportamentais, incluindo necessidades específicas. Utilize fontes obrigatórias.*
+
+O público-alvo principal do GeoRisco são os **Agentes da Defesa Civil de Santo André**, que trabalham em duas funções principais:
+
+**Agente de Defesa Civil (Campo)**
+Vai para as ruas visitar as casas e coletar informações sobre as famílias em áreas de risco. Usa a aplicação no celular, frequentemente em chuvas e sem internet. Tem conhecimento tecnológico intermediário — alguns têm facilidade, outros precisam de treinamento. Precisa de um aplicativo simples, fácil de usar e que funcione mesmo sem sinal. Trabalha sob pressão, então os formulários precisam ser rápidos e diretos.
+
+**Agente de Defesa Civil (Administração)**
+Coordena as operações, decide onde concentrar esforços, como alocar recursos e quais áreas precisam de ação imediata. Usa a aplicação no computador e gerencia os parâmetros de monitoramento. Precisa de painéis que mostrem claramente os riscos, quantas pessoas estão em cada zona, relatórios detalhados e informações estratégicas para planejar evacuações e contingências.
+
+**Necessidades Comuns:** Todos precisam que os dados sejam precisos, que não haja perda de informações, e que as informações das famílias sejam protegidas com segurança e sigilo.
 
 
 ## 6.4. Posicionamento e Branding
