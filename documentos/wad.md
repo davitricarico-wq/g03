@@ -1611,9 +1611,13 @@ Dentre as dificuldades, encontramos problemas diversos considerando o prazo de e
 
 ## 6.1. Resumo Executivo
 
-*Preencher com até 300 palavras, sem necessidade de fonte*
+O GeoRisco Santo André é uma aplicação web desenvolvida em parceria com a Defesa Civil do município para apoiar a gestão georreferenciada de populações em áreas de risco. A solução substitui processos analógicos, fragmentados e baseados em planilhas físicas por uma plataforma digital integrada, que permite ao agente de campo cadastrar moradias, núcleos familiares, vulnerabilidades e animais de estimação, e oferece à sede um painel geolocalizado para tomada de decisão estratégica em tempo real.
 
-*Apresente de forma clara e objetiva os principais destaques do projeto: oportunidades de mercado, diferenciais competitivos da aplicação web e os objetivos estratégicos pretendidos.*
+**Oportunidades de mercado.** O projeto se insere no setor GovTech, segmento em expansão no Brasil, onde o setor público responde por cerca de 12% do PIB e enfrenta forte demanda por modernização. Marcos regulatórios como a Lei nº 12.608/2012 (Política Nacional de Proteção e Defesa Civil) e a LGPD (Lei nº 13.709/2018) reforçam a necessidade de cadastros atualizados, rastreáveis e seguros. Santo André concentra 28 áreas de risco e 3.803 edificações classificadas como risco alto e muito alto (R3/R4), cenário replicável em centenas de municípios brasileiros monitorados pelo CEMADEN, com potencial inicial de expansão para o ABC Paulista e demais coordenadorias municipais de Defesa Civil.
+
+**Diferenciais competitivos.** A aplicação combina geolocalização multimodal (CEP, coordenadas GPS, referências geográficas e fotos do imóvel) e visualização em mapa com filtros por vulnerabilidade e densidade populacional. O modelo B2G prioriza impacto social, conformidade com a LGPD e adequação ao contexto operacional real do agente.
+
+**Objetivos estratégicos.** Reduzir o tempo crítico de coleta para menos de cinco minutos por moradia; eliminar gaps operacionais entre evacuação e abrigo; oferecer visão estratégica em tempo real para alocação de recursos; e consolidar uma base íntegra que fortaleça a resiliência urbana de Santo André e sirva de referência para replicação em outros municípios.
 
 ## 6.2. Análise de Mercado
 
@@ -1666,9 +1670,45 @@ Fontes utilizadas para realizar a pesquisa de segmentação de mercado:
 
 ### 6.3.2. Perfil do Público-Alvo
 
-*b) Perfil do Público-Alvo (até 250 palavras)*
-*Caracterize o público-alvo com dados demográficos, psicográficos e comportamentais, incluindo necessidades específicas. Utilize fontes obrigatórias.*
 
+O público-alvo principal do GeoRisco são os profissionais de Campo e Gerência Operacional da **Defesa Civil de Santo André**:
+
+**Agente da Defesa Civil (Campo)**
+
+| Aspecto              | Descrição                                                                                                                                                                                                                 |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Atuação              | Age diretamente nas ruas visitando as casas e coletando informações sobre as famílias de Santo André, em especial, as em áreas de risco.                                                                                  |
+| Dispositivo          | Usa a aplicação no dispositivo móvel independente da situação local.                                                                                                                                                      |
+| Perfil Tecnológico   | Tem conhecimento tecnológico intermediário — alguns têm facilidade, outros precisam de treinamento.                                                                                                                       |
+| Necessidades         | Precisa de um aplicativo de interface simples, fácil de usar mesmo em situações adversas e que funcione mesmo sem sinal.                                                                                                                                           |
+| Desafios     | O processo de coleta ocorre em diferentes contextos, como visitas domiciliares, campanhas e ações emergenciais. Nem todos os moradores fornecem todas as informações solicitadas, exigindo suporte a cadastros parciais. Além disso, há retrabalho devido à duplicidade de registros, uso de formulários em papel sujeitos a perdas, dificuldades para localizar moradias em áreas remotas e limitações de conectividade durante o trabalho de campo. |
+
+
+<br>
+
+**Gestor Operacional da Defesa Civil (Estratégico)**
+
+| Aspecto                    | Descrição                                                                                                                                                                             |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Atuação                    | Coordena as operações de forma estratégica, decide onde concentrar esforços, como alocar recursos e quais áreas precisam de ação imediata ou especializada como o de pessoas com baixa mobilidade, acamadas etc.                                            |
+| Dispositivo                | Usa a aplicação no computador e gerencia os parâmetros de monitoramento.                                                                                                              |
+| Perfil Tecnológico   | Familiaridade média da maioria dos profissionais com tecnologia.  |
+| Necessidades de Informação | Precisa de acesso aos dados dos moradores e moradias para gerenciamento, controle e tomadas estratégicas em operações e apoios.                                                                                                   |
+| Visualização e Análise     | Necessita de painéis que mostrem claramente os riscos, quantas pessoas estão em cada zona, relatórios detalhados e informações estratégicas para planejar evacuações e contingências. |
+| Desafios     | Necessita consolidar informações provenientes de diferentes equipes e regiões para apoiar decisões rápidas. A ausência de dados atualizados ou de uma visão consolidada dos riscos pode dificultar o planejamento de evacuações, a alocação de recursos e a coordenação das operações. |
+
+<br>
+<br>
+
+**Necessidades Comuns**
+
+| Aspecto                     | Descrição                                                                |
+| --------------------------- | ------------------------------------------------------------------------ |
+| Precisão dos Dados          | Todos precisam que os dados sejam precisos.                              |
+| Integridade das Informações | Não pode haver perda de informações.                                     |
+| Segurança e Privacidade     | As informações das famílias devem ser protegidas com segurança e sigilo. |
+
+<br>
 
 ## 6.4. Posicionamento e Branding
 
