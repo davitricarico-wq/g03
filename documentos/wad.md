@@ -1643,10 +1643,11 @@ Descreva os principais segmentos de mercado a serem atendidos pela aplicação. 
 *Explique como sua aplicação se destacará da concorrência, evidenciando a lógica por trás do posicionamento.*
 
 ## 6.5. Business Model Canvas
+A seção de Posicionamento tem como objetivo definir a identidade estratégica do projeto GeoRisco e demonstrar como ele se insere e gera impacto nas operações da instituição parceira. A inclusão do Business Model Canvas (BMC) nesta seção é fundamental, pois ele atua como a ferramenta tática que mapeia, consolida e tangibiliza esse posicionamento de forma estruturada.
 
-*Preencha os nove blocos do Business Model Canvas de forma coerente com as análises realizadas nas seções anteriores: Segmentos de clientes; Proposta de valor; Canais; Relacionamento com clientes; Fontes de receita;*
+No contexto do projeto GeoRisco, o BMC não foca na geração de lucro comercial, mas sim na maximização do impacto social e da eficiência operacional pública. Ele materializa o posicionamento da solução ao detalhar de forma clara e visual como a aplicação web cria e entrega valor para a Defesa Civil do município de Santo André.
 
-*Recursos principais; Atividades principais; Parcerias principais; e estrutura de custos (somente se couber nesse momento da análise com o parceiro).*
+Link do arquivo: https://miro.com/app/board/uXjVHLRyshY=/?share_link_id=86927684222
 
 ## 6.6. Estratégia de Marketing
 
