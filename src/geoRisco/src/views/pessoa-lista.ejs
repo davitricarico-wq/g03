@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lista de Pessoas</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="page-header">
+        <h1>Lista de pessoas</h1>
+        <p class="subtitle">Registros cadastrados no sistema.</p>
+      </header>
+      <section class="card">
+        <% if (pessoas && pessoas.length) { %>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>Nome social</th>
+                  <th>Parentesco</th>
+                  <th>Status</th>
+                  <th>Escolaridade</th>
+                  <th>Cronico</th>
+                  <th>Medicacao</th>
+                  <th>Situacao ocupacional</th>
+                  <th>Nascimento</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% pessoas.forEach((pessoa) => { %>
+                  <tr>
+                    <td><%= pessoa.nome %></td>
+                    <td><%= pessoa.nomeSocial || '-' %></td>
+                    <td><%= pessoa.parentesco %></td>
+                    <td><%= pessoa.status %></td>
+                    <td><%= pessoa.escolaridade %></td>
+                    <td><%= pessoa.cronico ? 'Sim' : 'Nao' %></td>
+                    <td><%= pessoa.medicacao ? 'Sim' : 'Nao' %></td>
+                    <td><%= pessoa.situacaoOcupacional %></td>
+                    <td><%= pessoa.dataDeNascimento %></td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        <% } else { %>
+          <p class="empty">Nenhuma pessoa cadastrada ainda.</p>
+        <% } %>
+      </section>
+    </main>
+  </body>
+</html>

@@ -293,9 +293,9 @@ Apresenta-se a seguir a lista de User Stories levantadas para o projeto GeoRisco
 | Identificação | US04 |
 |---|---|
 | Persona | Wesley Souza (Gestor Operacional) |
-| User Story | "Como gestor operacional, quero poder buscar os dados das familias e moradias, para que eu possa consultar dados relacioandos à familias com informações especificas." |
+| User Story | "Como gestor operacional, quero poder buscar os dados das familias e moradias, para que eu possa consultar dados relacionados à familias com informações especificas." |
 | Critério de aceite 1 | CR1: Dado que o gestor acessa o módulo de consultas, quando utiliza um dos parametros de pesquisa, então a tela deve mostrar os dados basicos sobre o responsável, moradia, moradores e pets relacionados à(s) família(s) encontradas. |
-| Critério de aceite 2 | CR2: Dado que o gestor visualiza os dados de uma família, quando a família estiver sem moradia ou sem responsável vinculado, então o sistema deve exibir a flag visual de "cadastro incompleto" no cabeçalho da consulta. |
+| Critério de aceite 2 | CR2: Dado que o gestor visualiza os dados de uma família, quando a família estiver sem moradia vinculada, então o sistema deve exibir a flag visual de "cadastro incompleto" no cabeçalho da consulta. |
 | Critérios INVEST | Independente: Utiliza joins de dados já populados pelas US01 e US02.; Negociável: O layout de exibição e os níveis de alerta crítico podem ser ajustados.; Valiosa: Facilita o trabalho do gestor que não precisará cruzar tabelas manualmente em planilhas.; Estimável: A consulta a dados relacionados tem esforço facilmente mensurável.; Pequena: Trata-se de uma view (Visualização de dados) de leitura integrada.; Testável: O teste garante que as informações da ficha física batam com o que está sendo exibido digitalmente. |
 
 ### edição
@@ -316,7 +316,7 @@ Apresenta-se a seguir a lista de User Stories levantadas para o projeto GeoRisco
 | User Story | "Como agente de campo, quero que a localização da moradia utilize minha posição no momento do cadastro como referência, para que eu tenha salvo o local exato mesmo em zonas remotas." |
 | Critério de aceite 1 | CR1: Dado que o agente de campo entra na tela de cadastro de nova moradia, quando a tela carregar, então o sistema deve solicitar permissão do dispositivo e preencher automaticamente a Latitude e Longitude. |
 | Critério de aceite 2 | CR2: Dado que o agente tenha cadastrado os dados das familias de outro lugar que não seja a moradia atual, quando o mesmo for fazer o cadastro, então o sistema deve possuir um retorno visual indicando se a localização já foi obtida, um botão de apagar a localização registrada e outro de re-registrar a localização utilizando a localização atual. |
-| Critério de aceite 3 | CR3: Dado que o agente entra na tela de cadastro de moradia, quando a permissão de localização é negada ou não há sinal de GPS disponível, então o sistema deve permitir o preenchimento manual da latitude e longitude, mantendo o cadastro possível mesmo sem a captura automática. |
+| Critério de aceite 3 | CR3: Dado que o agente entra na tela de cadastro de moradia, quando a permissão de localização é negada ou não há sinal de GPS disponível, então o sistema deve permitir o preenchimento manual da localização por meio do manuseamento do marcador (pin) no mapa, mantendo o cadastro possível mesmo sem a captura automática. |
 | Critérios INVEST | Independente: A funcionalidade de captura de hardware é independente dos campos de texto do formulário.; Negociável: A precisão exigida (ex: margem de 5 a 10 metros) pode ser acordada com o time.; Valiosa: Elimina o erro humano da digitação de coordenadas numéricas longas.; Estimável: Utilizar APIs nativas de geolocalização mobile é padrão na indústria.; Pequena: Cobre especificamente um único componente de auto-preenchimento.; Testável: Pode-se simular diferentes coordenadas GPS em emuladores para validar a captura. |
 
 | Identificação | US07 |
@@ -367,16 +367,6 @@ Apresenta-se a seguir a lista de User Stories levantadas para o projeto GeoRisco
 | Critério de aceite 1 | CR1: Dado que uma moradia esteja ativa no sistema, quando não houver um morador definido como chefe de família, então o sistema deve exibir um alerta de inconsistência cadastral e impedir a finalização ou permanência do cadastro como ativo. |
 | Critério de aceite 2 | CR2: Dado que um chefe de família seja arquivado, inativado ou removido da moradia, quando a alteração for confirmada, então o sistema deve exigir a definição de um novo chefe de família antes de concluir a operação. |
 | Critérios INVEST | Independente: A validação do chefe de família pode ser implementada sem impactar os demais módulos do sistema.; Negociável: As regras de definição e substituição do chefe de família podem ser ajustadas conforme as políticas da Defesa Civil.; Valiosa: Garante consistência nos registros familiares e melhora a rastreabilidade das informações sociais.; Estimável: A implementação exige apenas validações de vínculo e regras de negócio simples.; Pequena: O escopo está restrito à obrigatoriedade e substituição do chefe de família.; Testável: O QA pode tentar manter uma moradia ativa sem chefe de família e validar se o sistema bloqueia a operação corretamente. |
-
-### obrigatoriedade - familia na moradia
-
-| Identificação | US12 |
-|---|---|
-| Persona | Wesley Souza (Gestor Operacional) |
-| User Story | "Como gestor operacional, quero que toda família ativa possua obrigatoriamente uma moradia vinculada, para garantir a integridade cadastral e facilitar a gestão operacional e social das famílias atendidas." |
-| Critério de aceite 1 | CR1: Dado que uma família esteja ativa no sistema, quando não houver um moradia definida e ativa, então o sistema deve exibir um alerta de inconsistência cadastral e impedir a finalização ou permanência do cadastro como ativo. |
-| Critério de aceite 2 | CR2: Dado que a moradia seja arquivada, inativado ou removido enquanto uma família estiver vinculada, quando a alteração for confirmada, então o sistema deve exigir a definição de uma nova moradia. |
-| Critérios INVEST | Independente: A validação da moradia pode ser implementada sem impactar os demais módulos do sistema.; Negociável: As regras de definição e substituição da moradia podem ser ajustadas conforme as políticas da Defesa Civil.; Valiosa: Garante consistência nos registros familiares e melhora a rastreabilidade das informações sociais.; Estimável: A implementação exige apenas validações de vínculo e regras de negócio simples.; Pequena: O escopo está restrito à obrigatoriedade e substituição da moradia vinculada a família.; Testável: O QA pode tentar manter uma família ativa sem moradia e validar se o sistema envia o alerta corretamente. |
 
 
 # <a name="c3"></a>3. Projeto da Aplicação Web (sprints 1 a 5)
@@ -432,6 +422,7 @@ O sistema atende primordialmente ao Agente de Campo (A01) no que tange à operat
 
 ### 3.1.4 Requisitos Não Funcionais — ISO/IEC 25010:2011
 
+<<<<<<< documentos/wad.md
 | ID | Eixo | Descrição | Derivação e Contexto do Parceiro | Métrica / Critério de Aceite | Conexão com RFs | Como Verificar |
 |---|---|---|---|---|---|---|
 | RNF001 | **Usabilidade** | A interface PWA deve permitir o preenchimento completo de um cadastro de moradia em menos de 3 minutos por agentes de campo em situações de estresse, com layout otimizado para uso em campo. | Derivado da US01 e US02: João Silva atua em áreas de risco sob pressão, com proficiência tecnológica média/baixa. O parceiro exige que o sistema reduza o tempo de operação e evite erros de preenchimento. A métrica de 3 minutos foi estabelecida com base no tempo médio de uma vistoria presencial. | Tempo médio de preenchimento completo < 3 min (Time-on-Task com mín. 5 agentes reais). Taxa de erro de preenchimento < 5%. | RF001, RF002 | Testes de usabilidade cronometrados com agentes reais em dispositivos móveis em condições simuladas de campo. |
@@ -440,20 +431,95 @@ O sistema atende primordialmente ao Agente de Campo (A01) no que tange à operat
 | RNF005 | **Suportabilidade** | A aplicação PWA deve operar corretamente nos dispositivos móveis fornecidos ou utilizados pela prefeitura, sem quebra de layout ou perda de funcionalidade. | Derivado da restrição de hardware do parceiro: a Defesa Civil de Santo André utiliza dispositivos institucionais de modelos variados, sem padronização de hardware, com telas entre 5,5 e 7 polegadas e versões de SO diversas. A compatibilidade ampla é essencial para a adoção do sistema em campo. | Layout funcional sem sobreposição de elementos em telas de 5,5 a 7 polegadas; compatibilidade plena com as 3 últimas versões de Android e iOS, sem erros de renderização. | RF001, RF002, RF003 | Matriz de testes em emuladores (BrowserStack) cobrindo modelos e versões especificados; testes complementares nos aparelhos físicos disponibilizados pela Defesa Civil. |
 | RNF007 | **Restrições de Design** | O bundle PWA deve ser compacto para funcionar em dispositivos com armazenamento limitado. Fotos de imóveis devem ser comprimidas automaticamente antes do armazenamento. | Derivado da US02 e da restrição de hardware do parceiro: dispositivos institucionais possuem armazenamento interno reduzido. O upload de fotos de fachada e entorno, exigido pelo parceiro como evidência visual, pode consumir espaço excessivo sem controle de tamanho. Os limites de 15 MB e 2 MB por foto foram definidos para garantir operação em aparelhos a partir de 16 GB com conexões lentas. | Bundle PWA em cache < 15 MB; cada imagem comprimida automaticamente para máx. 2 MB sem intervenção do agente. | RF002 | Análise de payload via Chrome DevTools (aba Network/Storage); validação automatizada do tamanho dos arquivos armazenados no banco após upload. |
 | RNF008 | **Organizacionais** | O ambiente de homologação e testes deve operar exclusivamente com dados fictícios e mascarados durante toda a fase de desenvolvimento, sem exceções. | Derivado diretamente do Termo de Confidencialidade e da LGPD: qualquer exposição acidental de dados reais de populações vulneráveis em ambiente de desenvolvimento constitui violação legal e contratual. Esta restrição se aplica a todos os membros da equipe em todas as sprints, incluindo seeds, fixtures e dumps de teste. | 100% dos registros em homologação fictícios ou mascarados, auditado ao encerramento de cada sprint. Nenhum CPF, nome real ou coordenada real em base de testes. | Todos os RFs | Auditoria periódica da base de testes; checklist de conformidade no encerramento de cada sprint; scripts de varredura automatizada para detectar padrões de dados reais. |
+=======
+| ID | Eixo | Descrição | Derivação e Contexto do Parceiro | Evolução do conceitual para técnico | Métrica / Critério de Aceite | Conexão com RFs | Como Verificar |
+|---|---|---|---|---|---|---|---|
+| RNF001 | **Usabilidade** | O sistema deve facilitar o preenchimento e a consulta de cadastros por meio de payloads padronizados, validações de entrada e respostas de erro compreensíveis. Evitando assim, a escrita de dados errados, inconsistentes e dados não padronizados.  | Derivado da US01 e US02: agentes atuam em áreas de risco sob pressão e precisam registrar dados de pessoas, moradias e famílias com o menor número possível de inconsistências. | O requisito evoluiu para decisões técnicas como uso de DTOs, funções de normalização em `request-utils.ts` e validações específicas em `validations/`, reduzindo erros de entrada antes que os dados cheguem aos services. | Payloads obrigatórios devem ser validados antes da persistência; requisições inválidas devem retornar mensagens de erro claras. | RF001, RF002, RF005, RF012 | Testar chamadas da API com dados válidos e inválidos, verificando se os erros retornados orientam a correção do preenchimento. |
+| RNF002 | **Confiabilidade** | O backend deve preservar a integridade dos dados em operações compostas, evitando cadastros parciais quando uma etapa do processo falha. | Derivado da necessidade de manter cadastros familiares, moradias, responsáveis e vínculos consistentes, já que dados incompletos podem prejudicar consultas e ações da Defesa Civil. | O requisito evoluiu para o uso de transações nos services, com `BEGIN`, `COMMIT` e `ROLLBACK` em operações que envolvem múltiplas tabelas, como cadastro de responsável, moradia com localização e núcleo familiar. | Operações compostas devem ser concluídas integralmente ou revertidas em caso de erro. | RF001, RF002, RF003, RF012 | Simular falhas durante cadastros compostos e verificar se nenhum registro parcial permanece persistido no banco. |
+| RNF003 | **Eficiência de desempenho** | O sistema deve manter uma organização que permita consultas e operações de cadastro com baixo acoplamento e possibilidade de otimização futura. | Derivado da necessidade de consulta rápida a pessoas, moradias, famílias, pets e fotos, especialmente em cenários de uso operacional. | O requisito evoluiu para a separação entre controllers, services e repositories. O acesso ao banco foi isolado em repositories, permitindo otimizar queries SQL sem alterar a lógica dos controllers ou services. | Endpoints principais devem responder de forma consistente, com funções como busca de dados da moradia devem responder em menos de 1 segundo e permitir análise futura de gargalos em consultas SQL. | RF004, RF005, RF006, RF011 | Medir tempo de resposta dos endpoints principais e revisar queries em repositories para identificar pontos de otimização. |
+| RNF004 | **Adequação funcional** | A API deve oferecer endpoints coerentes com os fluxos centrais do sistema, cobrindo cadastro, consulta, atualização e remoção de pessoas, moradias, famílias, pets e fotos. Com todos estes seguindo o protocólo HTTP correto. | Derivado da necessidade de transformar os fluxos definidos no WAD em operações concretas no backend. | O requisito evoluiu para rotas REST organizadas por domínio em `routes/`, com controllers e services específicos para cada módulo funcional da aplicação. | Os endpoints implementados devem corresponder aos fluxos funcionais documentados e estar vinculados aos RFs relevantes. | Todos os RFs | Conferir a documentação da WebAPI e testar se os endpoints existentes cobrem os fluxos previstos nos requisitos funcionais. |
+| RNF005 | **Interoperabilidade** | A aplicação deve ser acessível por tecnologias web amplamente compatíveis e permitir consumo dos mesmos endpoints por diferentes interfaces. | Derivado da necessidade de uso em diferentes dispositivos e contextos, incluindo telas de cadastro, consulta e uso futuro em mobile/PWA. | O requisito evoluiu para o uso de Express, JSON, EJS e arquivos estáticos, permitindo acesso via navegador e consumo da API HTTP por diferentes interfaces. | A API deve manter contratos independentes do dispositivo ou interface que a consome. | RF001, RF002, RF003, RF004 | Testar a aplicação em navegadores e resoluções diferentes, verificando se os endpoints continuam acessíveis e consistentes. |
+| RNF006 | **Segurança** | O sistema deve reduzir exposição de dados sensíveis e arquivos, validando entradas, controlando erros e evitando acesso direto a detalhes internos da aplicação. Importante explicitar que deve-se garantir que logs de erros ou informacionais do sistema não exponham dados sensíveis. | Derivado da LGPD e do tratamento de dados sensíveis de cidadãos vulneráveis, além da necessidade de proteger fotos e informações cadastrais. | O requisito evoluiu para validações de payload, uso de `HttpError`, tratamento padronizado com `handleControllerError` e integração com Supabase Storage por URLs assinadas. | Requisições inválidas não devem expor stack trace, credenciais, detalhes internos do banco ou caminhos sensíveis de storage. | RF001, RF002, RF009, RF010 | Enviar requisições inválidas e verificar se as respostas de erro são controladas e não expõem informações internas. |
+| RNF007 | **Compatibilidade** | O sistema deve separar o armazenamento de metadados do armazenamento de arquivos, permitindo integração entre PostgreSQL e serviço externo de storage. | Derivado da necessidade de registrar fotos de moradias e pets sem sobrecarregar o banco relacional com arquivos binários. | O requisito evoluiu para endpoints próprios de fotos e upload mediado por Supabase Storage. O banco mantém vínculos e metadados, enquanto o storage externo armazena os arquivos. | O sistema deve permitir gerar URL assinada, cadastrar metadados da foto e vincular o arquivo à moradia ou ao pet correspondente. | RF002, RF007 | Testar criação de URL assinada, cadastro de foto e vínculo com moradia ou pet, verificando integração entre API, banco e storage. |
+| RNF008 | **Manutenibilidade** | O projeto deve manter uma estrutura organizada, auditável e segura para evolução, testes e uso de dados fictícios durante o desenvolvimento. | Derivado da necessidade de evolução contínua do projeto em sprints, com separação clara de responsabilidades e redução do risco de uso indevido de dados reais. | O requisito evoluiu para a organização do backend em `controllers`, `services`, `repositories`, `dtos`, `models`, `validations`, `errors`, `db` e `storage`, além do uso de variáveis de ambiente para configurações sensíveis. | A estrutura do código deve permitir manutenção por módulos e facilitar auditoria do que é regra de negócio, persistência, validação ou infraestrutura. | Todos os RFs | Revisar estrutura de pastas, testes e dados utilizados em desenvolvimento, garantindo que a evolução do sistema não dependa de dados reais. |
+>>>>>>> documentos/wad.md
 
-### 3.1.5. Matriz RF → RN → Endpoint (sprints 3 a 5)
-
-Matriz de cobertura que demonstra quais RN (Regras de Negócio) e endpoints implementam cada RF (Requisito Funcional).
-
-| RF    | RN associadas | Endpoint    | Método |
-|-------|---------------|-------------|--------|
-| RF001 | RN01, RN02    | `/usuarios` | POST   |
+## 3.1.5. Matriz RF → RN → Endpoint (sprints 3 a 5)
+ 
+Matriz de cobertura que demonstra quais RN (Regras de Negócio) e endpoints implementam cada RF (Requisito Funcional). Os endpoints listados abaixo estão implementados no backend e formalizados no arquivo `documentos/outros/webapi-docs.html`.
+ 
+| RF | RN associadas | Endpoint | Método |
+|----|---------------|----------|--------|
+| RF001 | RN01, RN02 | `/api/pessoas` | POST |
+| RF001 | RN01, RN02 | `/api/responsaveis` | POST |
+| RF001 | RN01, RN02 | `/api/familias` | POST |
+| RF001 | RN01, RN02 | `/api/familias/nucleo` | POST |
+| RF001 | RN01, RN02 | `/api/familias/{id_familia}/pessoas` | POST |
+| RF002 | RN01, RN04 | `/api/moradias` | POST |
+| RF002 | RN01, RN04 | `/api/familias/{id_familia}/moradias` | POST |
+| RF002 | RN04 | `/api/moradias/{id_moradia}/fotos` | POST |
+| RF002 | RN04 | `/api/moradias/{id_moradia}/fotos/upload-url` | POST |
+| RF002 | RN04 | `/api/moradias/{id_moradia}/fotos` | GET |
+| RF003 | RN01, RN04 | `/api/moradias` | POST |
+| RF004 | N/A | `/api/moradias` | GET |
+| RF005 | RN01, RN05 | `/api/moradias/{id_moradia}` | GET |
+| RF005 | RN01, RN05 | `/api/moradias/{id_moradia}/detalhes` | GET |
+| RF006 | RN02 | `/api/moradias` | GET |
+| RF006 | RN02 | `/api/pessoas/busca` | GET |
+| RF007 | N/A | `/api/familias/{id_familia}/pets` | GET |
+| RF007 | N/A | `/api/familias/{id_familia}/pets` | POST |
+| RF007 | N/A | `/api/pets/{id_pet}` | PUT |
+| RF007 | N/A | `/api/pets/{id_pet}` | GET |
+| RF007 | N/A | `/api/pets/{id_pet}/fotos` | GET |
+| RF007 | N/A | `/api/pets/{id_pet}/fotos/upload-url` | POST |
+| RF007 | N/A | `/api/pets/{id_pet}/fotos` | POST |
+| RF009 | RN03 | `/api/moradias/{id_moradia}` | DELETE |
+| RF009 | RN03 | `/api/familias/{id_familia}/moradias/{id_moradia}` | DELETE |
+| RF010 | RN03 | `/api/pessoas/{id_pessoa}` | DELETE |
+| RF010 | RN03 | `/api/pessoas/inativas` | GET |
+| RF012 | RN01, RN02, RN04 | `/api/pessoas/{id_pessoa}` | PUT |
+| RF012 | RN01, RN02, RN04 | `/api/responsaveis/{id_responsavel}` | PUT |
+| RF012 | RN01, RN02, RN04 | `/api/moradias/{id_moradia}` | PUT |
+ 
+---
 
 ## 3.2. Arquitetura (sprints 1 a 5)
+A arquitetura projetada para o sistema é, em suma, baseada na Arquitetura de Camadas (Layered Architecture), porém com a aplicação de: Arquitetura de Seis Camadas (6-Tier Architecture) com base em princípios SOLID e de separação de conceitos (Separation of Concerns). Dividindo a aplicação em componentes especializados e com responsabilidades muito bem definidas.
+Assim, fornece um código testável, escalável e de alta manutenibilidade, permitindo que as regras de negócio fiquem isoladas de detalhes de infraestrutura (como o banco de dados) e da interface do usuário.
 
 ### 3.2.1. Diagrama de Arquitetura (sprints 3 e 4)
 
-*Posicione aqui o diagrama de arquitetura da solução, indicando as camadas principais (Controller, Service, Repository, Model) e suas responsabilidades. Atualize sempre que necessário.*
+```
+src/
+├── models/ – tipos e interfaces
+│   ├── validations/ – validação dos atributos / classes
+│   └── implementations/ – definição das classes
+├── views/ – telas (templates ejs)
+├── DTOs/ – Data Transfer Objects: entidades com somente as propriedades necessárias
+├── controllers/ – borda HTTP
+├── services/ – regras de negócio
+│   ├── interfaces – Contratos dos services
+│   ├── implementations – implementações dos services
+├── repositories/ – acesso ao banco de dados
+│   ├── interfaces/ – Contratos dos repositórios
+│   └── implementations/ – implementações dos repositórios
+├──mappers/ – transformadores de objetos: Model → DTO
+├──database/ – configurações do banco de dados e histórico de migrações
+│   └── migrations/ – versionamento do esquema do banco de dados
+(transversal, fora do fluxo)
+├──routes/ – rotas (endpoints) das requisições
+├──middlewares/ – guarda o middleware global do sistema
+├──errors/ – classes de tratamento de erros específicos e customizados do sistema
+└── helpers/ – utilitários puros
+
+```
+
+<div align="center">
+    <p>Figura: Diagrama de Classe Arquitetural</p>
+    <img src="outros/diagrama-classe-arquitetural.drawio.png">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
 
 ### 3.2.2. Diagrama de Casos de Uso (sprint 1)
 
@@ -466,11 +532,121 @@ O diagrama mapeia dois atores e três perfis de uso distintos. O **Agente de Cam
 
 ### 3.2.3. Diagrama de Classes do Domínio (sprint 2)
 
-*Diagrama UML de classes com entidades, atributos, relacionamentos e responsabilidades. Diferencie **associação**, **agregação** (losango vazio), **composição** (losango cheio) e **herança** (triângulo vazio). Multiplicidade explícita em toda associação.*
+O Diagrama de Classes de Dominio representa visualmente as principais entidades do négocio, com seus atributos e relacionamentos entre elas. Não se preocupando com detalhes técnicos como métodos, chaves estrangeiras ou tecnologias específicas, focando somente em capturar o que existe no mundo real dentro do contexto do sistema.
+
+Link do diagrama (realizado por meio do site draw.io): https://drive.google.com/file/d/1YfjTRYovyfGQ29EKa9RM1ScGjfUeJIIK/view?usp=sharing
+
+
+<div align="center">
+    <p>Figura 7: Diagrama de Classes de Domínio</p>
+    <img src="outros/diagrama-classes-dominio.drawio.png" width="800">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
 
 ### 3.2.4. Diagrama de Sequência UML (sprint 3)
 
-*Ao menos um fluxo prioritário, mostrando a interação entre as camadas Controller → Service → Repository → Banco. Linhas de vida verticais, ativação correta, mensagens síncronas e assíncronas diferenciadas, retornos tracejados.*
+Os diagramas de sequência UML desta seção documentam os fluxos de interação entre as camadas da arquitetura do sistema deste projeto, evidenciando como as requisições originadas na interface do usuário percorrem a cadeia **Frontend → Controller → Service → Repository → Banco de Dados** até a geração da resposta. Cada linha de vida vertical representa um participante ativo no processamento, com ativações indicando o período em que cada componente mantém controle da execução. Mensagens síncronas (chamadas diretas) são representadas por setas sólidas, enquanto retornos são indicados por setas tracejadas. Caminhos alternativos e de exceção são delimitados por blocos `alt`/`opt`, refletindo as ramificações de negócio documentadas nos fluxos de interação.
+
+Os doze fluxos documentados nesta seção cobrem o ciclo principal de uso do sistema, desde o cadastro em campo até as operações de consulta, filtros, mapa de calor, recadastro, arquivamento e validações transversais de integridade. A modelagem foi atualizada conforme o WAD atual, considerando a arquitetura de dados centrada em **família**, **moradia**, **histórico de ocupação**, **cidadão**, **responsável**, **pet**, **foto de moradia** e **grupo prioritário**.
+
+---
+
+#### FL01 — Cadastro de Cidadão e Vínculo à Moradia
+
+<img src="outros/diagramas_sequencia/fl01_cadastro_de_cidadao_e_vinculo_a_moradia.png">
+
+Este fluxo descreve a jornada de cadastro conduzida pelo **Agente de Campo (A01)** a partir do aplicativo mobile. O processo é estruturado em cinco sessões sequenciais: Moradia, Localização, Chefe de Família, Composição Familiar e Pets. Cada uma liberada somente após a confirmação da anterior, garantindo a integridade referencial dos dados antes do envio. Ao submeter o formulário completo, o Frontend dispara uma sequência ordenada de requisições `POST` que cria os registros em cascata (`LOCALIZACAO → MORADIA → CIDADAO → RESPONSAVEL → PET → FORMULARIO`), enquanto o Service aplica as regras de negócio RN01 (classificação de risco) e RN04 (restrição de fotos). O diagrama também contempla o **modo offline**, no qual o formulário é persistido em cache local via IndexedDB e sincronizado automaticamente ao restabelecer conexão, e o **caminho de exceção** de duplicidade de cadastro, que oferece ao agente as opções de busca, atualização ou cancelamento.
+
+---
+
+#### FL02 — Visualização de Mapa Georreferenciado
+
+<img src="outros/diagramas_sequencia/fl02_visualização_de_mapa_georreferenciado.png">
+
+Este fluxo descreve a consulta ao mapa de risco realizada pelo **Diretor ou Gestor Operacional (A02/A03)** a partir do painel desktop. Ao acessar o módulo de mapa, o Frontend solicita ao backend a lista de moradias com coordenadas geográficas e nível de risco, que são renderizadas como marcadores coloridos (vermelho para Crítico, laranja para Alto, amarelo para Padrão). Ao clicar em um marcador, uma segunda requisição carrega os dados completos da moradia, momento em que o Service executa a **regra transversal FL11** para avaliar a condição de Risco Crítico (RN05) (presença de morador com deficiência que necessita de apoio) e injeta a flag correspondente na resposta. O diagrama também cobre os caminhos alternativos de ausência de dados georreferenciados e de falha na API de mapas.
+
+
+---
+
+#### FL03 - Consulta integrada de moradia e moradores
+
+<img src="outros/diagramas_sequencia/FL03_Consulta_Areas_Risco.png">
+
+Este fluxo detalha a consulta integrada executada pelo **Gestor Operacional (A02/A03)** ao pesquisar ou selecionar uma ficha. O Frontend solicita uma listagem resumida de moradias e, após a seleção de um registro, carrega os dados completos da moradia, localização, ocupação ativa, família, responsável, moradores, gestantes, grupos prioritários, pets e fotos. A consulta utiliza o `historico_ocupacao` para identificar a família atualmente vinculada à moradia, considerando apenas ocupações com `data_saida` nula. Caso não exista ocupação ativa, o sistema retorna a ficha do imóvel sem moradores ativos. Quando há ocupação ativa, o Service calcula a prioridade de evacuação (RN01) e avalia a flag de Risco Crítico (RN05).
+
+---
+
+#### FL04 - Filtros avançados de moradias e assistidos
+
+<img src="outros/diagramas_sequencia/FL04_Relatorios.png">
+
+Este fluxo representa o uso de filtros avançados pelo **Gestor Operacional (A02/A03)** na tela de gerenciamento de dados. O usuário pode combinar critérios como status da moradia, condição de ocupação, grupos prioritários, vulnerabilidades, destino em caso de evacuação e situação de recadastro. O Frontend envia os filtros ao Controller, que delega ao Service a validação dos parâmetros e a montagem da consulta. O Repository cruza as tabelas `moradia`, `localizacao`, `historico_ocupacao`, `familia`, `cidadao`, `cidadao_grupo_prioritario` e `grupo_prioritario`, retornando uma lista filtrada. Quando não há resultados, o painel exibe uma mensagem orientativa. Quando há registros, o gestor pode exportar a listagem em formato CSV ou PDF.
+
+---
+
+#### FL05 - Atualização anual de dados pelo agente de campo
+
+<img src="outros/diagramas_sequencia/FL05_Atualizacao_Dados.png">
+
+Este fluxo descreve a revisão anual de uma família marcada para recadastro, conduzida pelo **Agente de Campo (A01)**. O Frontend carrega o cadastro completo da família, incluindo ocupação ativa, moradia, localização, responsável, moradores, gestantes, pets e fotos. O agente revisa os dados em campo e envia as alterações para o backend, que valida as regras RN01, RN02 e RN04 antes de persistir as atualizações. Caso a família tenha mudado de moradia, o Service encerra o vínculo atual em `historico_ocupacao` com `data_saida` e cria uma nova ocupação ativa. Em modo offline, a alteração é enfileirada no cache local com UUID próprio e sincronizada posteriormente.
+
+---
+
+#### FL06 - Cadastro e manutenção de pets vinculados à família
+
+<img src="outros/diagramas_sequencia/FL06_Filtros_Dados.png">
+
+Este fluxo detalha a manutenção dos animais de estimação informados pelo **Agente de Campo (A01)**. O Frontend consulta os pets já vinculados à família e permite adicionar ou editar registros, sempre associando o animal ao `id_familia`, e não diretamente à moradia. Essa decisão acompanha o modelo de dados atual: se a família for realocada, os pets permanecem associados ao mesmo núcleo familiar, enquanto o histórico de ocupação registra a mudança de moradia. O Service valida os campos obrigatórios, como `tipo_pet`, e o Repository persiste os dados na tabela `pet`.
+
+---
+
+#### FL07 - Mapa de calor e indicadores de vulnerabilidade
+
+<img src="outros/diagramas_sequencia/FL07_Mapa_Calor.png">
+
+Este fluxo descreve a geração do mapa de calor utilizado pelo **Gestor Operacional (A02/A03)** para visualizar concentrações de vulnerabilidade no território. O usuário ativa a camada de calor e seleciona filtros como idosos, PCDs, acamados, gestantes ou crianças. O backend consulta moradias ativas, ocupações atuais e moradores vinculados aos grupos prioritários, agrupando coordenadas por intensidade. O Frontend renderiza a camada sobre o mapa e recalcula os clusters quando o usuário altera zoom ou filtro. Em paralelo, o painel pode consultar os indicadores de recadastro, exibindo o total de registros atualizados e desatualizados.
+
+---
+
+#### FL08 - Arquivamento lógico de moradia
+
+<img src="outros/diagramas_sequencia/FL08_Arquivamento_Moradia.png">
+
+Este fluxo representa o arquivamento lógico de uma moradia pelo **Gestor Operacional (A03)**. O gestor seleciona uma moradia ativa, informa o motivo do arquivamento e envia a solicitação de alteração de status. O Service verifica se existe uma ocupação ativa vinculada à moradia por meio de `historico_ocupacao`. Se houver família ativa residindo no local, a operação é bloqueada com conflito, pois a US14 exige que toda família ativa possua uma moradia ativa vinculada. Nesse caso, o sistema solicita realocação ou inativação da família antes de concluir o arquivamento. Se não houver ocupação ativa, o status da moradia é atualizado sem exclusão física, preservando a rastreabilidade histórica conforme RN03.
+
+---
+
+#### FL09 - Arquivamento lógico de morador falecido
+
+<img src="outros/diagramas_sequencia/FL09_Arquivamento_Morador.png">
+
+Este fluxo descreve o arquivamento lógico de um morador falecido realizado pelo **Gestor Operacional (A02/A03)**. O gestor informa a data de falecimento e confirma a operação. O Service verifica se o cidadão é o responsável da família. Caso seja, o sistema exige a escolha de um novo responsável ativo antes de concluir o arquivamento, preservando a integridade definida pela US13. Quando a substituição é resolvida, o cadastro do cidadão é inativado por meio de `status_cadastro=false`, sem deleção física. Após a atualização, o Service reavalia a prioridade da família e a regra de Risco Crítico, garantindo que consultas e relatórios ativos não exibam moradores arquivados.
+
+---
+
+#### FL10 - Alerta automático de recadastro a cada 12 meses
+
+<img src="outros/diagramas_sequencia/FL10_Alerta_Recadastro.png">
+
+Este fluxo documenta a rotina de recadastro obrigatório prevista pela RN02. Um job agendado verifica diariamente moradias ativas cuja `ultima_atualizacao` tenha ultrapassado 365 dias. A consulta considera moradias com ocupação ativa e família ativa, evitando alertas sobre registros apenas históricos. No painel, o **Gestor Operacional (A02/A03)** consulta os indicadores de recadastro e visualiza o total de cadastros atualizados e desatualizados. Ao clicar no indicador, o Frontend redireciona para a listagem de moradias com o filtro `desatualizado=true`, permitindo organizar as revisitas de campo.
+
+---
+
+#### FL11 - Regra transversal de Risco Crítico (RN05)
+
+<img src="outros/diagramas_sequencia/FL11_Flag_Risco_Critico.png">
+
+Este fluxo representa uma regra transversal, acionada por outros fluxos sempre que uma moradia e seus moradores ativos são carregados para exibição. O Service consulta a moradia, a ocupação ativa, a família residente e os cidadãos vinculados aos grupos prioritários. A condição RN05 é satisfeita quando a moradia possui histórico de ocorrência e existe ao menos um morador ativo classificado com mobilidade reduzida ou acamado. Quando a condição é verdadeira, a resposta recebe `risco_critico=true`, permitindo que o Frontend destaque a flag "Risco Crítico" em cards, fichas e consultas integradas. Quando a condição não é satisfeita, a ficha é exibida sem o alerta.
+
+---
+
+#### FL12 - Validação transversal de integridade cadastral
+
+<img src="outros/diagramas_sequencia/FL12_Integridade_Familia_Responsavel_Ocupacao.png">
+
+Este fluxo consolida as validações derivadas das US13 e US14. Ele não representa uma tela isolada, mas uma regra transversal chamada por operações de cadastro, atualização, arquivamento e realocação. Sempre que uma família ativa é alterada, o Service verifica se existe responsável ativo vinculado e se há uma ocupação ativa em moradia válida. Se a família ficar sem responsável, a operação é bloqueada e o usuário deve definir um novo responsável. Se a família ficar sem moradia ativa, o sistema exige a criação de uma nova ocupação ou a inativação da família. Essa validação impede inconsistências cadastrais e preserva a coerência entre `familia`, `responsavel`, `moradia` e `historico_ocupacao`.
+
 
 ### 3.2.5. Diagrama de Atividades ou Estados (sprint 3)
 
@@ -482,7 +658,22 @@ O diagrama mapeia dois atores e três perfis de uso distintos. O **Agente de Cam
 
 ### 3.2.7. Padrões de Projeto Aplicados (sprints 3 a 5)
 
-*Documente os design patterns utilizados (Repository, Strategy, Factory, DTO etc.) e quais princípios SOLID se aplicam. Justifique a adoção de cada padrão com base em uma necessidade real do projeto.*
+Durante o desenvolvimento do backend do GeoRisco, foram aplicados padrões arquiteturais voltados à separação de responsabilidades, testabilidade e manutenção das regras de negócio. A aplicação foi estruturada em camadas, utilizando TypeScript, Express, PostgreSQL e Supabase Storage.
+
+| Padrão / Conceito Arquitetural | Aplicação no GeoRisco | Justificativa |
+| :--- | :--- | :--- |
+| **Arquitetura em Camadas** | O backend está organizado em `routes`, `controllers`, `services`, `repositories`, `dtos`, `models`, `validations`, `errors`, `db` e `storage`. | Essa divisão separa entrada HTTP, regras de negócio, persistência e infraestrutura. Isso facilita manutenção em um sistema com cadastros de pessoas, moradias, famílias, pets, fotos e vínculos históricos. |
+| **Controller** | Os controllers recebem requisições, extraem parâmetros, normalizam payloads e retornam respostas HTTP. | Evita que regras de negócio e SQL fiquem misturados com detalhes de rota, status code e renderização de views/API. |
+| **Service Layer** | Os services concentram validações de negócio, transações e orquestração entre repositories. | Necessário para operações compostas, como cadastro de responsável, criação de núcleo familiar, vínculo entre família e moradia e upload de fotos. |
+| **Repository Pattern** | Os repositories encapsulam consultas SQL e acesso ao PostgreSQL. | Isola a persistência da lógica de negócio, permitindo alterar queries, views ou estratégia de banco sem impactar diretamente controllers e services. |
+| **DTO (Data Transfer Object)** | Os DTOs definem os formatos de entrada e saída usados em cadastros, buscas, fotos, moradias e famílias. | Ajuda a controlar os dados trafegados entre frontend e backend, reduzindo exposição desnecessária de campos sensíveis e padronizando contratos da API. |
+| **Dependency Injection por Construtor** | Controllers recebem services, e services recebem repositories por construtor, baseados em interfaces. | Reduz acoplamento entre classes e facilita testes com mocks, como nos testes de controller e persistência. |
+| **Interface Segregation / Contratos** | Existem interfaces específicas para services e repositories, como `IPessoaService`, `IPessoaRepository`, `IFamiliaService` e equivalentes. | Os contratos deixam claro o que cada camada pode consumir, evitando dependência direta de implementação concreta. |
+| **Validação Centralizada** | Arquivos em `validations/` e funções de normalização em `request-utils.ts` validam payloads, IDs, datas, números e campos obrigatórios. | Garante consistência nos dados antes de persistir informações sensíveis e reduz duplicação de validação nos controllers. |
+| **Custom Exception** | A classe `HttpError` representa erros de negócio com status HTTP definido. | Permite diferenciar erros esperados, como ID inválido ou registro não encontrado, de falhas internas do servidor. |
+| **Tratamento Centralizado de Erros** | A função `handleControllerError` padroniza respostas de erro nos controllers. | Evita repetição de lógica de erro e impede que detalhes técnicos sejam expostos ao usuário final. |
+| **Transação na Camada de Serviço** | Operações que afetam múltiplas tabelas usam `BEGIN`, `COMMIT` e `ROLLBACK` nos services. | Mantém integridade em fluxos críticos, como criação de responsável, moradia com localização e núcleo familiar completo. |
+| **Adapter / Facade para Serviço Externo** | O acesso ao Supabase Storage fica isolado em `storage/supabase-storage.client.ts` e no `FotoStorageService`. | Centraliza a integração externa de armazenamento de fotos, evitando que controllers e repositories dependam diretamente da API do Supabase. |
 
 ## 3.3. Wireframes (sprint 2)
 
@@ -611,751 +802,591 @@ Esta seção apresenta o detalhamento de um registro específico, acessado após
 
 Esta seção apresenta o guia de estilos utilizado no desenvolvimento da aplicação web. Aqui estão definidos os padrões visuais e componentes de interface adotados, como cores, tipografia, botões, ícones e demais elementos gráficos. O objetivo é garantir consistência visual, padronização e melhor experiência de uso durante o desenvolvimento e evolução da solução.
 
+<div align="center">
+    <p>Figura 16: Guia de estilos</p>
+    <img src="outros/guia_de_estilos.png">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
 ### 3.4.1 Cores
 
-*Apresente aqui a paleta de cores, com seus códigos de aplicação e suas respectivas funções*
+A a paleta de cores pensada para a prototipação foi inspirada na logo oficial da própria Defesa Civil de Santo André e do CREDEC-SA (Centro de Resiliência às Emergências de Defesa Civil de Santo André). Logos: 
+
+<div align="center">
+    <p>Figura 17: Logo da Defesa Civil de Santo André</p>
+    <img src="outros/logoSantoAndre.png" width="200">
+    <p>Defesa Civil de Santo André</p>
+</div>
+
+<div align="center">
+    <p>Figura 18: Logo do CREDEC-SA</p>
+    <img src="outros/logoCREDEC.png" width="200">
+    <p>CREDEC-SA</p>
+</div>
+
+A equipe decidiu usar dois tons de azul, um de laranja e três cores neutras. A composição da paleta ficou assim: 
+
+- Azul Escuro: #182C4C
+- Azul Claro: #004ea1
+- Laranja: #ff7500
+- Cinza Escuro: #5e5e5e
+- Cinza Claro: #9f9f9f
+- Branco: #ffffff 
+
 
 ### 3.4.2 Tipografia
 
-*Apresente aqui a tipografia da solução, com famílias de fontes e suas respectivas funções*
+A família tipográfica utilizada na solução é a **DM Sans**, uma fonte geométrica sem serifa (sans-serif) de baixo contraste, projetada pela Colophon Foundry. É ideal para textos legíveis em tamanhos menores e apresenta formas geométricas claras que transmitem um tom neutro e objetivo.
 
-### 3.4.3 Iconografia e imagens 
+| Estilo | Peso | Tamanho | Uso |
+|---|---|---|---|
+| Título | DM Sans Bold | 64px | Títulos principais de página |
+| Header 1 | DM Sans Regular | 48px | Cabeçalhos de seção primária |
+| Header 2 | DM Sans Regular | 40px | Cabeçalhos de seção secundária |
+| Header 3 | DM Sans Regular | 36px | Cabeçalhos terciários |
+| Header 4 | DM Sans Regular | 32px | Cabeçalhos quaternários |
+| Header 5 | DM Sans Regular | 24px | Cabeçalhos de menor hierarquia |
+| Corpo / Label | DM Sans Light | 16px | Textos descritivos, legendas e rótulos de componentes |
 
-*(esta subseção é opcional, caso não existam ícones e imagens, apague esta subseção)*
+A cor de texto primária é `#1a1a2e`, utilizada em headers e corpo sobre fundo branco ou claro. Em fundos coloridos, aplica-se texto branco (`#ffffff`).
 
-*posicione aqui imagens e textos contendo exemplos padronizados de ícones e imagens, com seus respectivos atributos de aplicação, utilizadas na solução*
+### 3.4.3 Iconografia e Imagens
+
+A solução utiliza um conjunto de ícones de linha (outline) com estilo geométrico, coerente com a tipografia DM Sans.
+
+**Atributos de aplicação:**
+
+- **Cor padrão:** `#5e5e5e` — ícones em estado neutro
+- **Cor ativa:** `#004ea1` — ícones em estado selecionado ou ação principal
+- **Cor sobre fundo escuro:** `#ffffff` — sobre fundos `#182C4C` ou `#004ea1`
+- **Tamanho padrão:** 24×24px
+
+| Ícone | Função |
+|---|---|
+| Documento | Representar arquivos ou conteúdos |
+| Casa | Navegação para a tela inicial |
+| Lupa | Acionar campo de pesquisa |
+| Copiar | Duplicar conteúdo ou elemento |
+| Editar | Editar informações |
+| Diamante | Indicar item especial ou favorito |
+| Localização | Indicar endereço ou mapa |
+| Upload | Enviar ou exportar conteúdo |
+| Lixeira | Excluir item |
+| Grade | Visualização em formato de tabela |
+| Filtro | Filtrar listagens ou resultados |
+| Seta | Navegar para o próximo passo ou página |
 
 ## 3.5. Protótipo de alta fidelidade (sprint 3)
 
-*posicione aqui algumas imagens demonstrativas de seu protótipo de alta fidelidade e o link para acesso ao protótipo completo (mantenha o link sempre público para visualização)*
+### Protótipo Tela Inicial
+
+A tela inicial apresenta o logotipo da Defesa Civil de Santo André centralizado
+no topo, sobre um fundo azul gradiente, seguido da saudação **"Bem vindo, Agente."**
+com destaque em laranja no nome do perfil.
+
+O conteúdo principal exibe três opções de navegação em formato de cards:
+
+- **Cadastro** — card destacado com fundo azul e borda laranja, indicando a ação
+  primária da tela. Contém ícone de documento à esquerda e seta de navegação à direita.
+- **Busca** — card secundário com fundo branco, ícone de lupa e seta de navegação.
+- **Mapa** — card secundário com fundo branco, ícone de localização e seta de navegação.
+
+Na parte inferior, uma barra de navegação fixa exibe os três atalhos principais:
+**Cadastro**, **Mapa** (ativo) e **Busca**, com ícones e rótulos de texto.
+
+---
+
+<div align="center">
+    <p>Figura 18: Mockup da Tela Inicial </p>
+    <img src="outros/inicial v2.png" width="400">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
+### Protótipos da Tela de Mapa
+
+A tela de mapa exibe um cabeçalho azul escuro com o logotipo da Defesa Civil à
+esquerda, o título **"Visualização"** centralizado e um ícone de home à direita
+para retornar à tela inicial.
+
+O conteúdo principal é ocupado por um mapa interativo da região de Santo André,
+sobre o qual é sobreposto um painel lateral de **Filtros** no canto esquerdo.
+O painel possui borda laranja, fundo branco e lista categorias de ocorrências
+selecionáveis via checkbox. Um botão com seta **"<"** permite recolher o painel,
+expandindo a área visível do mapa.
+
+A barra de navegação inferior mantém o padrão da aplicação com os atalhos
+**Cadastro**, **Mapa** (ativo) e **Busca**.
+
+ <div align="center">
+    <p>Figura 19: Mockup Tela de Mapa </p>
+    <img src="outros/mapa v2.png" width="400">
+    <p>Feito pela própria equipe (2026)</p>
+</div> 
+
+### Protótipos da Tela de Busca
+
+A tela de busca mantém o cabeçalho padrão com logotipo, título **"Busca"** e
+ícone de home. Abaixo, um campo de texto com ícone de lupa permite inserir termos
+de pesquisa, acompanhado de um botão de filtro à direita.
+
+Os resultados são exibidos abaixo do label **"Resultados:"** em azul, com um
+contador de registros encontrados ("4 encontrados") alinhado à direita.
+
+Cada resultado é apresentado em um card com borda arredondada contendo:
+- **Nome completo** em destaque e CPF como subtítulo
+- **Localização** (bairro), **quantidade de pessoas** e **quantidade de pets**
+  com ícones correspondentes
+- **Tags coloridas** indicando vulnerabilidades do cadastro (ex.: Gestante,
+  Criança, Idoso, Doença Crônica), cada uma com cor própria
+- Botão **"Editar"** com ícone à direita e botão de **exclusão** (lixeira) abaixo
+
+A barra de navegação inferior mantém o padrão com **Cadastro**, **Mapa** (ativo)
+e **Busca**.
+
+ <div align="center">
+    <p>Figura 20: Mockup Tela de Busca </p>
+    <img src="outros/busca v2.png" width="400">
+    <p>Feito pela própria equipe (2026)</p>
+</div> 
+
+### Protótipos das telas de Cadastro
+
+Estes protótipos apresentam grandes semelhanças entre eles, visto que possuem quase que a mesma funcionalidade. Entre elas estão, barra azul superior, barra de navegação entre seções, título indicando seção, menu de navegação inferior, botão "Próximo" (embora na seção 2 não seja possível ver), campos para preenchimento de informações, sinalização de obrigatoriedade (* vermelho) e barra lateral indicando possível arraste da página ("scroll up" e "scroll down")
+
+Além disso, os protótipos apresentam funcionalidades em comum, sendo elas: a barra de navegação entre seções indica em qual seção o usuário está (deixando o bloco referente à seção atual azul); o botão "Concluir", apesar de ausente, é exibido assim que o usuário completar todos os campos obrigatórios em qualquer seção; campos preenchíveis por digitação, seleção múltipla, "sim ou não", seleção de data e adição de imagens. 
+
+---
+
+<div align="center">
+    <p>Figura 19: Mockup da Seção 1 de Cadastro </p>
+    <img src="outros/formularioMoradia.png" width="400">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
+A primeira tela ao clicar no botão "Cadastro" da tela inicial é a seção 1, referente à entrada dos dados da moradia. A partir daqui, o usuário fica livre para navegar entre as seções de cadastro conforme o contexto da entrevista com os moradores evolui. 
+
+A primeira seção engloba todos os dados necessários para o cadastro da moradia visitada. 
+
+Um detalhe bastante importante sobre a mudança dos wireframes para os mockups é a disposição da barra superior da tela. As mudanças citadas a seguir se aplicam à todas as telas de cadastro: exclusão do botão de configurações; exclusão da imagem de logo à esquerda; reposicionamento da logo da Defesa Civil de Santo André; exclusão do pequeno texto acompanhado da logo; adição do ícone de casa (redireciona para a tela inicial). 
+
+Este protótipo já apresenta exemplos de informações a serem adicionadas nos campos e como ficaria com todos preenchidos, incluindo a imagem de referência minimizada.
+
+---
+
+<div align="center">
+    <p>Figura 20: Mockup da Seção 2 de Cadastro </p>
+    <img src="outros/formularioResponsavel.png" width="400">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
+A segunda seção engloba todos os dados necessários para o cadastro do responsável pela família/moradia. 
+
+Este protótipo, diferente do anterior, mostra como são os campos de resposta "sim ou não" (boolean) e sinaliza exatamente como o menu inferior interage com o restante dos elementos na tela: opacidade parcial. Além disso, esta tela, por conter uma quantidade maior de informações, não mostra os campos de problema crônico, medicamento e prioridade que, por sua vez, estão ocultos juntos do botão de próximo. Todo o conteúdo poderá ser visualizado com um simples arraste na tela para baixo.
+
+Este protótipo já apresenta exemplos de informações a serem adicionadas nos campos e como ficaria com todos preenchidos.
+
+---
+
+<div align="center">
+    <p>Figura 21: Mockup da Seção 3 de Cadastro </p>
+    <img src="outros/formularioMoradores.png" width="400">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
+A terceira seção engloba todos os dados necessários para o cadastro de todos os moradores da moradia visitada. 
+
+Este protótipo, basicamente imita a estrutura dos dois anteriores e indica todas as informações obrigatórias ou não e o tipo de preenchimento. Por outro lado, esta seção e a próxima apresentam um novo grande botão tracejado. No caso dessa página, ao clicar, o usuário adicionará mais um morador. Além disso, os dados preenchidos do primeiro morador devem ser ocultos e compactados para uma longa barra horizontal que, se clicada, expandirá todos os dados do morador cadastrado. O botão "+Adicionar Morador" estará sempre visível abaixo do último formulário incompleto ou expandido. 
+
+Vale a pena ressaltar que os dados de moradores, selecionados pela equipe, também estão presentes na seção 2 (Responsável), mas apenas os dados que foram julgados essenciais ficaram para a seção 3.
+
+Este protótipo já apresenta exemplos de informações a serem adicionadas nos campos e como ficaria com todos preenchidos.
+
+---
+
+<div align="center">
+    <p>Figura 22: Mockup da Seção 4 de Cadastro </p>
+    <img src="outros/formularioPets.png" width="400">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
+A quarta seção engloba todos os dados necessários para o cadastro de todos os pets/animais vinculados à moradia visitada. 
+
+Este protótipo é bastante semelhante ao anterior em termos de estrutura, porém apresenta informações diferentes a serem preenchidas, já que aqui o assunto é um animal, e não uma pessoa. 
+
+A funcionalidade de adicionar mais de um cadastro também está presente aqui e, assim como na seção 1 (Moradia), existe a possibilidade de ser cadastrada uma imagem de referência do(s) animal(is), mas agora com um campo que indique o nome do arquivo inserido.
+
+Por fim, é apenas nesse protótipo que o botão "Concluir" está representado porque entende-se que, mesmo com a liberdade de escolha para a ordem de preenchimento dos dados, a seção de pets muitas vezes será a última.
+
+Este protótipo já apresenta exemplos de informações a serem adicionadas nos campos e como ficaria com todos preenchidos, incluindo com imagens.
+
+
+---
+
+[Link para visualização do protótipo](https://www.figma.com/design/9C6LICPO1RCl5y9UaVsCQo/Mockups?node-id=0-1&p=f&t=KbpgFnX3YR4LP3ui-0)
+
+---
 
 ## 3.6. Modelagem do banco de dados (sprints 2 e 4)
 
-### 3.6.1. Modelo Entidade-Relacionamento (ER) (sprint 2)
+### 3.6.1. Modelo Entidade-Relacionamento (MER)
+
+O **Modelo Entidade-Relacionamento (MER)** é uma abordagem conceitual que representa a estrutura de dados de um sistema através da identificação de entidades (objetos do mundo real), seus atributos e os relacionamentos entre elas. Para este projeto, adotamos a **notação Chen**, que utiliza retângulos para entidades, losangos para relacionamentos, elipses para atributos e triângulos para especializações, oferecendo clareza visual e conformidade com padrões acadêmicos e profissionais.
 
 <div align="center">
-    <p>Figura 16: Modelo Entidade Relacionamento- </p>
-    <img src="outros/MER.png">
+    <p>Figura 16: Modelo Entidade-Relacionamento</p>
+    <img src="outros/MER.jpg">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
 O modelo de dados foi estruturado seguindo as melhores práticas de normalização, rastreabilidade e integridade referencial, com foco em sistemas governamentais. As principais decisões arquiteturais refletidas no diagrama são:
 
-#### 1. Herança e Especialização (Pessoa, Responsável e Grávida)
-Para evitar redundância de dados e focar no Responsável da Família sem perder o mapeamento de vulnerabilidade dos dependentes, adotamos o padrão de herança (representado pelo triângulo).
-* **`Pessoa` (Superclasse):** Centraliza os atributos universais (Nome, Escolaridade, Situação Ocupacional, Doenças Crônicas).
-* **`Responsável` e `Grávida` (Subclasses):** Herdam os atributos de Pessoa, mas agregam dados específicos de suas funções no sistema. O `Responsável` carrega a carga burocrática (CPF, NIS, Renda, Programas Sociais), enquanto a `Grávida` guarda dados vitais de saúde para prioridade em resgates (Data Prevista de Parto).
+#### 1. Herança e Especialização (Pessoa e Responsável)
+Para evitar redundância de dados e focar no Responsável da Família, adotamos o padrão de herança (representado pelo triângulo na notação Chen).
+* **`Pessoa` (Superclasse):** Centraliza os atributos universais (Nome Social, Data de Nascimento, Escolaridade, Situação Ocupacional, Medicação, Status).
+* **`Responsável` (Subclasse):** Herda atributos de Pessoa e agrega dados específicos de gestão familiar: CPF, NIS, Renda, Programas Sociais, dados de contato (Telefone, Email) e informações de residência.
 
 #### 2. Agrupamento Lógico por `Família`
-Em vez de vincular dezenas de indivíduos diretamente a uma casa de forma solta, criamos a entidade agrupadeira **`Família`**.
-* Toda `Pessoa` está vinculada a uma `Família` (relacionamento *Pertence*).
-* A `Família` possui obrigatoriamente um `Responsável`.
-* **Vantagem Técnica:** Essa decisão facilita o trânsito de dados. Se uma enchente desalojar 6 pessoas de uma casa, o sistema precisa atualizar apenas o endereço da entidade `Família`, e todos os membros (incluindo os `Pets` associados a ela) herdam a mudança automaticamente.
+Em vez de vincular dezenas de indivíduos diretamente a uma moradia de forma solta, criamos a entidade agrupadeira **`Família`**.
+* Toda `Pessoa` está vinculada a uma `Família` (relacionamento *Pertence*) com cardinalidade (0, n).
+* A `Família` possui obrigatoriamente um `Responsável` com cardinalidade (1, n).
+* **Vantagem Técnica:** Essa decisão facilita o trânsito de dados. Se uma enchente desalojar 6 pessoas de uma casa, o sistema precisa atualizar apenas o registro da entidade `Família` na tabela `ocupa`, e todos os membros herdam a mudança automaticamente.
 
-#### 3. Rastreabilidade e Histórico (Relacionamento N:N "Ocupa")
-O maior desafio resolvido neste modelo foi a preservação do histórico de ocupação sem duplicar dados físicos. A estrutura da **`Moradia`** (Latitude, Longitude, CEP) é imutável. O que muda é quem mora lá.
-* Criamos o relacionamento **Muitos-para-Muitos (N:N)** chamado **`Ocupa`** entre `Família` e `Moradia`.
-* Este relacionamento gera uma tabela associativa contendo atributos temporais: **`DataEntrada`**, **`DataSaida`** e **`Status`**.
-* **Como funciona:** Quando uma família se muda ou é evacuada, preenchemos a `DataSaida` do vínculo atual e criamos um novo vínculo com a nova moradia. Assim, temos a linha do tempo exata de por quais casas a família passou e quais famílias já ocuparam um determinado terreno de risco. Por isso dizemos que uma família ocupa N casas ao longo do tempo, e uma casa é ocupada por N famílias ao longo do tempo, sem perder nenhum dado histórico.
+#### 3. Rastreabilidade e Histórico (Relacionamento N:N "ocupa")
+O maior desafio resolvido neste modelo foi a preservação do histórico de ocupação sem duplicar dados físicos. A estrutura da **`Moradia`** (localização geográfica, CEP, características construtivas) é imutável. O que muda é quem mora lá.
+* Criamos o relacionamento **Muitos-para-Muitos (N:N)** chamado **`ocupa`** entre `Família` e `Moradia`, com cardinalidade (0, n) em ambas as extremidades.
+* Este relacionamento gera uma tabela associativa contendo atributos temporais: **`DataEntrada`** e **`DataSaida`**, permitindo rastrear períodos de ocupação.
+* **Como funciona:** Quando uma família se muda ou é evacuada, preenchemos a `DataSaida` do vínculo atual e criamos um novo vínculo com a nova moradia. Assim, temos a linha do tempo exata de por quais imóveis a família passou e quais famílias já ocuparam determinadas moradias de risco, sem perder nenhum dado histórico.
 
 #### 4. Exclusão Lógica (Soft Delete) e Estados Operacionais
 Em conformidade com a LGPD e regras de auditoria pública, **nenhum dado é deletado fisicamente (DROP/DELETE)**.
 * Inserimos o atributo **`Status`** nas entidades vitais (`Pessoa` e `Moradia`).
-* Se um morador sai do município, o status da `Pessoa` fica inativo. Se uma casa de risco desaba, o status da `Moradia` é atualizado para "Demolida". O histórico do que aconteceu ali permanece intacto.
+* Se um morador sai do município, o status da `Pessoa` fica inativo. Se uma moradia é desapropriada ou demolida, o status é atualizado para o estado correspondente. O histórico permanece intacto para auditoria.
 
 #### 5. Entidades Satélites Flexíveis
-* **`Foto`:** Ligada em uma relação (1:N) com a `Moradia`, permitindo criar uma galeria de fotos para identificação da moradia.
-* **`GrupoPrioritario`:** Permite associar cidadãos a listas de vulnerabilidade (ex: Acamados, Deficientes Visuais), agilizando a logística humanitária em emergências.
+* **`Foto`:** Ligada em uma relação (0, n) com `Moradia`, permitindo criar uma galeria de fotos para identificação e documentação visual da moradia.
+* **`Pet`:** Relacionada a `Pessoa` (0, n), registrando animais de estimação dependentes para logística humanitária em evacuações.
+* **`GrupoPrioritario`:** Relacionada a `Pessoa` (0, n), permitindo associar cidadãos a listas de vulnerabilidade (ex: Acamados, Deficientes Visuais), agilizando a logística de resgates em emergências.
 
-### 3.6.2. Diagrama Entidade-Relacionamento (DER) (sprint 2)
+#### 6. Localização Geográfica e Referência Endereçal
+A entidade **`localizacao`** centraliza dados geográficos e endereçais:
+* Relacionada a `Moradia` (1, 1), garantindo que cada imóvel possui uma localização única e imutável.
+* Armazena **Latitude**, **Longitude**, **CEP**, **Logradouro**, **Bairro**, **Cidade**, **Estado**, **Número**, **Referência** e **Complemento**, permitindo georreferenciamento preciso e retroação em mapas de risco.
 
-O Diagrama Entidade-Relacionamento (DER) representa a modelagem conceitual do banco de dados da aplicação, demonstrando as entidades do sistema, seus atributos, chaves primárias e estrangeiras, além dos relacionamentos e cardinalidades existentes. O diagrama serve como base para a implementação da estrutura relacional no banco de dados.
+### 3.6.2. Modelo Lógico
 
-<p>Figura 17: Diagrama Entidade-Relacionamento - </p>
-<img src="../assets/der-logico.png">
-<p>Feito pela própria equipe (2026)</p>
+O modelo lógico traduz o modelo conceptual para a estrutura de um banco de dados relacional, definindo as tabelas, as chaves primárias (PK), as chaves estrangeiras (FK) e a multiplicidade dos relacionamentos. Esta versão está rigorosamente alinhada com as decisões arquiteturais adotadas para a plataforma Supabase, com ênfase na rastreabilidade temporal, na conformidade com as leis de proteção de dados (deleção lógica) e na especialização das entidades.
 
-Cada **retângulo** no diagrama representa uma tabela do banco de dados. Cada **linha** dentro do retângulo representa uma coluna dessa tabela. As **linhas que conectam** os retângulos representam os relacionamentos entre as tabelas.
+#### Diagrama de Entidade-Relacionamento (DER)
 
+Abaixo é apresentado o esquema visual do banco de dados, ilustrando as tabelas físicas, os seus atributos e os relacionamentos implementados.
 
-## Tipos de Dados Utilizados
+<div align="center">
+    <p>Figura 17: Diagrama Entidade-Relacionamento Lógico</p>
+    <img src="outros/DER.png">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+---
 
-| Tipo | Significado |
-|------|-------------|
-| `INT` | Número inteiro. Usado para identificadores, contagens e chaves. Ex: `1`, `42`, `1000`. |
-| `VARCHAR(n)` | Texto de tamanho **variável** com até *n* caracteres. Só ocupa o espaço que o texto realmente utilizar. Ex: nome de uma pessoa. |
-| `CHAR(n)` | Texto de tamanho **fixo** com exatamente *n* caracteres. Usado quando o valor tem sempre o mesmo tamanho. Ex: CPF (sempre 11 dígitos), CEP (sempre 8 dígitos), UF (sempre 2 letras). |
-| `TEXT` | Texto longo **sem limite de tamanho** definido. Usado para observações, descrições livres e campos abertos. |
-| `DATE` | Data no formato `AAAA-MM-DD`. Armazena apenas a data, sem horário. Ex: `1990-05-20`. |
-| `TIMESTAMP` | Data e hora completas. Armazena dia, mês, ano, hora, minuto e segundo. Ex: `2024-03-15 14:32:00`. |
-| `DECIMAL(p, s)` | Número com casas decimais. `p` é o total de dígitos e `s` são as casas após a vírgula. Ex: `DECIMAL(10,2)` permite valores como `99999999.99`. Usado para renda e coordenadas geográficas. |
-| `BOOLEAN` | Valor lógico **verdadeiro ou falso** (sim/não). Ex: possui veículo? sim ou não. |
-| `ENUM(valores)` | **Lista fechada** de valores permitidos. O campo só aceita um dos valores definidos previamente. Garante a consistência e evita erros de digitação. Ex: `ENUM(estado_civil)` aceita apenas `"Solteiro"`, `"Casado"`, `"Divorciado"`, etc. |
-| `PK` | ***Primary Key* — Chave Primária.** Identifica de forma única cada registro da tabela. Não pode se repetir nem ser nulo. |
-| `FK` | ***Foreign Key* — Chave Estrangeira.** Referencia a chave primária de outra tabela, criando o vínculo entre elas. |
+#### 1. Entidades Principais e Especializações
+
+**Pessoa**
+Entidade base (superclasse) que guarda os dados demográficos e de saúde básicos de qualquer morador ou cidadão assistido.
+* **Campos:** `id` (PK), `nome`, `nome_social`, `data_de_nascimento`, `parentesco`, `situacao_ocupacional`, `escolaridade`, `cronico`, `medicacao`, `status`, `deleted_at`.
+
+**Responsável**
+Subclasse de `Pessoa` (Herança 1:1), responsável por isolar e armazenar os dados burocráticos, financeiros e de contacto (dados sensíveis) do chefe de família.
+* **Campos:** `id_pessoa` (PK, FK para `pessoa`), `cpf`, `nis`, `renda`, `sexo`, `raca`, `estado_civil`, `veiculo`, `programa_social`, `email`, `telefone`, `nome_do_pai`, `nome_da_mae`, `local_de_nascimento`, `data_residencia_estado`, `data_residencia_moradia`.
+
+**Família**
+Atua como a entidade agregadora central do sistema (*hub*), permitindo agrupar os cidadãos e os respetivos animais de estimação independentemente da moradia física, o que facilita sobremaneira as transições e relocalizações em casos de desalojamento.
+* **Campos:** `id` (PK), `status`, `deleted_at`.
+
+**Localização**
+Isola as coordenadas geográficas e o endereço do imóvel, viabilizando o processamento de dados espaciais e a geração de mapas de calor para a Defesa Civil.
+* **Campos:** `id` (PK), `logradouro`, `numero`, `bairro`, `cidade`, `estado`, `cep`, `latitude`, `longitude`, `referencia`, `complemento`.
+
+**Moradia**
+Representa a infraestrutura residencial ou comercial atrelada a uma localização espacial unívoca.
+* **Campos:** `id` (PK), `id_localizacao` (FK para `localizacao`, UNIQUE), `tipo_construcao`, `data_registro`, `status`, `uso_imovel`, `pavimentos`, `situacao_de_ocupacao`, `descricao`, `deleted_at`.
+
+**Pet**
+Registo dos animais associados à família, cuja informação é fundamental para as logísticas de evacuação e de acolhimento em abrigos.
+* **Campos:** `id` (PK), `id_familia` (FK para `familia`), `nome`, `porte`, `raca`, `cor`, `observacao`, `tipo`.
+
+**Grupo Prioritário**
+Cataloga as condições de vulnerabilidade ou necessidades especiais (físicas ou mentais), de modo a priorizar resgates ou assistências (ex: gestantes, acamados).
+* **Campos:** `id` (PK), `condicao`, `tipo`.
+
+**Foto**
+Registos visuais para atestar a condição estrutural e a avaliação de risco no terreno.
+* **Campos:** `id` (PK), `id_moradia` (FK para `moradia`), `url`.
 
 ---
 
-## Entidades e seus Atributos
+#### 2. Entidades Associativas e de Histórico (Relacionamentos N:N)
 
-### 1. Família (Núcleo Familiar)
+Para garantir a preservação do histórico de ocupações (auditoria pós-desastre e acompanhamento ao longo dos anos), foram modeladas tabelas associativas cuja chave primária composta incorpora sempre uma dimensão temporal (`data_entrada`).
 
-Entidade **agrupadora central**. Representa o núcleo familiar como um todo. É esta entidade que transita entre diferentes moradias, levando consigo todos os cidadãos e animais de estimação associados.
+**Pessoa_Família**
+Vincula os indivíduos aos núcleos familiares e regista o seu período de permanência.
+* **Campos:** `id_pessoa` (PK, FK), `id_familia` (PK, FK), `data_entrada` (PK), `data_saida`.
 
-| Atributo | Tipo | Descrição |
-|----------|------|-----------|
-| `id_familia` | `INT PK` | Identificador único da família. |
-| `data_cadastro` | `DATE` | Data em que a família foi cadastrada no sistema. |
-| `status_ativo` | `BOOLEAN` | Controle de exclusão lógica (*Soft Delete*). Se `false`, a família está inativada no sistema. |
+**Família_Moradia**
+Regista quando um agregado familiar entra ou desocupa uma residência, possibilitando a total rastreabilidade da habitação territorial no município.
+* **Campos:** `id_familia` (PK, FK), `id_moradia` (PK, FK), `data_entrada` (PK), `data_saida`, `status`.
 
----
-
-### 2. Cidadão (Pessoa)
-
-Representa qualquer indivíduo cadastrado no sistema. Contém os dados universais (saúde, escolaridade, etc.) e está sempre associado a uma `Família`.
-
-| Atributo | Tipo | Descrição |
-|----------|------|-----------|
-| `id_cidadao` | `INT PK` | Identificador único do cidadão. |
-| `id_familia` | `INT FK` | Referência à família à qual o cidadão pertence. |
-| `nome_completo` | `VARCHAR(150)` | Nome civil completo da pessoa. |
-| `nome_social` | `VARCHAR(150)` | Nome pelo qual a pessoa prefere ser chamada. |
-| `data_nascimento` | `DATE` | Data de nascimento no formato `AAAA-MM-DD`. |
-| `situacao_ocupacional` | `ENUM` | Situação de trabalho atual (ex: `Empregado`, `Desempregado`, `Aposentado`). |
-| `doencas_cronicas` | `TEXT` | Registro de doenças crônicas que a pessoa possui. |
-| `medicamentos` | `TEXT` | Lista de medicamentos de uso contínuo. |
-| `grau_parentesco_responsavel` | `ENUM` | Relação do cidadão com o responsável da família. |
-| `escolaridade` | `ENUM` | Nível de instrução escolar. |
-| `status_cadastro` | `BOOLEAN` | Controle de exclusão lógica individual, em conformidade com a LGPD. |
+**Pessoa_Grupo_Prioritario**
+Associação pura (sem temporalidade restrita) entre os indivíduos e os diversos grupos de prioridade a que podem simultaneamente pertencer.
+* **Campos:** `id_pessoa` (PK, FK), `id_grupo_prioritario` (PK, FK).
 
 ---
 
-### 3. Responsável (Especialização)
+#### 3. Domínios de Dados e Tipos Enumerados (ENUMs)
 
-Entidade que herda os dados de `Cidadão`, representando o **Chefe de Família**. Armazena a carga burocrática e os dados de contato do núcleo familiar.
+Por forma a padronizar as entradas de dados e evitar inconsistências nos formulários da aplicação (e também ao nível do banco de dados), as seguintes colunas foram restringidas a tipos de dados enumerados (*ENUMs*):
 
-| Atributo | Tipo | Descrição |
-|----------|------|-----------|
-| `id_responsavel` | `INT PK` | Identificador único do responsável. |
-| `id_cidadao` | `INT FK` | Referência ao registro base de cidadão (Relação de Herança). |
-| `email` | `VARCHAR(150)` | Endereço de e-mail para contato. |
-| `celular` | `VARCHAR(20)` | Número de celular com DDD. |
-| `renda` | `DECIMAL(10,2)` | Renda mensal em reais. |
-| `cpf` | `CHAR(11)` | Documento de identificação (CPF), sempre com 11 dígitos numéricos. |
-| `programas_sociais` | `BOOLEAN` | Indica se é beneficiário de algum programa de apoio social. |
-| `nis` | `VARCHAR(20)` | Número de Identificação Social. |
-| `veiculo` | `BOOLEAN` | Indica se possui veículo próprio, vital para planejamento de evacuações. |
+* **Controlo Lógico:** `status_familia_enum` (Ativo, Inativo), `status_pessoa_enum` (Ativo, Obito, Inativo), `status_moradia_enum` (Ativa, Interditada, Demolida, Em Risco, Excluída).
+* **Identificação Demográfica:** `sexo_enum`, `raca_enum`, `estado_civil_enum`, `escolaridade_enum`, `situacao_ocupacional_enum`, `parentesco_enum`.
+* **Infraestrutura e Ocupação:** `tipo_construcao_enum`, `uso_imovel_enum`, `situacao_ocupacao_moradia_enum`.
+* **Classificações Especiais:** `tipo_pet_enum` (cachorro, gato, reptil, ave, roedor, outros), `tipo_prioridade_enum` (Mental, Físico).
 
 ---
 
-### 4. Gestante (Especialização)
+#### 4. Regras e Restrições Estruturais
 
-Entidade que herda os dados de `Cidadão` para registrar informações de indivíduos em **período gestacional**, garantindo prioridade em resgates.
-
-| Atributo | Tipo | Descrição |
-|----------|------|-----------|
-| `id_gestante` | `INT PK` | Identificador único do registro de gestação. |
-| `id_cidadao` | `INT FK` | Referência ao registro base de cidadão. |
-| `data_prevista` | `DATE` | Data prevista para o parto. |
-
----
-
-### 5. Grupo Prioritário
-
-Tabela auxiliar que define os **grupos de vulnerabilidade** (ex: Idosos, Acamados, Deficientes).
-
-| Atributo | Tipo | Descrição |
-|----------|------|-----------|
-| `id_grupo_prioritario` | `INT PK` | Identificador único do grupo. |
-| `nome` | `VARCHAR(50)` | Nome do grupo prioritário. |
-| `tipo` | `ENUM` | Classificação do grupo (Saúde, Social, Etária). |
-
----
-
-### 6. Moradia
-
-A **estrutura física** no terreno. Uma vez mapeada, a moradia raramente muda ou é apagada, servindo como âncora fixa no Mapa de Calor.
-
-| Atributo | Tipo | Descrição |
-|----------|------|-----------|
-| `id_moradia` | `INT PK` | Identificador único da infraestrutura. |
-| `id_localizacao` | `INT FK` | Referência aos dados geográficos (coordenadas e endereço). |
-| `tipo_construcao` | `ENUM` | Material predominante (ex: `Alvenaria`, `Madeira`). |
-| `status` | `ENUM` | Estado operacional rápido para o mapa: `Ativa`, `Interditada`, `Demolida`. |
-| `data_cadastro` | `DATE` | Data da primeira vistoria no local. |
-
----
-
-### 7. Histórico de Ocupação (Tabela Associativa N:N)
-
-O "coração" do sistema de rastreabilidade. Registra a **linha do tempo** de qual família morou em qual casa, permitindo auditoria contínua sem perda de dados.
-
-| Atributo | Tipo | Descrição |
-|----------|------|-----------|
-| `id_historico_ocupacao` | `INT PK` | Identificador da relação de ocupação. |
-| `id_familia` | `INT FK` | Referência à família ocupante. |
-| `id_moradia` | `INT FK` | Referência à casa ocupada. |
-| `data_entrada` | `DATE` | Data em que a família se mudou para o local. |
-| `data_saida` | `DATE` | Data em que saíram. **Se nulo**, significa que ainda residem no local. |
-| `status` | `VARCHAR(50)` | Motivo/Situação do vínculo (ex: `Regular`, `Evacuada por Deslizamento`). |
-
----
-
-### 8. Pet (Animal de Estimação)
-
-Animais que pertencem a uma família. Mudam de casa automaticamente se a família for realojada.
-
-| Atributo | Tipo | Descrição |
-|----------|------|-----------|
-| `id_pet` | `INT PK` | Identificador único do animal. |
-| `id_familia` | `INT FK` | Referência à família tutora do animal. |
-| `tipo_pet` | `ENUM` | Espécie do animal (ex: `Cão`, `Gato`). |
-| `porte_pet` | `ENUM` | Tamanho (ex: `Pequeno`, `Médio`). |
-
----
-
-### 9. Localização e Foto Moradia
-
-Entidades satélites que armazenam, respectivamente, as coordenadas/endereço exato do lote e o arquivo de fotografias da estrutura.
-
----
-
-## Relacionamentos e Cardinalidades
-
-A **cardinalidade** define como os registros se interligam no banco de dados. Com a nova arquitetura focada no histórico, as ligações comportam-se da seguinte forma:
-
-### Família → Cidadão — `1:N` (Um para Muitos)
-Uma família é composta por um ou vários cidadãos. Cada cidadão pertence exclusivamente a uma única família. Se a família for realojada em um abrigo, todos os cidadãos associados deslocam-se logicamente com ela.
-
-### Família → Pet — `1:N` (Um para Muitos)
-A mesma lógica aplica-se aos animais. Um núcleo familiar pode possuir vários animais de estimação, e o sistema rastreia os animais através da família, facilitando as operações de resgate animal.
-
-### Cidadão → Responsável / Gestante — `Herança (Especialização)`
-Não se trata de um relacionamento tradicional, mas de uma extensão do cidadão. Todo o `Responsável` é obrigatoriamente um `Cidadão`, mas nem todo o cidadão é um responsável. A ligação é de `1:1` no banco de dados (o ID do responsável aponta para o ID do cidadão correspondente).
-
-### Cidadão → Grupo Prioritário — `N:N` (Muitos para Muitos)
-Um cidadão pode possuir múltiplas vulnerabilidades (ex: Idoso e Acamado simultaneamente), e um grupo contém múltiplos cidadãos. Isso é resolvido através da tabela associativa `cidadao_grupo_prioritario`.
-
-### Família → Moradia — `N:N` (Muitos para Muitos através de Histórico)
-**A alteração mais importante do sistema.** Uma família pode passar por várias casas ao longo do tempo (ex: casa antiga → abrigo → casa nova), e uma casa pode ser habitada por diferentes famílias ao longo dos anos. Esta relação gera a entidade **`Histórico de Ocupação`**, garantindo que nenhum dado do passado seja reescrito ou perdido.
+* **Integridade Referencial:** Todas as *Foreign Keys* estão acompanhadas da ação `ON DELETE CASCADE`. Deste modo, assegura-se que a base de dados não manterá registos órfãos quando entidades de nível superior (ex: localização ou moradia real) forem limpas.
+* **Exclusão Lógica (*Soft Delete*):** A eliminação física de Famílias, Moradias e Pessoas não ocorre. Qualquer interrogação de `DELETE` ao nível da aplicação é intercetada de modo transparente pelo PostgreSQL (através de `RULES`), passando apenas a atualizar as colunas de estado e preenchendo o campo `deleted_at`.
+* **Unicidade Restrita (`UNIQUE`):** Implementada para impossibilitar redundâncias em documentos de alta criticidade na entidade `responsavel` (`cpf`, `email`, `telefone`) e para garantir o relacionamento um-para-um (1:1) rigoroso do campo `id_localizacao` alocado a cada `moradia`.
 
 ### 3.6.3. Modelo Físico
 
-### Diagrama Entidade-Relacionamento (DER) — Modelo Físico
+#### Diagrama Entidade-Relacionamento (DER) — Modelo Físico
 
-O modelo físico apresentado implementa a arquitetura conceitual descrita em 3.6.1 e 3.6.2 utilizando PostgreSQL como SGBD. As principais decisões de implementação refletem os requisitos de rastreabilidade, integridade referencial, conformidade com LGPD e otimização para mapeamento geográfico de áreas de risco.
-
----
-
-### Decisões Arquiteturais do Modelo Físico
-
-#### 1. Família como Entidade Agrupadeira Central
-
-A entidade **`familia`** é o núcleo organizador do sistema. Todos os cidadãos e pets vinculam-se a uma família, não diretamente a uma moradia. Isso permite:
-- Controle de ocupação histórica sem duplicação de dados
-- Transição de moradias em casos de desalojamento ou evacuação
-- Atualizações em massa (ex: toda a família se mudou)
-- Rastreamento de vulnerabilidade familiar ao longo do tempo
-
-#### 2. Herança de Cidadão: Responsável e Gestante
-
-A hierarquia `Cidadão` → (`Responsável`, `Gestante`) foi implementada usando **class-table inheritance**:
-- Tabela **`cidadao`** armazena atributos comuns (nome, data nascimento, situação ocupacional)
-- Tabelas **`responsavel`** e `gestante` herdam via `id_cidadao` como PK + FK
-- Cada subtipo adiciona dados específicos sem redundância
-
-**Vantagem:** Um cidadão pode ser responsável, gestante, ou apenas dependente sem conflitos.
-
-#### 3. Relacionamento N:N com Histórico Temporal (Historico_Ocupacao)
-
-O relacionamento **`historico_ocupacao`** entre `familia` e `moradia` preserva:
-- `data_entrada`: início da ocupação
-- `data_saida`: encerramento (NULL se ainda ocupa)
-- `status`: motivo da saída (Desalojado, Evacuado, Mudança Voluntária, etc.)
-
-Permite análises históricas completas: **qual familia morou onde, por quanto tempo, por quê**.
-
-#### 4. Soft Delete (Exclusão Lógica)
-
-Em conformidade com LGPD e auditoria pública:
-- **`cidadao.status_cadastro`** (BOOLEAN): ativa/inativa pessoa individual
-- **`familia.status_ativo`** (BOOLEAN): ativa/inativa núcleo familiar
-- **`moradia.status`** (ENUM): operacional (Ativa, Interditada, Demolida, Evacuada)
-
-Nenhum registro é fisicamente deletado; histórico é preservado para auditoria.
-
-#### 5. Pet Vinculado a Família (Não a Moradia)
-
-Pets relacionam-se a `familia` e não a `moradia` porque:
-- Quando uma família se muda, leva seus pets consigo
-- Evita dados órfãos quando moradia é evacuada
-- Facilita rastreamento de animais em emergências
-
-#### 6. Constraints e Validações
-
-- **NOT NULL** em campos obrigatórios (nomes, datas, coordenadas)
-- **UNIQUE** em CPF, email, NIS (sem duplicação)
-- **FOREIGN KEY** em todos os relacionamentos
-- **CHECK** para validações de range (renda, coordenadas geográficas)
+O modelo físico apresentado implementa a arquitetura conceitual descrita em 3.6.1 e 3.6.2 utilizando PostgreSQL como SGBD. As principais decisões de implementação refletem os requisitos de rastreabilidade, integridade referencial, conformidade com a LGPD e otimização para mapeamento geográfico de áreas de risco, rodando em ambiente Supabase.
 
 ---
 
-### Tipos Enumerados (ENUMs)
+#### Decisões Arquiteturais do Modelo Físico
+
+##### 1. Família como Entidade Agrupadeira Central
+A entidade **`familia`** é o núcleo organizador e o hub de conectividade do sistema. Diferente de arquiteturas tradicionais, as pessoas e os animais de estimação vinculam-se a uma família, e não diretamente a uma moradia física. Isso viabiliza:
+- Controle de ocupação histórica sem duplicação ou redundância de dados.
+- Transição simplificada de moradias em cenários de evacuação emergencial.
+- Atualizações cadastrais em massa (ex: o núcleo familiar inteiro mudou de endereço).
+
+##### 2. Herança de Pessoa: Responsável
+A hierarquia de especialização `Pessoa` → `Responsável` foi consolidada por meio da estratégia de **class-table inheritance**:
+- A tabela **`pessoa`** funciona como superclasse, armazenando atributos universais de qualquer cidadão cadastrado (nome, data de nascimento, escolaridade e situação ocupacional).
+- A tabela **`responsavel`** atua como a subclasse, estendendo a superclasse e compartilhando a mesma Primary Key (`id_pessoa`) como uma Foreign Key. Ela isola dados burocráticos, financeiros e de contato.
+
+##### 3. Relacionamento N:N com Histórico Temporal Desmembrado
+Para garantir auditoria governamental completa, as relações associativas foram desmembradas em duas frentes com persistência temporal:
+- **`pessoa_familia`**: Controla as transições de composição interna do núcleo familiar ao longo do tempo (entradas e saídas).
+- **`familia_moradia`**: Preserva o histórico de habitação territorial, armazenando dados críticos como `data_entrada`, `data_saida` e o `status` da ocupação.
+
+##### 4. Mecanismo de Soft Delete Integral via Rules
+Em estrita conformidade com a LGPD e com as necessidades de auditoria da Defesa Civil, nenhum registro crucial de pessoa, família ou moradia é fisicamente removido do banco. Implementou-se um mecanismo baseado no campo `deleted_at (TIMESTAMP)` controlado por `RULES` do PostgreSQL. Um comando `DELETE` padrão é interceptado pelo banco, que realiza uma exclusão lógica, atualizando o timestamp de remoção e alterando o estado da entidade para `'Inativo'` ou `'Excluída'`.
+
+##### 5. Pet Vinculado à Família
+Os animais domésticos relacionam-se diretamente com a tabela `familia`. Em caso de evacuação de áreas de risco, o sistema garante que os pets não fiquem atrelados a um imóvel destruído, facilitando a logística de abrigo.
+
+---
+
+#### Tipos Enumerados (ENUMs)
 
 ```sql
-CREATE TYPE grau_parentesco_enum AS ENUM (
-  'Responsável',
-  'Pai',
-  'Mãe',
-  'Avô/Avó',
-  'Tia/Tio',
-  'Irmã/Irmão',
-  'Sobrinho/Sobrinha',
-  'Filho/Filha',
-  'Outro'
-);
-
 CREATE TYPE escolaridade_enum AS ENUM (
-  'Analfabeto',
-  'Ensino Fundamental Incompleto',
-  'Ensino Fundamental Completo',
-  'Ensino Médio Incompleto',
-  'Ensino Médio Completo',
-  'Ensino Superior Incompleto',
-  'Ensino Superior Completo',
-  'Pós-Graduação'
-);
-
-CREATE TYPE situacao_ocupacional_enum AS ENUM (
-  'Empregado',
-  'Desempregado',
-  'Autônomo',
-  'Informal',
-  'Aposentado',
-  'Estudante',
-  'Do Lar',
-  'Outro'
-);
-
-CREATE TYPE tipo_grupo_prioritario_enum AS ENUM (
-  'Criança',
-  'Gestante',
-  'Idoso',
-  'Deficiente',
-  'Vulnerável',
-  'Acamado',
-  'Outro'
-);
-
-CREATE TYPE raca_enum AS ENUM (
-  'Branco',
-  'Preto',
-  'Pardo',
-  'Amarelo',
-  'Indígena',
-  'Outro'
-);
-
-CREATE TYPE sexo_enum AS ENUM (
-  'Masculino',
-  'Feminino',
-  'Outro'
-);
-
-CREATE TYPE porte_pet_enum AS ENUM (
-  'Pequeno',
-  'Médio',
-  'Grande'
-);
-
-CREATE TYPE tipo_pet_enum AS ENUM (
-  'Cão',
-  'Gato',
-  'Pássaro',
-  'Roedor',
-  'Réptil',
-  'Outro'
-);
-
-CREATE TYPE tipo_construcao_enum AS ENUM (
-  'Alvenaria',
-  'Madeira',
-  'Misto'
-);
-
-CREATE TYPE condicao_ocupacao_enum AS ENUM (
-  'Própria Quitada',
-  'Própria Financiada',
-  'Alugada',
-  'Cedida',
-  'Ocupação',
-  'Outro'
-);
-
-CREATE TYPE tipo_uso_imovel_enum AS ENUM (
-  'Residencial',
-  'Comercial',
-  'Misto'
+    'Analfabeto', 'Fundamental Incompleto', 'Fundamental Completo', 'Médio Incompleto', 'Médio Completo', 'Superior Incompleto', 'Superior Completo', 'Pós-graduação'
 );
 
 CREATE TYPE estado_civil_enum AS ENUM (
-  'Solteiro',
-  'Casado',
-  'Divorciado',
-  'Viúvo',
-  'União Estável',
-  'Outro'
+    'Solteiro', 'Casado', 'Divorciado', 'Viúvo', 'União Estável'
 );
 
-CREATE TYPE tipo_foto_enum AS ENUM (
-  'Frente',
-  'Redor'
+CREATE TYPE parentesco_enum AS ENUM (
+    'Responsável', 'Cônjuge', 'Filho(a)', 'Enteado(a)', 'Pai/Mãe', 'Outro'
+);
+
+CREATE TYPE raca_enum AS ENUM (
+    'Branca', 'Preta', 'Parda', 'Amarela', 'Indígena', 'Não Declarado'
+);
+
+CREATE TYPE sexo_enum AS ENUM (
+    'Masculino', 'Feminino', 'Outro', 'Não Declarado'
+);
+
+CREATE TYPE situacao_ocupacao_moradia_enum AS ENUM (
+    'Própria Quitada', 'Própria Financiada', 'Alugada', 'Cedida', 'Invasão', 'Outro'
+);
+
+CREATE TYPE situacao_ocupacional_enum AS ENUM (
+    'Empregado', 'Desempregado', 'Autônomo', 'Informal', 'Aposentado/Pensionista', 'Estudante', 'Do Lar', 'Outro'
+);
+
+CREATE TYPE status_familia_enum AS ENUM (
+    'Ativo', 'Inativo'
 );
 
 CREATE TYPE status_moradia_enum AS ENUM (
-  'Ativa',
-  'Interditada',
-  'Demolida',
-  'Área de Risco Evacuada'
-);
-```
-
----
-
-### Migrations DDL (Create Tables)
-
-#### Migration 001: Criar Tabela de Localização
-
-```sql
--- Armazena endereço e coordenadas geográficas
--- Base para plotagem em mapa e rastreamento de áreas de risco
-CREATE TABLE localizacao (
-  id_localizacao SERIAL PRIMARY KEY,
-  coordenadas_longitude DECIMAL(10, 8),
-  coordenadas_latitude DECIMAL(10, 8),
-  cep CHAR(8),
-  logradouro VARCHAR(80),
-  bairro VARCHAR(50),
-  numero INT,
-  cidade VARCHAR(50),
-  ponto_referencia VARCHAR(150),
-  uf CHAR(2)
+    'Ativa', 'Interditada', 'Demolida', 'Em Risco', 'Excluída'
 );
 
-CREATE INDEX idx_localizacao_cep ON localizacao(cep);
-```
-
-**Justificativa:** Coordenadas são opcionais pois podem ser preenchidas posterior. Índice em CEP para buscas geográficas rápidas.
-
----
-
-#### Migration 002: Criar Tabela de Moradia
-
-```sql
--- Representa o imóvel onde as famílias residem
--- Status permite rastreamento operacional (ativa, demolida, evacuada)
-CREATE TABLE moradia (
-  id_moradia SERIAL PRIMARY KEY,
-  id_localizacao INT REFERENCES localizacao(id_localizacao),
-  tipo_construcao tipo_construcao_enum,
-  condicao_ocupacao condicao_ocupacao_enum,
-  tipo_uso_imovel tipo_uso_imovel_enum,
-  telefone VARCHAR(20),
-  observacoes TEXT,
-  data_cadastro DATE,
-  ultima_atualizacao DATE,
-  status status_moradia_enum DEFAULT 'Ativa'
+CREATE TYPE status_pessoa_enum AS ENUM (
+    'Ativo', 'Obito', 'Inativo'
 );
 
-CREATE INDEX idx_moradia_localizacao ON moradia(id_localizacao);
-CREATE INDEX idx_moradia_status ON moradia(status);
-```
-
-**Justificativa:** Status permite soft delete operacional. Índices em FK e status para queries frequentes de mapeamento.
-
----
-
-#### Migration 003: Criar Tabela de Grupo Prioritário
-
-```sql
--- Define grupos de vulnerabilidade/prioridade para atendimento
--- Auxilia na logística de emergências e políticas públicas
-CREATE TABLE grupo_prioritario (
-  id_grupo_prioritario SERIAL PRIMARY KEY,
-  nome VARCHAR(50) NOT NULL UNIQUE,
-  tipo tipo_grupo_prioritario_enum NOT NULL
-);
-```
-
-**Justificativa:** Nome único evita duplicação de grupos (ex: não há dois grupos "Idoso").
-
----
-
-#### Migration 004: Criar Tabela de Família
-
-```sql
--- Entidade agrupadeira central do sistema
--- Organiza cidadãos sob um núcleo familiar
--- Facilita controle de ocupação histórica e mobilidade residencial
-CREATE TABLE familia (
-  id_familia SERIAL PRIMARY KEY,
-  data_cadastro DATE DEFAULT CURRENT_DATE,
-  status_ativo BOOLEAN DEFAULT TRUE
+CREATE TYPE tipo_construcao_enum AS ENUM (
+    'Alvenaria', 'Madeira', 'Mista', 'Taipa', 'Lona/Improvisada', 'Outro'
 );
 
-CREATE INDEX idx_familia_status ON familia(status_ativo);
-```
-
-**Justificativa:** Simples e flexível. Status permite desativar núcleo sem deletar dados. Crucial para rastreabilidade histórica.
-
----
-
-#### Migration 005: Criar Tabela de Cidadão (Superclasse)
-
-```sql
--- Superclasse que agrupa Responsável e Gestante
--- Armazena atributos comuns a todas as pessoas cadastradas
--- Soft delete individual via status_cadastro
-CREATE TABLE cidadao (
-  id_cidadao SERIAL PRIMARY KEY,
-  id_familia INT NOT NULL REFERENCES familia(id_familia),
-  nome_completo VARCHAR(150) NOT NULL,
-  nome_social VARCHAR(150),
-  data_nascimento DATE,
-  situacao_ocupacional situacao_ocupacional_enum,
-  doencas_cronicas TEXT,
-  medicamentos TEXT,
-  grau_parentesco_responsavel grau_parentesco_enum,
-  escolaridade escolaridade_enum,
-  status_cadastro BOOLEAN DEFAULT TRUE
+CREATE TYPE tipo_pet_enum AS ENUM (
+    'cachorro', 'gato', 'reptil', 'ave', 'roedor', 'outros'
 );
 
-CREATE INDEX idx_cidadao_familia ON cidadao(id_familia);
-CREATE INDEX idx_cidadao_status ON cidadao(status_cadastro);
-```
-
-**Justificativa:** Centraliza dados comuns. `status_cadastro` permite inativar pessoa individual (LGPD). Índices para buscas por família e status ativo.
-
----
-
-#### Migration 006: Criar Tabela de Responsável (Subclasse de Cidadão)
-
-```sql
--- Subclasse de Cidadão: acrescenta dados burocrático-sociais
--- Um Responsável é sempre um Cidadão previamente cadastrado
--- CPF, Email, NIS são únicos para evitar duplicação
-CREATE TABLE responsavel (
-  id_responsavel SERIAL PRIMARY KEY,
-  id_cidadao INT NOT NULL REFERENCES cidadao(id_cidadao) ON DELETE CASCADE,
-  email VARCHAR(150) UNIQUE,
-  celular VARCHAR(20),
-  renda DECIMAL(10, 2) CHECK (renda >= 0),
-  cpf CHAR(11) NOT NULL UNIQUE,
-  raca raca_enum,
-  sexo sexo_enum,
-  estado_civil estado_civil_enum,
-  nome_completo_mae VARCHAR(150),
-  nome_completo_pai VARCHAR(150),
-  data_residencia_domicilio DATE,
-  data_residencia_municipio DATE,
-  programas_sociais BOOLEAN,
-  nis VARCHAR(20) UNIQUE,
-  veiculo BOOLEAN,
-  local_nascimento VARCHAR(80)
+CREATE TYPE tipo_prioridade_enum AS ENUM (
+    'Mental', 'Físico'
 );
 
-CREATE INDEX idx_responsavel_cpf ON responsavel(cpf);
-CREATE INDEX idx_responsavel_email ON responsavel(email);
-CREATE INDEX idx_responsavel_nis ON responsavel(nis);
-```
-
-**Justificativa:** CPF, email, NIS são UNIQUE para integridade. Renda com CHECK não-negativa. Múltiplos índices para buscas por identidade.
-
----
-
-#### Migration 007: Criar Tabela de Gestante (Subclasse de Cidadão)
-
-```sql
--- Subclasse de Cidadão: registra gestações
--- Permite múltiplos registros por pessoa (histórico de gestações)
--- Atualizado a cada 1,5 a 2 anos conforme lógica de negócio
-CREATE TABLE gestante (
-  id_gestante SERIAL PRIMARY KEY,
-  id_cidadao INT NOT NULL REFERENCES cidadao(id_cidadao) ON DELETE CASCADE,
-  data_prevista DATE,
-  data_inicio DATE,
-  data_fim DATE
+CREATE TYPE uso_imovel_enum AS ENUM (
+    'Residencial', 'Comercial', 'Misto', 'Institucional', 'Abandonado'
 );
 
-CREATE INDEX idx_gestante_cidadao ON gestante(id_cidadao);
-CREATE INDEX idx_gestante_data_prevista ON gestante(data_prevista);
 ```
-
-**Justificativa:** Múltiplos registros por pessoa permitem histórico. Índice em `data_prevista` para priorização rápida de gestantes.
-
----
-
-#### Migration 008: Criar Tabela de Pet
-
-```sql
--- Registra animais de estimação residentes na família
--- Vinculado a familia e não moradia (pets acompanham família na mudança)
--- Relevante para controle de zoonoses e assistência social
-CREATE TABLE pet (
-  id_pet SERIAL PRIMARY KEY,
-  id_familia INT NOT NULL REFERENCES familia(id_familia),
-  nome VARCHAR(50),
-  porte_pet porte_pet_enum,
-  tipo_pet tipo_pet_enum NOT NULL,
-  cor VARCHAR(30),
-  observacoes TEXT,
-  foto_url VARCHAR(255)
-);
-
-CREATE INDEX idx_pet_familia ON pet(id_familia);
-```
-
-**Justificativa:** Pets vinculados a família (não moradia) porque acompanham família em evacuações. `tipo_pet` obrigatório.
-
----
-
-#### Migration 009: Criar Tabela de Foto Moradia
-
-```sql
--- Armazena fotos do imóvel para identificação visual
--- Uma moradia pode ter múltiplas fotos (frente, redor, lateral, etc.)
--- Fundamental para trabalho de campo da Defesa Civil
-CREATE TABLE foto_moradia (
-  id_foto_moradia SERIAL PRIMARY KEY,
-  id_moradia INT NOT NULL REFERENCES moradia(id_moradia) ON DELETE CASCADE,
-  tipo_foto tipo_foto_enum,
-  url VARCHAR(255) NOT NULL
-);
-
-CREATE INDEX idx_foto_moradia ON foto_moradia(id_moradia);
-```
-
-**Justificativa:** Permite galeria por moradia. Índice facilita buscar "todas as fotos de uma moradia" para validação de campo.
-
----
-
-#### Migration 010: Criar Tabela Histórico de Ocupação (N:N com Histórico Temporal)
-
-```sql
--- Relacionamento N:N entre Família e Moradia com atributos temporais
--- CORE da rastreabilidade do sistema
--- Preserva histórico completo de ocupações para análise de vulnerabilidade
--- Uma família pode ocupar N moradias ao longo do tempo
--- Uma moradia pode ser ocupada por N famílias ao longo do tempo
-CREATE TABLE historico_ocupacao (
-  id_historico_ocupacao SERIAL PRIMARY KEY,
-  id_familia INT NOT NULL REFERENCES familia(id_familia),
-  id_moradia INT NOT NULL REFERENCES moradia(id_moradia),
-  data_entrada DATE NOT NULL,
-  data_saida DATE,
-  status VARCHAR(50) DEFAULT 'Regular',
-  UNIQUE (id_familia, id_moradia, data_entrada),
-  CONSTRAINT chk_datas_ocupacao CHECK (data_saida IS NULL OR data_saida > data_entrada)
-);
-
-CREATE INDEX idx_hist_ocupacao_fam ON historico_ocupacao(id_familia);
-CREATE INDEX idx_hist_ocupacao_mor ON historico_ocupacao(id_moradia);
-CREATE INDEX idx_hist_ocupacao_ativo ON historico_ocupacao(data_saida);
-```
-
-**Justificativa:** Chave composta garante único vínculo por período. CHECK valida lógica temporal. Índices para buscas de histórico ativo/passado.
-
----
-
-#### Migration 011: Criar Tabela Associativa Cidadão-GrupoPrioritario (N:N)
-
-```sql
--- Relacionamento N:N: um cidadão pode pertencer a vários grupos prioritários
--- Um grupo pode incluir muitos cidadãos
--- Exemplo: uma pessoa pode ser Idosa E Deficiente simultaneamente
-CREATE TABLE cidadao_grupo_prioritario (
-  id_cidadao INT NOT NULL REFERENCES cidadao(id_cidadao) ON DELETE CASCADE,
-  id_grupo_prioritario INT NOT NULL REFERENCES grupo_prioritario(id_grupo_prioritario) ON DELETE CASCADE,
-  PRIMARY KEY (id_cidadao, id_grupo_prioritario)
-);
-
-CREATE INDEX idx_cid_grupo_cid ON cidadao_grupo_prioritario(id_cidadao);
-CREATE INDEX idx_cid_grupo_grupo ON cidadao_grupo_prioritario(id_grupo_prioritario);
-```
-
-**Justificativa:** Chave composta evita duplicatas. Índices permitem buscas eficientes: "todas as pessoas de um grupo" ou "todos os grupos de uma pessoa".
-
----
-
-#### Resumo de Constraints Implementados
-
-| Tipo | Aplicação |
-|------|-----------|
-| **NOT NULL** | id_familia (cidadao); id_cidadao (responsavel, gestante); id_moradia (foto_moradia, historico_ocupacao); nome_completo (cidadao); cpf (responsavel); tipo_pet (pet); data_entrada (historico_ocupacao) |
-| **UNIQUE** | cpf, email, nis (responsavel); nome (grupo_prioritario); (id_familia, id_moradia, data_entrada) (historico_ocupacao) |
-| **FOREIGN KEY** | Todas as referências entre tabelas com ON DELETE CASCADE onde apropriado |
-| **CHECK** | renda >= 0 (responsavel); data_saida > data_entrada (historico_ocupacao) |
-| **PRIMARY KEY** | Todas as tabelas com id_* SERIAL ou chaves compostas (associativas) |
-
----
-
-#### Índices Estratégicos para Performance
-
-Otimizados para operações mais frequentes:
-
-| Índice | Justificativa |
-|--------|---------------|
-| `idx_familia_status` | Filtrar famílias ativas vs inativas rapidamente |
-| `idx_cidadao_familia` | Listar todos os cidadãos de uma família |
-| `idx_cidadao_status` | Filtrar cadastros ativos para LGPD |
-| `idx_moradia_status` | Mostrar moradias ativas no mapa |
-| `idx_moradia_localizacao` | Buscar moradias por localização geográfica |
-| `idx_historico_ocupacao_ativo` | Encontrar ocupações ativas (data_saida IS NULL) |
-| `idx_gestante_data_prevista` | Priorizar gestantes para atendimento pré-natal |
-| `idx_responsavel_cpf` | Busca rápida por CPF (documentação) |
-| `idx_foto_moradia` | Galeria rápida de fotos por moradia |
-| `idx_cid_grupo_grupo` | Listar pessoas de um grupo de vulnerabilidade |
-
----
-
-#### Modelo de Dados Relacional — Garantias
-
-O modelo implementado assegura:
-
- **Integridade Referencial** — FKs garantem relacionamentos válidos  
- **Rastreabilidade Completa** — Histórico preservado via `historico_ocupacao`  
- **Exclusão Lógica (LGPD)** — Soft delete via `status_cadastro` e `status_ativo`  
- **Normalização 3FN** — Sem redundância estrutural  
- **Flexibilidade de Mudança** — Pets/pessoas acompanham família em mobilidade  
- **Performance em Mapeamento** — Índices estratégicos para geolocalização  
- **Suporte a Especialização** — Herança de Cidadão sem conflitos  
-
 
 ### 3.6.4. Consultas SQL e lógica proposicional (sprint 2)
 
-*posicione aqui uma lista de consultas SQL compostas, realizadas pelo back-end da aplicação web, com sua respectiva lógica proposicional, descrita conforme template abaixo. Lembre-se que para usar LaTeX em markdown, basta você colocar as expressões entre $ ou $$*
+A lógica proposicional é um ramo da Matemática e da Computação utilizado para representar e analisar condições lógicas por meio de proposições. No contexto de bancos de dados e consultas SQL, ela permite interpretar como diferentes condições presentes em comandos como `WHERE`, `AND`, `OR`, `NOT`, `LIKE` e `IN` influenciam o resultado final de uma consulta.
 
-*Template de SQL + lógica proposicional*
-# 3.6.4 — Lógica Proposicional Aplicada às Consultas SQL
+Cada condição de uma instrução SQL pode ser representada por uma proposição lógica, normalmente identificada por letras como $A$, $B$ e $C$. Essas proposições assumem apenas dois valores possíveis: verdadeiro (V) ou falso (F). A partir disso, utilizam-se conectivos lógicos para combinar condições e construir expressões mais complexas. O operador `AND` corresponde à conjunção lógica ($\land$), exigindo que ambas as condições sejam verdadeiras; o operador `OR` representa a disjunção lógica ($\lor$), em que pelo menos uma condição deve ser verdadeira; e o operador `NOT` representa a negação lógica ($\neg$), invertendo o valor lógico da proposição.
+
+A tabela verdade é uma ferramenta utilizada para demonstrar todas as combinações possíveis entre proposições lógicas e seus respectivos resultados. Ela permite visualizar, de maneira organizada, como uma expressão lógica se comporta em diferentes cenários. Dessa forma, torna-se possível compreender com precisão quando uma consulta SQL retornará registros ou atualizará dados do banco.
+
+No desenvolvimento da aplicação web para a Defesa Civil, a lógica proposicional foi aplicada para estruturar consultas SQL mais robustas e coerentes, possibilitando a filtragem correta de dados relacionados a cidadãos, famílias, moradias, grupos prioritários, vínculos de ocupação e localização. As tabelas verdade auxiliam na validação dessas regras lógicas, garantindo maior clareza, previsibilidade e confiabilidade nas operações realizadas pelo sistema.
 
 ---
 
-#1 | ---
+#1 | SELECT
 --- | ---
-**Expressão SQL** | SELECT * FROM usuario WHERE (nivel_risco = 'ALTO' AND status_abrigo = 'ATIVO') OR (idade >= 60);
-**Descrição da consulta** | Seleciona usuários que estão em área de risco alto e possuem abrigo ativo, ou usuários idosos com idade maior ou igual a 60 anos.
-**Proposições lógicas** | $A$: O nível de risco é ALTO (`nivel_risco = 'ALTO'`) <br> $B$: O abrigo está ATIVO (`status_abrigo = 'ATIVO'`) <br> $C$: A idade é maior ou igual a 60 (`idade \geq 60`)
-**Expressão lógica proposicional** | $(A \land B) \lor C$
-**Tabela Verdade** | <table> <thead> <tr> <th>$A$</th> <th>$B$</th> <th>$C$</th> <th>$(A \land B)$</th> <th>$(A \land B) \lor C$</th> </tr> </thead> <tbody> <tr> <td>F</td> <td>F</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>F</td> <td>V</td> <td>F</td> <td>V</td> </tr> <tr> <td>F</td> <td>V</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>V</td> <td>V</td> <td>F</td> <td>V</td> </tr> <tr> <td>V</td> <td>F</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>F</td> <td>V</td> <td>F</td> <td>V</td> </tr> <tr> <td>V</td> <td>V</td> <td>F</td> <td>V</td> <td>V</td> </tr> <tr> <td>V</td> <td>V</td> <td>V</td> <td>V</td> <td>V</td> </tr> </tbody> </table>
+**Expressão SQL** | SELECT m.id_moradia, m.id_localizacao, m.tipo_construcao, m.condicao_ocupacao, m.tipo_uso_imovel, m.telefone, m.observacoes, m.data_cadastro, m.ultima_atualizacao, m.status, l.logradouro, l.bairro, c.nome_completo AS responsavel FROM moradia m JOIN localizacao l ON m.id_localizacao = l.id_localizacao JOIN historico_ocupacao ho ON m.id_moradia = ho.id_moradia JOIN familia f ON ho.id_familia = f.id_familia JOIN cidadao c ON f.id_familia = c.id_familia JOIN responsavel r ON c.id_cidadao = r.id_cidadao WHERE m.status IN ('Interditada', 'Área de Risco Evacuada') AND ho.data_saida IS NULL AND f.status_ativo = TRUE AND c.status_cadastro = TRUE;
+**Descrição da consulta** | Buscar moradias em condição de risco operacional com seus responsáveis familiares ativos.
+**Proposições lógicas** | $A$: A moradia está em condição de risco operacional (`m.status IN ('Interditada', 'Área de Risco Evacuada')`) <br> $B$: A família ocupa atualmente a moradia (`ho.data_saida IS NULL`) <br> $C$: A família e o responsável estão ativos (`f.status_ativo = TRUE AND c.status_cadastro = TRUE`)
+**Expressão lógica proposicional** | $(A \land B) \land C$
+**Tabela Verdade** | <table> <thead> <tr> <th>$A$</th> <th>$B$</th> <th>$C$</th> <th>$(A \land B)$</th> <th>$(A \land B) \land C$</th> </tr> </thead> <tbody> <tr> <td>F</td> <td>F</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>F</td> <td>V</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>V</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>V</td> <td>V</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>F</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>F</td> <td>V</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>V</td> <td>F</td> <td>V</td> <td>F</td> </tr> <tr> <td>V</td> <td>V</td> <td>V</td> <td>V</td> <td>V</td> </tr> </tbody> </table>
 
----
+A consulta #1 só retorna resultado quando a moradia está em risco operacional, possui ocupação ativa e os cadastros da família e do responsável permanecem ativos.
 
+#2 | SELECT
+--- | ---
+**Expressão SQL** | SELECT l.bairro, COUNT(c.id_cidadao) AS total_cronicos FROM cidadao c JOIN familia f ON c.id_familia = f.id_familia JOIN historico_ocupacao ho ON f.id_familia = ho.id_familia JOIN moradia m ON ho.id_moradia = m.id_moradia JOIN localizacao l ON m.id_localizacao = l.id_localizacao WHERE c.doencas_cronicas IS NOT NULL AND c.status_cadastro = TRUE AND f.status_ativo = TRUE AND ho.data_saida IS NULL GROUP BY l.bairro;
+**Descrição da consulta** | Contar quantas pessoas com doenças crônicas registradas existem por bairro.
+**Proposições lógicas** | $A$: A pessoa possui doença crônica registrada (`c.doencas_cronicas IS NOT NULL`) <br> $B$: O cidadão e sua família estão ativos (`c.status_cadastro = TRUE AND f.status_ativo = TRUE`) <br> $C$: O vínculo de ocupação da moradia está ativo (`ho.data_saida IS NULL`)
+**Expressão lógica proposicional** | $(A \land B) \land C$
+**Tabela Verdade** | <table> <thead> <tr> <th>$A$</th> <th>$B$</th> <th>$C$</th> <th>$(A \land B)$</th> <th>$(A \land B) \land C$</th> </tr> </thead> <tbody> <tr> <td>F</td> <td>F</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>F</td> <td>V</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>V</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>V</td> <td>V</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>F</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>F</td> <td>V</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>V</td> <td>F</td> <td>V</td> <td>F</td> </tr> <tr> <td>V</td> <td>V</td> <td>V</td> <td>V</td> <td>V</td> </tr> </tbody> </table>
+
+A consulta #2 só contabiliza o cidadão quando há doença crônica registrada, cadastro ativo e ocupação residencial vigente.
+
+#3 | SELECT
+--- | ---
+**Expressão SQL** | SELECT c.nome_completo, gp.data_prevista, gp.nome AS grupo_prioritario FROM cidadao c JOIN cidadao_grupo_prioritario cgp ON c.id_cidadao = cgp.id_cidadao JOIN grupo_prioritario gp ON cgp.id_grupo_prioritario = gp.id_grupo_prioritario WHERE c.status_cadastro = TRUE AND gp.nome = 'Gestante';
+**Descrição da consulta** | Listar gestantes ativas cadastradas em grupos prioritários.
+**Proposições lógicas** | $A$: O cidadão está ativo (`c.status_cadastro = TRUE`) <br> $B$: O cidadão possui registro de gestante (`g.id_cidadao IS NOT NULL`) <br> $C$: O cidadão pertence ao grupo prioritário Gestante (`gp.nome = 'Gestante'`)
+**Expressão lógica proposicional** | $(A \land B) \land C$
+**Tabela Verdade** | <table> <thead> <tr> <th>$A$</th> <th>$B$</th> <th>$C$</th> <th>$(A \land B)$</th> <th>$(A \land B) \land C$</th> </tr> </thead> <tbody> <tr> <td>F</td> <td>F</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>F</td> <td>V</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>V</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>V</td> <td>V</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>F</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>F</td> <td>V</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>V</td> <td>F</td> <td>V</td> <td>F</td> </tr> <tr> <td>V</td> <td>V</td> <td>V</td> <td>V</td> <td>V</td> </tr> </tbody> </table>
+
+A consulta #3 só retorna resultado quando o cidadão está ativo, possui registro na tabela de gestantes e está associado ao grupo prioritário correspondente.
+
+#4 | UPDATE
+--- | ---
+**Expressão SQL** | UPDATE moradia SET status = 'Ativa', ultima_atualizacao = CURRENT_DATE WHERE id_moradia = :id_moradia AND status IN ('Interditada', 'Área de Risco Evacuada');
+**Descrição da consulta** | Reativar uma moradia específica que estava em status não operacional reversível.
+**Proposições lógicas** | $A$: A moradia corresponde ao registro informado (`id_moradia = :id_moradia`) <br> $B$: A moradia está em status não operacional reversível (`status IN ('Interditada', 'Área de Risco Evacuada')`)
+**Expressão lógica proposicional** | $A \land B$
+**Tabela Verdade** | <table> <thead> <tr> <th>$A$</th> <th>$B$</th> <th>$A \land B$</th> </tr> </thead> <tbody> <tr> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>V</td> <td>F</td> </tr> <tr> <td>V</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>V</td> <td>V</td> </tr> </tbody> </table>
+
+A consulta #4 só realiza a atualização quando o registro informado existe no contexto da operação e a moradia está previamente classificada em um status não operacional reversível.
 
 ## 3.7. WebAPI e endpoints (sprints 3 e 4)
-
-*Utilize um link para outra página de documentação contendo a descrição completa de cada endpoint. Ou descreva aqui cada endpoint criado para seu sistema.* 
-
-*Cada endpoint deve conter endereço, método (GET, POST, PUT, PATCH, DELETE), header, body, formatos de response e os status codes possíveis (200, 201, 204, 400, 401, 403, 404, 409, 422, 500).*
+ 
+A documentação completa dos endpoints implementados está disponível em [`documentos/outros/webapi-docs.html`](outros/webapi-docs.html). O arquivo descreve a base URL, headers, formato padrão de erro, métodos HTTP, endpoints, atores, RF/RN relacionados, exemplos de request/response e status codes possíveis.
+ 
+### Endpoints implementados por domínio
+ 
+#### Pessoas e Responsáveis
+ 
+| Método | Endpoint | Descrição | RF |
+|--------|----------|-----------|-----|
+| GET | `/api/pessoas` | Lista todas as pessoas | RF001, RF006 |
+| GET | `/api/pessoas/busca` | Busca pessoas por nome ou CPF | RF006 |
+| GET | `/api/pessoas/inativas` | Lista pessoas inativas | RF010 |
+| GET | `/api/pessoas/{id}` | Retorna pessoa por ID | RF001 |
+| POST | `/api/pessoas` | Cadastra nova pessoa | RF001 |
+| PUT | `/api/pessoas/{id}` | Atualiza dados de uma pessoa | RF012 |
+| DELETE | `/api/pessoas/{id}` | Remove pessoa | RF010 |
+| GET | `/api/responsaveis` | Lista todos os responsáveis | RF001 |
+| GET | `/api/responsaveis/{id}` | Retorna responsável por ID | RF001 |
+| POST | `/api/responsaveis` | Cadastra novo responsável | RF001 |
+| PUT | `/api/responsaveis/{id}` | Atualiza dados de um responsável | RF012 |
+| DELETE | `/api/responsaveis/{id}` | Remove responsável | RF010 |
+ 
+#### Famílias
+ 
+| Método | Endpoint | Descrição | RF |
+|--------|----------|-----------|-----|
+| GET | `/api/familias` | Lista todas as famílias | RF001 |
+| GET | `/api/familias/{id}` | Retorna família por ID | RF001 |
+| POST | `/api/familias` | Cria nova família | RF001 |
+| DELETE | `/api/familias/{id}` | Remove família | RF009 |
+| POST | `/api/familias/nucleo` | Cadastra núcleo familiar completo | RF001 |
+| GET | `/api/familias/{id}/pessoas` | Lista pessoas de uma família | RF001 |
+| POST | `/api/familias/{id}/pessoas` | Vincula pessoa à família | RF001 |
+| DELETE | `/api/familias/{id}/pessoas/{pessoaId}` | Remove vínculo de pessoa da família | RF010 |
+| GET | `/api/familias/{id}/pessoas/historico` | Histórico de pessoas da família | RF005, RF012 |
+| GET | `/api/familias/{id}/moradias` | Lista moradias vinculadas à família | RF009, RF012 |
+| POST | `/api/familias/{id}/moradias` | Vincula moradia à família | RF002, RF003 |
+| DELETE | `/api/familias/{id}/moradias/{moradiaId}` | Remove vínculo de moradia da família | RF009 |
+| GET | `/api/familias/{id}/moradias/historico` | Histórico de ocupações da família | RF009, RF012 |
+| GET | `/api/familias/{id}/pets` | Lista pets da família | RF007 |
+| POST | `/api/familias/{id}/pets` | Cadastra novo pet na família | RF007 |
+ 
+#### Moradias
+ 
+| Método | Endpoint | Descrição | RF |
+|--------|----------|-----------|-----|
+| GET | `/api/moradias` | Lista moradias com filtros avançados | RF004, RF006 |
+| GET | `/api/moradias/{id}` | Retorna moradia por ID | RF005 |
+| GET | `/api/moradias/{id}/detalhes` | Retorna moradia com localização e ocupantes | RF005 |
+| GET | `/api/moradias/{id}/familias/historico` | Histórico de famílias que ocuparam a moradia | RF005, RF009 |
+| POST | `/api/moradias` | Cria nova moradia | RF002, RF003 |
+| PUT | `/api/moradias/{id}` | Atualiza dados da moradia | RF012 |
+| DELETE | `/api/moradias/{id}` | Remove moradia | RF009 |
+ 
+#### Fotos
+ 
+| Método | Endpoint | Descrição | RF |
+|--------|----------|-----------|-----|
+| GET | `/api/fotos` | Lista todas as fotos | RF002, RF007 |
+| GET | `/api/fotos/{id}` | Retorna foto por ID | RF002, RF007 |
+| GET | `/api/fotos/{id}/signed-url` | Gera URL assinada para acesso seguro | RF002, RF007 |
+| PUT | `/api/fotos/{id}` | Atualiza metadados de uma foto | RF002, RF007 |
+| DELETE | `/api/fotos/{id}` | Remove foto | RF002 |
+| GET | `/api/moradias/{id}/fotos` | Lista fotos de uma moradia | RF002 |
+| POST | `/api/moradias/{id}/fotos/upload-url` | Gera URL pré-assinada para upload | RF002 |
+| POST | `/api/moradias/{id}/fotos` | Registra metadados da foto após upload | RF002 |
+| DELETE | `/api/moradias/{id}/fotos/{fotoId}` | Remove foto de uma moradia | RF002 |
+| GET | `/api/pets/{id}/fotos` | Lista fotos de um pet | RF007 |
+| POST | `/api/pets/{id}/fotos/upload-url` | Gera URL pré-assinada para upload de foto de pet | RF007 |
+| POST | `/api/pets/{id}/fotos` | Registra metadados da foto do pet após upload | RF007 |
+| DELETE | `/api/pets/{id}/fotos/{fotoId}` | Remove foto de um pet | RF007 |
+ 
+#### Pets
+ 
+| Método | Endpoint | Descrição | RF |
+|--------|----------|-----------|-----|
+| GET | `/api/pets` | Lista todos os pets | RF007 |
+| GET | `/api/pets/{id}` | Retorna pet por ID | RF007 |
+| POST | `/api/pets` | Cria novo pet | RF007 |
+| PUT | `/api/pets/{id}` | Atualiza dados de um pet | RF007 |
+| DELETE | `/api/pets/{id}` | Remove pet | RF007 |
 
 ## 3.8. Autenticação, Autorização e Resiliência (sprint 5)
 
@@ -1379,17 +1410,183 @@ O modelo implementado assegura:
 
 ## 3.9. Matriz de Rastreabilidade (RTM) (sprints 3 a 5)
 
-*A RTM consolida a rastreabilidade completa do sistema. Um elo quebrado invalida toda a cadeia — mantenha-a atualizada a cada sprint. A partir da sprint 3 não deve haver lacunas nos fluxos centrais.*
+A Matriz de Rastreabilidade (RTM - Requirements Traceability Matrix) consolida, em uma única visão, os elos entre cada Persona, Requisito Funcional (RF), Regra de Negócio (RN), endpoint de API, tela da interface e caso de teste correspondente. O objetivo é garantir que nenhum requisito fique sem implementação, sem teste e sem evidência de validação, em que qualquer lacuna nessa cadeia representa um risco direto à integridade e à confiabilidade do sistema.
 
-| Persona | RF    | RN   | Endpoint    | Tela     | Teste | Evidência        |
-|---------|-------|------|-------------|----------|-------|------------------|
-| ...     | RF001 | RN01 | `/usuarios` | Cadastro | CT02  | print, log, relatório de cobertura |
+| # | Persona | US | RF | RN | Endpoint | Método | Tela | Casos de Teste | Evidência |
+|---|---------|----|----|-----|----------|--------|------|----------------|-----------|
+| 1 | Agente de Campo | US01 | RF001 — Cadastro Sociodemográfico e Vínculos | RN01 | `/api/pessoas`<br>`/api/responsaveis`<br>`/api/familias`<br>`/api/familias/nucleo`<br>`/api/familias/{id_familia}/pessoas` | `POST` | Cadastro → Responsável, Moradores, Família | CT01: Pessoa criada com sucesso em `/api/pessoas` (`201`)<br>CT02: Responsável criado com CPF obrigatório em `/api/responsaveis` (`201`)<br>CT03: Família criada em `/api/familias` (`201`)<br>CT04: Núcleo familiar cadastrado em `/api/familias/nucleo` com pessoas vinculadas (`201`)<br>CT05: Pessoa já vinculada à família retorna conflito (`409`)<br>CT06: Campos obrigatórios ausentes retornam `422` | Print da tela de cadastro; logs das respostas `201`; relatório de cobertura dos testes de cadastro |
+| 2 | Agente de Campo | US02, US05 | RF002 — Cadastro Estrutural de Moradias<br>RF003 — Georreferenciamento via GPS | RN04 | `/api/moradias`<br>`/api/familias/{id_familia}/moradias`<br>`/api/moradias/{id_moradia}/fotos/upload-url`<br>`/api/moradias/{id_moradia}/fotos`<br>`/api/cadastros-completos` | `POST` | Cadastro → Moradias | CT07: Moradia criada em `/api/moradias` com dados estruturais (`201`)<br>CT08: Moradia vinculada à família em `/api/familias/{id_familia}/moradias` (`201`)<br>CT09: URL de upload de foto de moradia gerada com sucesso (`200`)<br>CT10: Registro de foto da moradia criado após upload (`201`)<br>CT11: Foto de pessoa bloqueada conforme RN04 (`422`)<br>CT12: Cadastro completo transacional planejado em `/api/cadastros-completos` validado quando disponível | Print do formulário de moradia; log de vínculo família-moradia; evidência da URL de upload e da foto cadastrada |
+| 3 | Gestor | US03 | RF004 — Visualização em Mapa Georreferenciado | — | `/api/moradias`<br>`/api/moradias/mapa` | `GET` | Mapa | CT13: `/api/moradias?status=Ativa` retorna somente moradias ativas (`200`)<br>CT14: Endpoint planejado `/api/moradias/mapa` retorna marcadores com coordenadas válidas (`200`)<br>CT15: Moradias arquivadas ou inativas não aparecem na visão operacional do mapa<br>CT16: Lista vazia retorna `200` sem erro | Print do mapa com marcadores; payload da API com coordenadas; evidência de ausência de moradias inativas |
+| 4 | Gestor | US04 | RF005 — Consulta Integrada de Moradia e Moradores | RN01, RN05 | `/api/moradias/{id_moradia}`<br>`/api/moradias/{id_moradia}/detalhes`<br>`/api/moradias/{id_moradia}/consulta-integrada`<br>`/api/moradias/{id_moradia}/familias/historico` | `GET` | Consulta → Resultado da Busca | CT17: Moradia retornada por ID com dados estruturais (`200`)<br>CT18: Detalhes da moradia retornam localização e ocupantes (`200`)<br>CT19: Histórico de famílias da moradia retorna ocupações com `data_entrada` e `data_saida` (`200`)<br>CT20: Consulta integrada planejada retorna moradia, responsável, moradores e pets<br>CT21: Flag de risco crítico aparece quando a condição da RN05 for satisfeita<br>CT22: Moradia inexistente retorna `404` | Print da ficha detalhada; log da resposta da API; evidência da flag de risco quando aplicável |
+| 5 | Gestor | US06 | RF006 — Filtros Avançados de Moradias | — | `/api/moradias`<br>`/api/pessoas/busca`<br>`/api/pessoas` | `GET` | Consulta / Mapa | CT23: Filtro `status=Ativa` em `/api/moradias` retorna apenas moradias correspondentes (`200`)<br>CT24: Busca textual em `/api/pessoas/busca?q=Maria` retorna pessoas compatíveis (`200`)<br>CT25: Listagem de pessoas retorna registros ativos para consulta gerencial (`200`)<br>CT26: Busca sem resultados retorna array vazio sem erro<br>CT27: Nenhum dado fora do filtro selecionado aparece na resposta | Print dos resultados filtrados; payload dos endpoints de busca; evidência de ausência de registros fora do filtro |
+| 6 | Gestor | US06 | RF006 — Exportação de Moradias Filtradas | — | `/api/moradias/exportar` | `GET` | Consulta | CT28: Exportação planejada gera arquivo CSV ou PDF com headers corretos<br>CT29: Filtros aplicados na exportação refletem os mesmos filtros da listagem<br>CT30: Formato inválido retorna `400`<br>CT31: Usuário sem autenticação recebe `401` | Arquivo exportado como evidência; print do download; log da resposta HTTP |
+| 7 | Agente de Campo | US07 | RF007 — Cadastro de Animais de Estimação | — | `/api/pets`<br>`/api/familias/{id_familia}/pets` | `POST` | Cadastro → Pets | CT32: Pet criado em `/api/pets` com `tipo_pet` obrigatório (`201`)<br>CT33: Pet criado diretamente na família em `/api/familias/{id_familia}/pets` (`201`)<br>CT34: `tipo_pet` ausente retorna `422`<br>CT35: Família inexistente retorna `404` | Print do cadastro de pet; log de inserção no banco; payload da resposta `201` |
+| 8 | Agente de Campo e Gestor | US07 | RF007 — Consulta e Atualização de Pets | — | `/api/pets`<br>`/api/pets/{id_pet}`<br>`/api/familias/{id_familia}/pets` | `GET` / `PUT` | Consulta / Ficha de Emergência / Cadastro → Pets | CT36: Lista geral de pets retorna registros cadastrados (`200`)<br>CT37: Pet por ID retorna dados completos (`200`)<br>CT38: Pets da família aparecem na ficha de emergência (`200`)<br>CT39: Atualização de pet em `/api/pets/{id_pet}` retorna sucesso (`200`)<br>CT40: Pet inexistente retorna `404` | Print da ficha de emergência; log de consulta e atualização; evidência do pet atualizado |
+| 9 | Agente de Campo e Gestor | US07 | RF007 — Fotos de Pets | — | `/api/pets/{id_pet}/fotos`<br>`/api/pets/{id_pet}/fotos/upload-url`<br>`/api/pets/{id_pet}/fotos/{id_foto}` | `GET` / `POST` / `DELETE` | Cadastro → Pets / Ficha de Emergência | CT41: Fotos do pet são listadas com sucesso (`200`)<br>CT42: URL de upload para foto do pet é gerada (`200`)<br>CT43: Registro de foto do pet é criado (`201`)<br>CT44: Remoção de foto do pet retorna sucesso (`200`)<br>CT45: Pet ou foto inexistente retorna `404` | Print da seção de fotos do pet; evidência da URL de upload; log de remoção |
+| 10 | Gestor | US08 | RF008 — Mapa de Calor | RN01 | `/api/indicadores/mapa-calor` | `GET` | Mapa | CT46: Endpoint planejado retorna dados agregados para o layer de calor (`200`)<br>CT47: Filtro por grupo prioritário retorna intensidade coerente com os registros<br>CT48: Agrupamentos de coordenadas próximas geram maior intensidade visual<br>CT49: Array vazio retorna `200` sem erro | Print do mapa de calor; payload agregado; evidência de renderização com filtros |
+| 11 | Gestor | US09 | RF009 — Arquivamento de Moradias | RN03 | `/api/moradias/{id_moradia}`<br>`/api/moradias/{id_moradia}/status`<br>`/api/moradias/{id_moradia}/fotos/{id_foto}` | `DELETE` / `PATCH` | Consulta / Mapa | CT50: Remoção de moradia implementada retorna sucesso (`200`)<br>CT51: Atualização planejada de status arquiva moradia com motivo obrigatório (`200`)<br>CT52: Moradia inexistente retorna `404`<br>CT53: Usuário sem permissão recebe `403`<br>CT54: Foto vinculada à moradia pode ser removida sem apagar o restante da ficha (`200`) | Print do histórico inativo; log da alteração de status; payload de erro `403` quando aplicável |
+| 12 | Gestor | US09, US14 | RF009 — Realocação de Família | RN03 | `/api/familias/{id_familia}/moradias`<br>`/api/familias/{id_familia}/moradias/historico`<br>`/api/familias/{id_familia}/moradias/{id_moradia}`<br>`/api/familias/{id_familia}/realocacoes` | `GET` / `POST` / `DELETE` | Consulta | CT55: Moradias da família são listadas com sucesso (`200`)<br>CT56: Histórico de moradias da família exibe vínculos ativos e encerrados (`200`)<br>CT57: Nova moradia é vinculada à família com `data_entrada` (`201`)<br>CT58: Desvinculação de moradia retorna sucesso (`200`)<br>CT59: Endpoint planejado de realocação cria novo vínculo e encerra o anterior<br>CT60: Conflito de ocupação retorna `409` | Log do `historico_ocupacao`; print de confirmação da realocação; payload de conflito |
+| 13 | Gestor | US10 | RF010 — Arquivamento de Moradores Falecidos | RN03 | `/api/pessoas/{id_cidadao}`<br>`/api/pessoas/inativas`<br>`/api/responsaveis/{id_responsavel}`<br>`/api/familias/{id_familia}`<br>`/api/cidadaos/{id_cidadao}/arquivar` | `DELETE` / `GET` / `PATCH` | Consulta | CT61: Pessoa removida ou inativada retorna sucesso (`200`)<br>CT62: Pessoas inativas são listadas em `/api/pessoas/inativas` (`200`)<br>CT63: Responsável removido exige validação de integridade familiar conforme regra vigente<br>CT64: Família removida por gestor retorna sucesso quando permitido (`200`)<br>CT65: Arquivamento planejado de cidadão preserva histórico e exige data de falecimento<br>CT66: Recurso inexistente retorna `404` | Print da listagem de pessoas inativas; log do arquivamento; evidência de histórico preservado |
+| 14 | Gestor | US11 | RF011 — Alerta Automático de Recadastro (12 meses) | RN02 | `/api/indicadores/recadastro` | `GET` | Mapa / Painel | CT67: Endpoint planejado retorna contadores de cadastros atualizados e desatualizados (`200`)<br>CT68: Ficha com mais de 365 dias sem atualização entra no contador de desatualizados<br>CT69: Após atualização da ficha, contador de desatualizados é reduzido na próxima consulta<br>CT70: Usuário não autenticado recebe `401` | Print do painel com indicador; log da consulta; evidência antes/depois da atualização |
+| 15 | Agente de Campo | US12 | RF012 — Atualização Anual de Dados | RN01, RN02, RN04 | `/api/pessoas/{id_cidadao}`<br>`/api/responsaveis/{id_responsavel}`<br>`/api/moradias/{id_moradia}`<br>`/api/fotos/{id_foto}`<br>`/api/familias/{id_familia}/cadastro-completo` | `PUT` / `GET` | Cadastro (edição) | CT71: Pessoa atualizada com sucesso (`200`)<br>CT72: Responsável atualizado com sucesso (`200`)<br>CT73: Moradia atualizada com sucesso (`200`)<br>CT74: Foto da moradia atualizada sem violar RN04 (`200`)<br>CT75: Cadastro completo planejado é consultado para revisão anual (`200`)<br>CT76: Atualização planejada do cadastro completo limpa alerta de recadastro | Print antes/depois no painel; log de atualização; evidência de alteração da data de atualização |
+| 16 | Gestor | US13 | Regra de responsável obrigatório por família | RN03 | `/api/responsaveis`<br>`/api/responsaveis/{id_responsavel}`<br>`/api/familias/{id_familia}/responsavel` | `GET` / `POST` / `PUT` | Consulta | CT77: Responsáveis são listados para seleção (`200`)<br>CT78: Responsável por ID retorna dados cadastrais (`200`)<br>CT79: Novo responsável é criado quando necessário (`201`)<br>CT80: Dados do responsável são atualizados com sucesso (`200`)<br>CT81: Endpoint planejado define ou substitui responsável familiar (`200`)<br>CT82: CPF ou email duplicado retorna `409` | Log de atualização no banco; print de confirmação; payload de conflito quando aplicável |
+| 17 | Gestor | US04, US05 | RF004 — Visualização em Mapa Georreferenciado<br>RF005 — Consulta Integrada de Moradia e Moradores | RN04 | `/api/fotos`<br>`/api/fotos/{id_foto}`<br>`/api/fotos/{id_foto}/signed-url`<br>`/api/moradias/{id_moradia}/fotos` | `GET` / `PUT` / `DELETE` | Consulta / Mapa / Ficha da Moradia | CT83: Fotos cadastradas são listadas com sucesso (`200`)<br>CT84: Foto por ID retorna tipo e URL (`200`)<br>CT85: URL assinada é gerada para acesso seguro à foto (`200`)<br>CT86: Fotos da moradia são listadas na ficha (`200`)<br>CT87: Atualização de foto retorna sucesso (`200`)<br>CT88: Remoção de foto retorna sucesso sem remover a moradia (`200`) | Print da galeria da moradia; evidência da URL assinada; log de atualização ou remoção |
+
+---
 
 # <a name="c4"></a>4. Desenvolvimento da Aplicação Web
 
 ## 4.1. Primeira versão da aplicação web (sprint 3)
+Na primeira versão do sistema web, foi aplicado a estrutura de pastas juntamente com o desenvolvimento das funcionalidades CRUD base do sistema referente a moradia, moradores, responsáveis e pets, havendo já um protótipo de alta fidelidade com guia e identidade visual. Ademais, o código foi desenvolvido utilizando a metodologia TDD (Test Driven Design), onde o desenvolvimento é orientado a testes, garantindo um código já testado e comprovado.
 
-*Descreva e ilustre aqui o desenvolvimento da primeira versão do sistema web. Utilize prints de tela para ilustrar. Indique obrigatoriamente: (a) o que foi implementado, (b) o que não foi concluído, (c) dificuldades técnicas enfrentadas e próximos passos.*
+Assim, ainda não foi inserido métodos complexos e mais específicos, priorizando a entrega de um MVC visualizável e testável.
+
+### 4.1.1 O que foi implementado
+
+#### **Arquitetura em 6 Camadas**
+- **Controllers:** Recebem requisições HTTP, validam entrada, retornam respostas (suporte duplo a EJS e JSON)
+- **Services:** Implementam regras de negócio (RN01-RN04), validações, transações
+- **Repositories:** Encapsulam acesso ao PostgreSQL/Supabase, queries SQL otimizadas
+- **DTOs:** Tipagem de dados trafegados entre camadas
+- **Models:** Interfaces TypeScript para entidades
+- **Validations:** Validação centralizada de payloads
+- **Errors:** Classe `HttpError` para tratamento padronizado de erros
+
+#### **Endpoints Implementados (RF001-RF007)**
+
+**Pessoas (RF001):**
+- `GET /api/pessoas` — Lista todas as pessoas ativas
+- `GET /api/pessoas/busca` — Busca por nome, CPF, email, telefone
+- `GET /api/pessoas/inativas` — Lista pessoas inativas (soft delete)
+- `GET /api/pessoas/{id}` — Retorna pessoa por ID
+- `POST /api/pessoas` — Cria nova pessoa com validação RN01 (nome e data obrigatórios)
+- `PUT /api/pessoas/{id}` — Atualiza dados de pessoa
+- `DELETE /api/pessoas/{id}` — Remove logicamente pessoa (LGPD soft delete)
+
+**Responsáveis (RF001):**
+- `GET /api/responsaveis` — Lista todos os responsáveis
+- `GET /api/responsaveis/{id}` — Retorna responsável por ID
+- `POST /api/responsaveis` — Cadastra responsável com CPF, NIS, renda, programas sociais
+- `PUT /api/responsaveis/{id}` — Atualiza responsável
+- `DELETE /api/responsaveis/{id}` — Remove responsável
+
+**Moradias (RF002, RF003):**
+- `GET /api/moradias` — Lista moradias com filtros (status, tipo construção)
+- `GET /api/moradias/{id}` — Retorna moradia por ID
+- `GET /api/moradias/{id}/detalhes` — Detalhes com localização e histórico
+- `POST /api/moradias` — Cria moradia com tipo construção, pavimentos, localização
+- `PUT /api/moradias/{id}` — Atualiza moradia
+- `DELETE /api/moradias/{id}` — Remove moradia com soft delete
+
+**Famílias (RF001):**
+- `GET /api/familias` — Lista famílias
+- `GET /api/familias/{id}` — Retorna família por ID
+- `POST /api/familias` — Cria família
+- `POST /api/familias/nucleo` — Cadastro transacional completo (responsável + membros + moradia)
+- `GET /api/familias/{id}/pessoas` — Lista pessoas da família
+- `POST /api/familias/{id}/pessoas` — Vincula pessoa à família
+- `GET /api/familias/{id}/moradias` — Lista moradias da família
+- `POST /api/familias/{id}/moradias` — Vincula moradia com histórico de ocupação
+- `GET /api/familias/{id}/pets` — Lista pets da família
+- `POST /api/familias/{id}/pets` — Cadastra pet
+
+**Pets (RF007):**
+- `GET /api/pets` — Lista todos os pets
+- `GET /api/pets/{id}` — Retorna pet por ID
+- `POST /api/pets` — Cria novo pet (tipo obrigatório)
+- `PUT /api/pets/{id}` — Atualiza pet
+- `DELETE /api/pets/{id}` — Remove pet
+
+**Fotos (RF002, RF007):**
+- `GET /api/moradias/{id}/fotos` — Lista fotos da moradia
+- `POST /api/moradias/{id}/fotos/upload-url` — Gera URL pré-assinada Supabase Storage
+- `POST /api/moradias/{id}/fotos` — Registra metadados da foto
+- `GET /api/pets/{id}/fotos` — Lista fotos do pet
+- `POST /api/pets/{id}/fotos/upload-url` — URL de upload para foto de pet
+
+#### **Banco de Dados e Migrações**
+- **7 migrações versionadas** implementadas:
+  - `01_create_pessoas_sql.sql` — Criação tabela pessoas com ENUMs (parentesco, status, escolaridade, situação ocupacional)
+  - `02_add_familias.sql` — Tabela família com relacionamento 1:N com pessoa
+  - `03_allow_pet_photos.sql` — Adição suporte a fotos de pets
+  - `04_add_pet_status.sql` — Status para pets
+  - `05_enforce_responsavel_unico_familia.sql` — Constraint de responsável único por família
+  - `06_add_tipo_pet.sql` — Enum de tipos de pets
+  - `07_create_storage_bucket.sql` — Bucket Supabase para fotos
+
+- **Tabelas criadas:** `pessoas`, `responsavel`, `familia`, `pet`, `localizacao`, `moradia`, `foto`, `pessoa_familia`, `familia_moradia`
+- **ENUMs implementados:** tipo_parentesco, tipo_status, tipo_escolaridade, tipo_situacao_ocupacional, tipo_pet
+
+#### **Validações e Regras de Negócio (RN01-RN04)**
+- **RN01:** Nome e data de nascimento obrigatórios para Pessoa
+- **RN02:** Escolaridade e situação ocupacional obrigatórias
+- **RN03:** Parentesco obrigatório
+- **RN04:** Medicação e doença crônica não podem ser nulas
+- **RN - LGPD:** Soft delete com `deleted_at` e `status` para conformidade com LGPD
+
+#### **Views EJS e Interface Web**
+- `pessoa-novo.ejs` — Formulário de cadastro de pessoa com validação client-side
+- `pessoa-lista.ejs` — Tabela de listagem de pessoas com ícones de editar/deletar
+- `public/styles.css` — Estilos conforme guia (cores: Azul #182C4C, Laranja #ff7500, tipografia DM Sans)
+
+#### **Testes Automatizados (Jest + Supertest)**
+- `pessoa.persistence.spec.ts` — Testes de persistência DB validando RN01
+- Controller tests para validação de payloads, status codes, renderização de views
+- Cobertura básica de operações CRUD e fluxos de erro
+
+#### **Integração Supabase**
+- Classe `SupabaseStorageClient` implementada para upload de fotos
+- Geração de URLs pré-assinadas para acesso seguro
+- FotoStorageService como wrapper desacoplando detalhes de infraestrutura
+
+#### Reajustes e atualizações da documentação
+Foram realizadas as seguintes atualizações no WAD durante essa sprint de consolidação:
+
+- Seção 4.1 (Primeira versão da aplicação web)
+- Seção 3.4 (Guia de Estilos): criação do Guia de Estilos completa
+- Seção 3.5 (Protótipos de Alta Fidelidade): desenhado os protótipo de Alta Fidelidade do sistema
+- Seção 3.6 (Modelo Físico): reajustes conforme surgimento de necessidades de alterações do banco de dados
+- Seção 3.6.4 (Consultas SQL com Lógica Proposicional): Escrita das consultas SQL juntamento com a documentação da lógica proposicional do sistema
+- Documentação e aplicação geral da arquitetura utilizada (3.2)
+
+
+### 4.1.2 O que não foi concluído
+
+- **Mapa Georreferenciado (RF004):** Endpoints `/api/moradias/mapa` e visualização de marcadores não implementados
+- **Mapa de Calor (RF008):** Endpoint `/api/indicadores/mapa-calor` planejado, não finalizado
+- **Alerta de Recadastro (RF011):** Job agendado de detecção de fichas desatualizadas (>365 dias) não implementado
+- **Consulta Integrada com Flag Risco Crítico (RF005, RN05):** Endpoint `/api/moradias/{id}/consulta-integrada` com flag de risco crítico não finalizado
+- **Exportação de Relatórios (RF006):** Endpoints `/api/moradias/exportar` em CSV/PDF não implementados
+- **Realocação de Famílias Avançada (RF009):** Fluxo complexo de realocação com validação de integridade incompleto
+- **Frontend Mobile/Responsivo:** Apenas telas EJS básicas. Sem interface desktop.
+- **Geolocalização Multimodal (RF003):** Captura automática de GPS, CEP digital e referências visuais não totalmente testada
+- **Endpoints GET com agregação:** Endpoints de totalização por grupo prioritário, contadores de vulnerabilidade não implementados
+
+
+### 4.1.3 Dificuldades encontradas
+Dentre as dificuldades, encontramos problemas diversos considerando o prazo de entrega apertadíssimo, dificultando na possibilidade de aplicações de funcionalidades secundárias, porém úteis, como o alerta de atualização do cadastro de Gestantes após um prazo estimado de gravidez; diferenciação de pets para animais com fins funcionais (comerciais e reprodutivos). Sendo todas estas, inseridas como escopo extra que desejaríamos de implementar se fosse possível.
+
+
+### 4.1.4 Próximos passos
+**Sprint 4 (Consolidação e Features Críticas):**
+1. **Completar RF005:** Consulta integrada + flag RN05 de risco crítico
+2. **Implementar RF004/RF008:** Mapa com marcadores e heatmap de vulnerabilidades
+3. **Job de recadastro (RF011):** Scheduler para detectar fichas desatualizadas
+4. **Exportação (RF006):** CSV/PDF com filtros
+5. **Melhorar testes:** Aumentar cobertura para 80%+; testes e2e com Supertest
+6. **Frontend básico:** Começar interface React/Next.js para cadastro
+7. **Geolocalização:** Testar captura GPS completa em diferentes contextos
+
+### 4.1.5 Demonstrações visuais
+
+<!-- <p>Arquitetura de pastas e classes</p> -->
+<div align="center">
+    <p>Arquitetura de pastas e classes</p>
+    <img src="outros/arquitetura-pastas.png" height="800">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
+
 
 ## 4.2. Segunda versão da aplicação web (sprint 4)
 
@@ -1430,8 +1627,13 @@ O modelo implementado assegura:
 
 ## 6.2. Análise de Mercado
 
-*a) Visão Geral do Setor (até 250 palavras)*
-*Contextualize o setor no qual a aplicação está inserida, considerando aspectos econômicos, tecnológicos e regulatórios. Utilize fontes confiáveis.*
+O GeoRisco Santo André está inserido no setor de GovTech, que corresponde a um conjunto de soluções tecnológicas desenvolvidas por empresas privadas para modernizar a gestão pública e aprimorar a prestação de serviços à população.
+
+O setor surge da convergência entre a aceleração digital da sociedade e a defasagem histórica dos sistemas públicos, que ainda operam em grande parte com processos analógicos, fragmentados e pouco escaláveis. À medida que governos enfrentam demandas crescentes por eficiência, transparência e sustentabilidade, o GovTech se consolida como resposta estrutural, oferecendo ferramentas que automatizam processos, reduzem custos operacionais e reconstroem a confiança pública.
+
+No Brasil, o contexto é especialmente favorável. O setor público é o maior comprador de produtos e serviços do país, respondendo por cerca de 12% do PIB brasileiro, o que cria uma demanda estrutural contínua por soluções tecnológicas. Do ponto de vista regulatório, dois marcos legais moldam diretamente o segmento de GovTech voltado à gestão de riscos: a Lei nº 12.608/2012, que institui a Política Nacional de Proteção e Defesa Civil e exige cadastros atualizados de populações vulneráveis, e a LGPD (Lei nº 13.709/2018), que impõe requisitos de rastreabilidade e proteção de dados sensíveis coletados em campo. 
+
+É nesse cenário que soluções como o GeoRisco encontram espaço: endereçando lacunas operacionais reais em municípios que carecem de sistemas digitais integrados para gestão de risco.
 
 *b) Tamanho e Crescimento do Mercado (até 250 palavras)*
 *Apresente dados quantitativos sobre o tamanho atual e projeções de crescimento do mercado. Utilize fontes confiáveis.*
@@ -1439,45 +1641,91 @@ O modelo implementado assegura:
 *c) Tendências de Mercado (até 300 palavras)*
 *Identifique e analise tendências relevantes (tecnológicas, comportamentais e mercadológicas) que influenciam o setor. Utilize fontes confiáveis.*
 
-## 6.3. Análise da Concorrência
 
-*a) Principais Concorrentes (até 250 palavras)*
-*Liste os concorrentes diretos e indiretos, destacando suas principais características e posicionamento no mercado.*
+## 6.3. Público-Alvo
 
-*b) Vantagens Competitivas da Aplicação Web (até 250 palavras)*
-*Descreva os diferenciais da sua aplicação em relação aos concorrentes, sem necessidade de citação de fontes.*
+### 6.3.1 Segmentação de Mercado
 
+A segmentação de mercado da aplicação foi definida a partir do setor público de proteção e defesa civil, com foco em instituições responsáveis pela prevenção, preparação, resposta e recuperação em situações de risco e desastre. O segmento prioritário é composto pela Defesa Civil de Santo André, especialmente pelos agentes de campo e gestores operacionais que atuam no cadastramento, monitoramento e atendimento de famílias residentes em áreas suscetíveis a deslizamentos, enchentes e outros eventos adversos associados a desastres geo-hidrológicos.
 
-## 6.4. Público-Alvo
+Também foi identificado como segmento relevante o conjunto de prefeituras e coordenadorias municipais de Defesa Civil que enfrentam desafios semelhantes, principalmente em municípios com áreas de risco, ocupações vulneráveis e necessidade de atualização constante de dados territoriais e sociodemográficos. Nesses contextos, a aplicação pode ser utilizada como ferramenta de apoio à digitalização de cadastros, ao georreferenciamento de moradias e à priorização de atendimentos em situações emergenciais.
 
-*a) Segmentação de Mercado (até 250 palavras)*
-Descreva os principais segmentos de mercado a serem atendidos pela aplicação. Utilize bases de dados e fontes confiáveis.*
+Além disso, a solução pode atender secretarias municipais que atuam de forma integrada com a Defesa Civil, como Habitação, Assistência Social, Saúde, Meio Ambiente e Desenvolvimento Urbano. Esses órgãos dependem de informações confiáveis sobre famílias, moradias, vulnerabilidades, localização e histórico de ocupação para planejar políticas públicas, definir prioridades e coordenar ações preventivas.
+
+Dessa forma, concluiu-se que a aplicação está direcionada principalmente ao mercado institucional govtech, com foco em gestão pública de riscos, resiliência urbana e proteção de populações vulneráveis. Seu potencial de uso concentra-se em órgãos públicos municipais que necessitam substituir processos manuais e descentralizados por uma solução digital, integrada e adaptada ao trabalho em campo.
+
+Fontes utilizadas para realizar a pesquisa de segmentação de mercado:
+1. https://www.gov.br/cemaden/pt-br/assuntos/noticias-cemaden/cemaden-expande-rede-de-monitoramento-e-passa-a-monitorar-1-295-municipios
+2. https://www.gov.br/secom/pt-br/acompanhe-a-secom/noticias/2026/05/mais-162-cidades-brasileiras-sao-incluidas-na-rede-de-alertas-do-cemaden/
+3. https://www.gov.br/casacivil/pt-br/assuntos/cadastro-de-municipios-suscetiveis-a-eventos-de-enxurradas-e-inundacoes/Nota_Tecnica_2.pdf
+4. https://agenciadenoticias.ibge.gov.br/agencia-noticias/2012-agencia-de-noticias/noticias/21566-estudo-inedito-mostra-moradores-sujeitos-a-enchentes-e-deslizamentos
+5. https://ipt.br/2023/03/27/mapeamento-e-gerenciamento-de-areas-de-risco-de-deslizamento-e-solapamento-de-margem-no-municipio-de-santo-andre-sp/
+
+### 6.3.2. Perfil do Público-Alvo
 
 *b) Perfil do Público-Alvo (até 250 palavras)*
 *Caracterize o público-alvo com dados demográficos, psicográficos e comportamentais, incluindo necessidades específicas. Utilize fontes obrigatórias.*
 
 
-## 6.5. Posicionamento
+## 6.4. Posicionamento e Branding
 
 *a) Proposta de Valor Única (até 250 palavras)*
-*Defina de maneira clara o que torna a sua aplicação única e valiosa para o mercado.*
+*Defina de maneira clara o que torna a sua aplicação única e valiosa para seus usuários.*
 
-*b) Estratégia de Diferenciação (até 250 palavras)*
-*Explique como sua aplicação se destacará da concorrência, evidenciando a lógica por trás do posicionamento.*
+## 6.4.2 Posicionamento e Branding
 
-## 6.6. Estratégia de Marketing 
+O público-alvo central do GeoRisco é a população residente nas áreas de risco de Santo André. O município tem 748.919 habitantes (Censo 2022, IBGE), e o Plano Municipal de Redução de Riscos (2025) identifica 28 áreas de risco, com 3.803 edificações em risco alto e muito alto (R3/R4), em bairros como Jardim Santo André, Sítio dos Vianas e Paranapiacaba.
 
-*a) Produto/Serviço (até 200 palavras)*
-*Descreva as funcionalidades, benefícios e diferenciais da aplicação*
+**Demográfico.** Famílias de baixa renda em encostas e margens de córregos — em Santo André, 30,5% da população tem rendimento per capita de até meio salário mínimo — com sobrerrepresentação de grupos prioritários para evacuação: idosos (60+), crianças de 0 a 12 anos, gestantes, lactantes e Pessoas com Deficiência (PCD). O município tem 50.177 moradores com algum tipo de deficiência, 6,7% da população (Paracenso/Prefeitura de Santo André, 2023). Mobilidade reduzida e doenças crônicas exigem priorização.
 
-*b) Preço (até 200 palavras)*
-*Explique o modelo de precificação adotado e justifique com base nas análises anteriores.*
+**Psicográfico.** Forte vínculo afetivo e territorial com a moradia, pertencimento comunitário e desconfiança frente ao poder público; receio de perder bens, documentos e animais de estimação ao deixar a casa.
 
-*c) Praça (Distribuição) (até 200 palavras)*
-*Apresente os canais digitais utilizados para distribuir e entregar a aplicação ao público.*
+**Comportamental.** Resistência à evacuação preventiva mesmo sob alerta — equipes da Defesa Civil enfrentam a recusa de moradores em sair de áreas de alto risco, recorrendo, em casos extremos, à remoção compulsória.
 
-*d) Promoção (até 200 palavras)*
-*Descreva as estratégias digitais planejadas, como SEO, redes sociais, marketing de conteúdo e campanhas pagas.*
+**Necessidades específicas.** Identificação imediata de prioridades de evacuação; triagem de saúde e prontuário conforme o SUAS; abrigo que acolha o núcleo familiar e seus animais; guarda de bens; e tratamento anonimizado dos dados, conforme a LGPD.
+
+## 6.5. Business Model Canvas
+
+*Preencha os nove blocos do Business Model Canvas de forma coerente com as análises realizadas nas seções anteriores: Segmentos de clientes; Proposta de valor; Canais; Relacionamento com clientes; Fontes de receita;*
+
+*Recursos principais; Atividades principais; Parcerias principais; e estrutura de custos (somente se couber nesse momento da análise com o parceiro).*
+
+## 6.6. Estratégia de Marketing
+
+A estratégia de marketing do GeoRisco Santo André foi estruturada com base no modelo dos 4Ps: Produto/Serviço, Preço, Praça e Promoção. Essa abordagem permite organizar a forma como a aplicação gera valor, como pode ser financiada, por quais canais será disponibilizada e quais estratégias serão usadas para divulgar sua adoção. Como se trata de uma solução GovTech voltada à gestão pública e à Defesa Civil, os 4Ps foram adaptados ao contexto B2G, priorizando impacto social, eficiência operacional e relacionamento institucional.
+
+Em **Produto/Serviço**, são descritas as funcionalidades, benefícios e diferenciais da aplicação. Em **Preço**, apresenta-se o modelo de monetização mais adequado para órgãos públicos e sua justificativa. Em **Praça**, explica-se como a solução será distribuída e entregue aos usuários. Por fim, em **Promoção**, são definidas as estratégias digitais e institucionais para divulgação, aquisição de parceiros e expansão da aplicação para novos contextos municipais.
+
+### 6.6.1. Produto/Serviço
+
+O GeoRisco Santo André é uma aplicação web voltada à gestão de populações em áreas de risco, desenvolvida para apoiar agentes de campo e gestores operacionais da Defesa Civil. A solução permite o cadastro georreferenciado de moradias, famílias, moradores e pets, reunindo informações como endereço, coordenadas, fotos do imóvel, composição familiar, vulnerabilidades e histórico de ocupação. Também oferece consulta integrada de registros, visualização em mapa, filtros por território e apoio à identificação de situações críticas.
+
+O principal benefício da aplicação é centralizar dados antes dispersos em processos manuais, planilhas ou registros fragmentados, aumentando a agilidade, a confiabilidade e a rastreabilidade das informações. Seu diferencial está na adequação ao contexto real da Defesa Civil de Santo André, com foco em tomada de decisão rápida, priorização de grupos vulneráveis, apoio à evacuação e melhoria da gestão de abrigos. Assim, o GeoRisco fortalece a capacidade preventiva e operacional do município diante de eventos climáticos extremos.
+
+
+### 6.6.2. Preço 
+
+O modelo de precificação proposto é B2G (Business to Government), voltado à contratação por órgãos públicos municipais, sem cobrança direta dos cidadãos ou dos agentes que utilizam a aplicação. A solução pode ser implantada por meio de contratação institucional, contemplando custos relacionados à hospedagem, manutenção, suporte técnico e treinamento dos usuários.
+
+Esse modelo é adequado porque a Defesa Civil presta um serviço público essencial, sem finalidade comercial voltada ao consumidor final. O valor da aplicação está na centralização das informações, na redução de processos manuais, no aumento da eficiência operacional e no apoio à tomada de decisão em situações de risco e emergência.
+
+Por se tratar de uma solução destinada ao setor público, não são definidos valores comerciais específicos nesta etapa. A precificação depende de fatores como porte do município, número de usuários, requisitos técnicos, disponibilidade orçamentária e processos de contratação pública. Dessa forma, a proposta prioriza a definição de um modelo de contratação sustentável e compatível com a realidade da administração pública.
+
+
+### 6.6.3. Praça
+
+A distribuição do GeoRisco ocorrerá por canais digitais institucionais, com acesso seguro por navegador em celulares, tablets e computadores. A aplicação poderá ser disponibilizada em domínio oficial da Prefeitura ou da Defesa Civil, com perfis de permissão adequados às funções de agentes de campo, gestores e administradores. Dessa forma, o sistema atende tanto ao uso operacional em campo quanto à análise estratégica em ambiente de sede.
+
+A entrega da aplicação pode ser feita por infraestrutura em nuvem ou em ambiente tecnológico definido pelo município, garantindo disponibilidade, armazenamento centralizado e padronização dos dados. Para expansão, os canais de distribuição incluem parcerias com prefeituras, Defesa Civil estadual, consórcios intermunicipais, secretarias de meio ambiente, assistência social e tecnologia. Documentação técnica, manuais digitais, treinamentos online e APIs de integração podem apoiar a implantação em novos contextos, permitindo que a solução seja replicada para outros municípios com necessidades semelhantes.
+
+
+### 6.6.4. Promoção
+
+A estratégia de promoção do GeoRisco prioriza credibilidade institucional, impacto social e demonstração de resultados, considerando que o público-alvo é composto por órgãos públicos e gestores municipais. Uma página institucional otimizada para SEO poderá divulgar a solução por meio de termos como “gestão de áreas de risco”, “Defesa Civil municipal”, “cadastro georreferenciado” e “gestão de desastres”, facilitando sua descoberta por potenciais interessados.
+
+A divulgação também poderá ocorrer por canais institucionais da Prefeitura, da Defesa Civil e por redes profissionais como o LinkedIn, destacando benefícios como centralização de dados, apoio à evacuação e proteção de populações vulneráveis. O marketing de conteúdo incluirá estudos de caso, vídeos demonstrativos, relatórios de impacto, infográficos e artigos sobre prevenção de desastres e gestão territorial. Além disso, a promoção poderá ser fortalecida por apresentações para prefeituras, participação em eventos de inovação pública, parcerias acadêmicas e divulgação em redes de Defesa Civil. Essas ações contribuem para ampliar a visibilidade da solução, fortalecer sua legitimidade institucional e incentivar sua adoção por outros municípios.
+
+---
 
 # <a name="c7"></a>7. Registro de atualizações (sprint 5)
 Início na sprint 2 pois não é possível realizar atualizações na sprint que foi iniciado o projeto;
@@ -1502,7 +1750,7 @@ Tivemos alterações nas Personas (ambas), User Stories (todas), RF, RNF e RN. D
 
 *Relacione também quaisquer outras ideias que o grupo tenha para melhorias futuras*
 
-# <a name="c9"></a>9. Referências (sprints 1 a 5)
+# <a name="c8"></a>8. Referências (sprints 1 a 5)
 
 1. PORTER, Michael E. *Estratégia Competitiva: Técnicas para Análise de Indústrias e da Concorrência*. 2. ed. Rio de Janeiro: Campus, 2004.
 
