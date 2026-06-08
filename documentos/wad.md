@@ -1611,9 +1611,13 @@ Dentre as dificuldades, encontramos problemas diversos considerando o prazo de e
 
 ## 6.1. Resumo Executivo
 
-*Preencher com até 300 palavras, sem necessidade de fonte*
+O GeoRisco Santo André é uma aplicação web desenvolvida em parceria com a Defesa Civil do município para apoiar a gestão georreferenciada de populações em áreas de risco. A solução substitui processos analógicos, fragmentados e baseados em planilhas físicas por uma plataforma digital integrada, que permite ao agente de campo cadastrar moradias, núcleos familiares, vulnerabilidades e animais de estimação, e oferece à sede um painel geolocalizado para tomada de decisão estratégica em tempo real.
 
-*Apresente de forma clara e objetiva os principais destaques do projeto: oportunidades de mercado, diferenciais competitivos da aplicação web e os objetivos estratégicos pretendidos.*
+**Oportunidades de mercado.** O projeto se insere no setor GovTech, segmento em expansão no Brasil, onde o setor público responde por cerca de 12% do PIB e enfrenta forte demanda por modernização. Marcos regulatórios como a Lei nº 12.608/2012 (Política Nacional de Proteção e Defesa Civil) e a LGPD (Lei nº 13.709/2018) reforçam a necessidade de cadastros atualizados, rastreáveis e seguros. Santo André concentra 28 áreas de risco e 3.803 edificações classificadas como risco alto e muito alto (R3/R4), cenário replicável em centenas de municípios brasileiros monitorados pelo CEMADEN, com potencial inicial de expansão para o ABC Paulista e demais coordenadorias municipais de Defesa Civil.
+
+**Diferenciais competitivos.** A aplicação combina geolocalização multimodal (CEP, coordenadas GPS, referências geográficas e fotos do imóvel) e visualização em mapa com filtros por vulnerabilidade e densidade populacional. O modelo B2G prioriza impacto social, conformidade com a LGPD e adequação ao contexto operacional real do agente.
+
+**Objetivos estratégicos.** Reduzir o tempo crítico de coleta para menos de cinco minutos por moradia; eliminar gaps operacionais entre evacuação e abrigo; oferecer visão estratégica em tempo real para alocação de recursos; e consolidar uma base íntegra que fortaleça a resiliência urbana de Santo André e sirva de referência para replicação em outros municípios.
 
 ## 6.2. Análise de Mercado
 
