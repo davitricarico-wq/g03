@@ -1617,10 +1617,13 @@ Dentre as dificuldades, encontramos problemas diversos considerando o prazo de e
 
 ## 6.2. Análise de Mercado
 
-### 6.2.1 Visão Geral do Setor
+O GeoRisco Santo André está inserido no setor de GovTech, que corresponde a um conjunto de soluções tecnológicas desenvolvidas por empresas privadas para modernizar a gestão pública e aprimorar a prestação de serviços à população.
 
-*a) Visão Geral do Setor (até 250 palavras)*
-*Contextualize o setor no qual a aplicação está inserida, considerando aspectos econômicos, tecnológicos e regulatórios. Utilize fontes confiáveis.*
+O setor surge da convergência entre a aceleração digital da sociedade e a defasagem histórica dos sistemas públicos, que ainda operam em grande parte com processos analógicos, fragmentados e pouco escaláveis. À medida que governos enfrentam demandas crescentes por eficiência, transparência e sustentabilidade, o GovTech se consolida como resposta estrutural, oferecendo ferramentas que automatizam processos, reduzem custos operacionais e reconstroem a confiança pública.
+
+No Brasil, o contexto é especialmente favorável. O setor público é o maior comprador de produtos e serviços do país, respondendo por cerca de 12% do PIB brasileiro, o que cria uma demanda estrutural contínua por soluções tecnológicas. Do ponto de vista regulatório, dois marcos legais moldam diretamente o segmento de GovTech voltado à gestão de riscos: a Lei nº 12.608/2012, que institui a Política Nacional de Proteção e Defesa Civil e exige cadastros atualizados de populações vulneráveis, e a LGPD (Lei nº 13.709/2018), que impõe requisitos de rastreabilidade e proteção de dados sensíveis coletados em campo. 
+
+É nesse cenário que soluções como o GeoRisco encontram espaço: endereçando lacunas operacionais reais em municípios que carecem de sistemas digitais integrados para gestão de risco.
 
 ### 6.2.2 Tamanho e Crescimento de Mercado 
 
@@ -1641,21 +1644,48 @@ Fontes: Market Growth Reports (2026); Global Growth Insights (2026); Verified Ma
 *c) Tendências de Mercado (até 300 palavras)*
 *Identifique e analise tendências relevantes (tecnológicas, comportamentais e mercadológicas) que influenciam o setor. Utilize fontes confiáveis.*
 
+
 ## 6.3. Público-Alvo
 
-*a) Segmentação de Mercado (até 250 palavras)*
-Descreva os principais segmentos de mercado a serem atendidos pela aplicação. Utilize bases de dados e fontes confiáveis.*
+### 6.3.1 Segmentação de Mercado
+
+A segmentação de mercado da aplicação foi definida a partir do setor público de proteção e defesa civil, com foco em instituições responsáveis pela prevenção, preparação, resposta e recuperação em situações de risco e desastre. O segmento prioritário é composto pela Defesa Civil de Santo André, especialmente pelos agentes de campo e gestores operacionais que atuam no cadastramento, monitoramento e atendimento de famílias residentes em áreas suscetíveis a deslizamentos, enchentes e outros eventos adversos associados a desastres geo-hidrológicos.
+
+Também foi identificado como segmento relevante o conjunto de prefeituras e coordenadorias municipais de Defesa Civil que enfrentam desafios semelhantes, principalmente em municípios com áreas de risco, ocupações vulneráveis e necessidade de atualização constante de dados territoriais e sociodemográficos. Nesses contextos, a aplicação pode ser utilizada como ferramenta de apoio à digitalização de cadastros, ao georreferenciamento de moradias e à priorização de atendimentos em situações emergenciais.
+
+Além disso, a solução pode atender secretarias municipais que atuam de forma integrada com a Defesa Civil, como Habitação, Assistência Social, Saúde, Meio Ambiente e Desenvolvimento Urbano. Esses órgãos dependem de informações confiáveis sobre famílias, moradias, vulnerabilidades, localização e histórico de ocupação para planejar políticas públicas, definir prioridades e coordenar ações preventivas.
+
+Dessa forma, concluiu-se que a aplicação está direcionada principalmente ao mercado institucional govtech, com foco em gestão pública de riscos, resiliência urbana e proteção de populações vulneráveis. Seu potencial de uso concentra-se em órgãos públicos municipais que necessitam substituir processos manuais e descentralizados por uma solução digital, integrada e adaptada ao trabalho em campo.
+
+Fontes utilizadas para realizar a pesquisa de segmentação de mercado:
+1. https://www.gov.br/cemaden/pt-br/assuntos/noticias-cemaden/cemaden-expande-rede-de-monitoramento-e-passa-a-monitorar-1-295-municipios
+2. https://www.gov.br/secom/pt-br/acompanhe-a-secom/noticias/2026/05/mais-162-cidades-brasileiras-sao-incluidas-na-rede-de-alertas-do-cemaden/
+3. https://www.gov.br/casacivil/pt-br/assuntos/cadastro-de-municipios-suscetiveis-a-eventos-de-enxurradas-e-inundacoes/Nota_Tecnica_2.pdf
+4. https://agenciadenoticias.ibge.gov.br/agencia-noticias/2012-agencia-de-noticias/noticias/21566-estudo-inedito-mostra-moradores-sujeitos-a-enchentes-e-deslizamentos
+5. https://ipt.br/2023/03/27/mapeamento-e-gerenciamento-de-areas-de-risco-de-deslizamento-e-solapamento-de-margem-no-municipio-de-santo-andre-sp/
+
+### 6.3.2. Perfil do Público-Alvo
 
 *b) Perfil do Público-Alvo (até 250 palavras)*
 *Caracterize o público-alvo com dados demográficos, psicográficos e comportamentais, incluindo necessidades específicas. Utilize fontes obrigatórias.*
 
+
 ## 6.4. Posicionamento e Branding
 
 *a) Proposta de Valor Única (até 250 palavras)*
-*Defina de maneira clara o que torna a sua aplicação única e valiosa para o mercado.*
+*Defina de maneira clara o que torna a sua aplicação única e valiosa para seus usuários.*
 
-*b) Estratégia de Diferenciação (até 250 palavras)*
-*Explique como sua aplicação se destacará da concorrência, evidenciando a lógica por trás do posicionamento.*
+## 6.4.2 Posicionamento e Branding
+
+O público-alvo central do GeoRisco é a população residente nas áreas de risco de Santo André. O município tem 748.919 habitantes (Censo 2022, IBGE), e o Plano Municipal de Redução de Riscos (2025) identifica 28 áreas de risco, com 3.803 edificações em risco alto e muito alto (R3/R4), em bairros como Jardim Santo André, Sítio dos Vianas e Paranapiacaba.
+
+**Demográfico.** Famílias de baixa renda em encostas e margens de córregos — em Santo André, 30,5% da população tem rendimento per capita de até meio salário mínimo — com sobrerrepresentação de grupos prioritários para evacuação: idosos (60+), crianças de 0 a 12 anos, gestantes, lactantes e Pessoas com Deficiência (PCD). O município tem 50.177 moradores com algum tipo de deficiência, 6,7% da população (Paracenso/Prefeitura de Santo André, 2023). Mobilidade reduzida e doenças crônicas exigem priorização.
+
+**Psicográfico.** Forte vínculo afetivo e territorial com a moradia, pertencimento comunitário e desconfiança frente ao poder público; receio de perder bens, documentos e animais de estimação ao deixar a casa.
+
+**Comportamental.** Resistência à evacuação preventiva mesmo sob alerta — equipes da Defesa Civil enfrentam a recusa de moradores em sair de áreas de alto risco, recorrendo, em casos extremos, à remoção compulsória.
+
+**Necessidades específicas.** Identificação imediata de prioridades de evacuação; triagem de saúde e prontuário conforme o SUAS; abrigo que acolha o núcleo familiar e seus animais; guarda de bens; e tratamento anonimizado dos dados, conforme a LGPD.
 
 ## 6.5. Business Model Canvas
 
@@ -1665,17 +1695,40 @@ Descreva os principais segmentos de mercado a serem atendidos pela aplicação. 
 
 ## 6.6. Estratégia de Marketing
 
-*a) Produto/Serviço (até 200 palavras)*
-*Descreva as funcionalidades, benefícios e diferenciais da aplicação*
+A estratégia de marketing do GeoRisco Santo André foi estruturada com base no modelo dos 4Ps: Produto/Serviço, Preço, Praça e Promoção. Essa abordagem permite organizar a forma como a aplicação gera valor, como pode ser financiada, por quais canais será disponibilizada e quais estratégias serão usadas para divulgar sua adoção. Como se trata de uma solução GovTech voltada à gestão pública e à Defesa Civil, os 4Ps foram adaptados ao contexto B2G, priorizando impacto social, eficiência operacional e relacionamento institucional.
 
-*b) Preço (até 200 palavras)*
-*Explique o modelo de precificação adotado e justifique com base nas análises anteriores.*
+Em **Produto/Serviço**, são descritas as funcionalidades, benefícios e diferenciais da aplicação. Em **Preço**, apresenta-se o modelo de monetização mais adequado para órgãos públicos e sua justificativa. Em **Praça**, explica-se como a solução será distribuída e entregue aos usuários. Por fim, em **Promoção**, são definidas as estratégias digitais e institucionais para divulgação, aquisição de parceiros e expansão da aplicação para novos contextos municipais.
 
-*c) Praça (Distribuição) (até 200 palavras)*
-*Apresente os canais digitais utilizados para distribuir e entregar a aplicação ao público.*
+### 6.6.1. Produto/Serviço
 
-*d) Promoção (até 200 palavras)*
-*Descreva as estratégias digitais planejadas, como SEO, redes sociais, marketing de conteúdo e campanhas pagas.*
+O GeoRisco Santo André é uma aplicação web voltada à gestão de populações em áreas de risco, desenvolvida para apoiar agentes de campo e gestores operacionais da Defesa Civil. A solução permite o cadastro georreferenciado de moradias, famílias, moradores e pets, reunindo informações como endereço, coordenadas, fotos do imóvel, composição familiar, vulnerabilidades e histórico de ocupação. Também oferece consulta integrada de registros, visualização em mapa, filtros por território e apoio à identificação de situações críticas.
+
+O principal benefício da aplicação é centralizar dados antes dispersos em processos manuais, planilhas ou registros fragmentados, aumentando a agilidade, a confiabilidade e a rastreabilidade das informações. Seu diferencial está na adequação ao contexto real da Defesa Civil de Santo André, com foco em tomada de decisão rápida, priorização de grupos vulneráveis, apoio à evacuação e melhoria da gestão de abrigos. Assim, o GeoRisco fortalece a capacidade preventiva e operacional do município diante de eventos climáticos extremos.
+
+
+### 6.6.2. Preço 
+
+O modelo de precificação proposto é B2G (Business to Government), voltado à contratação por órgãos públicos municipais, sem cobrança direta dos cidadãos ou dos agentes que utilizam a aplicação. A solução pode ser implantada por meio de contratação institucional, contemplando custos relacionados à hospedagem, manutenção, suporte técnico e treinamento dos usuários.
+
+Esse modelo é adequado porque a Defesa Civil presta um serviço público essencial, sem finalidade comercial voltada ao consumidor final. O valor da aplicação está na centralização das informações, na redução de processos manuais, no aumento da eficiência operacional e no apoio à tomada de decisão em situações de risco e emergência.
+
+Por se tratar de uma solução destinada ao setor público, não são definidos valores comerciais específicos nesta etapa. A precificação depende de fatores como porte do município, número de usuários, requisitos técnicos, disponibilidade orçamentária e processos de contratação pública. Dessa forma, a proposta prioriza a definição de um modelo de contratação sustentável e compatível com a realidade da administração pública.
+
+
+### 6.6.3. Praça
+
+A distribuição do GeoRisco ocorrerá por canais digitais institucionais, com acesso seguro por navegador em celulares, tablets e computadores. A aplicação poderá ser disponibilizada em domínio oficial da Prefeitura ou da Defesa Civil, com perfis de permissão adequados às funções de agentes de campo, gestores e administradores. Dessa forma, o sistema atende tanto ao uso operacional em campo quanto à análise estratégica em ambiente de sede.
+
+A entrega da aplicação pode ser feita por infraestrutura em nuvem ou em ambiente tecnológico definido pelo município, garantindo disponibilidade, armazenamento centralizado e padronização dos dados. Para expansão, os canais de distribuição incluem parcerias com prefeituras, Defesa Civil estadual, consórcios intermunicipais, secretarias de meio ambiente, assistência social e tecnologia. Documentação técnica, manuais digitais, treinamentos online e APIs de integração podem apoiar a implantação em novos contextos, permitindo que a solução seja replicada para outros municípios com necessidades semelhantes.
+
+
+### 6.6.4. Promoção
+
+A estratégia de promoção do GeoRisco prioriza credibilidade institucional, impacto social e demonstração de resultados, considerando que o público-alvo é composto por órgãos públicos e gestores municipais. Uma página institucional otimizada para SEO poderá divulgar a solução por meio de termos como “gestão de áreas de risco”, “Defesa Civil municipal”, “cadastro georreferenciado” e “gestão de desastres”, facilitando sua descoberta por potenciais interessados.
+
+A divulgação também poderá ocorrer por canais institucionais da Prefeitura, da Defesa Civil e por redes profissionais como o LinkedIn, destacando benefícios como centralização de dados, apoio à evacuação e proteção de populações vulneráveis. O marketing de conteúdo incluirá estudos de caso, vídeos demonstrativos, relatórios de impacto, infográficos e artigos sobre prevenção de desastres e gestão territorial. Além disso, a promoção poderá ser fortalecida por apresentações para prefeituras, participação em eventos de inovação pública, parcerias acadêmicas e divulgação em redes de Defesa Civil. Essas ações contribuem para ampliar a visibilidade da solução, fortalecer sua legitimidade institucional e incentivar sua adoção por outros municípios.
+
+---
 
 # <a name="c7"></a>7. Registro de atualizações (sprint 5)
 Início na sprint 2 pois não é possível realizar atualizações na sprint que foi iniciado o projeto;
