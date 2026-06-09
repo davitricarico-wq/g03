@@ -261,7 +261,7 @@ Apresenta-se a seguir a lista de User Stories levantadas para o projeto GeoRisco
 
 ---
 
-### cadastro
+### cadastro - cidadãos
 
 | Identificação | US01 |
 |---|---|
@@ -273,6 +273,8 @@ Apresenta-se a seguir a lista de User Stories levantadas para o projeto GeoRisco
 | Critério de aceite 4 | CR4: Dado que o agente cadastra um cidadão, quando a pessoa se enquadra em um ou mais grupos de prioridade (ex.: idoso, gestante/lactante, PCD), então o sistema deve permitir classificá-la no(s) grupo(s) de vulnerabilidade correspondente(s). |
 | Critério de aceite 5 | CR5: Dado que o agente informa o CPF de um cidadão, quando o CPF já estiver cadastrado no sistema, então o sistema deve bloquear o cadastro duplicado e sinalizar que a pessoa já existe. |
 | Critérios INVEST | Independente: O módulo de cadastro pessoal não depende da implementação da funcionalidade de mapas.; Negociável: Os campos sociodemográficos e de vulnerabilidade, bem como as regras de marcação do responsável, podem ser ajustados.; Valiosa: Fornece a base de dados central para que a Defesa Civil identifique e proteja vidas humanas.; Estimável: É um formulário CRUD tradicional, com validações previsíveis de campos obrigatórios, responsável, grupos de vulnerabilidade e unicidade de CPF.; Pequena: Foca no cadastro dos dados da família/moradores, na designação do responsável e na classificação de vulnerabilidade, sem abranger mapa ou edição posterior.; Testável: O testador pode inserir dados simulados e validar a gravação, o aviso de "cadastro incompleto" quando não há moradia, o bloqueio do envio sem responsável, a classificação nos grupos de vulnerabilidade e o bloqueio de CPF já cadastrado. |
+
+### cadastro - moradias
 
 | Identificação | US02 |
 |---|---|
@@ -313,7 +315,7 @@ Apresenta-se a seguir a lista de User Stories levantadas para o projeto GeoRisco
 | Critério de aceite 3 | CR3: Dado que o gestor edita uma moradia já cadastrada, quando a tela de edição da moradia carregar, então o mini-mapa deve exibir o pin já posicionado nas coordenadas salvas, permitindo confirmá-lo ou reposicioná-lo (tocando no mapa ou arrastando o pin), sendo obrigatório manter coordenadas válidas para concluir o salvamento. |
 | Critérios INVEST | Independente: Atua apenas sobre registros já existentes fechando o ciclo de vida do dado.; Negociável: A necessidade de manter versionamento de histórico pode ser discutida.; Valiosa: Garante que o banco da Defesa Civil reflita sempre a realidade do ano vigente.; Estimável: É um reaproveitamento do formulário de criação adaptado para Update.; Pequena: Foca unicamente na ação de editar e limpar os alertas.; Testável: Atestar que salvar a edição atualiza os dados no banco e remove o indicador de "cadastro incompleto" quando os dados obrigatórios passam a estar completos. |
 
-### cadastro
+### cadastro - localização
 
 | Identificação | US06 |
 |---|---|
@@ -323,6 +325,8 @@ Apresenta-se a seguir a lista de User Stories levantadas para o projeto GeoRisco
 | Critério de aceite 2 | CR2: Dado que o agente tenha cadastrado os dados das familias de outro lugar que não seja a moradia atual, quando o mesmo for fazer o cadastro, então o sistema deve possuir um retorno visual indicando se a localização já foi obtida, um botão de apagar a localização registrada e outro de re-registrar a localização utilizando a localização atual. |
 | Critério de aceite 3 | CR3: Dado que o agente entra na tela de cadastro de moradia, quando a permissão de localização é negada ou não há sinal de GPS disponível, então o sistema deve permitir o preenchimento manual da localização por meio do manuseamento do marcador (pin) no mapa, mantendo o cadastro possível mesmo sem a captura automática. |
 | Critérios INVEST | Independente: A funcionalidade de captura de hardware é independente dos campos de texto do formulário.; Negociável: A precisão exigida (ex: margem de 5 a 10 metros) pode ser acordada com o time.; Valiosa: Elimina o erro humano da digitação de coordenadas numéricas longas.; Estimável: Utilizar APIs nativas de geolocalização mobile é padrão na indústria.; Pequena: Cobre especificamente um único componente de auto-preenchimento.; Testável: Pode-se simular diferentes coordenadas GPS em emuladores para validar a captura. |
+
+### cadastro - pets
 
 | Identificação | US07 |
 |---|---|
