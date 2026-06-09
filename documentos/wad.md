@@ -488,26 +488,25 @@ Assim, fornece um código testável, escalável e de alta manutenibilidade, perm
 
 ```
 src/
-├── models/ – tipos e interfaces
-│   ├── validations/ – validação dos atributos / classes
-│   └── implementations/ – definição das classes
-├── views/ – telas (templates ejs)
-├── DTOs/ – Data Transfer Objects: entidades com somente as propriedades necessárias
-├── controllers/ – borda HTTP
-├── services/ – regras de negócio
-│   ├── interfaces – Contratos dos services
-│   ├── implementations – implementações dos services
-├── repositories/ – acesso ao banco de dados
-│   ├── interfaces/ – Contratos dos repositórios
-│   └── implementations/ – implementações dos repositórios
-├──mappers/ – transformadores de objetos: Model → DTO
-├──database/ – configurações do banco de dados e histórico de migrações
-│   └── migrations/ – versionamento do esquema do banco de dados
-(transversal, fora do fluxo)
-├──routes/ – rotas (endpoints) das requisições
-├──middlewares/ – guarda o middleware global do sistema
-├──errors/ – classes de tratamento de erros específicos e customizados do sistema
-└── helpers/ – utilitários puros
+├── app.ts – configuração do Express, middlewares nativos, views, estáticos e rotas
+├── server.ts – inicialização do servidor
+├── controllers/ – borda HTTP e tratamento das requisições
+├── routes/ – rotas/endpoints da aplicação
+├── services/ – regras de negócio e orquestração entre repositórios
+├── repositories/ – acesso ao banco de dados PostgreSQL
+├── interfaces/ – contratos das camadas
+│   ├── services/ – contratos dos services
+│   └── repositories/ – contratos dos repositories
+├── dtos/ – Data Transfer Objects e contratos de entrada/saída
+├── models/ – tipos e interfaces de domínio
+├── validations/ – validação dos payloads e regras de entrada
+├── db/ – conexão, abstrações e migrações do banco de dados
+│   └── migrations/ – versionamento do esquema do banco
+├── storage/ – integração com Supabase Storage
+├── views/ – telas/templates EJS
+├── public/ – arquivos estáticos
+├── errors/ – erros customizados da aplicação
+└── tests/ – testes automatizados
 
 ```
 
