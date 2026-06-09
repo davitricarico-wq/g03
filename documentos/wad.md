@@ -88,7 +88,7 @@ A ameaça de novos entrantes é baixa, pois não se trata de um mercado competit
 
 A análise da ameaça de substitutos deve ser adaptada, pois se trata de um serviço público exclusivo, sem concorrência direta. Ainda assim, existem alternativas como aplicativos climáticos, redes comunitárias, ONGs e seguros privados. Essas opções possuem alta acessibilidade e baixo custo, resultando em intensidade baixa a moderada. Assim, a Defesa Civil deve manter eficiência operacional e comunicação ágil para preservar a confiança da população e reduzir a dependência dessas alternativas.
 
-Fontes (seção 8): (REF.1, REF.2, REF.3, REF.4, REF.5).
+Fontes (seção 9): (REF.1, REF.2, REF.3, REF.4, REF.5).
 
 
 ### 2.1.2. Análise SWOT da Instituição Parceira (sprint 1)
@@ -2202,6 +2202,8 @@ O GeoRisco Santo André é uma aplicação web desenvolvida em parceria com a De
 
 ## 6.2. Análise de Mercado
 
+### 6.2.1 Visão Geral do Setor 
+
 O GeoRisco Santo André está inserido no setor de GovTech, que corresponde a um conjunto de soluções tecnológicas desenvolvidas por empresas privadas para modernizar a gestão pública e aprimorar a prestação de serviços à população.
 
 O setor surge da convergência entre a aceleração digital da sociedade e a defasagem histórica dos sistemas públicos, que ainda operam em grande parte com processos analógicos, fragmentados e pouco escaláveis. À medida que governos enfrentam demandas crescentes por eficiência, transparência e sustentabilidade, o GovTech se consolida como resposta estrutural, oferecendo ferramentas que automatizam processos, reduzem custos operacionais e reconstroem a confiança pública.
@@ -2210,12 +2212,34 @@ No Brasil, o contexto é especialmente favorável. O setor público é o maior c
 
 É nesse cenário que soluções como o GeoRisco encontram espaço: endereçando lacunas operacionais reais em municípios que carecem de sistemas digitais integrados para gestão de risco.
 
-*b) Tamanho e Crescimento do Mercado (até 250 palavras)*
-*Apresente dados quantitativos sobre o tamanho atual e projeções de crescimento do mercado. Utilize fontes confiáveis.*
+### 6.2.2 Tamanho e Crescimento de Mercado 
 
-*c) Tendências de Mercado (até 300 palavras)*
-*Identifique e analise tendências relevantes (tecnológicas, comportamentais e mercadológicas) que influenciam o setor. Utilize fontes confiáveis.*
+O mercado relacionado ao GeoRisco Santo André está inserido no segmento de softwares de gestão de emergências, segurança pública e gerenciamento de crises, que apresenta forte expansão impulsionada pela digitalização dos serviços públicos, aumento da frequência de eventos climáticos extremos e necessidade de respostas mais rápidas e integradas.
 
+O mercado global de **Emergency Management Software (software de gestão de emergências)** foi estimado entre US$ 420 milhões e US$ 450 milhões em 2025/2026, com projeções de alcançar aproximadamente US$ 1,1 bilhão até 2035, representando uma taxa média de crescimento anual (CAGR) de 11,3%. Esse crescimento é impulsionado pela adoção de soluções baseadas em nuvem, integração de dados geoespaciais e uso de inteligência artificial para monitoramento e resposta a desastres.
+
+Em uma visão mais ampla, o mercado global de **software para segurança pública**, que engloba plataformas de gestão de incidentes, monitoramento em tempo real e coordenação de emergências, movimentou cerca de US$ 11,48 bilhões em 2025 e possui previsão de atingir US$ 24,23 bilhões até 2034, com crescimento anual médio de 9,2%.
+
+Além disso, este mercado, diretamente relacionado à continuidade operacional e resposta a eventos críticos, foi avaliado em US$ 143,97 bilhões em 2025 e deverá alcançar US$ 310,12 bilhões em 2034, mantendo CAGR de 8,9%.
+
+Esses indicadores demonstram um **mercado em expansão consistente**, favorecido pelo aumento dos investimentos governamentais em resiliência urbana, proteção civil e gestão inteligente de riscos.
+
+Fontes (seção 9): (REF.6, REF.7, REF.8).
+
+### 6.2.3 Tendências de Mercado
+
+Três eixos de tendências convergem para ampliar a relevância e a adoção do GeoRisco Santo André nos próximos anos.
+
+**Tendências Tecnológicas**
+A consolidação das plataformas de Government as a Service (GaaS) e a adoção crescente de infraestrutura em nuvem pelo setor público brasileiro criam condições favoráveis para soluções SaaS B2G de baixo custo de implantação. O avanço das APIs de geolocalização, como Google Maps Platform e OpenStreetMap, e a popularização de bibliotecas de mapas interativos (Leaflet, Mapbox) reduzem significativamente a barreira técnica para desenvolvimento de sistemas georreferenciados. Paralelamente, o crescimento do uso de dispositivos móveis por servidores públicos em campo impulsiona a demanda por aplicações mobile-first, exatamente o modelo adotado pelo GeoRisco.
+
+**Tendências Comportamentais**
+A digitalização acelerada dos processos públicos pós-pandemia gerou maior receptividade de gestores municipais a ferramentas digitais integradas. Há também uma mudança de postura institucional: municípios deixam de reagir a desastres e passam a investir em prevenção e mapeamento contínuo de risco, o que aumenta a demanda por cadastros georreferenciados permanentes, e não apenas emergenciais.
+
+**Tendências Mercadológicas**
+O mercado GovTech brasileiro está em expansão. Segundo o relatório GovTech Brasil 2023, elaborado pela Abstartups em parceria com o Sebrae, o ecossistema conta com mais de 800 startups ativas no setor público. O volume de contratações públicas de tecnologia cresce em função da Lei nº 14.133/2021 (Nova Lei de Licitações), que simplifica processos para soluções inovadoras. Além disso, o CEMADEN monitora atualmente 1.295 municípios brasileiros em situação de risco, configurando um mercado endereçável expressivo para replicação da solução além de Santo André.
+
+Fontes (seção 9): (REF.9, REF.10, REF.11, REF.12, REF.13).
 
 ## 6.3. Público-Alvo
 
@@ -2229,12 +2253,7 @@ Além disso, a solução pode atender secretarias municipais que atuam de forma 
 
 Dessa forma, concluiu-se que a aplicação está direcionada principalmente ao mercado institucional govtech, com foco em gestão pública de riscos, resiliência urbana e proteção de populações vulneráveis. Seu potencial de uso concentra-se em órgãos públicos municipais que necessitam substituir processos manuais e descentralizados por uma solução digital, integrada e adaptada ao trabalho em campo.
 
-Fontes utilizadas para realizar a pesquisa de segmentação de mercado:
-1. https://www.gov.br/cemaden/pt-br/assuntos/noticias-cemaden/cemaden-expande-rede-de-monitoramento-e-passa-a-monitorar-1-295-municipios
-2. https://www.gov.br/secom/pt-br/acompanhe-a-secom/noticias/2026/05/mais-162-cidades-brasileiras-sao-incluidas-na-rede-de-alertas-do-cemaden/
-3. https://www.gov.br/casacivil/pt-br/assuntos/cadastro-de-municipios-suscetiveis-a-eventos-de-enxurradas-e-inundacoes/Nota_Tecnica_2.pdf
-4. https://agenciadenoticias.ibge.gov.br/agencia-noticias/2012-agencia-de-noticias/noticias/21566-estudo-inedito-mostra-moradores-sujeitos-a-enchentes-e-deslizamentos
-5. https://ipt.br/2023/03/27/mapeamento-e-gerenciamento-de-areas-de-risco-de-deslizamento-e-solapamento-de-margem-no-municipio-de-santo-andre-sp/
+Fontes (seção 9): (REF.14, REF.15, REF.16, REF.17, REF.18).
 
 ### 6.3.2. Perfil do Público-Alvo
 O público-alvo do GeoRisco é composto pelos profissionais da Defesa Civil de Santo André responsáveis pela coleta, gestão e análise de informações sobre moradores e áreas de risco do município.
@@ -2252,15 +2271,13 @@ Como expectativa comum, ambos os perfis buscam maior precisão, integridade e se
 
 ## 6.4.2 Posicionamento e Branding
 
-O público-alvo central do GeoRisco é a população residente nas áreas de risco de Santo André. O município tem 748.919 habitantes (Censo 2022, IBGE), e o Plano Municipal de Redução de Riscos (2025) identifica 28 áreas de risco, com 3.803 edificações em risco alto e muito alto (R3/R4), em bairros como Jardim Santo André, Sítio dos Vianas e Paranapiacaba.
+**b) Estratégia de Diferenciação**
 
-**Demográfico.** Famílias de baixa renda em encostas e margens de córregos — em Santo André, 30,5% da população tem rendimento per capita de até meio salário mínimo — com sobrerrepresentação de grupos prioritários para evacuação: idosos (60+), crianças de 0 a 12 anos, gestantes, lactantes e Pessoas com Deficiência (PCD). O município tem 50.177 moradores com algum tipo de deficiência, 6,7% da população (Paracenso/Prefeitura de Santo André, 2023). Mobilidade reduzida e doenças crônicas exigem priorização.
+A diferenciação do GeoRisco Santo André está em sua adaptação direta à rotina da Defesa Civil municipal, e não apenas na digitalização genérica de cadastros. Enquanto alternativas como planilhas, formulários isolados, sistemas nacionais ou ferramentas de mapa atendem partes do processo, o GeoRisco integra, em uma única aplicação, cadastro de moradias, famílias, moradores, pets, fotos, localização, histórico de ocupação, consulta e visualização territorial.
 
-**Psicográfico.** Forte vínculo afetivo e territorial com a moradia, pertencimento comunitário e desconfiança frente ao poder público; receio de perder bens, documentos e animais de estimação ao deixar a casa.
+Essa integração posiciona a solução como uma ferramenta operacional de gestão pública de risco, capaz de apoiar tanto o agente em campo quanto o gestor na sede. O diferencial está na rastreabilidade dos dados, na padronização das informações sensíveis e na leitura geográfica das vulnerabilidades, permitindo priorizar atendimentos, planejar evacuações e reduzir perdas de informação entre etapas.
 
-**Comportamental.** Resistência à evacuação preventiva mesmo sob alerta — equipes da Defesa Civil enfrentam a recusa de moradores em sair de áreas de alto risco, recorrendo, em casos extremos, à remoção compulsória.
-
-**Necessidades específicas.** Identificação imediata de prioridades de evacuação; triagem de saúde e prontuário conforme o SUAS; abrigo que acolha o núcleo familiar e seus animais; guarda de bens; e tratamento anonimizado dos dados, conforme a LGPD.
+Por ser desenvolvida com base no contexto de Santo André e nas necessidades reais da Defesa Civil, a aplicação também se diferencia pela linguagem institucional, pela interface objetiva e pelo alinhamento à LGPD. Em vez de competir por apelo comercial, o GeoRisco se destaca pela legitimidade pública, pela aderência ao serviço essencial prestado e pela capacidade de transformar dados territoriais em decisões rápidas, seguras e justificáveis.
 
 ## 6.5. Business Model Canvas
 
@@ -2328,7 +2345,7 @@ Tivemos alterações nas Personas (ambas), User Stories (todas), RF, RNF e RN. D
 
 *Relacione também quaisquer outras ideias que o grupo tenha para melhorias futuras*
 
-# <a name="c8"></a>8. Referências (sprints 1 a 5)
+# <a name="c8"></a>9. Referências (sprints 1 a 5)
 
 1. PORTER, Michael E. *Estratégia Competitiva: Técnicas para Análise de Indústrias e da Concorrência*. 2. ed. Rio de Janeiro: Campus, 2004.
 
@@ -2340,6 +2357,33 @@ Tivemos alterações nas Personas (ambas), User Stories (todas), RF, RNF e RN. D
 
 5. PEDROSO, Luiz Guilherme Lourenço Becker. [Título do trabalho]. 2017. Trabalho de Conclusão de Curso (Graduação) – Universidade de São Paulo, São Paulo, 2017. Disponível em: https://bdta.abcd.usp.br/directbitstream/05356078-01cb-4989-856d-4cf4dcb8b4cc/LuizGuilhermeLourencoBeckerPedroso%20TCCPRO17.pdf
 . Acesso em: 30 abr. 2026.
+
+6. FORTUNE BUSINESS INSIGHTS. Crisis Management Software Market Size, Share & Industry Analysis. Pune, 2026. Disponível em: https://www.fortunebusinessinsights.com/pt/crisis-management-software-market-110370. Acesso em: 2 jun. 2026.
+
+7. GLOBAL GROWTH INSIGHTS. Emergency Management Software Market Report. 2026. Disponível em: https://www.globalgrowthinsights.com/market-reports/emergency-management-software-market-105680. Acesso em: 2 jun. 2026.
+
+8. VERIFIED MARKET REPORTS. Public Safety Software Market Size, Share, Trends and Forecast. 2026. Disponível em: https://www.verifiedmarketreports.com/product/public-safety-software-market/. Acesso em: 2 jun. 2026.
+
+9. ABSTARTUPS; SEBRAE. GovTech Brasil 2023: mapeamento do ecossistema de tecnologia para o setor público. São Paulo: Abstartups, 2023. Disponível em: https://abstartups.com.br/govtech-brasil. Acesso em: 09 jun. 2026.
+
+10. BRASIL. Lei nº 14.133, de 1º de abril de 2021. Lei de Licitações e Contratos Administrativos. Diário Oficial da União, Brasília, DF, 1 abr. 2021. Disponível em: https://www.planalto.gov.br/ccivil_03/_ato2019-2022/2021/lei/l14133.htm. Acesso em: 09 jun. 2026.
+
+11. CENTRO NACIONAL DE MONITORAMENTO E ALERTAS DE DESASTRES NATURAIS (CEMADEN). CEMADEN expande rede de monitoramento e passa a monitorar 1.295 municípios. Brasília: CEMADEN, 2024. Disponível em: https://www.gov.br/cemaden/pt-br/assuntos/noticias-cemaden/cemaden-expande-rede-de-monitoramento-e-passa-a-monitorar-1-295-municipios. Acesso em: 09 jun. 2026.
+
+12. GOOGLE. Google Maps Platform documentation. Mountain View: Google LLC, 2024. Disponível em: https://developers.google.com/maps/documentation. Acesso em: 09 jun. 2026.
+
+13. OPENSTREETMAP FOUNDATION. OpenStreetMap. 2024. Disponível em: https://www.openstreetmap.org. Acesso em: 09 jun. 2026.
+
+14. CENTRO NACIONAL DE MONITORAMENTO E ALERTAS DE DESASTRES NATURAIS (CEMADEN). Cemaden expande rede de monitoramento e passa a monitorar 1.295 municípios. São José dos Campos, 2026. Disponível em: <https://www.gov.br/cemaden/pt-br/assuntos/noticias-cemaden/cemaden-expande-rede-de-monitoramento-e-passa-a-monitorar-1-295-municipios>. Acesso em: 9 jun. 2026.
+
+15. BRASIL. Secretaria de Comunicação Social da Presidência da República (SECOM). Mais 162 cidades brasileiras são incluídas na rede de alertas do Cemaden. Brasília, 2026. Disponível em: <https://www.gov.br/secom/pt-br/acompanhe-a-secom/noticias/2026/05/mais-162-cidades-brasileiras-sao-incluidas-na-rede-de-alertas-do-cemaden/>. Acesso em: 9 jun. 2026.
+
+16. BRASIL. Casa Civil. Cadastro de municípios suscetíveis a eventos de enxurradas e inundações: Nota Técnica 2. Brasília, [s.d.]. Disponível em: <https://www.gov.br/casacivil/pt-br/assuntos/cadastro-de-municipios-suscetiveis-a-eventos-de-enxurradas-e-inundacoes/Nota_Tecnica_2.pdf>. Acesso em: 9 jun. 2026.
+
+17. INSTITUTO BRASILEIRO DE GEOGRAFIA E ESTATÍSTICA (IBGE). Estudo inédito mostra moradores sujeitos a enchentes e deslizamentos. Rio de Janeiro, 2018. Disponível em: <https://agenciadenoticias.ibge.gov.br/agencia-noticias/2012-agencia-de-noticias/noticias/21566-estudo-inedito-mostra-moradores-sujeitos-a-enchentes-e-deslizamentos>. Acesso em: 9 jun. 2026.
+
+18. INSTITUTO DE PESQUISAS TECNOLÓGICAS (IPT). Mapeamento e gerenciamento de áreas de risco de deslizamento e solapamento de margem no município de Santo André-SP. São Paulo, 27 mar. 2023. Disponível em: <https://ipt.br/2023/03/27/mapeamento-e-gerenciamento-de-areas-de-risco-de-deslizamento-e-solapamento-de-margem-no-municipio-de-santo-andre-sp/>. Acesso em: 9 jun. 2026.
+
 
 # <a name="c10"></a>Anexos
 
