@@ -420,7 +420,7 @@ O sistema atende primordialmente ao Agente de Campo (A01) no que tange à operat
 
 | ID | Nome | Descrição | Pré-condição | Consequência do Descumprimento | Atores | RFs Associados |
 |---|---|---|---|---|---|---|
-| RN01 | Registro Obrigatório de Indicadores de Vulnerabilidade | Toda pessoa cadastrada deve ter seus indicadores de vulnerabilidade corretamente preenchidos (idoso, criança 0–12 anos, gestante/lactante, PCD, mobilidade reduzida/acamado). A priorização de atendimento durante evacuações é responsabilidade operacional dos agentes com base nesses dados — o sistema não exibe hierarquia automática de priorização. | Existência de registro de pessoa vinculada a uma moradia. | Indicadores ausentes comprometem o planejamento de evacuação pelos agentes de campo. | A01, A02 | RF001 |
+| RN01 | Registro Obrigatório de Indicadores de Vulnerabilidade | Toda pessoa cadastrada deve ter sua classificação de vulnerabilidade resolvida: pode estar associada a um ou mais grupos de vulnerabilidade (relação N:N) e, quando nenhum se aplica, recebe "nenhuma". Os grupos "idoso" e "criança (0–12 anos)" são atribuídos automaticamente pela data de nascimento; os demais (gestante/lactante, PCD, mobilidade reduzida/acamado) são marcados manualmente. A priorização de atendimento em evacuações é responsabilidade operacional dos agentes com base nesses dados; o sistema não exibe hierarquia automática de priorização. | Existência de registro de pessoa vinculada a uma família. | Classificação de vulnerabilidade ausente ou incorreta compromete o planejamento de evacuação pelos agentes de campo. | A01, A02 | RF001 |
 | RN02 | Recadastro Obrigatório a cada 12 Meses                 | O sistema deve detectar fichas de moradores e moradias sem atualização há 365 dias e emitir alerta automático. O alerta persiste até que o agente de campo revisite e re-salve os dados.                                                                                     | Ficha cadastrada há mais de 12 meses sem edição.                                          | Dados desatualizados podem comprometer planos de evacuação e distribuição de recursos humanitários.   | A02     | RF011, RF012        |
 | RN03 | Arquivamento Lógico de Moradias e Moradores (LGPD)     | Registros de moradores falecidos e imóveis destruídos/evacuados/desapropriados devem ser inativados logicamente (soft delete), com registro de motivo e data. Os dados são preservados para fins históricos, auditoria e rastreabilidade, em conformidade com a LGPD.        | Ação confirmada pelo gestor com motivo e data preenchidos.                                | Deleção física viola a LGPD e elimina histórico necessário para relatórios e auditorias.              | A02     | RF009, RF010        |
 | RN04 | Captura de Geolocalização e Proibição de Foto de Pessoas | O sistema deve capturar automaticamente as coordenadas GPS do dispositivo no cadastro de moradia. É estritamente proibido o registro fotográfico das pessoas cadastradas; apenas fotos de fachada e entorno do imóvel são permitidas (máx. 2 por imóvel).                    | Permissão de GPS concedida pelo dispositivo.                                              | Foto de pessoas cadastradas viola a LGPD e direitos de imagem.                                        | A01          | RF002, RF003        |
@@ -428,7 +428,26 @@ O sistema atende primordialmente ao Agente de Campo (A01) no que tange à operat
 
 ---
 
-### 3.1.4 Requisitos Não Funcionais — ISO/IEC 25010:2011
+### 3.1.4 Validações de Campo (VC)
+
+As Validações de Campo (VC) definem as restrições de preenchimento obrigatório, unicidade e domínio aplicadas a cada campo no momento do cadastro/edição, antes da persistência. Elas se distinguem das Regras de Negócio (3.1.3): a VC atua sobre um único campo/registro, enquanto a RN expressa políticas e relações entre entidades.
+
+| ID | Campo / Validação | Entidade | Tipo | Observação |
+|---|---|---|---|---|
+| VC01 | Nome completo preenchido | Cidadão | Obrigatório | — |
+| VC02 | Data de nascimento preenchida | Cidadão | Obrigatório | Base para derivar automaticamente "idoso" e "criança (0–12 anos)" |
+| VC03 | CPF preenchido e único | Cidadão | Obrigatório + Único | Vale para todos os cidadãos; bloqueia cadastro duplicado |
+| VC04 | Vínculo a uma família | Cidadão | Obrigatório | Todo cidadão pertence a uma família |
+| VC05 | Classificação de vulnerabilidade (≥ 1 grupo) | Cidadão | Obrigatório | Relação N:N (cidadão ↔ vulnerabilidade); recebe "nenhuma" quando nenhum grupo se aplica; "idoso"/"criança" derivados da data de nascimento |
+| VC06 | Grau de parentesco com o responsável | Cidadão | Obrigatório | — |
+| VC07 | NIS único; renda ≥ 0 | Responsável | Único + Range | O responsável é um cidadão marcado manualmente; o CPF é validado na VC03 (Cidadão) |
+| VC08 | Tipo de construção, nº de pavimentos e condição de ocupação | Moradia | Obrigatório | — |
+| VC09 | Coordenadas (latitude e longitude) | Moradia | Obrigatório | Endereço textual (rua, número) é opcional |
+| VC10 | Limite de fotos da moradia | Moradia | Máx. 2 | Apenas fachada/entorno; proibida foto de pessoa (ver RN de geolocalização/LGPD) |
+
+---
+
+### 3.1.5 Requisitos Não Funcionais — ISO/IEC 25010:2011
 | ID | Eixo | Descrição | Derivação e Contexto do Parceiro | Evolução do conceitual para técnico | Métrica / Critério de Aceite | Conexão com RFs | Como Verificar |
 |---|---|---|---|---|---|---|---|
 | RNF001 | **Usabilidade** | O sistema deve facilitar o preenchimento e a consulta de cadastros por meio de payloads padronizados, validações de entrada e respostas de erro compreensíveis. Evitando assim, a escrita de dados errados, inconsistentes e dados não padronizados.  | Derivado da US01 e US02: agentes atuam em áreas de risco sob pressão e precisam registrar dados de pessoas, moradias e famílias com o menor número possível de inconsistências. | O requisito evoluiu para decisões técnicas como uso de DTOs, funções de normalização em `request-utils.ts` e validações específicas em `validations/`, reduzindo erros de entrada antes que os dados cheguem aos services. | Payloads obrigatórios devem ser validados antes da persistência; requisições inválidas devem retornar mensagens de erro claras. | RF001, RF002, RF005, RF012 | Testar chamadas da API com dados válidos e inválidos, verificando se os erros retornados orientam a correção do preenchimento. |
@@ -440,7 +459,7 @@ O sistema atende primordialmente ao Agente de Campo (A01) no que tange à operat
 | RNF007 | **Compatibilidade** | O sistema deve separar o armazenamento de metadados do armazenamento de arquivos, permitindo integração entre PostgreSQL e serviço externo de storage. | Derivado da necessidade de registrar fotos de moradias e pets sem sobrecarregar o banco relacional com arquivos binários. | O requisito evoluiu para endpoints próprios de fotos e upload mediado por Supabase Storage. O banco mantém vínculos e metadados, enquanto o storage externo armazena os arquivos. | O sistema deve permitir gerar URL assinada, cadastrar metadados da foto e vincular o arquivo à moradia ou ao pet correspondente. | RF002, RF007 | Testar criação de URL assinada, cadastro de foto e vínculo com moradia ou pet, verificando integração entre API, banco e storage. |
 | RNF008 | **Manutenibilidade** | O projeto deve manter uma estrutura organizada, auditável e segura para evolução, testes e uso de dados fictícios durante o desenvolvimento. | Derivado da necessidade de evolução contínua do projeto em sprints, com separação clara de responsabilidades e redução do risco de uso indevido de dados reais. | O requisito evoluiu para a organização do backend em `controllers`, `services`, `repositories`, `dtos`, `models`, `validations`, `errors`, `db` e `storage`, além do uso de variáveis de ambiente para configurações sensíveis. | A estrutura do código deve permitir manutenção por módulos e facilitar auditoria do que é regra de negócio, persistência, validação ou infraestrutura. | Todos os RFs | Revisar estrutura de pastas, testes e dados utilizados em desenvolvimento, garantindo que a evolução do sistema não dependa de dados reais. |
 
-## 3.1.5. Matriz RF → RN → Endpoint (sprints 3 a 5)
+## 3.1.6. Matriz RF → RN → Endpoint (sprints 3 a 5)
  
 Matriz de cobertura que demonstra quais RN (Regras de Negócio) e endpoints implementam cada RF (Requisito Funcional). Os endpoints listados abaixo estão implementados no backend e formalizados no arquivo `documentos/outros/webapi-docs.html`.
  
