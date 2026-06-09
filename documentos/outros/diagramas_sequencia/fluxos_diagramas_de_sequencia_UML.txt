@@ -118,7 +118,7 @@ end
 
 title FL02 - Visualizacao de moradias em mapa georreferenciado
 
-actor "Gestor Operacional (A02/A03)" as Gestor
+actor "Gestor Operacional (A02)" as Gestor
 participant "Frontend Painel Desktop" as Frontend
 participant "MoradiaController" as Controller
 participant "MoradiaService" as Service
@@ -164,7 +164,7 @@ end
 
 title FL03 - Consulta integrada de moradia e moradores
 
-actor "Gestor Operacional (A02/A03)" as Gestor
+actor "Gestor Operacional (A02)" as Gestor
 participant "Frontend Painel Desktop" as Frontend
 participant "ConsultaController" as Controller
 participant "ConsultaService" as Service
@@ -209,7 +209,7 @@ end
 
 title FL04 - Filtros avancados de moradias e assistidos
 
-actor "Gestor Operacional (A02/A03)" as Gestor
+actor "Gestor Operacional (A02)" as Gestor
 participant "Frontend Painel Desktop" as Frontend
 participant "FiltroController" as Controller
 participant "FiltroService" as Service
@@ -356,7 +356,7 @@ end note
 
 title FL07 - Mapa de calor e indicadores de vulnerabilidade
 
-actor "Gestor Operacional (A02/A03)" as Gestor
+actor "Gestor Operacional (A02)" as Gestor
 participant "Frontend Painel Desktop" as Frontend
 participant "IndicadorController" as Controller
 participant "IndicadorService" as Service
@@ -408,7 +408,7 @@ end
 
 title FL08 - Arquivamento logico de moradia
 
-actor "Gestor Operacional (A03)" as Gestor
+actor "Gestor Operacional (A02)" as Gestor
 participant "Frontend Painel Desktop" as Frontend
 participant "MoradiaController" as Controller
 participant "MoradiaService" as Service
@@ -464,7 +464,7 @@ end
 
 title FL09 - Arquivamento logico de morador falecido
 
-actor "Gestor Operacional (A02/A03)" as Gestor
+actor "Gestor Operacional (A02)" as Gestor
 participant "Frontend Painel Desktop" as Frontend
 participant "CidadaoController" as Controller
 participant "CidadaoService" as Service
@@ -528,7 +528,7 @@ participant "Job Agendado\n(Diario)" as Cron
 participant "RecadastroService" as Service
 participant "RecadastroRepository" as Repository
 database "Banco de Dados" as DB
-actor "Gestor Operacional (A02/A03)" as Gestor
+actor "Gestor Operacional (A02)" as Gestor
 participant "Frontend Painel Desktop" as Frontend
 participant "IndicadorController" as Controller
 
