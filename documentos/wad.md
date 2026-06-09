@@ -1692,8 +1692,9 @@ Como expectativa comum, ambos os perfis buscam maior precisão, integridade e se
 
 ## 6.4. Posicionamento e Branding
 
-*a) Proposta de Valor Única (até 250 palavras)*
-*Defina de maneira clara o que torna a sua aplicação única e valiosa para seus usuários.*
+## 6.4.1 Proposta de Valor Única
+
+Oferecemos um sistema de gestão de famílias e moradias em área de risco para a prefeitura de Santo André, que precisa manusear de forma prática os dados dos cidadãos em vulnerabilidade, bem como visualizar esses dados de forma estratégica e sem a necessidade do uso de formulários em papel.
 
 ## 6.4.2 Posicionamento e Branding
 
