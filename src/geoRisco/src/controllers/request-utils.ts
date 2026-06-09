@@ -1,0 +1,239 @@
+import type { Response } from 'express';
+import type { CreateLocalizacaoDto, UpdateLocalizacaoDto } from '../dtos/localizacao.dto';
+import type { CreateMoradiaDto, UpdateMoradiaDto } from '../dtos/moradia.dto';
+import type { CreatePessoaDto, CreateResponsavelDto, UpdatePessoaDto, UpdateResponsavelDto } from '../dtos/pessoa.dto';
+import { HttpError } from '../errors/http-error';
+import type {
+    Escolaridade,
+    EstadoCivil,
+    Parentesco,
+    Raca,
+    Sexo,
+    SituacaoOcupacional,
+    StatusPessoa
+} from '../models/pessoa.model';
+import type {
+    SituacaoOcupacaoMoradia,
+    StatusMoradia,
+    TipoConstrucao,
+    UsoImovel
+} from '../models/moradia.model';
+
+type Body = Record<string, unknown>;
+
+export function handleControllerError(res: Response, err: unknown, fallbackMessage: string) {
+    if (err instanceof HttpError) {
+        return res.status(err.statusCode).json({ error: err.message });
+    }
+    console.error(fallbackMessage, err);
+    return res.status(500).json({ error: fallbackMessage });
+}
+
+export function parseId(value: unknown): number {
+    const parsed = typeof value === 'number' ? value : Number.parseInt(String(value), 10);
+    if (!Number.isInteger(parsed) || parsed <= 0) {
+        throw new HttpError(400, 'ID inválido');
+    }
+    return parsed;
+}
+
+export function asBody(value: unknown): Body {
+    if (!value || typeof value !== 'object' || Array.isArray(value)) {
+        throw new HttpError(400, 'Payload inválido');
+    }
+    return value as Body;
+}
+
+function get(body: Body, ...keys: string[]): unknown {
+    for (const key of keys) {
+        if (body[key] !== undefined) {
+            return body[key];
+        }
+    }
+    return undefined;
+}
+
+function optionalString(value: unknown): string | null {
+    if (value === undefined || value === null) {
+        return null;
+    }
+    const text = String(value).trim();
+    return text === '' ? null : text;
+}
+
+function requiredString(value: unknown, field: string): string {
+    const text = optionalString(value);
+    if (!text) {
+        throw new HttpError(400, `${field} é obrigatório`);
+    }
+    return text;
+}
+
+function optionalDate(value: unknown): Date | null {
+    if (value === undefined || value === null || value === '') {
+        return null;
+    }
+    const date = value instanceof Date ? value : new Date(String(value));
+    if (Number.isNaN(date.getTime())) {
+        throw new HttpError(400, 'Data inválida');
+    }
+    return date;
+}
+
+function requiredDate(value: unknown): Date {
+    const date = optionalDate(value);
+    if (!date) {
+        throw new HttpError(400, 'Data é obrigatória');
+    }
+    return date;
+}
+
+function optionalBoolean(value: unknown): boolean | undefined {
+    if (value === undefined || value === null || value === '') {
+        return undefined;
+    }
+    if (typeof value === 'boolean') {
+        return value;
+    }
+    if (typeof value === 'string') {
+        return ['true', '1', 'on', 'sim'].includes(value.toLowerCase());
+    }
+    return Boolean(value);
+}
+
+function requiredBoolean(value: unknown, field: string): boolean {
+    const parsed = optionalBoolean(value);
+    if (parsed === undefined) {
+        throw new HttpError(400, `${field} é obrigatório`);
+    }
+    return parsed;
+}
+
+function optionalNumber(value: unknown): number | undefined {
+    if (value === undefined || value === null || value === '') {
+        return undefined;
+    }
+    const parsed = typeof value === 'number' ? value : Number(value);
+    if (Number.isNaN(parsed)) {
+        throw new HttpError(400, 'Número inválido');
+    }
+    return parsed;
+}
+
+function requiredNumber(value: unknown, field: string): number {
+    const parsed = optionalNumber(value);
+    if (parsed === undefined) {
+        throw new HttpError(400, `${field} é obrigatório`);
+    }
+    return parsed;
+}
+
+export function normalizeCreatePessoaDto(bodyValue: unknown, defaultParentesco?: Parentesco): CreatePessoaDto {
+    const body = asBody(bodyValue);
+    return {
+        nome: requiredString(get(body, 'nome'), 'Nome'),
+        nomeSocial: optionalString(get(body, 'nomeSocial', 'nome_social')),
+        dataDeNascimento: requiredDate(get(body, 'dataDeNascimento', 'data_de_nascimento')),
+        parentesco: (optionalString(get(body, 'parentesco')) ?? defaultParentesco) as Parentesco,
+        situacaoOcupacional: requiredString(get(body, 'situacaoOcupacional', 'situacao_ocupacional'), 'Situação ocupacional') as SituacaoOcupacional,
+        escolaridade: requiredString(get(body, 'escolaridade'), 'Escolaridade') as Escolaridade,
+        cronico: requiredBoolean(get(body, 'cronico'), 'Cronico'),
+        medicacao: requiredBoolean(get(body, 'medicacao'), 'Medicacao'),
+        status: (optionalString(get(body, 'status')) ?? 'Ativo') as StatusPessoa
+    };
+}
+
+export function normalizeUpdatePessoaDto(bodyValue: unknown): UpdatePessoaDto {
+    const body = asBody(bodyValue);
+    return {
+        nome: optionalString(get(body, 'nome')) ?? undefined,
+        nomeSocial: get(body, 'nomeSocial', 'nome_social') === undefined ? undefined : optionalString(get(body, 'nomeSocial', 'nome_social')),
+        dataDeNascimento: get(body, 'dataDeNascimento', 'data_de_nascimento') === undefined ? undefined : requiredDate(get(body, 'dataDeNascimento', 'data_de_nascimento')),
+        parentesco: optionalString(get(body, 'parentesco')) as Parentesco | undefined,
+        situacaoOcupacional: optionalString(get(body, 'situacaoOcupacional', 'situacao_ocupacional')) as SituacaoOcupacional | undefined,
+        escolaridade: optionalString(get(body, 'escolaridade')) as Escolaridade | undefined,
+        cronico: optionalBoolean(get(body, 'cronico')),
+        medicacao: optionalBoolean(get(body, 'medicacao')),
+        status: optionalString(get(body, 'status')) as StatusPessoa | undefined
+    };
+}
+
+export function normalizeCreateResponsavelDto(bodyValue: unknown): CreateResponsavelDto {
+    const body = asBody(bodyValue);
+    return {
+        ...normalizeCreatePessoaDto(body, 'Responsável'),
+        parentesco: 'Responsável',
+        cpf: optionalString(get(body, 'cpf')),
+        nis: optionalString(get(body, 'nis')),
+        renda: optionalNumber(get(body, 'renda')) ?? null,
+        sexo: requiredString(get(body, 'sexo'), 'Sexo') as Sexo,
+        raca: requiredString(get(body, 'raca'), 'Raça') as Raca,
+        estadoCivil: requiredString(get(body, 'estadoCivil', 'estado_civil'), 'Estado civil') as EstadoCivil,
+        veiculo: optionalBoolean(get(body, 'veiculo')) ?? false,
+        programaSocial: optionalBoolean(get(body, 'programaSocial', 'programa_social')) ?? false,
+        email: optionalString(get(body, 'email')),
+        telefone: optionalString(get(body, 'telefone')),
+        nomeDoPai: optionalString(get(body, 'nomeDoPai', 'nome_do_pai')),
+        nomeDaMae: optionalString(get(body, 'nomeDaMae', 'nome_da_mae')),
+        localDeNascimento: optionalString(get(body, 'localDeNascimento', 'local_de_nascimento')),
+        dataResidenciaEstado: optionalDate(get(body, 'dataResidenciaEstado', 'data_residencia_estado')),
+        dataResidenciaMoradia: optionalDate(get(body, 'dataResidenciaMoradia', 'data_residencia_moradia'))
+    };
+}
+
+export function normalizeUpdateResponsavelDto(bodyValue: unknown): UpdateResponsavelDto {
+    const body = asBody(bodyValue);
+    return {
+        ...normalizeUpdatePessoaDto(body),
+        cpf: get(body, 'cpf') === undefined ? undefined : optionalString(get(body, 'cpf')),
+        nis: get(body, 'nis') === undefined ? undefined : optionalString(get(body, 'nis')),
+        renda: get(body, 'renda') === undefined ? undefined : optionalNumber(get(body, 'renda')) ?? null,
+        sexo: optionalString(get(body, 'sexo')) as Sexo | undefined,
+        raca: optionalString(get(body, 'raca')) as Raca | undefined,
+        estadoCivil: optionalString(get(body, 'estadoCivil', 'estado_civil')) as EstadoCivil | undefined,
+        veiculo: optionalBoolean(get(body, 'veiculo')),
+        programaSocial: optionalBoolean(get(body, 'programaSocial', 'programa_social')),
+        email: get(body, 'email') === undefined ? undefined : optionalString(get(body, 'email')),
+        telefone: get(body, 'telefone') === undefined ? undefined : optionalString(get(body, 'telefone')),
+        nomeDoPai: get(body, 'nomeDoPai', 'nome_do_pai') === undefined ? undefined : optionalString(get(body, 'nomeDoPai', 'nome_do_pai')),
+        nomeDaMae: get(body, 'nomeDaMae', 'nome_da_mae') === undefined ? undefined : optionalString(get(body, 'nomeDaMae', 'nome_da_mae')),
+        localDeNascimento: get(body, 'localDeNascimento', 'local_de_nascimento') === undefined ? undefined : optionalString(get(body, 'localDeNascimento', 'local_de_nascimento')),
+        dataResidenciaEstado: get(body, 'dataResidenciaEstado', 'data_residencia_estado') === undefined ? undefined : optionalDate(get(body, 'dataResidenciaEstado', 'data_residencia_estado')),
+        dataResidenciaMoradia: get(body, 'dataResidenciaMoradia', 'data_residencia_moradia') === undefined ? undefined : optionalDate(get(body, 'dataResidenciaMoradia', 'data_residencia_moradia'))
+    };
+}
+
+export function normalizeLocalizacaoDto(bodyValue: unknown, partial = false): CreateLocalizacaoDto | UpdateLocalizacaoDto {
+    const body = asBody(bodyValue);
+    return {
+        logradouro: get(body, 'logradouro') === undefined ? undefined : optionalString(get(body, 'logradouro')),
+        numero: get(body, 'numero') === undefined ? undefined : optionalString(get(body, 'numero')),
+        bairro: get(body, 'bairro') === undefined ? undefined : optionalString(get(body, 'bairro')),
+        cidade: partial && get(body, 'cidade') === undefined ? undefined : requiredString(get(body, 'cidade'), 'Cidade'),
+        estado: partial && get(body, 'estado') === undefined ? undefined : requiredString(get(body, 'estado'), 'Estado').toUpperCase(),
+        cep: get(body, 'cep') === undefined ? undefined : optionalString(get(body, 'cep')),
+        latitude: partial && get(body, 'latitude') === undefined ? undefined : requiredNumber(get(body, 'latitude'), 'Latitude'),
+        longitude: partial && get(body, 'longitude') === undefined ? undefined : requiredNumber(get(body, 'longitude'), 'Longitude'),
+        referencia: get(body, 'referencia') === undefined ? undefined : optionalString(get(body, 'referencia')),
+        complemento: get(body, 'complemento') === undefined ? undefined : optionalString(get(body, 'complemento'))
+    };
+}
+
+export function normalizeMoradiaDto(bodyValue: unknown, partial = false): CreateMoradiaDto | UpdateMoradiaDto {
+    const body = asBody(bodyValue);
+    return {
+        tipoConstrucao: (partial && get(body, 'tipoConstrucao', 'tipo_construcao') === undefined
+            ? undefined
+            : requiredString(get(body, 'tipoConstrucao', 'tipo_construcao'), 'Tipo de construção')) as TipoConstrucao | undefined,
+        dataRegistro: get(body, 'dataRegistro', 'data_registro') === undefined ? undefined : optionalDate(get(body, 'dataRegistro', 'data_registro')),
+        status: optionalString(get(body, 'status')) as StatusMoradia | undefined,
+        usoImovel: (partial && get(body, 'usoImovel', 'uso_imovel') === undefined
+            ? undefined
+            : requiredString(get(body, 'usoImovel', 'uso_imovel'), 'Uso do imóvel')) as UsoImovel | undefined,
+        pavimentos: optionalNumber(get(body, 'pavimentos')),
+        situacaoDeOcupacao: (partial && get(body, 'situacaoDeOcupacao', 'situacao_de_ocupacao') === undefined
+            ? undefined
+            : requiredString(get(body, 'situacaoDeOcupacao', 'situacao_de_ocupacao'), 'Situação de ocupação')) as SituacaoOcupacaoMoradia | undefined,
+        descricao: get(body, 'descricao') === undefined ? undefined : optionalString(get(body, 'descricao'))
+    };
+}
