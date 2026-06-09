@@ -1663,46 +1663,13 @@ Fontes utilizadas para realizar a pesquisa de segmentação de mercado:
 5. https://ipt.br/2023/03/27/mapeamento-e-gerenciamento-de-areas-de-risco-de-deslizamento-e-solapamento-de-margem-no-municipio-de-santo-andre-sp/
 
 ### 6.3.2. Perfil do Público-Alvo
+O público-alvo do GeoRisco é composto pelos profissionais da Defesa Civil de Santo André responsáveis pela coleta, gestão e análise de informações sobre moradores e áreas de risco do município.
 
+Os Agentes de Defesa Civil, que atuam em campo, são adultos com níveis de familiaridade com tecnologias digitais que variam de baixa a média. Sua rotina envolve visitas domiciliares, vistorias e coleta de dados em locais muitas vezes de difícil acesso e com limitações de informações. Seu comportamento é marcado pela necessidade de mobilidade, agilidade e adaptação a diferentes cenários. Entre suas principais necessidades estão o registro rápido e confiável das informações, a consulta e atualização de dados em campo. Suas principais dores incluem retrabalho, perda de informações, duplicidade de registros e dificuldades de localização de moradias.
 
-O público-alvo principal do GeoRisco são os profissionais de Campo e Gerência Operacional da **Defesa Civil de Santo André**:
+Os Gestores Operacionais, por sua vez, atuam no planejamento e coordenação das ações da Defesa Civil. Utilizam computadores para monitorar informações, analisar riscos e apoiar a tomada de decisões. Necessitam de dados consolidados, atualizados e confiáveis para planejar evacuações, direcionar recursos e acompanhar populações vulneráveis. Suas principais dores estão relacionadas à falta de informações integradas e à dificuldade de obter uma visão abrangente dos riscos do município.
 
-**Agente da Defesa Civil (Campo)**
-
-| Aspecto              | Descrição                                                                                                                                                                                                                 |
-| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Atuação              | Age diretamente nas ruas visitando as casas e coletando informações sobre as famílias de Santo André, em especial, as em áreas de risco.                                                                                  |
-| Dispositivo          | Usa a aplicação no dispositivo móvel independente da situação local.                                                                                                                                                      |
-| Perfil Tecnológico   | Tem conhecimento tecnológico intermediário — alguns têm facilidade, outros precisam de treinamento.                                                                                                                       |
-| Necessidades         | Precisa de um aplicativo de interface simples, fácil de usar mesmo em situações adversas e que funcione mesmo sem sinal.                                                                                                                                           |
-| Desafios     | O processo de coleta ocorre em diferentes contextos, como visitas domiciliares, campanhas e ações emergenciais. Nem todos os moradores fornecem todas as informações solicitadas, exigindo suporte a cadastros parciais. Além disso, há retrabalho devido à duplicidade de registros, uso de formulários em papel sujeitos a perdas, dificuldades para localizar moradias em áreas remotas e limitações de conectividade durante o trabalho de campo. |
-
-
-<br>
-
-**Gestor Operacional da Defesa Civil (Estratégico)**
-
-| Aspecto                    | Descrição                                                                                                                                                                             |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Atuação                    | Coordena as operações de forma estratégica, decide onde concentrar esforços, como alocar recursos e quais áreas precisam de ação imediata ou especializada como o de pessoas com baixa mobilidade, acamadas etc.                                            |
-| Dispositivo                | Usa a aplicação no computador e gerencia os parâmetros de monitoramento.                                                                                                              |
-| Perfil Tecnológico   | Familiaridade média da maioria dos profissionais com tecnologia.  |
-| Necessidades de Informação | Precisa de acesso aos dados dos moradores e moradias para gerenciamento, controle e tomadas estratégicas em operações e apoios.                                                                                                   |
-| Visualização e Análise     | Necessita de painéis que mostrem claramente os riscos, quantas pessoas estão em cada zona, relatórios detalhados e informações estratégicas para planejar evacuações e contingências. |
-| Desafios     | Necessita consolidar informações provenientes de diferentes equipes e regiões para apoiar decisões rápidas. A ausência de dados atualizados ou de uma visão consolidada dos riscos pode dificultar o planejamento de evacuações, a alocação de recursos e a coordenação das operações. |
-
-<br>
-<br>
-
-**Necessidades Comuns**
-
-| Aspecto                     | Descrição                                                                |
-| --------------------------- | ------------------------------------------------------------------------ |
-| Precisão dos Dados          | Todos precisam que os dados sejam precisos.                              |
-| Integridade das Informações | Não pode haver perda de informações.                                     |
-| Segurança e Privacidade     | As informações das famílias devem ser protegidas com segurança e sigilo. |
-
-<br>
+Como expectativa comum, ambos os perfis buscam maior precisão, integridade e segurança dos dados, além de processos mais eficientes que apoiem respostas rápidas e assertivas em situações de risco.
 
 ## 6.4. Posicionamento e Branding
 
