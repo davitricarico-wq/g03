@@ -1597,13 +1597,17 @@ Dentre as dificuldades, encontramos problemas diversos considerando o prazo de e
 
 ## 5.1. Relatório de testes de integração de endpoints automatizados (sprint 4)
 
-*Liste e descreva os testes automatizados dos endpoints criados e planejados para sua solução, implementados com **Jest**. Cubra as duas abordagens:*
+*### 5.1.1 Estratégia de Testes
 
-- ***White-box*** *— testes unitários de Service que exercitam ramos internos, exceções e regras de negócio (conhecimento da implementação).*
-- ***Black-box*** *— testes de integração dos endpoints via Jest + Supertest, verificando apenas o contrato HTTP (status, body, efeito observável), sem depender da implementação interna.*
+A estratégia de testes automatizados do projeto segue a separação por camadas da arquitetura da aplicação, distinguindo os testes de Service, Controller e Repository conforme a responsabilidade de cada uma dessas partes.
 
-*Posicione aqui também o relatório de cobertura de testes Jest se houver (através de link ou transcrito para estrutura markdown).*
+Na camada de Service, a abordagem adotada é de teste unitário white-box. Essa camada concentra regras de negócio, validações, tratamento de exceções e decisões internas da aplicação. Por isso, os testes devem conhecer os fluxos internos do serviço e exercitar seus diferentes ramos de execução. Nessa abordagem, os repositórios são substituídos por mocks, permitindo validar cenários como dados obrigatórios ausentes, entidades não encontradas, conflitos de regra de negócio e chamadas corretas aos métodos de persistência.
 
+Na camada de Controller, a abordagem esperada é de teste de integração black-box via Supertest. Esses testes devem exercitar os endpoints HTTP da aplicação Express sem depender da implementação interna dos controllers ou services. O foco deve estar no contrato externo da API, verificando status HTTP, corpo da resposta, renderização esperada quando aplicável e comportamento observável para entradas válidas, inválidas e cenários de erro.
+
+Na camada de Repository, os testes são opcionais e devem ser aplicados apenas quando houver lógica não trivial de query. Isso inclui casos como montagem dinâmica de filtros, joins, uso de views, soft delete, consultas históricas, vínculos entre entidades ou regras diretamente dependentes da persistência. Quando necessários, esses testes podem ser executados como testes de integração com banco controlado, preferencialmente condicionados por variáveis de ambiente para não tornar a suíte padrão dependente de banco externo.
+
+No estado atual da branch develop, já existem testes automatizados com Jest para PessoaController e um teste condicional de persistência relacionado à regra RN01. Entretanto, os testes de controller encontrados ainda chamam os métodos diretamente com mocks de Request e Response, em vez de exercitar os endpoints via Supertest. Assim, a estratégia descrita nesta seção estabelece o padrão a ser consolidado: Service como white-box unitário, Controller como black-box de integração via Supertest e Repository apenas quando houver lógica de query relevante.
 ## 5.2. Testes de usabilidade (sprint 5)
 
 ### 5.2.1. Relatório de testes de guerrilha
