@@ -1,60 +1,703 @@
-# Documentacao de Endpoints - GeoRisco Santo Andre
+# Documentação de Endpoints - GeoRisco Santo André
 
-Este documento descreve os endpoints do projeto GeoRisco Santo Andre, incluindo aqueles já implementados e os planejados para futuras versões.
+**Status**: ✅ Atualizado conforme implementação backend (2026-06-09)
 
-> **Nota Importante**: Como o código está em desenvolvimento, esta documentação reflete tanto os endpoints já funcionais no código quanto aqueles ainda em desenvolvimento. Os endpoints implementados foram extraídos diretamente do código-fonte do projeto.
+Este documento descreve todos os endpoints implementados no projeto GeoRisco Santo André. Os endpoints foram extraídos diretamente do código-fonte e estão organizados por módulo funcional (Pessoa, Responsável, Moradia, Família, Pet, Foto).
 
-## Padroes Gerais
+
+
+---
+
+## 📋 Padrões Gerais
 
 ### Base URL
 
-```txt
-/api
+```
+http://localhost:1234/api
 ```
 
-Exemplo:
+### Headers Obrigatórios
 
-```txt
-/api/pessoas
-```
+| Header | Valor |
+|---|---|
+| `Content-Type` | `application/json` |
 
-### Headers Padrao
-
-| Header | Obrigatorio | Descricao |
-|---|---:|---|
-| `Content-Type: application/json` | Sim | Indica envio de dados em JSON. |
-| `Authorization: Bearer <token>` | Sim | Token de autenticacao do usuario logado. |
-
-### Formato Padrao de Erro
+### Formato de Erro Padrão
 
 ```json
 {
   "error": "Mensagem resumida do erro",
-  "details": "Descricao complementar quando aplicavel"
+  "details": "Descrição complementar quando aplicável"
 }
 ```
 
-### Status HTTP Comuns
+### Status HTTP Utilizados
 
-| Status | Nome | Explicacao |
-|---:|---|---|
-| `200` | OK | Requisicao processada com sucesso. Usado em consultas e atualizacoes. |
-| `201` | Created | Recurso criado com sucesso. Usado em cadastros. |
-| `400` | Bad Request | A requisicao possui formato invalido, parametros incorretos ou JSON malformado. |
-| `401` | Unauthorized | Usuario nao autenticado ou token ausente/invalido. |
-| `403` | Forbidden | Usuario autenticado, mas sem permissao para executar a operacao. |
-| `404` | Not Found | Recurso solicitado nao encontrado. |
-| `409` | Conflict | A operacao viola uma regra de integridade ou conflito de negocio. |
-| `422` | Unprocessable Entity | Dados sintaticamente validos, mas com campos obrigatorios ausentes ou valores invalidos. |
-| `500` | Internal Server Error | Falha inesperada no servidor. |
+| Status | Significado |
+|---|---|
+| `200` | OK - Requisição bem-sucedida |
+| `201` | Created - Recurso criado com sucesso |
+| `400` | Bad Request - Dados inválidos |
+| `404` | Not Found - Recurso não encontrado |
+| `409` | Conflict - Violação de regra de negócio |
+| `422` | Unprocessable Entity - Campos obrigatórios ausentes |
+| `500` | Internal Server Error - Erro do servidor |
 
 ---
 
-## Pessoas
+## 📊 Sumário de Endpoints
 
-### 1. Listar Todas as Pessoas
+**Total implementados**: 52 endpoints ✅
 
-Lista todas as pessoas cadastradas no sistema.
+| Módulo | Endpoints | Status |
+|---|---|---|
+| **Pessoa** | 7 | ✅ |
+| **Responsável** | 5 | ✅ |
+| **Moradia** | 7 | ✅ |
+| **Família** | 13 | ✅ |
+| **Pet** | 7 | ✅ |
+| **Foto** | 13 | ✅ |
+
+---
+
+## 👤 PESSOA (7 endpoints)
+
+### GET `/api/pessoas` - Listar todas (JSON)
+**RF**: RF001 | **RN**: RN01, RN02
+
+```bash
+GET /api/pessoas
+```
+
+**Response**: Array de pessoas com status ativo/inativo.
+
+---
+
+### GET `/api/pessoas/busca` - Buscar
+**RF**: RF001 | **RN**: RN01
+
+Busca por nome, CPF, email ou telefone.
+
+```bash
+GET /api/pessoas/busca?nome=Maria&escopo=ativas
+```
+
+---
+
+### GET `/api/pessoas/inativas` - Listar inativas
+**RF**: RF010 | **RN**: RN03
+
+```bash
+GET /api/pessoas/inativas
+```
+
+---
+
+### GET `/api/pessoas/{id}` - Obter por ID
+**RF**: RF001 | **RN**: RN01
+
+```bash
+GET /api/pessoas/1
+```
+
+---
+
+### POST `/api/pessoas` - Criar pessoa
+**RF**: RF001 | **RN**: RN01, RN02
+
+```bash
+POST /api/pessoas
+{
+  "nome": "Ana Costa",
+  "dataDeNascimento": "1990-08-15",
+  "parentesco": "Responsável",
+  "escolaridade": "Médio Completo",
+  "situacaoOcupacional": "Autônomo",
+  "medicacao": false,
+  "cronico": false
+}
+```
+
+**Response**: `201 Created`
+
+---
+
+### PUT `/api/pessoas/{id}` - Atualizar
+**RF**: RF012 | **RN**: RN01, RN02
+
+```bash
+PUT /api/pessoas/1
+{
+  "nome": "Maria Silva Costa",
+  "situacaoOcupacional": "Desempregado"
+}
+```
+
+**Response**: `200 OK`
+
+---
+
+### DELETE `/api/pessoas/{id}` - Remover (soft delete)
+**RF**: RF010 | **RN**: RN03
+
+```bash
+DELETE /api/pessoas/5
+```
+
+**Response**: `200 OK`
+
+---
+
+## 👨‍⚖️ RESPONSÁVEL (5 endpoints)
+
+### GET `/api/responsaveis` - Listar todos
+**RF**: RF001 | **RN**: RN01
+
+```bash
+GET /api/responsaveis
+```
+
+---
+
+### GET `/api/responsaveis/{id}` - Obter por ID
+**RF**: RF001 | **RN**: RN01
+
+```bash
+GET /api/responsaveis/1
+```
+
+---
+
+### POST `/api/responsaveis` - Criar
+**RF**: RF001 | **RN**: RN01
+
+```bash
+POST /api/responsaveis
+{
+  "nome": "João Santos",
+  "dataDeNascimento": "1975-12-20",
+  "parentesco": "Responsável",
+  "sexo": "Masculino",
+  "raca": "Pardo",
+  "estadoCivil": "Casado"
+}
+```
+
+**Response**: `201 Created`
+
+---
+
+### PUT `/api/responsaveis/{id}` - Atualizar
+**RF**: RF012 | **RN**: RN01
+
+```bash
+PUT /api/responsaveis/1
+{
+  "programaSocial": true
+}
+```
+
+**Response**: `200 OK`
+
+---
+
+### DELETE `/api/responsaveis/{id}` - Remover
+**RF**: RF010 | **RN**: RN03
+
+```bash
+DELETE /api/responsaveis/2
+```
+
+**Response**: `200 OK`
+
+---
+
+## 🏠 MORADIA (7 endpoints)
+
+### GET `/api/moradias` - Listar moradias
+**RF**: RF004 | **RN**: RN01
+
+```bash
+GET /api/moradias
+```
+
+---
+
+### GET `/api/moradias/{id}` - Obter por ID
+**RF**: RF004, RF005 | **RN**: RN01, RN05
+
+```bash
+GET /api/moradias/1
+```
+
+---
+
+### GET `/api/moradias/{id}/detalhes` - Detalhes com relacionamentos
+**RF**: RF005 | **RN**: RN01, RN05
+
+Retorna moradia com família, pessoas e pets vinculados + flag risco_crítico.
+
+```bash
+GET /api/moradias/1/detalhes
+```
+
+---
+
+### GET `/api/moradias/{id}/familias/historico` - Histórico de famílias
+**RF**: RF005 | **RN**: RN01
+
+```bash
+GET /api/moradias/1/familias/historico
+```
+
+---
+
+### POST `/api/moradias` - Criar com georreferenciamento
+**RF**: RF002, RF003 | **RN**: RN01, RN04
+
+```bash
+POST /api/moradias
+{
+  "moradia": {
+    "tipoConstricao": "Madeira",
+    "numeroParavimentos": 1,
+    "condicaoOcupacao": "Alugada",
+    "sinaisAlerta": "Umidade"
+  },
+  "localizacao": {
+    "latitude": -23.6815,
+    "longitude": -46.5153,
+    "cep": "09010160",
+    "logradouro": "Rua das Flores, 456"
+  }
+}
+```
+
+**Response**: `201 Created`
+
+---
+
+### PUT `/api/moradias/{id}` - Atualizar
+**RF**: RF012 | **RN**: RN01, RN04
+
+```bash
+PUT /api/moradias/1
+{
+  "sinaisAlerta": "Rachaduras severas"
+}
+```
+
+**Response**: `200 OK`
+
+---
+
+### DELETE `/api/moradias/{id}` - Arquivar (soft delete)
+**RF**: RF009 | **RN**: RN03
+
+```bash
+DELETE /api/moradias/1
+```
+
+**Response**: `200 OK`
+
+---
+
+## 👨‍👩‍👧‍👦 FAMÍLIA (13 endpoints)
+
+### GET `/api/familias` - Listar famílias
+**RF**: RF001 | **RN**: RN01
+
+```bash
+GET /api/familias
+```
+
+---
+
+### GET `/api/familias/{id}` - Obter por ID
+**RF**: RF001 | **RN**: RN01
+
+```bash
+GET /api/familias/1
+```
+
+---
+
+### POST `/api/familias` - Criar família
+**RF**: RF001 | **RN**: RN01
+
+```bash
+POST /api/familias
+{ "status": "Ativa" }
+```
+
+**Response**: `201 Created`
+
+---
+
+### DELETE `/api/familias/{id}` - Remover
+**RF**: RF010 | **RN**: RN03
+
+```bash
+DELETE /api/familias/2
+```
+
+**Response**: `200 OK`
+
+---
+
+### POST `/api/familias/nucleo` - Cadastrar núcleo familiar
+**RF**: RF001 | **RN**: RN01
+
+Agrupamento de pessoas em uma família.
+
+```bash
+POST /api/familias/nucleo
+{
+  "familiaId": 1,
+  "pessoaIds": [1, 2, 3]
+}
+```
+
+**Response**: `201 Created`
+
+---
+
+### GET `/api/familias/{id}/pessoas` - Listar pessoas
+**RF**: RF001 | **RN**: RN01
+
+```bash
+GET /api/familias/1/pessoas
+```
+
+---
+
+### GET `/api/familias/{id}/pessoas/historico` - Histórico de pessoas
+**RF**: RF001 | **RN**: RN01
+
+```bash
+GET /api/familias/1/pessoas/historico
+```
+
+---
+
+### POST `/api/familias/{id}/pessoas` - Vincular pessoa
+**RF**: RF001 | **RN**: RN01
+
+```bash
+POST /api/familias/1/pessoas
+{ "pessoaId": 3 }
+```
+
+**Response**: `201 Created`
+
+---
+
+### DELETE `/api/familias/{id}/pessoas/{pessoaId}` - Remover pessoa
+**RF**: RF010 | **RN**: RN03
+
+```bash
+DELETE /api/familias/1/pessoas/3
+```
+
+**Response**: `200 OK`
+
+---
+
+### GET `/api/familias/{id}/moradias` - Listar moradias
+**RF**: RF001 | **RN**: RN01
+
+```bash
+GET /api/familias/1/moradias
+```
+
+---
+
+### GET `/api/familias/{id}/moradias/historico` - Histórico de moradias
+**RF**: RF001 | **RN**: RN01
+
+```bash
+GET /api/familias/1/moradias/historico
+```
+
+---
+
+### POST `/api/familias/{id}/moradias` - Vincular moradia
+**RF**: RF001 | **RN**: RN01
+
+```bash
+POST /api/familias/1/moradias
+{ "moradiaId": 2 }
+```
+
+**Response**: `201 Created`
+
+---
+
+### DELETE `/api/familias/{id}/moradias/{moradiaId}` - Remover moradia
+**RF**: RF010 | **RN**: RN03
+
+```bash
+DELETE /api/familias/1/moradias/1
+```
+
+**Response**: `200 OK`
+
+---
+
+## 🐾 PET (7 endpoints)
+
+### GET `/api/pets` - Listar pets
+**RF**: RF007 | **RN**: N/A
+
+```bash
+GET /api/pets
+```
+
+---
+
+### GET `/api/pets/{id}` - Obter por ID
+**RF**: RF007 | **RN**: N/A
+
+```bash
+GET /api/pets/1
+```
+
+---
+
+### POST `/api/pets` - Criar pet
+**RF**: RF007 | **RN**: N/A
+
+```bash
+POST /api/pets
+{
+  "tipo": "Cão",
+  "quantidade": 2,
+  "familiaId": 1
+}
+```
+
+**Response**: `201 Created`
+
+---
+
+### PUT `/api/pets/{id}` - Atualizar
+**RF**: RF007 | **RN**: N/A
+
+```bash
+PUT /api/pets/1
+{ "quantidade": 3 }
+```
+
+**Response**: `200 OK`
+
+---
+
+### DELETE `/api/pets/{id}` - Remover
+**RF**: RF010 | **RN**: N/A
+
+```bash
+DELETE /api/pets/2
+```
+
+**Response**: `200 OK`
+
+---
+
+### GET `/api/familias/{familiaId}/pets` - Listar pets da família
+**RF**: RF007 | **RN**: N/A
+
+```bash
+GET /api/familias/1/pets
+```
+
+---
+
+### POST `/api/familias/{familiaId}/pets` - Criar pet na família
+**RF**: RF007 | **RN**: N/A
+
+```bash
+POST /api/familias/1/pets
+{
+  "tipo": "Ave",
+  "quantidade": 1
+}
+```
+
+**Response**: `201 Created`
+
+---
+
+## 📸 FOTO (13 endpoints)
+
+### GET `/api/fotos` - Listar fotos
+**RF**: RF002 | **RN**: RN04
+
+```bash
+GET /api/fotos
+```
+
+---
+
+### GET `/api/fotos/{id}` - Obter por ID
+**RF**: RF002 | **RN**: RN04
+
+```bash
+GET /api/fotos/1
+```
+
+---
+
+### GET `/api/fotos/{id}/signed-url` - Gerar URL assinada
+**RF**: RF002 | **RN**: RN04
+
+URL assinada via Supabase Storage para download seguro.
+
+```bash
+GET /api/fotos/1/signed-url
+```
+
+---
+
+### PUT `/api/fotos/{id}` - Atualizar foto
+**RF**: RF002 | **RN**: RN04
+
+```bash
+PUT /api/fotos/1
+{ "descricao": "Fachada principal com danos" }
+```
+
+**Response**: `200 OK`
+
+---
+
+### DELETE `/api/fotos/{id}` - Remover foto
+**RF**: RF010 | **RN**: RN04
+
+```bash
+DELETE /api/fotos/1
+```
+
+**Response**: `200 OK`
+
+---
+
+### GET `/api/moradias/{id}/fotos` - Listar fotos da moradia
+**RF**: RF002 | **RN**: RN04
+
+```bash
+GET /api/moradias/1/fotos
+```
+
+---
+
+### POST `/api/moradias/{id}/fotos/upload-url` - Gerar URL de upload
+**RF**: RF002 | **RN**: RN04
+
+```bash
+POST /api/moradias/1/fotos/upload-url
+{
+  "nomeArquivo": "fachada_nova.jpg",
+  "tipo": "fachada"
+}
+```
+
+**Response**: `201 Created`
+
+---
+
+### POST `/api/moradias/{id}/fotos` - Registrar foto
+**RF**: RF002 | **RN**: RN04
+
+```bash
+POST /api/moradias/1/fotos
+{
+  "nome": "fachada_moradia_01.jpg",
+  "tipo": "fachada",
+  "descricao": "Fachada frontal da residência"
+}
+```
+
+**Response**: `201 Created`
+
+---
+
+### DELETE `/api/moradias/{id}/fotos/{fotoId}` - Remover foto da moradia
+**RF**: RF010 | **RN**: RN04
+
+```bash
+DELETE /api/moradias/1/fotos/3
+```
+
+**Response**: `200 OK`
+
+---
+
+### GET `/api/pets/{id}/fotos` - Listar fotos do pet
+**RF**: RF007 | **RN**: RN04
+
+```bash
+GET /api/pets/1/fotos
+```
+
+---
+
+### POST `/api/pets/{id}/fotos/upload-url` - Gerar URL de upload para pet
+**RF**: RF007 | **RN**: RN04
+
+```bash
+POST /api/pets/1/fotos/upload-url
+{ "nomeArquivo": "cachorro_raca_1.jpg" }
+```
+
+**Response**: `201 Created`
+
+---
+
+### POST `/api/pets/{id}/fotos` - Registrar foto do pet
+**RF**: RF007 | **RN**: RN04
+
+```bash
+POST /api/pets/1/fotos
+{
+  "nome": "pet_foto_01.jpg",
+  "tipo": "pet",
+  "descricao": "Cão de estimação"
+}
+```
+
+**Response**: `201 Created`
+
+---
+
+### DELETE `/api/pets/{id}/fotos/{fotoId}` - Remover foto do pet
+**RF**: RF010 | **RN**: RN04
+
+```bash
+DELETE /api/pets/1/fotos/5
+```
+
+**Response**: `200 OK`
+
+---
+
+## ✅ Checklist de Verificação
+
+- ✅ Todos os endpoints testados e funcionais
+- ✅ RFs associados verificados (RF001-RF012)
+- ✅ RNs associadas documentadas (RN01-RN05)  
+- ✅ Status HTTP corretos (200, 201, 400, 404, 409, 422, 500)
+- ✅ DTOs e validações implementadas
+- ✅ Tratamento de erros centralizado
+- ✅ Soft delete (arquivo lógico) para pessoas e moradias
+- ✅ Georreferenciamento (latitude/longitude) em moradias
+- ✅ Integração com Supabase Storage para fotos
+- ✅ Históricos de relacionamentos (pessoas, moradias)
+
+---
+
+**Data de atualização**: 2026-06-09  
+**Versão**: 2.1 (Completa e Validada)  
+**Branch**: `doc/verificacao_mudanca_endpoints_backend-endpoints-3.1.5`
 
 | Campo | Valor |
 |---|---|
