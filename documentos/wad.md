@@ -1597,12 +1597,23 @@ Dentre as dificuldades, encontramos problemas diversos considerando o prazo de e
 
 ## 5.1. Relatório de testes de integração de endpoints automatizados (sprint 4)
 
-*Liste e descreva os testes automatizados dos endpoints criados e planejados para sua solução, implementados com **Jest**. Cubra as duas abordagens:*
+### 5.1.1 Estratégias de Testes
 
-- ***White-box*** *— testes unitários de Service que exercitam ramos internos, exceções e regras de negócio (conhecimento da implementação).*
-- ***Black-box*** *— testes de integração dos endpoints via Jest + Supertest, verificando apenas o contrato HTTP (status, body, efeito observável), sem depender da implementação interna.*
+#### 5.1.1.1 
 
-*Posicione aqui também o relatório de cobertura de testes Jest se houver (através de link ou transcrito para estrutura markdown).*
+#### 5.1.1.2 Padrão AAA e Determinismo
+
+A escrita dos testes deve seguir o padrão AAA (Arrange, Act, Assert), que organiza cada caso de teste em três etapas bem definidas: preparação, execução e verificação. Esse padrão melhora a legibilidade, facilita a manutenção e reduz ambiguidades sobre o comportamento que está sendo validado.
+
+Na etapa Arrange, são preparados todos os dados, objetos, dependências e condições necessárias para o teste. Essa preparação deve ser explícita e isolada, evitando dependência de dados previamente existentes no ambiente. Na etapa Act, executa-se apenas a ação principal que se deseja testar, como a chamada de uma função, método, rota ou serviço. Por fim, na etapa Assert, são verificadas as saídas, alterações de estado ou efeitos esperados, garantindo que o resultado obtido corresponde ao comportamento especificado.
+
+Além da organização pelo padrão AAA, os testes devem ser determinísticos, ou seja, devem produzir sempre o mesmo resultado quando executados nas mesmas condições. Um teste determinístico não pode depender da ordem de execução de outros testes, do relógio real do sistema, de chamadas a redes externas ou de dados residuais deixados por execuções anteriores.
+
+Para garantir esse determinismo, cada teste deve criar seus próprios dados de entrada e limpar ou isolar qualquer estado necessário. Dependências externas, como APIs, serviços de terceiros ou banco de dados compartilhado, devem ser substituídas por mocks, stubs, fixtures ou ambientes controlados. Quando houver lógica dependente de data e hora, o tempo deve ser fixado ou simulado, evitando falhas causadas por diferenças de horário, fuso, virada de dia ou variações de execução.
+
+Também é importante que os testes não compartilhem estado mutável entre si. Cada caso deve poder ser executado individualmente ou em conjunto com toda a suíte, em qualquer ordem, sem alterar seu resultado. Essa característica aumenta a confiabilidade da suíte de testes e reduz a ocorrência de falhas intermitentes, conhecidas como testes “flaky”.
+
+Dessa forma, a adoção do padrão AAA combinada ao determinismo contribui para uma estratégia de testes mais clara, confiável e sustentável. Os testes passam a funcionar não apenas como mecanismos de verificação automática, mas também como documentação objetiva do comportamento esperado do sistema.
 
 ## 5.2. Testes de usabilidade (sprint 5)
 
