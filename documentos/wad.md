@@ -654,22 +654,23 @@ Este fluxo consolida as validações derivadas das US13 e US14. Ele não represe
 
 ### 3.2.7. Padrões de Projeto Aplicados (sprints 3 a 5)
 
-Durante o desenvolvimento do backend do GeoRisco, foram aplicados padrões arquiteturais voltados à separação de responsabilidades, testabilidade e manutenção das regras de negócio. A aplicação foi estruturada em camadas, utilizando TypeScript, Express, PostgreSQL e Supabase Storage.
+Durante o desenvolvimento do backend do GeoRisco, foram aplicados padrões arquiteturais voltados à separação de responsabilidades, testabilidade, segurança e manutenção das regras de negócio. A aplicação foi consolidada em camadas com TypeScript, Express, PostgreSQL/Supabase e Supabase Storage, cobrindo CRUDs, núcleo familiar transacional, histórico de vínculos, consulta detalhada de moradias, pets e fotos.
 
 | Padrão / Conceito Arquitetural | Aplicação no GeoRisco | Justificativa |
 | :--- | :--- | :--- |
-| **Arquitetura em Camadas** | O backend está organizado em `routes`, `controllers`, `services`, `repositories`, `dtos`, `models`, `validations`, `errors`, `db` e `storage`. | Essa divisão separa entrada HTTP, regras de negócio, persistência e infraestrutura. Isso facilita manutenção em um sistema com cadastros de pessoas, moradias, famílias, pets, fotos e vínculos históricos. |
-| **Controller** | Os controllers recebem requisições, extraem parâmetros, normalizam payloads e retornam respostas HTTP. | Evita que regras de negócio e SQL fiquem misturados com detalhes de rota, status code e renderização de views/API. |
-| **Service Layer** | Os services concentram validações de negócio, transações e orquestração entre repositories. | Necessário para operações compostas, como cadastro de responsável, criação de núcleo familiar, vínculo entre família e moradia e upload de fotos. |
-| **Repository Pattern** | Os repositories encapsulam consultas SQL e acesso ao PostgreSQL. | Isola a persistência da lógica de negócio, permitindo alterar queries, views ou estratégia de banco sem impactar diretamente controllers e services. |
-| **DTO (Data Transfer Object)** | Os DTOs definem os formatos de entrada e saída usados em cadastros, buscas, fotos, moradias e famílias. | Ajuda a controlar os dados trafegados entre frontend e backend, reduzindo exposição desnecessária de campos sensíveis e padronizando contratos da API. |
-| **Dependency Injection por Construtor** | Controllers recebem services, e services recebem repositories por construtor, baseados em interfaces. | Reduz acoplamento entre classes e facilita testes com mocks, como nos testes de controller e persistência. |
-| **Interface Segregation / Contratos** | Existem interfaces específicas para services e repositories, como `IPessoaService`, `IPessoaRepository`, `IFamiliaService` e equivalentes. | Os contratos deixam claro o que cada camada pode consumir, evitando dependência direta de implementação concreta. |
-| **Validação Centralizada** | Arquivos em `validations/` e funções de normalização em `request-utils.ts` validam payloads, IDs, datas, números e campos obrigatórios. | Garante consistência nos dados antes de persistir informações sensíveis e reduz duplicação de validação nos controllers. |
-| **Custom Exception** | A classe `HttpError` representa erros de negócio com status HTTP definido. | Permite diferenciar erros esperados, como ID inválido ou registro não encontrado, de falhas internas do servidor. |
-| **Tratamento Centralizado de Erros** | A função `handleControllerError` padroniza respostas de erro nos controllers. | Evita repetição de lógica de erro e impede que detalhes técnicos sejam expostos ao usuário final. |
-| **Transação na Camada de Serviço** | Operações que afetam múltiplas tabelas usam `BEGIN`, `COMMIT` e `ROLLBACK` nos services. | Mantém integridade em fluxos críticos, como criação de responsável, moradia com localização e núcleo familiar completo. |
-| **Adapter / Facade para Serviço Externo** | O acesso ao Supabase Storage fica isolado em `storage/supabase-storage.client.ts` e no `FotoStorageService`. | Centraliza a integração externa de armazenamento de fotos, evitando que controllers e repositories dependam diretamente da API do Supabase. |
+| **Arquitetura em Camadas** | O backend está organizado em `routes`, `controllers`, `services`, `repositories`, `dtos`, `models`, `validations`, `errors`, `db`, `storage`, `views` e `public`. | Essa divisão separa entrada HTTP, interface EJS, regras de negócio, persistência e infraestrutura, facilitando evolução dos módulos de pessoas, moradias, famílias, pets, fotos e vínculos históricos. |
+| **Controller** | Os controllers recebem requisições, extraem parâmetros, normalizam payloads, chamam services e retornam JSON ou views EJS. | Evita que regras de negócio e SQL fiquem misturados com detalhes de rota, status code, renderização e contratos HTTP. |
+| **Service Layer** | Os services concentram validações de negócio, orquestração entre repositories, transações e composição de respostas agregadas, como núcleo familiar e detalhes da moradia. | Necessário para fluxos compostos, como cadastro de responsável, criação de moradia com localização, vínculo família-moradia, pets, fotos e consulta detalhada. |
+| **Repository Pattern** | Os repositories encapsulam SQL, acesso ao PostgreSQL/Supabase e mapeamento entre colunas do banco e objetos TypeScript. | Isola a persistência da lógica de negócio, permitindo alterar queries, views ou estratégia de banco sem impactar diretamente controllers e services. |
+| **DTO (Data Transfer Object)** | Os DTOs definem formatos de entrada e saída para pessoas, responsáveis, moradias, localização, famílias, pets, fotos e URLs assinadas. | Padroniza os dados trafegados entre frontend e backend, reduz exposição de campos sensíveis e torna os contratos da API mais claros. |
+| **Dependency Injection por Construtor** | Controllers recebem services, services recebem repositories e alguns repositories aceitam um `Queryable` para uso com `pool` ou cliente transacional. | Reduz acoplamento entre classes, facilita testes com mocks e permite reutilizar a mesma operação dentro ou fora de transações. |
+| **Interface Segregation / Contratos** | Existem interfaces específicas para services e repositories, como `IPessoaService`, `IFamiliaRepository`, `IMoradiaService`, `IPetRepository` e equivalentes. | Os contratos deixam claro o que cada camada pode consumir, evitando dependência direta de implementações concretas. |
+| **Validação e Normalização Centralizadas** | Arquivos em `validations/` e funções em `request-utils.ts` validam payloads, IDs, datas, números, booleanos, campos obrigatórios e aliases de campos. | Garante consistência antes da persistência, reduz duplicação nos controllers e melhora a qualidade dos dados coletados em campo. |
+| **Custom Exception e Erro Padronizado** | A classe `HttpError` representa erros de negócio com status HTTP, e `handleControllerError` padroniza as respostas de erro. | Diferencia erros esperados, como ID inválido, registro inexistente ou conflito de responsável, de falhas internas, sem expor detalhes técnicos. |
+| **Transação / Unit of Work** | Operações que afetam múltiplas tabelas usam `BEGIN`, `COMMIT` e `ROLLBACK` nos services com o mesmo cliente de banco. | Mantém integridade em fluxos críticos, como criação de responsável, moradia com localização, atualização conjunta e cadastro completo de núcleo familiar. |
+| **Soft Delete e Views Ativas** | O banco usa `deleted_at`, status e views como `vw_pessoa_ativa`, `vw_moradia_ativa` e `vw_familia_ativa` para consultas operacionais. | Preserva histórico e conformidade com LGPD, enquanto evita que registros arquivados apareçam nas listagens e vínculos ativos. |
+| **Regras de Integridade no Banco** | Migrações adicionam restrições como foto com exatamente um dono (`moradia` ou `pet`) e trigger de responsável único por família ativa. | Reforça regras críticas mesmo se uma chamada futura contornar a camada de serviço, protegendo consistência entre família, moradia, pessoa, pet e foto. |
+| **Adapter / Facade para Serviço Externo** | O acesso ao Supabase Storage fica isolado em `storage/supabase-storage.client.ts` e no `FotoStorageService`, com URLs assinadas para upload e leitura. | Centraliza a integração externa de fotos, separa metadados relacionais dos arquivos e evita que controllers e repositories dependam diretamente da API do Supabase. |
 
 ## 3.3. Wireframes (sprint 2)
 
@@ -1763,8 +1764,9 @@ Como expectativa comum, ambos os perfis buscam maior precisão, integridade e se
 
 ## 6.4. Posicionamento e Branding
 
-*a) Proposta de Valor Única (até 250 palavras)*
-*Defina de maneira clara o que torna a sua aplicação única e valiosa para seus usuários.*
+## 6.4.1 Proposta de Valor Única
+
+Oferecemos um sistema de gestão de famílias e moradias em área de risco para a prefeitura de Santo André, que precisa manusear de forma prática os dados dos cidadãos em vulnerabilidade, bem como visualizar esses dados de forma estratégica e sem a necessidade do uso de formulários em papel.
 
 ## 6.4.2 Posicionamento e Branding
 
