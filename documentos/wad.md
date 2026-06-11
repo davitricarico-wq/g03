@@ -2525,17 +2525,17 @@ O levantamento atual foi conferido contra os arquivos de rotas e controllers do 
 
 | Método | Endpoint | Descrição | Resposta de sucesso | RF relacionado |
 |--------|----------|-----------|---------------------|----------------|
-| GET | `/api/pessoas` | Lista todas as pessoas cadastradas | `200` | RF001, RF006 |
-| GET | `/api/pessoas/busca` | Busca pessoas por filtros como `nome`, `cpf`, `email`, `telefone` e `escopo` | `200` | RF006 |
+| GET | `/api/pessoas` | Lista todas as pessoas cadastradas | `200` | RF001, RF016 |
+| GET | `/api/pessoas/busca` | Busca pessoas por filtros como `nome`, `cpf`, `email`, `telefone` e `escopo` | `200` | RF016 |
 | GET | `/api/pessoas/inativas` | Lista pessoas inativas | `200` | RF010 |
 | GET | `/api/pessoas/{id}` | Retorna pessoa por ID | `200` | RF001 |
 | POST | `/api/pessoas` | Cadastra nova pessoa | `201` | RF001 |
-| PUT | `/api/pessoas/{id}` | Atualiza parcialmente uma pessoa | `200` | RF012 |
+| PUT | `/api/pessoas/{id}` | Atualiza parcialmente uma pessoa | `200` | RF012, RF019 |
 | DELETE | `/api/pessoas/{id}` | Remove pessoa por soft delete | `204` | RF010 |
-| GET | `/api/responsaveis` | Lista todos os responsáveis | `200` | RF001 |
-| GET | `/api/responsaveis/{id}` | Retorna responsável pelo ID da pessoa | `200` | RF001 |
-| POST | `/api/responsaveis` | Cadastra pessoa responsável e seus dados adicionais | `201` | RF001 |
-| PUT | `/api/responsaveis/{id}` | Atualiza parcialmente um responsável | `200` | RF012 |
+| GET | `/api/responsaveis` | Lista todos os responsáveis | `200` | RF001, RF014 |
+| GET | `/api/responsaveis/{id}` | Retorna responsável pelo ID da pessoa | `200` | RF001, RF014 |
+| POST | `/api/responsaveis` | Cadastra pessoa responsável e seus dados adicionais | `201` | RF001, RF014 |
+| PUT | `/api/responsaveis/{id}` | Atualiza parcialmente um responsável | `200` | RF012, RF014, RF019 |
 | DELETE | `/api/responsaveis/{id}` | Remove responsável | `204` | RF010 |
 
 Os endpoints de pessoa aceitam os campos principais `nome`, `dataDeNascimento`, `parentesco`, `situacaoOcupacional`, `escolaridade`, `cronico`, `medicacao` e `status`, incluindo aliases em `snake_case` para alguns atributos. Responsáveis são tratados como pessoas com dados complementares, como `cpf`, `nis`, `renda`, `sexo`, `raca`, `estadoCivil`, `email`, `telefone`, vínculos familiares e datas de residência.
@@ -2547,9 +2547,9 @@ Os endpoints de pessoa aceitam os campos principais `nome`, `dataDeNascimento`, 
 | GET | `/api/moradias` | Lista moradias | `200` | RF004, RF006 |
 | GET | `/api/moradias/{id}` | Retorna moradia por ID | `200` | RF005 |
 | GET | `/api/moradias/{id}/detalhes` | Retorna detalhes da moradia, incluindo famílias, pessoas, pets e fotos associados | `200` | RF005 |
-| GET | `/api/moradias/{id}/familias/historico` | Lista o histórico de famílias vinculadas à moradia | `200` | RF005, RF009 |
+| GET | `/api/moradias/{id}/familias/historico` | Lista o histórico de famílias vinculadas à moradia | `200` | RF014 |
 | POST | `/api/moradias` | Cria moradia com localização | `201` | RF002, RF003 |
-| PUT | `/api/moradias/{id}` | Atualiza parcialmente moradia e/ou localização | `200` | RF012 |
+| PUT | `/api/moradias/{id}` | Atualiza parcialmente moradia e/ou localização | `200` | RF012, RF015, RF019 |
 | DELETE | `/api/moradias/{id}` | Remove moradia por soft delete | `204` | RF009 |
 
 A criação de moradia espera um corpo com os grupos `localizacao` e `moradia`. Em `localizacao`, os campos mínimos são `cidade`, `estado`, `latitude` e `longitude`. Em `moradia`, os campos mínimos são `tipoConstrucao`, `usoImovel` e `situacaoDeOcupacao`, também com aliases em `snake_case` para integração com clientes que adotem esse padrão.
@@ -2558,19 +2558,19 @@ A criação de moradia espera um corpo com os grupos `localizacao` e `moradia`. 
 
 | Método | Endpoint | Descrição | Resposta de sucesso | RF relacionado |
 |--------|----------|-----------|---------------------|----------------|
-| GET | `/api/familias` | Lista famílias | `200` | RF001 |
-| GET | `/api/familias/{id}` | Retorna família por ID | `200` | RF001 |
-| POST | `/api/familias` | Cria uma família | `201` | RF001 |
-| DELETE | `/api/familias/{id}` | Remove família por soft delete | `204` | RF009 |
-| POST | `/api/familias/nucleo` | Cadastra núcleo familiar completo, incluindo localização, moradia, responsável, dependentes, pets e fotos | `201` | RF001, RF002, RF003, RF007 |
-| GET | `/api/familias/{id}/pessoas` | Lista pessoas vinculadas à família | `200` | RF001 |
-| GET | `/api/familias/{id}/pessoas/historico` | Lista histórico de pessoas vinculadas à família | `200` | RF005, RF012 |
-| POST | `/api/familias/{id}/pessoas` | Vincula pessoa à família | `201` | RF001 |
-| DELETE | `/api/familias/{id}/pessoas/{pessoaId}` | Remove vínculo ativo entre pessoa e família | `200` | RF010 |
-| GET | `/api/familias/{id}/moradias` | Lista moradias vinculadas à família | `200` | RF009, RF012 |
-| GET | `/api/familias/{id}/moradias/historico` | Lista histórico de moradias vinculadas à família | `200` | RF009, RF012 |
-| POST | `/api/familias/{id}/moradias` | Vincula moradia à família | `201` | RF002, RF003 |
-| DELETE | `/api/familias/{id}/moradias/{moradiaId}` | Remove vínculo ativo entre moradia e família | `200` | RF009 |
+| GET | `/api/familias` | Lista famílias | `200` | RF014 |
+| GET | `/api/familias/{id}` | Retorna família por ID | `200` | RF014 |
+| POST | `/api/familias` | Cria uma família | `201` | RF001, RF014, RF017 |
+| DELETE | `/api/familias/{id}` | Remove família por soft delete | `204` | RF014 |
+| POST | `/api/familias/nucleo` | Cadastra núcleo familiar completo, incluindo localização, moradia, responsável, dependentes, pets e fotos | `201` | RF013 |
+| GET | `/api/familias/{id}/pessoas` | Lista pessoas vinculadas à família | `200` | RF014 |
+| GET | `/api/familias/{id}/pessoas/historico` | Lista histórico de pessoas vinculadas à família | `200` | RF014 |
+| POST | `/api/familias/{id}/pessoas` | Vincula pessoa à família | `201` | RF014 |
+| DELETE | `/api/familias/{id}/pessoas/{pessoaId}` | Remove vínculo ativo entre pessoa e família | `200` | RF014 |
+| GET | `/api/familias/{id}/moradias` | Lista moradias vinculadas à família | `200` | RF014 |
+| GET | `/api/familias/{id}/moradias/historico` | Lista histórico de moradias vinculadas à família | `200` | RF014 |
+| POST | `/api/familias/{id}/moradias` | Vincula moradia à família | `201` | RF014, RF017 |
+| DELETE | `/api/familias/{id}/moradias/{moradiaId}` | Remove vínculo ativo entre moradia e família | `200` | RF014 |
 
 Os endpoints de vínculo preservam o histórico de composição familiar e ocupação da moradia por meio de datas de entrada e saída. O endpoint `/api/familias/nucleo` consolida o fluxo principal de cadastro, permitindo registrar em uma única operação o núcleo familiar completo usado pelo processo operacional da Defesa Civil.
 
@@ -2581,10 +2581,10 @@ Os endpoints de vínculo preservam o histórico de composição familiar e ocupa
 | GET | `/api/pets` | Lista todos os pets | `200` | RF007 |
 | GET | `/api/pets/{id}` | Retorna pet por ID | `200` | RF007 |
 | POST | `/api/pets` | Cria pet informando `idFamilia` no corpo | `201` | RF007 |
-| PUT | `/api/pets/{id}` | Atualiza parcialmente um pet | `200` | RF007 |
+| PUT | `/api/pets/{id}` | Atualiza parcialmente um pet | `200` | RF007, RF019 |
 | DELETE | `/api/pets/{id}` | Remove pet | `204` | RF007 |
-| GET | `/api/familias/{id}/pets` | Lista pets de uma família | `200` | RF007 |
-| POST | `/api/familias/{id}/pets` | Cria pet vinculado à família informada na URL | `201` | RF007 |
+| GET | `/api/familias/{id}/pets` | Lista pets de uma família | `200` | RF007, RF014 |
+| POST | `/api/familias/{id}/pets` | Cria pet vinculado à família informada na URL | `201` | RF007, RF014 |
 
 Os pets aceitam campos como `tipo`, `nome`, `porte`, `raca`, `cor`, `status` e `observacao`. Os tipos previstos no modelo são `cachorro`, `gato`, `reptil`, `ave`, `roedor` e `outros`; os status aceitos são `Ativo`, `Inativo`, `Desaparecido` e `Falecido`.
 
@@ -2592,19 +2592,19 @@ Os pets aceitam campos como `tipo`, `nome`, `porte`, `raca`, `cor`, `status` e `
 
 | Método | Endpoint | Descrição | Resposta de sucesso | RF relacionado |
 |--------|----------|-----------|---------------------|----------------|
-| GET | `/api/fotos` | Lista todas as fotos | `200` | RF002, RF007 |
-| GET | `/api/fotos/{id}` | Retorna foto por ID | `200` | RF002, RF007 |
-| GET | `/api/fotos/{id}/signed-url` | Gera URL assinada para acesso à foto | `200` | RF002, RF007 |
-| PUT | `/api/fotos/{id}` | Atualiza a URL da foto | `200` | RF002, RF007 |
-| DELETE | `/api/fotos/{id}` | Remove foto | `204` | RF002, RF007 |
-| GET | `/api/moradias/{id}/fotos` | Lista fotos de uma moradia | `200` | RF002 |
-| POST | `/api/moradias/{id}/fotos/upload-url` | Gera URL assinada de upload para foto de moradia | `201` | RF002 |
-| POST | `/api/moradias/{id}/fotos` | Cria registro de foto vinculado à moradia | `201` | RF002 |
-| DELETE | `/api/moradias/{id}/fotos/{fotoId}` | Remove foto vinculada à moradia | `204` | RF002 |
-| GET | `/api/pets/{id}/fotos` | Lista fotos de um pet | `200` | RF007 |
-| POST | `/api/pets/{id}/fotos/upload-url` | Gera URL assinada de upload para foto de pet | `201` | RF007 |
-| POST | `/api/pets/{id}/fotos` | Cria registro de foto vinculado ao pet | `201` | RF007 |
-| DELETE | `/api/pets/{id}/fotos/{fotoId}` | Remove foto vinculada ao pet | `204` | RF007 |
+| GET | `/api/fotos` | Lista todas as fotos | `200` | RF018 |
+| GET | `/api/fotos/{id}` | Retorna foto por ID | `200` | RF018 |
+| GET | `/api/fotos/{id}/signed-url` | Gera URL assinada para acesso à foto | `200` | RF018 |
+| PUT | `/api/fotos/{id}` | Atualiza a URL da foto | `200` | RF018 |
+| DELETE | `/api/fotos/{id}` | Remove foto | `204` | RF018 |
+| GET | `/api/moradias/{id}/fotos` | Lista fotos de uma moradia | `200` | RF002, RF018 |
+| POST | `/api/moradias/{id}/fotos/upload-url` | Gera URL assinada de upload para foto de moradia | `201` | RF018 |
+| POST | `/api/moradias/{id}/fotos` | Cria registro de foto vinculado à moradia | `201` | RF002, RF018 |
+| DELETE | `/api/moradias/{id}/fotos/{fotoId}` | Remove foto vinculada à moradia | `204` | RF018 |
+| GET | `/api/pets/{id}/fotos` | Lista fotos de um pet | `200` | RF007, RF018 |
+| POST | `/api/pets/{id}/fotos/upload-url` | Gera URL assinada de upload para foto de pet | `201` | RF018 |
+| POST | `/api/pets/{id}/fotos` | Cria registro de foto vinculado ao pet | `201` | RF007, RF018 |
+| DELETE | `/api/pets/{id}/fotos/{fotoId}` | Remove foto vinculada ao pet | `204` | RF018 |
 
 A API separa o arquivo físico da foto de seu metadado. Primeiro, o cliente solicita uma URL assinada de upload com `fileName`, `contentType` e, opcionalmente, `upsert`. Depois do envio ao storage, registra no backend apenas a `url` ou caminho do arquivo, associando o metadado à moradia ou ao pet correspondente.
 
@@ -2954,7 +2954,7 @@ Oferecemos um sistema de gestão de famílias e moradias em área de risco para 
 
 ## 6.4.2 Posicionamento e Branding
 
-**b) Estratégia de Diferenciação**
+**Estratégia de Diferenciação**
 
 A diferenciação do GeoRisco Santo André está em sua adaptação direta à rotina da Defesa Civil municipal, e não apenas na digitalização genérica de cadastros. Enquanto alternativas como planilhas, formulários isolados, sistemas nacionais ou ferramentas de mapa atendem partes do processo, o GeoRisco integra, em uma única aplicação, cadastro de moradias, famílias, moradores, pets, fotos, localização, histórico de ocupação, consulta e visualização territorial.
 
