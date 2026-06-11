@@ -2789,33 +2789,54 @@ Essa abordagem garante que os fluxos críticos do sistema sejam validados não a
 
 #### Cobertura dos Endpoints Principais
 
-| Endpoint                            | RF           | RN   | Sucesso (200/201)                                           | Falha de Validação (400/422)                            | Regra de Negócio (409 ou equivalente)         | Recurso Não Encontrado (404)          |
-| ----------------------------------- | ------------ | ---- | ----------------------------------------------------------- | ------------------------------------------------------- | --------------------------------------------- | ------------------------------------- |
-| POST /api/pessoas                       | RF001        | RN01 | Pessoa cadastrada com indicadores de vulnerabilidade (CT01) | Campos obrigatórios ausentes (CT02)                     | CPF já cadastrado ou conflito equivalente     | Pessoa relacionada inexistente (CT05) |
-| POST /api/responsaveis                  | RF001        | RN01 | Responsável cadastrado com sucesso (CT03)                   | Dados obrigatórios ausentes                             | Responsável duplicado                         | Pessoa inexistente (CT11)             |
-| PUT /api/pessoas/:id                    | RF011, RF012 | RN02 | Atualização realizada (CT08)                                | Payload inválido (CT09)                                 | Violação das regras de atualização cadastral  | Pessoa inexistente (CT10)             |
-| GET /api/pessoas/busca                  | RF006        | RN02 | Busca executada com filtros válidos (CT12)                  | Nenhum filtro informado ou escopo inválido (CT13, CT14) | Consulta incompatível com regras do sistema   | Registro não encontrado               |
-| POST /api/familias/:id/pessoas          | RF001        | RN01 | Vínculo criado com sucesso                                  | Pessoa inválida para vínculo (CT06)                     | Família já possui responsável ativo (CT07)    | Família ou pessoa inexistente         |
-| POST /api/familias/nucleo               | RF002, RF003 | RN01 | Núcleo familiar cadastrado (CT32)                           | Dados obrigatórios ausentes                             | Falha nas regras de composição familiar       | Entidade vinculada inexistente        |
-| DELETE /api/moradias/:id                | RF009        | RN03 | Moradia arquivada com sucesso (CT15)                        | Identificador inválido                                  | Operação bloqueada por regra de negócio       | Moradia inexistente (CT16)            |
-| GET /api/moradias/:id/detalhes          | RF005        | RN05 | Dados agregados retornados corretamente (CT31)              | Identificador inválido                                  | Inconsistência de dados agregados             | Moradia inexistente (CT30)            |
-| POST /api/pets                          | RF007        | —    | Pet cadastrado (CT34)                                       | Dados inválidos (CT35)                                  | Conflito cadastral                            | Família inexistente (CT36)            |
-| PUT /api/pets/:id                       | RF007        | —    | Atualização realizada                                       | Payload inválido                                        | Estado incompatível para atualização          | Pet inexistente (CT37)                |
-| DELETE /api/pets/:id                    | RF007        | —    | Pet removido                                                | Identificador inválido                                  | Restrição de remoção                          | Pet inexistente (CT37)                |
-| POST /api/moradias/:id/fotos            | RF002        | RN04 | Foto vinculada à moradia (CT20)                             | Dados inválidos (CT21, CT22)                            | Violação das regras de vínculo da foto (CT25) | Moradia inexistente (CT23)            |
-| POST /api/pets/:id/fotos                | RF007        | RN04 | Foto vinculada ao pet                                       | Dados inválidos                                         | Violação das regras de vínculo da foto (CT26) | Pet inexistente (CT24)                |
-| POST /api/moradias/:id/fotos/upload-url | RF002        | RN04 | URL de upload gerada (CT27)                                 | Arquivo inválido                                        | Restrições de armazenamento                   | Moradia inexistente (CT28)            |
-| GET /api/fotos/:id/signed-url           | RF002        | RN04 | URL assinada gerada com sucesso                             | Identificador inválido                                  | Falha do serviço de armazenamento (CT29)      | Foto inexistente                      |
+| Endpoint                                | RF           | RN                     | Sucesso (200/201)                                                    | Falha de Validação (400/422)                            | Regra de Negócio (409 ou equivalente)                                   | Recurso Não Encontrado (404)          |
+| --------------------------------------- | ------------ | ---------------------- | -------------------------------------------------------------------- | ------------------------------------------------------- | ----------------------------------------------------------------------- | ------------------------------------- |
+| POST /api/pessoas                       | RF001        | RN04                   | Pessoa cadastrada com classificação de vulnerabilidade válida (CT01) | Campos obrigatórios ausentes (CT02)                     | Classificação inconsistente de vulnerabilidade                          | Pessoa relacionada inexistente (CT05) |
+| POST /api/responsaveis                  | RF001        | RN01, RN02             | Responsável cadastrado com sucesso (CT03)                            | Dados obrigatórios ausentes                             | Responsável duplicado ou conflito de responsabilidade                   | Pessoa inexistente (CT11)             |
+| PUT /api/pessoas/:id                    | RF011, RF012 | RN04, RN09, RN10       | Atualização realizada (CT08)                                         | Payload inválido (CT09)                                 | Violação das regras de recadastro ou atualização cadastral              | Pessoa inexistente (CT10)             |
+| GET /api/pessoas/busca                  | RF006        | RN11                   | Busca executada com filtros válidos (CT12)                           | Nenhum filtro informado ou escopo inválido (CT13, CT14) | Consulta incompatível com as regras do sistema                          | Registro não encontrado               |
+| POST /api/familias/:id/pessoas          | RF001        | RN01, RN02             | Vínculo criado com sucesso                                           | Pessoa inválida para vínculo (CT06)                     | Família já possui responsável ativo (CT07)                              | Família ou pessoa inexistente         |
+| POST /api/familias/nucleo               | RF001        | RN01, RN02, RN03       | Núcleo familiar cadastrado (CT32)                                    | Dados obrigatórios ausentes                             | Falha nas regras de composição familiar ou definição de responsável     | Entidade vinculada inexistente        |
+| DELETE /api/moradias/:id                | RF009        | RN06                   | Moradia arquivada com sucesso (CT15)                                 | Identificador inválido                                  | Operação incompatível com o estado atual do registro                    | Moradia inexistente (CT16)            |
+| GET /api/moradias/:id/detalhes          | RF005        | RN11                   | Dados agregados retornados corretamente (CT31)                       | Identificador inválido                                  | Inconsistência de dados operacionais                                    | Moradia inexistente (CT30)            |
+| POST /api/pets                          | RF007        | RN12                   | Pet cadastrado (CT34)                                                | Dados inválidos (CT35)                                  | Conflito cadastral do pet                                               | Família inexistente (CT36)            |
+| PUT /api/pets/:id                       | RF007        | RN12                   | Atualização realizada                                                | Payload inválido                                        | Violação das regras de vínculo familiar do pet                          | Pet inexistente (CT37)                |
+| DELETE /api/pets/:id                    | RF007        | RN12                   | Pet removido                                                         | Identificador inválido                                  | Restrição de remoção por regra de negócio                               | Pet inexistente (CT37)                |
+| POST /api/moradias/:id/fotos            | RF002        | RN07                   | Foto vinculada à moradia (CT20)                                      | Dados inválidos (CT21, CT22)                            | Tentativa de associação de foto em desacordo com a política LGPD (CT25) | Moradia inexistente (CT23)            |
+| POST /api/pets/:id/fotos                | RF007        | RN12                   | Foto vinculada ao pet                                                | Dados inválidos                                         | Violação das regras de vínculo da foto (CT26)                           | Pet inexistente (CT24)                |
+| POST /api/moradias/:id/fotos/upload-url | RF002        | RN07                   | URL de upload gerada (CT27)                                          | Arquivo inválido                                        | Violação das restrições de armazenamento ou política de imagens         | Moradia inexistente (CT28)            |
+| GET /api/fotos/:id/signed-url           | RF002        | RN07                   | URL assinada gerada com sucesso                                      | Identificador inválido                                  | Falha do serviço de armazenamento (CT29)                                | Foto inexistente                      |
+| POST /api/moradias                      | RF002        | RN05, RN08             | Moradia cadastrada com geolocalização confirmada                     | Campos obrigatórios ausentes                            | Status operacional inválido ou localização não confirmada               | Referência geográfica inexistente     |
+| PUT /api/moradias/:id                   | RF003        | RN05, RN08, RN09, RN10 | Moradia atualizada com sucesso                                       | Payload inválido                                        | Violação das regras de status, recadastro ou atualização                | Moradia inexistente                   |
+
 
 #### Cobertura das Regras de Negócio
 
-A cobertura dos testes de integração garante a validação das principais regras de negócio do sistema:
+Os testes de integração foram elaborados para validar as regras de negócio mais críticas da aplicação, garantindo que os comportamentos definidos para o sistema sejam respeitados em cenários de sucesso e falha.
 
-* **RN01 – Registro obrigatório dos indicadores de vulnerabilidade:** validada nos fluxos de cadastro de pessoas, responsáveis e composição familiar.
-* **RN02 – Recadastro obrigatório após 12 meses:** validada nos fluxos de atualização e consulta cadastral.
-* **RN03 – Exclusão lógica (soft delete):** validada nas operações de arquivamento de moradias e remoção de registros.
-* **RN04 – Controle de geolocalização e vínculo de fotos:** validada nos endpoints de upload, associação e consulta de imagens.
-* **RN05 – Consulta integrada e identificação de risco crítico:** validada nos endpoints de detalhamento de moradias e agregação de dados.
+* **RN01 – Família Ativa Deve Possuir Responsável:** validada nos fluxos de criação e atualização de famílias, assegurando que toda família ativa possua exatamente um responsável com dados obrigatórios preenchidos e que famílias sem membros sejam arquivadas.
+
+* **RN02 – Responsável Único por Família:** validada nos endpoints de vinculação e troca de responsáveis, impedindo a existência simultânea de múltiplos responsáveis ativos para a mesma família e garantindo o tratamento correto de conflitos.
+
+* **RN03 – Família Pode Ser Cadastrada Sem Moradia:** validada nos fluxos de cadastro familiar, permitindo a criação de famílias sem moradia vinculada e verificando a correta sinalização do indicador de cadastro incompleto.
+
+* **RN04 – Registro Obrigatório de Indicadores de Vulnerabilidade:** validada nos endpoints de cadastro e atualização de pessoas, garantindo que toda pessoa possua uma classificação de vulnerabilidade válida, seja por atribuição automática ou por seleção manual.
+
+* **RN05 – Captura e Confirmação de Geolocalização da Moradia:** validada nos fluxos de cadastro e edição de moradias, verificando a persistência correta das coordenadas geográficas somente após a confirmação explícita do agente.
+
+* **RN06 – Arquivamento Lógico (Soft Delete) e Conformidade LGPD:** validada nos endpoints de remoção de famílias, moradores e moradias, assegurando que os registros sejam apenas inativados e permaneçam disponíveis para histórico e auditoria.
+
+* **RN07 – Proibição de Foto de Pessoas (LGPD):** validada nos endpoints de upload e associação de fotos, impedindo registros incompatíveis com a política de privacidade definida para o sistema.
+
+* **RN08 – Marcação Manual do Status da Moradia:** validada nos fluxos de atualização de moradias, garantindo que o status operacional seja definido exclusivamente por ação do gestor, sem inferência automática pelo sistema.
+
+* **RN09 – Recadastro Obrigatório a cada 12 Meses:** validada nos processos de consulta e atualização cadastral, verificando a identificação automática de registros desatualizados e a exibição do respectivo indicador.
+
+* **RN10 – Limpeza Automática dos Indicadores:** validada nos fluxos de atualização de registros, garantindo a remoção automática dos indicadores de pendência quando as condições que os originaram deixam de existir.
+
+* **RN11 – Fonte Oficial dos Dados Operacionais:** validada nos endpoints de consulta, busca e visualização em mapa, assegurando que todas as informações retornadas sejam provenientes exclusivamente da base persistida no Supabase.
+
+* **RN12 – Pet Vinculado à Família (Não à Moradia):** validada nos endpoints de cadastro e manutenção de pets, garantindo que os animais permaneçam associados à família independentemente de mudanças de moradia.
 
 #### Resultado Esperado
 
