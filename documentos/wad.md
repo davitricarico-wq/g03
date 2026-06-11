@@ -481,6 +481,7 @@ Matriz de cobertura que demonstra quais RN (Regras de Negócio) e endpoints impl
 ---
 
 ## 3.2. Arquitetura (sprints 1 a 5)
+
 A arquitetura projetada para o sistema é, em suma, baseada na Arquitetura de Camadas (Layered Architecture), porém com a aplicação de: Arquitetura de Seis Camadas (6-Tier Architecture) com base em princípios SOLID e de separação de conceitos (Separation of Concerns). Dividindo a aplicação em componentes especializados e com responsabilidades muito bem definidas.
 Assim, fornece um código testável, escalável e de alta manutenibilidade, permitindo que as regras de negócio fiquem isoladas de detalhes de infraestrutura (como o banco de dados) e da interface do usuário.
 
@@ -525,6 +526,12 @@ src/
 </div>
 
 <div align="center">
+    <p>Figura: Diagrama de Classe Arquitetural - Bootstrap e Express</p>
+    <img src="outros/diagramas_arquitetura/diagramaArquitetura-Btstrp&Expr.png">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
+<div align="center">
     <p>Figura: Diagrama de Classe Arquitetural - Models</p>
     <img src="outros/diagramas_arquitetura/diagramaArquitetura-Models.png">
     <p>Feito pela própria equipe (2026)</p>
@@ -542,7 +549,7 @@ src/
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
-Documento do diagrama: [diagramaArquitetura.md](diagramaArquitetura.md)
+Documento disponível do diagrama para navegação e aprofundamento do entendimento: [diagramaArquitetura.md](diagramaArquitetura.md)
 
 ### 3.2.2. Diagrama de Casos de Uso (sprint 1)
 
