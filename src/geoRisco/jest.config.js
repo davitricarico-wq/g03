@@ -1,7 +1,8 @@
 /** @type {import('jest').Config} */
 module.exports = {
+    preset: 'ts-jest',
     testEnvironment: 'node',
-    testMatch: ['**/dist/**/*.spec.js'],
-    collectCoverageFrom: ['dist/**/*.js', '!dist/**/*.spec.js'],
+    testMatch: ['**/*.spec.ts'],
+    collectCoverageFrom: ['src/**/*.ts', '!src/**/*.spec.ts'],
     clearMocks: true
 };
