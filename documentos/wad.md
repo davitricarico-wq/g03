@@ -658,147 +658,45 @@ sequenceDiagram
 
 
 Este fluxo descreve a jornada de cadastro conduzida pelo **Agente de Campo (A01)** a partir do aplicativo mobile. O processo é estruturado em cinco sessões sequenciais: Moradia, Localização, Chefe de Família, Composição Familiar e Pets. Cada uma liberada somente após a confirmação da anterior, garantindo a integridade referencial dos dados antes do envio. Ao submeter o formulário completo, o Frontend dispara uma sequência ordenada de requisições `POST` que cria os registros em cascata (`LOCALIZACAO → MORADIA → PESSOA → RESPONSAVEL → PET → FORMULARIO`), enquanto o Service aplica as regras de negócio RN01 (classificação de risco) e RN04 (restrição de fotos). O **caminho de exceção** de duplicidade de cadastro, que oferece ao agente as opções de busca, atualização ou cancelamento.
-#### FL01 — Cadastro de Pessoa e Vínculo à Moradia
+
+### FL02 — Visualização de moradias em mapa georreferenciado
 
 ```mermaid
 sequenceDiagram
-    actor Agente as Agente de Campo (A01)
-    participant Frontend as Frontend PWA Mobile
-    participant Cache as Cache Local (IndexedDB)
-    participant Controller as CadastroController
-    participant Service as CadastroService
-    participant Repository as CadastroRepository
-    participant DB as Banco de Dados
-
-    Note over Agente,DB: Preenchimento em campo
-
-    Agente->>Frontend: Inicia novo cadastro
-    Frontend-->>Agente: Exibe seções de moradia, localização, família,<br/>responsável, moradores, grupos prioritários,<br/>gestante, pets e fotos
-
-    Agente->>Frontend: Preenche dados estruturais da moradia
-    Frontend->>Frontend: Captura GPS do dispositivo (RN04)
-
-    alt GPS permitido e disponível
-        Frontend->>Frontend: Preenche latitude e longitude
-    else GPS indisponível ou negado
-        Frontend-->>Agente: Solicita CEP, logradouro, bairro,<br/>número, cidade, UF e ponto de referência
-        Agente->>Frontend: Informa localização manual
-    end
-
-    Agente->>Frontend: Anexa até 2 fotos (fachada e entorno)
-    Frontend->>Frontend: Valida RN04: foto não pode conter pessoas
-    Agente->>Frontend: Informa responsável, demais cidadãos,<br/>vulnerabilidades, gestação quando houver e pets
-
-    Note over Agente,DB: Envio ou persistência local
-
-    Agente->>Frontend: Confirma cadastro
-
-        Frontend->>Controller: POST /api/familias/nucleo<br/>{localização, moradia, família,<br/>responsável, cidadãos, grupos,<br/>gestantes, pets, fotos}
-        Controller->>Service: Validar payload, RN01 e RN04
-        Service->>Service: Validar integridade:<br/>família ativa deve ter responsável<br/>e ocupação ativa
-        Service->>Repository: Abrir transação
-
-        Repository->>DB: INSERT localização
-        DB-->>Repository: id_localização
-        Repository->>DB: INSERT moradia {id_localização, status='Ativa'}
-        DB-->>Repository: id_moradia
-        Repository->>DB: INSERT família {status_ativo=true}
-        DB-->>Repository: id_família
-        Repository->>DB: INSERT historico_ocupacao<br/>{id_família, id_moradia, data_entrada=hoje,<br/>data_saida=NULL, status='Regular'}
-        DB-->>Repository: id_historico_ocupacao
-        Repository->>DB: INSERT pessoa do responsável<br/>{id_família, status_cadastro=true}
-        DB-->>Repository: id_pessoa_responsavel
-        Repository->>DB: INSERT responsável<br/>{id_pessoa_responsavel, cpf, renda, contato, NIS}
-        DB-->>Repository: id_responsavel
-
-        loop Para cada morador dependente
-            Repository->>DB: INSERT pessoa {id_família, status_cadastro=true}
-            DB-->>Repository: id_pessoa
-            opt Morador pertence a grupos prioritários
-                Repository->>DB: INSERT pessoa_grupo_prioritario<br/>{id_pessoa, id_grupo_prioritario}
-                DB-->>Repository: OK
-            end
-            opt Morador gestante
-                Repository->>DB: INSERT gestante<br/>{id_pessoa, data_prevista, data_inicio}
-                DB-->>Repository: OK
-            end
-        end
-
-        loop Para cada pet informado
-            Repository->>DB: INSERT pet<br/>{id_família, tipo_pet, porte_pet, nome, observações}
-            DB-->>Repository: OK
-        end
-
-        loop Para cada foto de moradia
-            Repository->>DB: INSERT foto_moradia {id_moradia, tipo_foto, url}
-            DB-->>Repository: OK
-        end
-
-        Repository-->>Service: Commit da transação
-        Service-->>Controller: HTTP 201 Created<br/>{id_família, id_moradia, id_responsavel}
-        Controller-->>Frontend: HTTP 201 Created
-        Frontend-->>Agente: Exibe confirmação do cadastro
-
-    Note over Agente,DB: Falhas principais
-
-    alt CPF, email ou NIS duplicado
-        Service-->>Controller: HTTP 409 Conflict
-        Controller-->>Frontend: HTTP 409 Conflict
-        Frontend-->>Agente: Exibe opção de buscar cadastro ou revisar dados
-    else Campos obrigatórios inválidos
-        Service-->>Controller: HTTP 422 Unprocessable Entity
-        Controller-->>Frontend: Lista de campos inválidos
-        Frontend-->>Agente: Destaca campos para correção
-    end
-```
-
-
-Este fluxo descreve a jornada de cadastro conduzida pelo **Agente de Campo (A01)** a partir do aplicativo mobile. O processo é estruturado em cinco sessões sequenciais: Moradia, Localização, Chefe de Família, Composição Familiar e Pets. Cada uma liberada somente após a confirmação da anterior, garantindo a integridade referencial dos dados antes do envio. Ao submeter o formulário completo, o Frontend dispara uma sequência ordenada de requisições `POST` que cria os registros em cascata (`LOCALIZACAO → MORADIA → PESSOA → RESPONSAVEL → PET → FORMULARIO`), enquanto o Service aplica as regras de negócio RN01 (classificação de risco) e RN04 (restrição de fotos). O **caminho de exceção** de duplicidade de cadastro, que oferece ao agente as opções de busca, atualização ou cancelamento.
-
----
-
-#### FL02 — Visualização de Moradias em Mapa Georreferenciado
-#### FL02 — Visualização de Moradias em Mapa Georreferenciado
-
-```mermaid
-sequenceDiagram
-    actor Gestor as Gestor Operacional (A03)
+    actor Gestor as Gestor Operacional (A02/A03)
     participant Frontend as Frontend Painel Desktop
     participant Controller as MoradiaController
     participant Service as MoradiaService
-    participant Repository as MoradiaRepository
+    participant Repository as MoradiaRepository/FamiliaRepository/FotoRepository
     participant DB as Banco de Dados
 
     Gestor->>Frontend: Acessa módulo de mapa
-    Frontend->>Controller: GET /api/moradias?status=Ativa
-    Controller->>Service: Solicitar moradias ativas com localização
-    Service->>Repository: Consultar moradias ativas com localização
-    Repository->>DB: SELECT moradia.id, localização.latitude,<br/>localização.longitude, moradia.status<br/>FROM moradia JOIN localização
-    DB-->>Repository: Lista de marcadores
-    Repository-->>Service: Lista de marcadores
-    Service-->>Controller: DTO de marcadores
-    Controller-->>Frontend: HTTP 200 OK [{id, lat, lng, status}]
+    Frontend->>Controller: GET /api/moradias
+    Controller->>Service: Solicitar moradias ativas
+    Service->>Repository: Consultar moradias da view ativa
+    Repository->>DB: SELECT id, status, lat, lng FROM vw_moradia_ativa m JOIN localizacao l ON l.id = m.id_localizacao
+    DB-->>Repository: Lista de moradias com localização
+    Repository-->>Service: Lista de moradias
+    Service-->>Controller: DTO de moradias
+    Controller-->>Frontend: HTTP 200 OK [{id, status, localizacao: {latitude, longitude}}]
 
     alt Existem moradias georreferenciadas
         Frontend->>Frontend: Renderiza pins no mapa
     else Nenhum registro encontrado
-        Frontend-->>Gestor: Exibe mapa vazio e mensagem<br/>"Nenhuma moradia ativa encontrada"
+        Frontend-->>Gestor: Exibe mapa vazio e mensagem "Nenhuma moradia ativa encontrada"
     end
 
     Gestor->>Frontend: Clica em um marcador
     Frontend->>Controller: GET /api/moradias/{id}/detalhes
-    Controller->>Service: Carregar moradia, famílias, pessoas, pets e fotos
-    Service->>Repository: Buscar dados integrados
-    Repository->>DB: SELECT moradia, localização, família,<br/>cidadão, pet, foto_moradia
+    Controller->>Service: Carregar moradia, famílias, moradores, pets, fotos e grupos prioritários
+    Service->>Repository: Buscar dados integrados (vw_moradia_ativa, vw_familia_ativa, vw_pessoa_ativa, pet, foto, pessoa_grupo_prioritario)
+    Repository->>DB: SELECT moradia, familia, pessoa, responsavel, pet, foto, grupo_prioritario
     DB-->>Repository: Dados integrados
     Repository-->>Service: Dados integrados
-    Service-->>Controller: Objeto de consulta integrada
-    Controller-->>Frontend: HTTP 200 OK<br/>{moradia, famílias, pessoas, pets, fotos}
-    Frontend-->>Gestor: Exibe card com dados da moradia
-
-    alt Falha na API de mapa
-        Frontend-->>Gestor: Exibe fallback em lista tabular
-    end
+    Service->>Service: Aplicar RN05: Risco Crítico<br/>(moradia.status = 'Em Risco' E morador com grupo prioritário acamado/cadeirante)
+    Service-->>Controller: Objeto de consulta detalhada
+    Controller-->>Frontend: HTTP 200 OK {moradia, familias: [{familia, pessoas, pets}], fotos, risco_critico}
+    Frontend-->>Gestor: Exibe card com detalhes e flag de risco se aplicável
 ```
 
 **NOTA IMPORTANTE (Implementação Atual)**:
