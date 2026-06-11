@@ -2771,6 +2771,58 @@ Também é importante que os testes não compartilhem estado mutável entre si. 
 
 Dessa forma, a adoção do padrão AAA combinada ao determinismo contribui para uma estratégia de testes mais clara, confiável e sustentável. Os testes passam a funcionar não apenas como mecanismos de verificação automática, mas também como documentação objetiva do comportamento esperado do sistema.
 
+### 5.1.2 Testes Unitários de Service
+
+
+### 5.1.3 Testes de Integração de Endpoints
+
+Os testes de integração de endpoints têm como objetivo validar o comportamento da API por meio de requisições HTTP executadas em ambiente controlado, verificando a correta comunicação entre controllers, services, repositórios e mecanismos de persistência. Os testes foram elaborados com base nos Requisitos Funcionais (RF), Regras de Negócio (RN), Matriz de Rastreabilidade (RTM) e documentação oficial da WebAPI.
+
+Conforme definido nos critérios do projeto, cada endpoint principal possui cobertura dos quatro cenários obrigatórios:
+
+* **Sucesso** (200 ou 201);
+* **Falha de validação** (400 ou 422);
+* **Violação de regra de negócio** (409 ou equivalente);
+* **Recurso não encontrado** (404).
+
+Essa abordagem garante que os fluxos críticos do sistema sejam validados não apenas em situações ideais, mas também em cenários de erro e inconsistência de dados.
+
+#### Cobertura dos Endpoints Principais
+
+| Endpoint                            | RF           | RN   | Sucesso (200/201)                                           | Falha de Validação (400/422)                            | Regra de Negócio (409 ou equivalente)         | Recurso Não Encontrado (404)          |
+| ----------------------------------- | ------------ | ---- | ----------------------------------------------------------- | ------------------------------------------------------- | --------------------------------------------- | ------------------------------------- |
+| POST /pessoas                       | RF001        | RN01 | Pessoa cadastrada com indicadores de vulnerabilidade (CT01) | Campos obrigatórios ausentes (CT02)                     | CPF já cadastrado ou conflito equivalente     | Pessoa relacionada inexistente (CT05) |
+| POST /responsaveis                  | RF001        | RN01 | Responsável cadastrado com sucesso (CT03)                   | Dados obrigatórios ausentes                             | Responsável duplicado                         | Pessoa inexistente (CT11)             |
+| PUT /pessoas/:id                    | RF011, RF012 | RN02 | Atualização realizada (CT08)                                | Payload inválido (CT09)                                 | Violação das regras de atualização cadastral  | Pessoa inexistente (CT10)             |
+| GET /pessoas/busca                  | RF006        | RN02 | Busca executada com filtros válidos (CT12)                  | Nenhum filtro informado ou escopo inválido (CT13, CT14) | Consulta incompatível com regras do sistema   | Registro não encontrado               |
+| POST /familias/:id/pessoas          | RF001        | RN01 | Vínculo criado com sucesso                                  | Pessoa inválida para vínculo (CT06)                     | Família já possui responsável ativo (CT07)    | Família ou pessoa inexistente         |
+| POST /familias/nucleo               | RF002, RF003 | RN01 | Núcleo familiar cadastrado (CT32)                           | Dados obrigatórios ausentes                             | Falha nas regras de composição familiar       | Entidade vinculada inexistente        |
+| DELETE /moradias/:id                | RF009        | RN03 | Moradia arquivada com sucesso (CT15)                        | Identificador inválido                                  | Operação bloqueada por regra de negócio       | Moradia inexistente (CT16)            |
+| GET /moradias/:id/detalhes          | RF005        | RN05 | Dados agregados retornados corretamente (CT31)              | Identificador inválido                                  | Inconsistência de dados agregados             | Moradia inexistente (CT30)            |
+| POST /pets                          | RF007        | —    | Pet cadastrado (CT34)                                       | Dados inválidos (CT35)                                  | Conflito cadastral                            | Família inexistente (CT36)            |
+| PUT /pets/:id                       | RF007        | —    | Atualização realizada                                       | Payload inválido                                        | Estado incompatível para atualização          | Pet inexistente (CT37)                |
+| DELETE /pets/:id                    | RF007        | —    | Pet removido                                                | Identificador inválido                                  | Restrição de remoção                          | Pet inexistente (CT37)                |
+| POST /moradias/:id/fotos            | RF002        | RN04 | Foto vinculada à moradia (CT20)                             | Dados inválidos (CT21, CT22)                            | Violação das regras de vínculo da foto (CT25) | Moradia inexistente (CT23)            |
+| POST /pets/:id/fotos                | RF007        | RN04 | Foto vinculada ao pet                                       | Dados inválidos                                         | Violação das regras de vínculo da foto (CT26) | Pet inexistente (CT24)                |
+| POST /moradias/:id/fotos/upload-url | RF002        | RN04 | URL de upload gerada (CT27)                                 | Arquivo inválido                                        | Restrições de armazenamento                   | Moradia inexistente (CT28)            |
+| GET /fotos/:id/signed-url           | RF002        | RN04 | URL assinada gerada com sucesso                             | Identificador inválido                                  | Falha do serviço de armazenamento (CT29)      | Foto inexistente                      |
+
+#### Cobertura das Regras de Negócio
+
+A cobertura dos testes de integração garante a validação das principais regras de negócio do sistema:
+
+* **RN01 – Registro obrigatório dos indicadores de vulnerabilidade:** validada nos fluxos de cadastro de pessoas, responsáveis e composição familiar.
+* **RN02 – Recadastro obrigatório após 12 meses:** validada nos fluxos de atualização e consulta cadastral.
+* **RN03 – Exclusão lógica (soft delete):** validada nas operações de arquivamento de moradias e remoção de registros.
+* **RN04 – Controle de geolocalização e vínculo de fotos:** validada nos endpoints de upload, associação e consulta de imagens.
+* **RN05 – Consulta integrada e identificação de risco crítico:** validada nos endpoints de detalhamento de moradias e agregação de dados.
+
+#### Resultado Esperado
+
+A execução da suíte de integração deve demonstrar que todos os endpoints principais da aplicação respondem corretamente tanto em cenários de sucesso quanto em situações de erro, garantindo conformidade com os requisitos funcionais, regras de negócio e contratos definidos para a API. Dessa forma, assegura-se a rastreabilidade entre RFs, RNs, endpoints e casos de teste, reduzindo riscos de regressão e aumentando a confiabilidade da solução desenvolvida para a Defesa Civil de Santo André.
+
+
+
 ## 5.2. Testes de usabilidade (sprint 5)
 
 ### 5.2.1. Relatório de testes de guerrilha
