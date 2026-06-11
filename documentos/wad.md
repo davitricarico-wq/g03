@@ -832,208 +832,120 @@ Este fluxo detalha a consulta integrada executada pelo **Gestor Operacional (A02
 
 ---
 
-#### FL04 - Filtros avançados de moradias e assistidos
-
+### FL04 — Filtros avançados de moradias e assistidos (Backlog)
 ```mermaid
 sequenceDiagram
-    actor Gestor as Gestor Operacional (A03)
+    actor Gestor as Gestor Operacional (A02/A03)
     participant Frontend as Frontend Painel Desktop
-    participant Controller as FiltroController
-    participant Service as FiltroService
-    participant Repository as FiltroRepository
+    participant Controller as MoradiaController
+    participant Service as MoradiaService
+    participant Repository as MoradiaRepository
     participant DB as Banco de Dados
 
-    Gestor->>Frontend: Acessa tela de gerenciamento de dados
-    Frontend-->>Gestor: Exibe filtros de moradia, vulnerabilidade,<br/>ocupação, destino de evacuação e status
-    Gestor->>Frontend: Seleciona filtros combinados
+    Gestor->>Frontend: Acessa tela de filtros e relatórios
+    Frontend-->>Gestor: Exibe filtros de moradia e vulnerabilidade (FL04 - Backlog)
+    Gestor->>Frontend: Aplica filtros combinados
 
-    Frontend->>Controller: GET /api/moradias?filtros=...
-    Controller->>Service: Validar filtros permitidos
-    Service->>Repository: Montar consulta dinâmica
-    Repository->>DB: SELECT moradia, localização, família,<br/>cidadão, grupo_prioritario, historico_ocupacao<br/>WHERE filtros aplicados<br/>AND ocupação atual quando necessário
-    DB-->>Repository: Resultado filtrado
-    Repository-->>Service: Resultado filtrado
-    Service->>Service: Aplicar RN01 para ordenação<br/>por prioridade quando solicitado
-    Service-->>Controller: Lista filtrada
+    Note over Frontend,DB: O backend atual não processa filtros avançados nem exportação (Backlog de Sprint Futura)
+
+    Frontend->>Controller: GET /api/moradias (sem filtros dinâmicos de vulnerabilidade)
+    Controller->>Service: Solicitar listagem de moradias
+    Service->>Repository: Buscar moradias da view ativa
+    Repository->>DB: SELECT * FROM vw_moradia_ativa
+    DB-->>Repository: Lista de moradias
+    Repository-->>Service: Lista de moradias
+    Service-->>Controller: DTO de moradias
     Controller-->>Frontend: HTTP 200 OK
+    Frontend-->>Gestor: Exibe lista completa de moradias ativas
 
-    alt Resultado vazio
-        Frontend-->>Gestor: Exibe "Nenhum registro encontrado"
-    else Resultado encontrado
-        Frontend-->>Gestor: Exibe tabela filtrada com dados exportáveis
-
-        opt Gestor solicita exportação
-            Gestor->>Frontend: Clica em Exportar
-            Frontend->>Controller: GET /moradias/exportar?filtros=...
-            Controller->>Service: Reexecutar consulta com mesmos filtros
-            Service->>Repository: Buscar dataset exportável
-            Repository->>DB: SELECT dataset filtrado
-            DB-->>Repository: Dataset
-            Repository-->>Service: Dataset
-            Service->>Service: Serializar CSV ou PDF
-            Service-->>Controller: Arquivo gerado
-            Controller-->>Frontend: HTTP 200 OK arquivo para download
-            Frontend-->>Gestor: Inicia download
-        end
+    opt Gestor tenta exportar (Futura Sprint)
+        Gestor->>Frontend: Clica em Exportar CSV/PDF
+        Frontend-->>Gestor: Alerta "Exportação será implementada em sprints futuras"
     end
 ```
-
-```mermaid
-sequenceDiagram
-    actor Gestor as Gestor Operacional (A03)
-    participant Frontend as Frontend Painel Desktop
-    participant Controller as FiltroController
-    participant Service as FiltroService
-    participant Repository as FiltroRepository
-    participant DB as Banco de Dados
-
-    Gestor->>Frontend: Acessa tela de gerenciamento de dados
-    Frontend-->>Gestor: Exibe filtros de moradia, vulnerabilidade,<br/>ocupação, destino de evacuação e status
-    Gestor->>Frontend: Seleciona filtros combinados
-
-    Frontend->>Controller: GET /api/moradias?filtros=...
-    Controller->>Service: Validar filtros permitidos
-    Service->>Repository: Montar consulta dinâmica
-    Repository->>DB: SELECT moradia, localização, família,<br/>cidadão, grupo_prioritario, historico_ocupacao<br/>WHERE filtros aplicados<br/>AND ocupação atual quando necessário
-    DB-->>Repository: Resultado filtrado
-    Repository-->>Service: Resultado filtrado
-    Service->>Service: Aplicar RN01 para ordenação<br/>por prioridade quando solicitado
-    Service-->>Controller: Lista filtrada
-    Controller-->>Frontend: HTTP 200 OK
-
-    alt Resultado vazio
-        Frontend-->>Gestor: Exibe "Nenhum registro encontrado"
-    else Resultado encontrado
-        Frontend-->>Gestor: Exibe tabela filtrada com dados exportáveis
-
-        opt Gestor solicita exportação
-            Gestor->>Frontend: Clica em Exportar
-            Frontend->>Controller: GET /moradias/exportar?filtros=...
-            Controller->>Service: Reexecutar consulta com mesmos filtros
-            Service->>Repository: Buscar dataset exportável
-            Repository->>DB: SELECT dataset filtrado
-            DB-->>Repository: Dataset
-            Repository-->>Service: Dataset
-            Service->>Service: Serializar CSV ou PDF
-            Service-->>Controller: Arquivo gerado
-            Controller-->>Frontend: HTTP 200 OK arquivo para download
-            Frontend-->>Gestor: Inicia download
-        end
-    end
-```
-
 
 Este fluxo representa o uso de filtros avançados pelo **Gestor Operacional (A02/A03)** na tela de gerenciamento de dados. O usuário pode combinar critérios como status da moradia, condição de ocupação, grupos prioritários, vulnerabilidades, destino em caso de evacuação e situação de recadastro. O Frontend envia os filtros ao Controller, que delega ao Service a validação dos parâmetros e a montagem da consulta. O Repository cruza as tabelas `moradia`, `localizacao`, `historico_ocupacao`, `familia`, `pessoa`, `pessoa_grupo_prioritario` e `grupo_prioritario`, retornando uma lista filtrada. Quando não há resultados, o painel exibe uma mensagem orientativa. Quando há registros, o gestor pode exportar a listagem em formato CSV ou PDF.
 Este fluxo representa o uso de filtros avançados pelo **Gestor Operacional (A02/A03)** na tela de gerenciamento de dados. O usuário pode combinar critérios como status da moradia, condição de ocupação, grupos prioritários, vulnerabilidades, destino em caso de evacuação e situação de recadastro. O Frontend envia os filtros ao Controller, que delega ao Service a validação dos parâmetros e a montagem da consulta. O Repository cruza as tabelas `moradia`, `localizacao`, `historico_ocupacao`, `familia`, `pessoa`, `pessoa_grupo_prioritario` e `grupo_prioritario`, retornando uma lista filtrada. Quando não há resultados, o painel exibe uma mensagem orientativa. Quando há registros, o gestor pode exportar a listagem em formato CSV ou PDF.
 
 ---
 
-#### FL05 - Atualização anual de dados pelo agente de campo
-
+### FL05 — Atualização anual de dados pelo agente de campo (Endpoints Separados)
 ```mermaid
 sequenceDiagram
     actor Agente as Agente de Campo (A01)
     participant Frontend as Frontend PWA Mobile
-    participant Cache as Cache Local (IndexedDB)
-    participant Controller as CadastroController
-    participant Service as CadastroService
-    participant Repository as CadastroRepository
+    participant Controller as MoradiaController/PessoaController
+    participant Service as MoradiaService/PessoaService
+    participant Repository as MoradiaRepository/PessoaRepository/FamiliaRepository
     participant DB as Banco de Dados
 
-    Agente->>Frontend: Abre ficha marcada para recadastro
-    Frontend->>Controller: GET /familias/{id_familia}/cadastro-completo
-    Controller->>Service: Carregar cadastro atual
-    Service->>Repository: Consultar família, ocupação ativa,<br/>moradia, localização, cidadãos,<br/>responsável, gestantes, pets e fotos
-    Repository->>DB: SELECT dados integrados<br/>WHERE família.id_familia=:id<br/>AND historico_ocupacao.data_saida IS NULL
-    DB-->>Repository: Dados atuais
-    Repository-->>Service: Dados atuais
-    Service-->>Controller: Cadastro completo
+    Agente->>Frontend: Abre formulário de recadastro da família
+    Frontend->>Controller: GET /api/moradias/{id_moradia}/detalhes
+    Controller->>Service: Carregar dados completos
+    Service->>Repository: Consultar moradia, famílias, pessoas, responsáveis, pets e fotos
+    Repository->>DB: SELECT dados integrados de vw_moradia_ativa, vw_familia_ativa, vw_pessoa_ativa
+    DB-->>Repository: Dados da moradia e moradores
+    Repository-->>Service: Dados integrados
+    Service-->>Controller: DTO detalhado da moradia
     Controller-->>Frontend: HTTP 200 OK
     Frontend-->>Agente: Exibe formulário pré-preenchido
 
     Agente->>Frontend: Revisa e edita dados
-    Frontend->>Frontend: Valida campos obrigatórios e fotos permitidas
-    Agente->>Frontend: Salva atualização
+    Frontend->>Frontend: Valida campos obrigatórios e fotos (RN04)
+    Agente->>Frontend: Confirma e salva atualização
+
+    Note over Frontend,DB: Como os endpoints NÃO foram unificados, o Frontend realiza chamadas CRUD separadas:
 
     alt Online
-        Frontend->>Controller: PUT /familias/{id_familia}/cadastro-completo<br/>{dados_atualizados}
-        Controller->>Service: Validar RN01, RN04, RN02 e integridade
-        Service->>Repository: Abrir transação
-        Repository->>DB: UPDATE família SET status_ativo=...
-        Repository->>DB: UPDATE/INSERT pessoa, responsável, gestante,<br/>pessoa_grupo_prioritario, pet conforme alterações
-        Repository->>DB: UPDATE moradia SET ultima_atualizacao=CURRENT_DATE
-        Repository->>DB: UPDATE localização quando alterada
+        par Atualizar dados físicos e de localização da moradia
+            Frontend->>Controller: PUT /api/moradias/{id_moradia} {moradia, localizacao}
+            Controller->>Service: Atualizar moradia/localização
+            Service->>Repository: Iniciar transação (BEGIN)
+            Repository->>DB: UPDATE localizacao SET ...; UPDATE moradia SET data_modificacao=now() ...
+            Repository-->>Service: Commit (COMMIT)
+            Service-->>Controller: Moradia atualizada
+            Controller-->>Frontend: HTTP 200 OK
 
-        opt Família mudou de moradia
-            Repository->>DB: UPDATE historico_ocupacao atual<br/>SET data_saida=CURRENT_DATE, status='Mudança/Evacuação'
-            Repository->>DB: INSERT historico_ocupacao<br/>{id_família, nova_moradia,<br/>data_entrada=CURRENT_DATE, data_saida=NULL}
+        and Atualizar dados pessoais de cada dependente
+            loop Para cada morador dependente atualizado
+                Frontend->>Controller: PUT /api/pessoas/{id_pessoa} {dados_morador}
+                Controller->>Service: Atualizar pessoa
+                Service->>Repository: UPDATE pessoa SET status='Ativo', data_modificacao=now() ...
+                Repository-->>Service: Pessoa atualizada
+                Service-->>Controller: Pessoa atualizada
+                Controller-->>Frontend: HTTP 200 OK
+            end
+
+        and Atualizar dados específicos do Responsável
+            Frontend->>Controller: PUT /api/responsaveis/{id_pessoa} {dados_financeiros_sociais}
+            Controller->>Service: Atualizar responsável
+            Service->>Repository: Iniciar transação (BEGIN)
+            Repository->>DB: UPDATE pessoa ... ; UPDATE responsavel ...
+            Repository-->>Service: Commit (COMMIT)
+            Service-->>Controller: Responsável atualizado
+            Controller-->>Frontend: HTTP 200 OK
         end
 
-        Repository-->>Service: Commit
-        Service->>Service: Remover indicador de desatualizado
-        Service-->>Controller: HTTP 200 OK
-        Controller-->>Frontend: HTTP 200 OK
-        Frontend-->>Agente: Exibe "Cadastro atualizado"
+        opt Mudança de moradia detectada
+            Frontend->>Controller: DELETE /api/familias/{id_familia}/moradias/{id_moradia_antiga}
+            Controller->>Service: Desvincular moradia antiga
+            Service->>Repository: UPDATE familia_moradia SET data_saida=now() WHERE data_saida IS NULL
+            DB-->>Repository: OK
+            Service-->>Controller: Desvinculado
+            Controller-->>Frontend: HTTP 200 OK
 
-    else Offline
-        Frontend->>Cache: Enfileira atualização com UUID local
-        Cache-->>Frontend: Atualização salva localmente
-        Frontend-->>Agente: Exibe "Aguardando sincronização"
-        Cache->>Frontend: Ao reconectar, sincroniza
-        Frontend->>Controller: PUT /familias/{id}/cadastro-completo<br/>{uuid_local, dados_atualizados}
-    end
-```
-```mermaid
-sequenceDiagram
-    actor Agente as Agente de Campo (A01)
-    participant Frontend as Frontend PWA Mobile
-    participant Cache as Cache Local (IndexedDB)
-    participant Controller as CadastroController
-    participant Service as CadastroService
-    participant Repository as CadastroRepository
-    participant DB as Banco de Dados
-
-    Agente->>Frontend: Abre ficha marcada para recadastro
-    Frontend->>Controller: GET /familias/{id_familia}/cadastro-completo
-    Controller->>Service: Carregar cadastro atual
-    Service->>Repository: Consultar família, ocupação ativa,<br/>moradia, localização, cidadãos,<br/>responsável, gestantes, pets e fotos
-    Repository->>DB: SELECT dados integrados<br/>WHERE família.id_familia=:id<br/>AND historico_ocupacao.data_saida IS NULL
-    DB-->>Repository: Dados atuais
-    Repository-->>Service: Dados atuais
-    Service-->>Controller: Cadastro completo
-    Controller-->>Frontend: HTTP 200 OK
-    Frontend-->>Agente: Exibe formulário pré-preenchido
-
-    Agente->>Frontend: Revisa e edita dados
-    Frontend->>Frontend: Valida campos obrigatórios e fotos permitidas
-    Agente->>Frontend: Salva atualização
-
-    alt Online
-        Frontend->>Controller: PUT /familias/{id_familia}/cadastro-completo<br/>{dados_atualizados}
-        Controller->>Service: Validar RN01, RN04, RN02 e integridade
-        Service->>Repository: Abrir transação
-        Repository->>DB: UPDATE família SET status_ativo=...
-        Repository->>DB: UPDATE/INSERT pessoa, responsável, gestante,<br/>pessoa_grupo_prioritario, pet conforme alterações
-        Repository->>DB: UPDATE moradia SET ultima_atualizacao=CURRENT_DATE
-        Repository->>DB: UPDATE localização quando alterada
-
-        opt Família mudou de moradia
-            Repository->>DB: UPDATE historico_ocupacao atual<br/>SET data_saida=CURRENT_DATE, status='Mudança/Evacuação'
-            Repository->>DB: INSERT historico_ocupacao<br/>{id_família, nova_moradia,<br/>data_entrada=CURRENT_DATE, data_saida=NULL}
+            Frontend->>Controller: POST /api/familias/{id_familia}/moradias {idMoradia: nova_moradia}
+            Controller->>Service: Vincular nova moradia
+            Service->>Repository: INSERT INTO familia_moradia (id_familia, id_moradia, data_entrada) VALUES (...)
+            DB-->>Repository: OK
+            Service-->>Controller: Vinculado
+            Controller-->>Frontend: HTTP 201 Created
         end
 
-        Repository-->>Service: Commit
-        Service->>Service: Remover indicador de desatualizado
-        Service-->>Controller: HTTP 200 OK
-        Controller-->>Frontend: HTTP 200 OK
-        Frontend-->>Agente: Exibe "Cadastro atualizado"
+        Frontend-->>Agente: Exibe "Cadastro anual atualizado com sucesso" (Tag de recadastro renovada)
 
     else Offline
-        Frontend->>Cache: Enfileira atualização com UUID local
-        Cache-->>Frontend: Atualização salva localmente
-        Frontend-->>Agente: Exibe "Aguardando sincronização"
-        Cache->>Frontend: Ao reconectar, sincroniza
-        Frontend->>Controller: PUT /familias/{id}/cadastro-completo<br/>{uuid_local, dados_atualizados}
+        Note over Frontend, Agente: Enfileira as requisições no cache local (IndexedDB) para sincronizar ao reconectar
     end
 ```
 
