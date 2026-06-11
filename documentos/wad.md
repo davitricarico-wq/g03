@@ -749,90 +749,48 @@ sequenceDiagram
 
 ---
 
-#### FL03 - Consulta integrada de moradia e moradores
+### FL03 — Consulta integrada de moradia e moradores
 
 ```mermaid
 sequenceDiagram
-    actor Gestor as Gestor Operacional (A03)
+    actor Gestor as Gestor Operacional (A02/A03)
     participant Frontend as Frontend Painel Desktop
-    participant Controller as ConsultaController
-    participant Service as ConsultaService
-    participant Repository as ConsultaRepository
+    participant Controller as MoradiaController
+    participant Service as MoradiaService
+    participant Repository as MoradiaRepository/FamiliaRepository/FotoRepository
     participant DB as Banco de Dados
 
     Gestor->>Frontend: Acessa módulo de consulta
     Frontend->>Controller: GET /api/moradias?busca={termo}
-    Controller->>Service: Buscar moradias por termo, status ou localização
-    Service->>Repository: Consultar moradias candidatas
-    Repository->>DB: SELECT moradia, localização<br/>WHERE status <> 'Demolida' OR filtro informado
+    Controller->>Service: Buscar moradias por termo
+    Service->>Repository: Consultar moradias ativas correspondentes
+    Repository->>DB: SELECT * FROM vw_moradia_ativa WHERE nome_responsavel ILIKE termo OR logradouro ILIKE termo
     DB-->>Repository: Lista resumida
     Repository-->>Service: Lista resumida
-    Service-->>Controller: Resultado resumido
-    Controller-->>Frontend: HTTP 200 OK
-    Frontend-->>Gestor: Exibe lista de fichas
+    Service-->>Controller: DTO de busca
+    Controller-->>Frontend: HTTP 200 OK [{id, status, localizacao, responsavel}]
+    Frontend-->>Gestor: Exibe lista de moradias encontradas
 
-    Gestor->>Frontend: Seleciona uma ficha
+    Gestor->>Frontend: Seleciona uma moradia
     Frontend->>Controller: GET /api/moradias/{id}/detalhes
-    Controller->>Service: Montar ficha integrada
-    Service->>Repository: Consultar ocupação ativa
-    Repository->>DB: SELECT historico_ocupacao, família, cidadão,<br/>responsável, gestante, grupo_prioritario,<br/>pet, foto_moradia<br/>WHERE id_moradia=:id AND data_saida IS NULL
-    DB-->>Repository: Dados da ocupação ativa
-    Repository-->>Service: Dados da ocupação ativa
+    Controller->>Service: Montar ficha integrada da moradia
+    Service->>Repository: Consultar moradia, famílias, pessoas, responsáveis, pets, fotos e grupos prioritários
+    Repository->>DB: SELECT * FROM vw_moradia_ativa WHERE id = :id;<br/>SELECT * FROM familia_moradia JOIN vw_familia_ativa JOIN vw_pessoa_ativa JOIN pessoa_grupo_prioritario JOIN pet JOIN foto
+    DB-->>Repository: Dados da moradia e moradores ativos
+    Repository-->>Service: Dados consolidados
 
     alt Moradia sem ocupação ativa
-        Service-->>Controller: HTTP 200 OK {moradia, ocupacao_atual=null, historico=true}
-        Controller-->>Frontend: Moradia sem família residente
-        Frontend-->>Gestor: Exibe ficha do imóvel sem moradores ativos
+        Service-->>Controller: HTTP 200 OK {moradia, familias=[], fotos}
+        Controller-->>Frontend: Exibe moradia sem família residente
+        Frontend-->>Gestor: Exibe dados físicos do imóvel sem moradores
     else Ocupação ativa encontrada
-        Service->>Service: Classificar prioridade RN01
-        Service->>Service: Aplicar RN05 (hist. ocorrência + mobilidade reduzida/acamado)
-        Service-->>Controller: Ficha integrada
-        Controller-->>Frontend: HTTP 200 OK<br/>{moradia, família, responsável, moradores,<br/>grupos, pets, prioridade, risco_critico}
-        Frontend-->>Gestor: Exibe consulta consolidada
+        Service->>Service: Classificar prioridade (RN01)
+        Service->>Service: Avaliar RN05: Risco Crítico<br/>(status 'Em Risco' + grupo acamado/cadeirante)
+        Service-->>Controller: Ficha detalhada
+        Controller-->>Frontend: HTTP 200 OK {moradia, familias: [{familia, pessoas, pets}], fotos, prioridade, risco_critico}
+        Frontend-->>Gestor: Exibe ficha de consulta consolidada
     end
 ```
-
-```mermaid
-sequenceDiagram
-    actor Gestor as Gestor Operacional (A03)
-    participant Frontend as Frontend Painel Desktop
-    participant Controller as ConsultaController
-    participant Service as ConsultaService
-    participant Repository as ConsultaRepository
-    participant DB as Banco de Dados
-
-    Gestor->>Frontend: Acessa módulo de consulta
-    Frontend->>Controller: GET /api/moradias?busca={termo}
-    Controller->>Service: Buscar moradias por termo, status ou localização
-    Service->>Repository: Consultar moradias candidatas
-    Repository->>DB: SELECT moradia, localização<br/>WHERE status <> 'Demolida' OR filtro informado
-    DB-->>Repository: Lista resumida
-    Repository-->>Service: Lista resumida
-    Service-->>Controller: Resultado resumido
-    Controller-->>Frontend: HTTP 200 OK
-    Frontend-->>Gestor: Exibe lista de fichas
-
-    Gestor->>Frontend: Seleciona uma ficha
-    Frontend->>Controller: GET /api/moradias/{id}/detalhes
-    Controller->>Service: Montar ficha integrada
-    Service->>Repository: Consultar ocupação ativa
-    Repository->>DB: SELECT historico_ocupacao, família, cidadão,<br/>responsável, gestante, grupo_prioritario,<br/>pet, foto_moradia<br/>WHERE id_moradia=:id AND data_saida IS NULL
-    DB-->>Repository: Dados da ocupação ativa
-    Repository-->>Service: Dados da ocupação ativa
-
-    alt Moradia sem ocupação ativa
-        Service-->>Controller: HTTP 200 OK {moradia, ocupacao_atual=null, historico=true}
-        Controller-->>Frontend: Moradia sem família residente
-        Frontend-->>Gestor: Exibe ficha do imóvel sem moradores ativos
-    else Ocupação ativa encontrada
-        Service->>Service: Classificar prioridade RN01
-        Service->>Service: Aplicar RN05 (hist. ocorrência + mobilidade reduzida/acamado)
-        Service-->>Controller: Ficha integrada
-        Controller-->>Frontend: HTTP 200 OK<br/>{moradia, família, responsável, moradores,<br/>grupos, pets, prioridade, risco_critico}
-        Frontend-->>Gestor: Exibe consulta consolidada
-    end
-```
-
 
 Este fluxo detalha a consulta integrada executada pelo **Gestor Operacional (A02/A03)** ao pesquisar ou selecionar uma ficha. O Frontend solicita uma listagem resumida de moradias e, após a seleção de um registro, carrega os dados completos da moradia, localização, ocupação ativa, família, responsável, moradores, gestantes, grupos prioritários, pets e fotos. A consulta utiliza o `historico_ocupacao` para identificar a família atualmente vinculada à moradia, considerando apenas ocupações com `data_saida` nula. Caso não exista ocupação ativa, o sistema retorna a ficha do imóvel sem moradores ativos. Quando há ocupação ativa, o Service calcula a prioridade de evacuação (RN01) e avalia a flag de Risco Crítico (RN05).
 
