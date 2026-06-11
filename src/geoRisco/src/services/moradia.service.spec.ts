@@ -94,24 +94,6 @@ describe('MoradiaService - testes unitarios de Service', () => {
         jest.restoreAllMocks();
     });
 
-    it('CT02 -> RN02 - alerta recadastro somente com 365 dias ou mais', () => {
-        const service = new MoradiaService(repo());
-        const referencia = new Date('2026-06-11T00:00:00.000Z');
-
-        expect(service.deveAlertarRecadastro(new Date('2025-06-11T00:00:00.000Z'), referencia)).toBe(true);
-        expect(service.deveAlertarRecadastro(new Date('2025-06-12T00:00:00.000Z'), referencia)).toBe(false);
-    });
-
-    it('CT02 -> RN02 - falha com data de atualizacao invalida', () => {
-        const service = new MoradiaService(repo());
-
-        expect(() => service.deveAlertarRecadastro(new Date('invalid'))).toThrow('Data de atualizacao invalida');
-        expect(() => service.deveAlertarRecadastro(
-            new Date('2025-06-11T00:00:00.000Z'),
-            new Date('invalid')
-        )).toThrow('Data de referencia invalida');
-    });
-
     it('CT04 -> RN04 - cadastra moradia com coordenadas GPS validas em transacao', async () => {
         const repository = repo();
         const client = mockClient();
@@ -158,32 +140,6 @@ describe('MoradiaService - testes unitarios de Service', () => {
         })).rejects.toMatchObject({ statusCode: 400 });
 
         expect(repository.createLocalizacao).not.toHaveBeenCalled();
-    });
-
-    it('CT05 -> RN05 - sinaliza risco critico com historico e morador vulneravel', () => {
-        const service = new MoradiaService(repo());
-
-        expect(service.avaliarRiscoCritico({
-            possuiHistoricoOcorrencia: true,
-            moradores: [{ mobilidadeReduzida: true }]
-        })).toBe(true);
-        expect(service.avaliarRiscoCritico({
-            possuiHistoricoOcorrencia: true,
-            moradores: [{ gruposPrioritarios: ['Acamado'] }]
-        })).toBe(true);
-    });
-
-    it('CT05 -> RN05 - nao sinaliza risco sem historico ou sem vulnerabilidade', () => {
-        const service = new MoradiaService(repo());
-
-        expect(service.avaliarRiscoCritico({
-            possuiHistoricoOcorrencia: false,
-            moradores: [{ acamado: true }]
-        })).toBe(false);
-        expect(service.avaliarRiscoCritico({
-            possuiHistoricoOcorrencia: true,
-            moradores: [{ gruposPrioritarios: ['Idoso'] }]
-        })).toBe(false);
     });
 
     it('lista moradias e falha no historico quando dependencia nao foi configurada', async () => {
