@@ -734,56 +734,7 @@ sequenceDiagram
     Controller-->>Frontend: HTTP 200 OK {moradia, familias: [{familia, pessoas, pets}], fotos, risco_critico}
     Frontend-->>Gestor: Exibe card com detalhes e flag de risco se aplicável
 ```
-
-**NOTA IMPORTANTE (Implementação Atual)**:
-- RN05 (Risco Crítico) **não está implementado** - falta tabela `historico_ocorrencia` no banco
-- Endpoint `/api/moradias/{id}/detalhes` retorna dados integrados sem flag de risco
-```mermaid
-sequenceDiagram
-    actor Gestor as Gestor Operacional (A03)
-    participant Frontend as Frontend Painel Desktop
-    participant Controller as MoradiaController
-    participant Service as MoradiaService
-    participant Repository as MoradiaRepository
-    participant DB as Banco de Dados
-
-    Gestor->>Frontend: Acessa módulo de mapa
-    Frontend->>Controller: GET /api/moradias?status=Ativa
-    Controller->>Service: Solicitar moradias ativas com localização
-    Service->>Repository: Consultar moradias ativas com localização
-    Repository->>DB: SELECT moradia.id, localização.latitude,<br/>localização.longitude, moradia.status<br/>FROM moradia JOIN localização
-    DB-->>Repository: Lista de marcadores
-    Repository-->>Service: Lista de marcadores
-    Service-->>Controller: DTO de marcadores
-    Controller-->>Frontend: HTTP 200 OK [{id, lat, lng, status}]
-
-    alt Existem moradias georreferenciadas
-        Frontend->>Frontend: Renderiza pins no mapa
-    else Nenhum registro encontrado
-        Frontend-->>Gestor: Exibe mapa vazio e mensagem<br/>"Nenhuma moradia ativa encontrada"
-    end
-
-    Gestor->>Frontend: Clica em um marcador
-    Frontend->>Controller: GET /api/moradias/{id}/detalhes
-    Controller->>Service: Carregar moradia, famílias, pessoas, pets e fotos
-    Service->>Repository: Buscar dados integrados
-    Repository->>DB: SELECT moradia, localização, família,<br/>cidadão, pet, foto_moradia
-    DB-->>Repository: Dados integrados
-    Repository-->>Service: Dados integrados
-    Service-->>Controller: Objeto de consulta integrada
-    Controller-->>Frontend: HTTP 200 OK<br/>{moradia, famílias, pessoas, pets, fotos}
-    Frontend-->>Gestor: Exibe card com dados da moradia
-
-    alt Falha na API de mapa
-        Frontend-->>Gestor: Exibe fallback em lista tabular
-    end
-```
-
-**NOTA IMPORTANTE (Implementação Atual)**:
-- RN05 (Risco Crítico) **não está implementado** - falta tabela `historico_ocorrencia` no banco
-- Endpoint `/api/moradias/{id}/detalhes` retorna dados integrados sem flag de risco
-
----
+Este fluxo descreve a consulta de informações espaciais executada pelo **Gestor Operacional (A02/A03)** a partir do painel administrativo desktop. O Frontend solicita a listagem de registros georreferenciados para renderização no mapa da região. O Service, por meio do Repository, realiza a busca lendo diretamente da view de leitura **`vw_moradia_ativa`** em conjunto com a tabela **`localizacao`** para obter as coordenadas de latitude e longitude dos imóveis que não sofreram exclusão lógica. Ao receber o conjunto de dados, o Frontend renderiza pins interativos na interface geográfica. Quando o gestor clica sobre um marcador específico, o sistema dispara a requisição de consulta consolidada (`GET /api/moradias/{id}/detalhes`), carregando os dados do imóvel, moradores ativos, pets e fotos, ao mesmo tempo em que calcula e exibe a flag visual de Risco Crítico (RN05) em um card sobreposto no próprio mapa.
 
 ### FL03 — Consulta integrada de moradia e moradores
 
@@ -829,7 +780,6 @@ sequenceDiagram
 ```
 
 Este fluxo detalha a consulta integrada executada pelo **Gestor Operacional (A02/A03)** ao pesquisar ou selecionar uma ficha. O Frontend solicita uma listagem resumida de moradias e, após a seleção de um registro, carrega os dados completos da moradia, localização, ocupação ativa, família, responsável, moradores, gestantes, grupos prioritários, pets e fotos. A consulta utiliza o `historico_ocupacao` para identificar a família atualmente vinculada à moradia, considerando apenas ocupações com `data_saida` nula. Caso não exista ocupação ativa, o sistema retorna a ficha do imóvel sem moradores ativos. Quando há ocupação ativa, o Service calcula a prioridade de evacuação (RN01) e avalia a flag de Risco Crítico (RN05).
-
 ---
 
 ### FL04 — Filtros avançados de moradias e assistidos (Backlog)
@@ -864,7 +814,6 @@ sequenceDiagram
     end
 ```
 
-Este fluxo representa o uso de filtros avançados pelo **Gestor Operacional (A02/A03)** na tela de gerenciamento de dados. O usuário pode combinar critérios como status da moradia, condição de ocupação, grupos prioritários, vulnerabilidades, destino em caso de evacuação e situação de recadastro. O Frontend envia os filtros ao Controller, que delega ao Service a validação dos parâmetros e a montagem da consulta. O Repository cruza as tabelas `moradia`, `localizacao`, `historico_ocupacao`, `familia`, `pessoa`, `pessoa_grupo_prioritario` e `grupo_prioritario`, retornando uma lista filtrada. Quando não há resultados, o painel exibe uma mensagem orientativa. Quando há registros, o gestor pode exportar a listagem em formato CSV ou PDF.
 Este fluxo representa o uso de filtros avançados pelo **Gestor Operacional (A02/A03)** na tela de gerenciamento de dados. O usuário pode combinar critérios como status da moradia, condição de ocupação, grupos prioritários, vulnerabilidades, destino em caso de evacuação e situação de recadastro. O Frontend envia os filtros ao Controller, que delega ao Service a validação dos parâmetros e a montagem da consulta. O Repository cruza as tabelas `moradia`, `localizacao`, `historico_ocupacao`, `familia`, `pessoa`, `pessoa_grupo_prioritario` e `grupo_prioritario`, retornando uma lista filtrada. Quando não há resultados, o painel exibe uma mensagem orientativa. Quando há registros, o gestor pode exportar a listagem em formato CSV ou PDF.
 
 ---
@@ -1231,7 +1180,7 @@ sequenceDiagram
     end
 ```
 
-Este fluxo representa uma regra transversal, acionada por outros fluxos sempre que uma moradia e seus moradores ativos são carregados para exibição. O Service consulta a moradia, a ocupação ativa, a família residente e os cidadãos vinculados aos grupos prioritários. A condição RN05 é satisfeita quando a moradia possui histórico de ocorrência e existe ao menos um morador ativo classificado com mobilidade reduzida ou acamado. Quando a condição é verdadeira, a resposta recebe `risco_critico=true`, permitindo que o Frontend destaque a flag "Risco Crítico" em cards, fichas e consultas integradas. Quando a condição não é satisfeita, a ficha é exibida sem o alerta.
+Este fluxo representa uma regra transversal, acionada por outros fluxos sempre que uma moradia e seus moradores ativos são carregados para exibição. O Service consulta a moradia, a ocupação ativa, a família residente e os cidadãos vinculados aos grupos prioritários. A condição RN05 é satisfeito quando a moradia possui histórico de ocorrência e existe ao menos um morador ativo classificado com mobilidade reduzida ou acamado. Quando a condição é verdadeira, a resposta recebe `risco_critico=true`, permitindo que o Frontend destaque a flag \"Risco Crítico\" em cards, fichas e consultas integradas. Quando a condição não é satisfeita, a ficha é exibida sem o alerta.
 
 ---
 
