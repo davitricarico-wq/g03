@@ -2771,6 +2771,94 @@ Também é importante que os testes não compartilhem estado mutável entre si. 
 
 Dessa forma, a adoção do padrão AAA combinada ao determinismo contribui para uma estratégia de testes mais clara, confiável e sustentável. Os testes passam a funcionar não apenas como mecanismos de verificação automática, mas também como documentação objetiva do comportamento esperado do sistema.
 
+## 5.1.2 Testes unitários de service
+
+Os testes unitários da camada Service verificam, de forma isolada, as regras de negócio que ficam entre os controllers e os repositories. Essa camada concentra decisões importantes do sistema, como validação de dados obrigatórios, aplicação de regras de recadastro, controle de arquivamento lógico, restrições de geolocalização/fotos e avaliação de risco crítico.
+
+Esses testes são feitos para garantir que as regras documentadas no WAD continuem funcionando mesmo quando a API, o banco de dados ou a interface mudarem. Para isso, os repositories, transações e serviços externos são substituídos por mocks, permitindo validar apenas o comportamento do Service. Essa abordagem torna os testes mais rápidos, determinísticos e adequados para evidenciar cobertura de regra de negócio sem depender de infraestrutura externa.
+
+O conjunto também serve como evidência de rastreabilidade entre casos de teste e regras de negócio. Os casos prioritários foram nomeados explicitamente no formato `CTxx -> RNxx`, permitindo demonstrar quais regras foram cobertas, qual caminho feliz foi validado e qual caminho de falha foi exercitado.
+
+## Escopo e execução
+
+Os testes unitários da camada Service ficam em `src/geoRisco/src/services/*.spec.ts`.
+
+Comando de evidência:
+
+```bash
+npm test -- --coverage
+```
+
+O Jest gera o relatório de cobertura da camada Service em `coverage/services`.
+
+A evidência visual da execução do comando `npm test -- --coverage` é apresentada abaixo:
+
+![Evidência da cobertura dos testes unitários de Service](outros/porcentagemdetestesservice.png)
+
+## Dependências necessárias
+
+Para permitir a execução dos testes, foram adicionadas as seguintes dependências:
+
+| Dependência | Tipo | Justificativa |
+|---|---|---|
+| `typescript` | devDependency | Necessária para compilar o projeto TypeScript antes da execução do Jest. |
+| `dotenv` | dependency | Necessária porque o projeto importa `dotenv/config` em arquivos de infraestrutura. |
+| `@supabase/supabase-js` | dependency | Necessária porque `foto-storage.service.ts` depende do cliente Supabase Storage. |
+
+Essas dependências já estão registradas no `package.json` e no `package-lock.json`. Portanto, em outro computador, não é necessário instalar cada pacote manualmente: basta executar `npm install` na raiz do projeto para que o npm baixe as versões corretas.
+
+Os testes unitários não dependem do `.env` real do projeto. Durante a execução do Jest, o arquivo `src/geoRisco/src/tests/jest.setup.ts` define valores fictícios para `DATABASE_URL`, `SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY`, permitindo que os imports de infraestrutura funcionem sem acessar banco de dados ou Supabase reais. As chamadas externas usadas nos Services são substituídas por mocks.
+
+Após clonar o projeto, basta executar:
+
+```bash
+npm install
+npm test -- --coverage
+```
+
+## Casos prioritários
+
+| Caso | RN | Arquivo | Objetivo |
+|---|---|---|---|
+| CT01 | RN01 | `pessoa.service.spec.ts` | Validar cadastro de pessoa com dados obrigatórios e falha quando o nome está ausente. |
+| CT02 | RN02 | `moradia.service.spec.ts` | Validar alerta de recadastro quando a última atualização tem 365 dias ou mais. |
+| CT03 | RN03 | `familia.service.spec.ts` | Validar arquivamento lógico delegado ao repositório e falha para vínculos inexistentes. |
+| CT04 | RN04 | `moradia.service.spec.ts` e `foto.service.spec.ts` | Validar geolocalização obrigatória e registro de foto com exatamente um dono permitido. |
+| CT05 | RN05 | `moradia.service.spec.ts` | Validar flag de risco crítico quando há histórico de ocorrência e morador vulnerável. |
+
+## Explicação dos 5 prioritários
+
+**CT01 -> RN01**
+- AAA: arrange cria repositório mockado e payload válido; act chama `PessoaService.cadastrar`; assert verifica retorno e chamada do repositório com nome normalizado, `nomeSocial` nulo e `status` padrão.
+- Determinismo: usa data fixa e mocks, sem banco ou rede.
+- RN coberta: RN01 exige dados essenciais para cadastro de pessoa.
+- Caminho de falha: payload sem nome rejeita com `HttpError 400` e não chama o repositório.
+
+**CT02 -> RN02**
+- AAA: arrange define data de referência fixa; act chama `MoradiaService.deveAlertarRecadastro`; assert compara `true` para 365 dias e `false` para 364 dias.
+- Determinismo: a data de referência é injetada no teste.
+- RN coberta: RN02 exige alerta para fichas sem atualização há 365 dias.
+- Caminho de falha: data inválida rejeita com `HttpError 400`.
+
+**CT03 -> RN03**
+- AAA: arrange cria família existente e repositório mockado; act chama `FamiliaService.remover`; assert verifica delegação para `delete`, que no banco é soft delete.
+- Determinismo: usa apenas mocks de repositório.
+- RN coberta: RN03 preserva histórico por arquivamento lógico.
+- Caminho de falha: vínculo pessoa-família ou família-moradia inexistente retorna `HttpError 404`.
+
+**CT04 -> RN04**
+- AAA: arrange prepara moradia com latitude/longitude e transação mockada; act chama `MoradiaService.cadastrar`; assert verifica commit e persistência com localização. O teste de foto prepara uma moradia existente, chama `FotoService.cadastrarNaMoradia` e confere exatamente um dono.
+- Determinismo: coordenadas, payloads e transação são fixos e mockados.
+- RN coberta: RN04 exige geolocalização no cadastro de moradia e restringe fotos ao imóvel/pet.
+- Caminho de falha: latitude inválida impede transação; foto sem dono ou com dois donos retorna `HttpError 400`.
+
+**CT05 -> RN05**
+- AAA: arrange cria entrada com histórico de ocorrência e moradores; act chama `MoradiaService.avaliarRiscoCritico`; assert verifica flag `true` para mobilidade reduzida/acamado.
+- Determinismo: entrada em memória, sem banco ou clock.
+- RN coberta: RN05 exige flag de risco crítico quando histórico de ocorrência e vulnerabilidade coexistem.
+- Caminho de falha: sem histórico ou sem vulnerabilidade a flag permanece `false`.
+
+
 ## 5.2. Testes de usabilidade (sprint 5)
 
 ### 5.2.1. Relatório de testes de guerrilha

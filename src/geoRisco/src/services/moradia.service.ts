@@ -9,9 +9,19 @@ import { HttpError } from '../errors/http-error';
 import type { IFamiliaRepository } from '../interfaces/repositories/familia.repository.interface';
 import type { IFotoRepository } from '../interfaces/repositories/foto.repository.interface';
 import type { IMoradiaRepository } from '../interfaces/repositories/moradia.repository.interface';
-import type { IMoradiaService } from '../interfaces/services/moradia.service.interface';
+import type { AvaliarRiscoCriticoDto, IMoradiaService } from '../interfaces/services/moradia.service.interface';
 import type { MoradiaComLocalizacao } from '../models/moradia.model';
 import { validateLocalizacaoPayload, validateMoradiaPayload } from '../validations/moradia.validation';
+
+const DIAS_RECADASTRO_OBRIGATORIO = 365;
+const MS_POR_DIA = 24 * 60 * 60 * 1000;
+
+function normalizarTexto(value: string): string {
+    return value
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase();
+}
 
 export class MoradiaService implements IMoradiaService {
     constructor(
@@ -66,6 +76,36 @@ export class MoradiaService implements IMoradiaService {
 
         await this.getById(id);
         return this.familiaRepo.getHistoricoFamiliasByMoradia(id);
+    }
+
+    deveAlertarRecadastro(ultimaAtualizacao: Date, referencia = new Date()): boolean {
+        if (!(ultimaAtualizacao instanceof Date) || Number.isNaN(ultimaAtualizacao.getTime())) {
+            throw new HttpError(400, 'Data de atualizacao invalida');
+        }
+        if (!(referencia instanceof Date) || Number.isNaN(referencia.getTime())) {
+            throw new HttpError(400, 'Data de referencia invalida');
+        }
+
+        const diasSemAtualizacao = Math.floor((referencia.getTime() - ultimaAtualizacao.getTime()) / MS_POR_DIA);
+        return diasSemAtualizacao >= DIAS_RECADASTRO_OBRIGATORIO;
+    }
+
+    avaliarRiscoCritico(data: AvaliarRiscoCriticoDto): boolean {
+        if (!data.possuiHistoricoOcorrencia) {
+            return false;
+        }
+
+        return data.moradores.some((morador) => {
+            const grupos = morador.gruposPrioritarios ?? [];
+            return (
+                morador.mobilidadeReduzida === true ||
+                morador.acamado === true ||
+                grupos.some((grupo) => {
+                    const normalizado = normalizarTexto(grupo);
+                    return normalizado.includes('mobilidade reduzida') || normalizado.includes('acamado');
+                })
+            );
+        });
     }
 
     async cadastrar(data: CreateMoradiaComLocalizacaoDto): Promise<MoradiaComLocalizacao> {
