@@ -585,22 +585,22 @@ Os doze fluxos documentados nesta seção cobrem o ciclo principal de uso do sis
 
 ---
 
-#### FL01 — Cadastro de Pessoa e Vínculo à Moradia
+### FL01 — Cadastro completo de família, moradia e ocupação
 
 ```mermaid
 sequenceDiagram
     actor Agente as Agente de Campo (A01)
     participant Frontend as Frontend PWA Mobile
     participant Cache as Cache Local (IndexedDB)
-    participant Controller as CadastroController
-    participant Service as CadastroService
-    participant Repository as CadastroRepository
+    participant Controller as FamiliaController
+    participant Service as FamiliaService
+    participant Repository as FamiliaRepository/MoradiaRepository/PessoaRepository/PetRepository/FotoRepository
     participant DB as Banco de Dados
 
     Note over Agente,DB: Preenchimento em campo
 
     Agente->>Frontend: Inicia novo cadastro
-    Frontend-->>Agente: Exibe seções de moradia, localização, família,<br/>responsável, moradores, grupos prioritários,<br/>gestante, pets e fotos
+    Frontend-->>Agente: Exibe seções de moradia, localização, família,<br/>responsável, moradores, grupos prioritários, pets e fotos
 
     Agente->>Frontend: Preenche dados estruturais da moradia
     Frontend->>Frontend: Captura GPS do dispositivo (RN04)
@@ -614,67 +614,80 @@ sequenceDiagram
 
     Agente->>Frontend: Anexa até 2 fotos (fachada e entorno)
     Frontend->>Frontend: Valida RN04: foto não pode conter pessoas
-    Agente->>Frontend: Informa responsável, demais cidadãos,<br/>vulnerabilidades, gestação quando houver e pets
+    Agente->>Frontend: Informa responsável, demais dependentes,<br/>vulnerabilidades (grupos prioritários) e pets
 
     Note over Agente,DB: Envio ou persistência local
 
     Agente->>Frontend: Confirma cadastro
 
-        Frontend->>Controller: POST /api/familias/nucleo<br/>{localização, moradia, família,<br/>responsável, cidadãos, grupos,<br/>gestantes, pets, fotos}
-        Controller->>Service: Validar payload, RN01 e RN04
-        Service->>Service: Validar integridade:<br/>família ativa deve ter responsável<br/>e ocupação ativa
-        Service->>Repository: Abrir transação
+    alt Dispositivo online
+        Frontend->>Controller: POST /api/familias/nucleo<br/>{localizacao, moradia, responsavel, dependentes, pets, fotos}
+        Controller->>Service: Validar payload, RN04 (fotos de pessoas)
+        Service->>Service: Validar integridade:<br/>Família ativa exige moradia ativa e responsável ativo (US13, US14)
+        Service->>Repository: Iniciar transação (BEGIN)
 
         Repository->>DB: INSERT localização
-        DB-->>Repository: id_localização
-        Repository->>DB: INSERT moradia {id_localização, status='Ativa'}
+        DB-->>Repository: id_localizacao
+        Repository->>DB: INSERT moradia {id_localizacao, status='Ativa'}
         DB-->>Repository: id_moradia
-        Repository->>DB: INSERT família {status_ativo=true}
-        DB-->>Repository: id_família
-        Repository->>DB: INSERT historico_ocupacao<br/>{id_família, id_moradia, data_entrada=hoje,<br/>data_saida=NULL, status='Regular'}
-        DB-->>Repository: id_historico_ocupacao
-        Repository->>DB: INSERT pessoa do responsável<br/>{id_família, status_cadastro=true}
+        Repository->>DB: INSERT família {status='Ativo'}
+        DB-->>Repository: id_familia
+        Repository->>DB: INSERT familia_moradia<br/>{id_familia, id_moradia, data_entrada=hoje,<br/>data_saida=NULL, status='Regular'}
+        DB-->>Repository: OK
+        Repository->>DB: INSERT pessoa do responsável<br/>{parentesco='Responsável', status='Ativo'}
         DB-->>Repository: id_pessoa_responsavel
-        Repository->>DB: INSERT responsável<br/>{id_pessoa_responsavel, cpf, renda, contato, NIS}
-        DB-->>Repository: id_responsavel
+        Repository->>DB: INSERT responsavel<br/>{id_pessoa, cpf, renda, NIS, sexo, raca, estado_civil}
+        DB-->>Repository: OK
+        Repository->>DB: INSERT pessoa_familia<br/>{id_pessoa_responsavel, id_familia, data_entrada=hoje}
+        DB-->>Repository: OK
 
         loop Para cada morador dependente
-            Repository->>DB: INSERT pessoa {id_família, status_cadastro=true}
+            Repository->>DB: INSERT pessoa {parentesco, status='Ativo'}
             DB-->>Repository: id_pessoa
-            opt Morador pertence a grupos prioritários
-                Repository->>DB: INSERT pessoa_grupo_prioritario<br/>{id_pessoa, id_grupo_prioritario}
-                DB-->>Repository: OK
-            end
-            opt Morador gestante
-                Repository->>DB: INSERT gestante<br/>{id_pessoa, data_prevista, data_inicio}
+            Repository->>DB: INSERT pessoa_familia {id_pessoa, id_familia, data_entrada=hoje}
+            DB-->>Repository: OK
+            opt Pertence a grupos prioritários
+                Repository->>DB: INSERT pessoa_grupo_prioritario {id_pessoa, id_grupo_prioritario}
                 DB-->>Repository: OK
             end
         end
 
         loop Para cada pet informado
-            Repository->>DB: INSERT pet<br/>{id_família, tipo_pet, porte_pet, nome, observações}
-            DB-->>Repository: OK
+            Repository->>DB: INSERT pet {id_familia, tipo, nome, porte, raca, cor}
+            DB-->>Repository: id_pet
+            loop Para cada foto do pet
+                Repository->>DB: INSERT foto {id_pet, url}
+                DB-->>Repository: OK
+            end
         end
 
         loop Para cada foto de moradia
-            Repository->>DB: INSERT foto_moradia {id_moradia, tipo_foto, url}
+            Repository->>DB: INSERT foto {id_moradia, url}
             DB-->>Repository: OK
         end
 
-        Repository-->>Service: Commit da transação
-        Service-->>Controller: HTTP 201 Created<br/>{id_família, id_moradia, id_responsavel}
+        Repository-->>Service: Commit da transação (COMMIT)
+        Service-->>Controller: DTO do núcleo criado
         Controller-->>Frontend: HTTP 201 Created
         Frontend-->>Agente: Exibe confirmação do cadastro
 
+    else Dispositivo offline
+        Frontend->>Cache: Salva cadastro completo com UUID local e estado PENDENTE
+        Cache-->>Frontend: Persistido localmente
+        Frontend-->>Agente: Exibe "Salvo localmente, aguardando sincronização"
+        Cache->>Frontend: Ao reconectar, aciona sync
+        Frontend->>Controller: POST /api/familias/nucleo {uuid_local, payload}
+    end
+
     Note over Agente,DB: Falhas principais
 
-    alt CPF, email ou NIS duplicado
+    alt CPF, email ou telefone duplicado
         Service-->>Controller: HTTP 409 Conflict
         Controller-->>Frontend: HTTP 409 Conflict
-        Frontend-->>Agente: Exibe opção de buscar cadastro ou revisar dados
-    else Campos obrigatórios inválidos
-        Service-->>Controller: HTTP 422 Unprocessable Entity
-        Controller-->>Frontend: Lista de campos inválidos
+        Frontend-->>Agente: Exibe mensagem de erro (Cadastro Duplicado)
+    else Campos obrigatórios inválidos / Foto com pessoas (RN04)
+        Service-->>Controller: HTTP 400 Bad Request
+        Controller-->>Frontend: Lista de erros de validação
         Frontend-->>Agente: Destaca campos para correção
     end
 ```
