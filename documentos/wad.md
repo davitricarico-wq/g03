@@ -2228,12 +2228,17 @@ Comando de evidência:
 ```bash
 npm test -- --coverage
 ```
+Caso o comando acima não funcione por restrições do powershell, rode:
+
+```bash
+npm.cmd test -- --coverage
+```
 
 O Jest gera o relatório de cobertura da camada Service em `coverage/services`.
 
 A evidência visual da execução do comando `npm test -- --coverage` é apresentada abaixo:
 
-![Evidência da cobertura dos testes unitários de Service](outros/porcentagemdetestesservice.png)
+![Evidência da cobertura dos testes unitários de Service](outros/porcentagemTesteService.png)
 
 ## Dependências necessárias
 
