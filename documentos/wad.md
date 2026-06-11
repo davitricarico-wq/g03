@@ -1053,278 +1053,145 @@ Este fluxo representa o arquivamento lógico de uma moradia pelo **Gestor Operac
 
 ---
 
-#### FL09 - Arquivamento lógico de morador falecido
-
+### FL09 — Arquivamento lógico de morador falecido (Endpoints Separados)
 ```mermaid
 sequenceDiagram
-    actor Gestor as Gestor Operacional (A03)
+    actor Gestor as Gestor Operacional (A02/A03)
     participant Frontend as Frontend Painel Desktop
-    participant Controller as PessoaController
+    participant PessoaController as PessoaController
     participant Service as PessoaService
-    participant Repository as PessoaRepository
+    participant Repository as PessoaRepository/FamiliaRepository
     participant DB as Banco de Dados
 
     Gestor->>Frontend: Acessa ficha do morador
-    Gestor->>Frontend: Aciona Arquivar Morador
-    Frontend-->>Gestor: Solicita data de falecimento
-    Gestor->>Frontend: Confirma dados
+    Gestor->>Frontend: Clica em "Arquivar Morador" (Soft Delete por Óbito)
 
-    Frontend->>Controller: PATCH /pessoas/{id_pessoa}/arquivar<br/>{motivo='Falecimento', data_falecimento}
-    Controller->>Service: Validar data e permissão
-    Service->>Repository: Verificar família da pessoa e se é responsável
-    Repository->>DB: SELECT pessoa, família, responsável<br/>WHERE pessoa.id_pessoa=:id
-    DB-->>Repository: Dados da pessoa
-    Repository-->>Service: Dados da pessoa
+    Note over Frontend, DB: A data do óbito será a data da requisição (salva em deleted_at).
 
-    alt Pessoa é responsável da família
-        Service->>Repository: Buscar outras pessoas ativas da mesma família
-        Repository->>DB: SELECT pessoa<br/>WHERE id_família=:id_familia<br/>AND status_cadastro=true<br/>AND id_pessoa <> :id
-        DB-->>Repository: Possíveis novos responsáveis
+    Frontend->>PessoaController: DELETE /api/pessoas/{id_pessoa}
+    PessoaController->>Service: Validar exclusão do morador
+    Service->>Repository: Verificar se o morador é o responsável ativo da família
+    Repository->>DB: SELECT * FROM vw_pessoa_ativa p INNER JOIN responsavel r ON r.id_pessoa=p.id WHERE p.id=:id AND p.parentesco='Responsável'
+    DB-->>Repository: Registro de responsável ativo encontrado
+    Repository-->>Service: Confirmado (morador é o responsável atual)
+
+    alt Morador é o responsável ativo da família
+        Service->>Repository: Buscar outros moradores ativos da mesma família
+        Repository->>DB: SELECT * FROM pessoa_familia pf INNER JOIN vw_pessoa_ativa p ON p.id=pf.id_pessoa WHERE pf.id_familia=:id_familia AND p.id <> :id
+        DB-->>Repository: Lista de membros ativos
         Repository-->>Service: Lista de candidatos
 
-        alt Não há outro morador ativo
-            Service-->>Controller: HTTP 409 Conflict {requer_acao_familia=true}
-            Controller-->>Frontend: HTTP 409 Conflict
-            Frontend-->>Gestor: Informa que a família ficará<br/>sem responsável e sem membros ativos
-        else Há candidato a novo responsável
-            Service-->>Controller: HTTP 409 Conflict<br/>{requer_novo_responsavel=true, candidatos}
-            Controller-->>Frontend: Lista de candidatos
-            Frontend-->>Gestor: Solicita novo responsável
-            Gestor->>Frontend: Seleciona novo responsável
-            Frontend->>Controller: PUT /familias/{id_familia}/responsavel {id_pessoa_nova}
-            Controller->>Service: Criar ou atualizar especialização<br/>responsável da nova pessoa
-            Service->>Repository: INSERT/UPDATE responsável {id_pessoa_nova}
-            Repository->>DB: INSERT/UPDATE responsável
-            DB-->>Repository: OK
+        alt Não há outros moradores ativos
+            Service-->>PessoaController: Bloquear exclusão (HTTP 409 Conflict)
+            PessoaController-->>Frontend: HTTP 409 Conflict {error: 'ultimo_membro_familia'}
+            Frontend-->>Gestor: Exibe alerta: Família ficará sem membros ativos. Solicita inativar família inteira.
+        else Existem outros membros ativos (Exige definição manual de novo responsável)
+            Service-->>PessoaController: Bloquear exclusão (HTTP 409 Conflict)
+            PessoaController-->>Frontend: HTTP 409 Conflict {error: 'requer_novo_responsavel', candidatos}
+            Frontend-->>Gestor: Solicita definir o novo responsável entre os membros ativos
+
+            opt Gestor promove novo responsável (Split Endpoints)
+                Gestor->>Frontend: Seleciona candidato e informa dados sociais/financeiros
+
+                Frontend->>PessoaController: PUT /api/pessoas/{id_novo_responsavel} {parentesco: 'Responsável'}
+                PessoaController->>Service: Alterar parentesco para Responsável
+                Service->>Repository: UPDATE pessoa SET parentesco='Responsável' WHERE id=:id
+                DB-->>Repository: OK
+                Service-->>PessoaController: OK
+                PessoaController-->>Frontend: HTTP 200 OK
+
+                Frontend->>PessoaController: POST /api/responsaveis {idPessoa: id_novo, cpf, renda, NIS, sexo, raca, estado_civil}
+                PessoaController->>Service: Criar registro de responsável financeiro/social
+                Service->>Repository: INSERT INTO responsavel (...) VALUES (...)
+                DB-->>Repository: OK
+                Service-->>PessoaController: OK
+                PessoaController-->>Frontend: HTTP 201 Created
+
+                Note over Frontend, PessoaController: Agora o morador antigo pode ser arquivado por óbito:
+                Frontend->>PessoaController: DELETE /api/pessoas/{id_pessoa}
+                PessoaController->>Service: Validar exclusão (agora com novo responsável ativo já definido)
+                Service->>Repository: Executar exclusão lógica
+                Repository->>DB: DELETE FROM pessoa WHERE id = :id_pessoa<br/>(PostgreSQL rule altera para UPDATE status='Inativo', deleted_at=now())
+                DB-->>Repository: OK
+                Service-->>PessoaController: OK
+                PessoaController-->>Frontend: HTTP 200 OK
+                Frontend-->>Gestor: Morador arquivado com sucesso
+            end
         end
+    else Morador comum (dependente)
+        Service->>Repository: Executar exclusão lógica
+        Repository->>DB: DELETE FROM pessoa WHERE id = :id_pessoa<br/>(PostgreSQL rule altera para UPDATE status='Inativo', deleted_at=now())
+        DB-->>Repository: OK
+        Repository-->>Service: OK
+        Service-->>PessoaController: OK
+        PessoaController-->>Frontend: HTTP 200 OK
+        Frontend-->>Gestor: Morador arquivado com sucesso
     end
-
-    Frontend->>Controller: PATCH /pessoas/{id_pessoa}/arquivar {confirmado=true}
-    Controller->>Service: Arquivar pessoa
-    Service->>Repository: Atualizar status lógico
-    Repository->>DB: UPDATE pessoa SET status_cadastro=false<br/>WHERE id_pessoa=:id
-    DB-->>Repository: OK
-    Repository-->>Service: OK
-    Service->>Service: Reavaliar RN01 e RN05<br/>para a família/moradia atual
-    Service-->>Controller: HTTP 200 OK
-    Controller-->>Frontend: HTTP 200 OK
-    Frontend-->>Gestor: Atualiza ficha e histórico
-```
-```mermaid
-sequenceDiagram
-    actor Gestor as Gestor Operacional (A03)
-    participant Frontend as Frontend Painel Desktop
-    participant Controller as PessoaController
-    participant Service as PessoaService
-    participant Repository as PessoaRepository
-    participant DB as Banco de Dados
-
-    Gestor->>Frontend: Acessa ficha do morador
-    Gestor->>Frontend: Aciona Arquivar Morador
-    Frontend-->>Gestor: Solicita data de falecimento
-    Gestor->>Frontend: Confirma dados
-
-    Frontend->>Controller: PATCH /pessoas/{id_pessoa}/arquivar<br/>{motivo='Falecimento', data_falecimento}
-    Controller->>Service: Validar data e permissão
-    Service->>Repository: Verificar família da pessoa e se é responsável
-    Repository->>DB: SELECT pessoa, família, responsável<br/>WHERE pessoa.id_pessoa=:id
-    DB-->>Repository: Dados da pessoa
-    Repository-->>Service: Dados da pessoa
-
-    alt Pessoa é responsável da família
-        Service->>Repository: Buscar outras pessoas ativas da mesma família
-        Repository->>DB: SELECT pessoa<br/>WHERE id_família=:id_familia<br/>AND status_cadastro=true<br/>AND id_pessoa <> :id
-        DB-->>Repository: Possíveis novos responsáveis
-        Repository-->>Service: Lista de candidatos
-
-        alt Não há outro morador ativo
-            Service-->>Controller: HTTP 409 Conflict {requer_acao_familia=true}
-            Controller-->>Frontend: HTTP 409 Conflict
-            Frontend-->>Gestor: Informa que a família ficará<br/>sem responsável e sem membros ativos
-        else Há candidato a novo responsável
-            Service-->>Controller: HTTP 409 Conflict<br/>{requer_novo_responsavel=true, candidatos}
-            Controller-->>Frontend: Lista de candidatos
-            Frontend-->>Gestor: Solicita novo responsável
-            Gestor->>Frontend: Seleciona novo responsável
-            Frontend->>Controller: PUT /familias/{id_familia}/responsavel {id_pessoa_nova}
-            Controller->>Service: Criar ou atualizar especialização<br/>responsável da nova pessoa
-            Service->>Repository: INSERT/UPDATE responsável {id_pessoa_nova}
-            Repository->>DB: INSERT/UPDATE responsável
-            DB-->>Repository: OK
-        end
-    end
-
-    Frontend->>Controller: PATCH /pessoas/{id_pessoa}/arquivar {confirmado=true}
-    Controller->>Service: Arquivar pessoa
-    Service->>Repository: Atualizar status lógico
-    Repository->>DB: UPDATE pessoa SET status_cadastro=false<br/>WHERE id_pessoa=:id
-    DB-->>Repository: OK
-    Repository-->>Service: OK
-    Service->>Service: Reavaliar RN01 e RN05<br/>para a família/moradia atual
-    Service-->>Controller: HTTP 200 OK
-    Controller-->>Frontend: HTTP 200 OK
-    Frontend-->>Gestor: Atualiza ficha e histórico
 ```
 
 Este fluxo descreve o arquivamento lógico de um morador falecido realizado pelo **Gestor Operacional (A02/A03)**. O gestor informa a data de falecimento e confirma a operação. O Service verifica se o cidadão é o responsável da família. Caso seja, o sistema exige a escolha de um novo responsável ativo antes de concluir o arquivamento, preservando a integridade definida pela US13. Quando a substituição é resolvida, o cadastro do cidadão é inativado por meio de `status_cadastro=false`, sem deleção física. Após a atualização, o Service reavalia a prioridade da família e a regra de Risco Crítico, garantindo que consultas e relatórios ativos não exibam moradores arquivados.
 
 ---
 
-#### FL10 - Alerta automático de recadastro a cada 12 meses
-
+### FL10 — Alerta automático de recadastro (Tag de 12 meses)
 ```mermaid
 sequenceDiagram
-    participant Cron as Job Agendado (Diário)
-    participant Service as RecadastroService
-    participant Repository as RecadastroRepository
-    participant DB as Banco de Dados
-    actor Gestor as Gestor Operacional (A03)
+    actor Gestor as Gestor Operacional (A02/A03)
     participant Frontend as Frontend Painel Desktop
-    participant Controller as IndicadorController
-
-    Note over Cron,DB: Rotina automática
-
-    Cron->>Service: Executar verificação diária RN02
-    Service->>Repository: Buscar moradias ativas sem atualização há 365 dias
-    Repository->>DB: SELECT moradia, historico_ocupacao, família<br/>FROM moradia JOIN historico_ocupacao JOIN família<br/>WHERE moradia.status='Ativa'<br/>AND historico_ocupacao.data_saida IS NULL<br/>AND família.status_ativo=true<br/>AND moradia.ultima_atualizacao < CURRENT_DATE - INTERVAL '365 days'
-    DB-->>Repository: Cadastros desatualizados
-    Repository-->>Service: Lista de pendências
-    Service->>Service: Montar alerta operacional para o painel do gestor
-
-    Note over Service,DB: O WAD descreve o alerta de recadastro,<br/>mas o modelo físico atual não define uma<br/>tabela NOTIFICACAO. Este fluxo trata o alerta<br/>como indicador derivado da consulta.
-
-    Note over Cron,Controller: Consulta no painel
-
-    Gestor->>Frontend: Abre painel ou mapa
-    Frontend->>Controller: GET /indicadores/recadastro
-    Controller->>Service: Solicitar totais RN02
-    Service->>Repository: Contar cadastros atualizados e desatualizados
-    Repository->>DB: SELECT totais por ultima_atualizacao<br/>FROM moradia WHERE status='Ativa'
-    DB-->>Repository: Totais
-    Repository-->>Service: Totais
-    Service-->>Controller: {atualizados, desatualizados}
-    Controller-->>Frontend: HTTP 200 OK
-    Frontend-->>Gestor: Exibe contador de cadastros desatualizados
-
-    Gestor->>Frontend: Clica no contador
-    Frontend->>Controller: GET /moradias?desatualizado=true
-    Controller->>Service: Listar moradias pendentes
-    Service->>Repository: Consultar moradias vencidas
-    Repository->>DB: SELECT dados para revisita
-    DB-->>Repository: Lista
-    Repository-->>Service: Lista
-    Service-->>Controller: Lista filtrada
-    Controller-->>Frontend: HTTP 200 OK
-    Frontend-->>Gestor: Exibe lista para recadastro
-```
-```mermaid
-sequenceDiagram
-    participant Cron as Job Agendado (Diário)
-    participant Service as RecadastroService
-    participant Repository as RecadastroRepository
+    participant Controller as MoradiaController
+    participant Service as MoradiaService
+    participant Repository as MoradiaRepository
     participant DB as Banco de Dados
-    actor Gestor as Gestor Operacional (A03)
-    participant Frontend as Frontend Painel Desktop
-    participant Controller as IndicadorController
 
-    Note over Cron,DB: Rotina automática
+    Note over Gestor, DB: O alerta de recadastro (FL10) é uma Tag calculada sob demanda pelas listagens/detalhes (Job Cron no Backlog).
 
-    Cron->>Service: Executar verificação diária RN02
-    Service->>Repository: Buscar moradias ativas sem atualização há 365 dias
-    Repository->>DB: SELECT moradia, historico_ocupacao, família<br/>FROM moradia JOIN historico_ocupacao JOIN família<br/>WHERE moradia.status='Ativa'<br/>AND historico_ocupacao.data_saida IS NULL<br/>AND família.status_ativo=true<br/>AND moradia.ultima_atualizacao < CURRENT_DATE - INTERVAL '365 days'
-    DB-->>Repository: Cadastros desatualizados
-    Repository-->>Service: Lista de pendências
-    Service->>Service: Montar alerta operacional para o painel do gestor
+    Gestor->>Frontend: Acessa o Painel de Gestão
+    Frontend->>Controller: GET /api/moradias (ou listagem com flag desatualizado)
+    Controller->>Service: Solicitar moradias ativas e calcular flags de recadastro
+    Service->>Repository: Consultar moradias da view ativa
+    Repository->>DB: SELECT * FROM vw_moradia_ativa
+    DB-->>Repository: Lista de moradias com data_modificacao e data_registro
+    Repository-->>Service: Lista de moradias
 
-    Note over Service,DB: O WAD descreve o alerta de recadastro,<br/>mas o modelo físico atual não define uma<br/>tabela NOTIFICACAO. Este fluxo trata o alerta<br/>como indicador derivado da consulta.
+    Service->>Service: Calcular para cada moradia:<br/>Se (data_modificacao OU data_registro) < (hoje - 365 dias) -> marcar flag 'desatualizado=true'
 
-    Note over Cron,Controller: Consulta no painel
-
-    Gestor->>Frontend: Abre painel ou mapa
-    Frontend->>Controller: GET /indicadores/recadastro
-    Controller->>Service: Solicitar totais RN02
-    Service->>Repository: Contar cadastros atualizados e desatualizados
-    Repository->>DB: SELECT totais por ultima_atualizacao<br/>FROM moradia WHERE status='Ativa'
-    DB-->>Repository: Totais
-    Repository-->>Service: Totais
-    Service-->>Controller: {atualizados, desatualizados}
-    Controller-->>Frontend: HTTP 200 OK
-    Frontend-->>Gestor: Exibe contador de cadastros desatualizados
-
-    Gestor->>Frontend: Clica no contador
-    Frontend->>Controller: GET /moradias?desatualizado=true
-    Controller->>Service: Listar moradias pendentes
-    Service->>Repository: Consultar moradias vencidas
-    Repository->>DB: SELECT dados para revisita
-    DB-->>Repository: Lista
-    Repository-->>Service: Lista
-    Service-->>Controller: Lista filtrada
-    Controller-->>Frontend: HTTP 200 OK
-    Frontend-->>Gestor: Exibe lista para recadastro
+    Service-->>Controller: Lista de moradias com tags de recadastro
+    Controller-->>Frontend: HTTP 200 OK [{id, status, desatualizado: true/false}]
+    Frontend-->>Gestor: Exibe lista com tags visuais de alerta (Tag de Recadastro) nas moradias vencidas
 ```
 
 Este fluxo documenta a rotina de recadastro obrigatório prevista pela RN02. Um job agendado verifica diariamente moradias ativas cuja `ultima_atualizacao` tenha ultrapassado 365 dias. A consulta considera moradias com ocupação ativa e família ativa, evitando alertas sobre registros apenas históricos. No painel, o **Gestor Operacional (A02/A03)** consulta os indicadores de recadastro e visualiza o total de cadastros atualizados e desatualizados. Ao clicar no indicador, o Frontend redireciona para a listagem de moradias com o filtro `desatualizado=true`, permitindo organizar as revisitas de campo.
 
 ---
 
-#### FL11 - Regra transversal de Risco Crítico (RN05)
-
+### FL11 — Regra transversal de Risco Crítico (RN05)
 ```mermaid
 sequenceDiagram
-    participant Chamador as Fluxo Chamador (FL02/FL03/FL04/FL05/FL07/FL09)
-    participant Service as Service
-    participant Repository as Repository
+    participant Chamador as Fluxo Chamador (FL02/FL03/FL05/FL09)
+    participant Service as MoradiaService/PessoaService
+    participant Repository as MoradiaRepository/FamiliaRepository
     participant DB as Banco de Dados
     participant Frontend as Frontend
     actor Usuario as Usuário
 
-    Note over Chamador,Service: RN05 não é um fluxo independente.<br/>É aplicada quando a consulta integrada,<br/>mapa, filtro, relatório ou atualização<br/>carrega moradia com ocupação ativa.
+    Note over Chamador, Service: RN05 não é um fluxo independente. É aplicada automaticamente ao consultar os detalhes de uma moradia ativa.
 
-    Chamador->>Service: Solicita avaliação RN05 {id_moradia}
-    Service->>Repository: Buscar moradia, ocorrências<br/>e moradores ativos da ocupação atual
-    Repository->>DB: SELECT indicador de historico_ocorrencia,<br/>pessoa.id_pessoa, grupo_prioritario.nome<br/>FROM moradia JOIN historico_ocupacao<br/>JOIN família JOIN pessoa<br/>LEFT JOIN pessoa_grupo_prioritario<br/>LEFT JOIN grupo_prioritario<br/>WHERE moradia.id_moradia=:id<br/>AND historico_ocupacao.data_saida IS NULL<br/>AND pessoa.status_cadastro=true
-    DB-->>Repository: Dados para avaliação
-    Repository-->>Service: Dados para avaliação
+    Chamador->>Service: Solicita avaliação de Risco Crítico {id_moradia}
+    Service->>Repository: Buscar status da moradia e grupos prioritários dos moradores ativos
+    Repository->>DB: SELECT m.status, gp.condicao FROM vw_moradia_ativa m JOIN familia_moradia fm JOIN pessoa_familia pf JOIN vw_pessoa_ativa p JOIN pessoa_grupo_prioritario pgp JOIN grupo_prioritario gp WHERE m.id = :id AND fm.data_saida IS NULL AND pf.data_saida IS NULL
+    DB-->>Repository: Status do imóvel e condições dos moradores
+    Repository-->>Service: Dados estruturados
 
-    Service->>Service: Verificar condição:<br/>historico_ocorrencia=true<br/>E algum morador em grupo<br/>'Mobilidade reduzida' ou 'Acamado'
-
-    alt Condição RN05 satisfeita
-        Service-->>Chamador: risco_critico=true
-        Chamador-->>Frontend: Objeto com flag
-        Frontend-->>Usuario: Exibe "Risco Crítico" no cabeçalho/card
-    else Condição RN05 não satisfeita
-        Service-->>Chamador: risco_critico=false
-        Chamador-->>Frontend: Objeto sem flag crítica
-        Frontend-->>Usuario: Exibe ficha normalmente
-    end
-```
-```mermaid
-sequenceDiagram
-    participant Chamador as Fluxo Chamador (FL02/FL03/FL04/FL05/FL07/FL09)
-    participant Service as Service
-    participant Repository as Repository
-    participant DB as Banco de Dados
-    participant Frontend as Frontend
-    actor Usuario as Usuário
-
-    Note over Chamador,Service: RN05 não é um fluxo independente.<br/>É aplicada quando a consulta integrada,<br/>mapa, filtro, relatório ou atualização<br/>carrega moradia com ocupação ativa.
-
-    Chamador->>Service: Solicita avaliação RN05 {id_moradia}
-    Service->>Repository: Buscar moradia, ocorrências<br/>e moradores ativos da ocupação atual
-    Repository->>DB: SELECT indicador de historico_ocorrencia,<br/>pessoa.id_pessoa, grupo_prioritario.nome<br/>FROM moradia JOIN historico_ocupacao<br/>JOIN família JOIN pessoa<br/>LEFT JOIN pessoa_grupo_prioritario<br/>LEFT JOIN grupo_prioritario<br/>WHERE moradia.id_moradia=:id<br/>AND historico_ocupacao.data_saida IS NULL<br/>AND pessoa.status_cadastro=true
-    DB-->>Repository: Dados para avaliação
-    Repository-->>Service: Dados para avaliação
-
-    Service->>Service: Verificar condição:<br/>historico_ocorrencia=true<br/>E algum morador em grupo<br/>'Mobilidade reduzida' ou 'Acamado'
+    Service->>Service: Verificar condição:<br/>(moradia.status = 'Em Risco' OR 'Interditada')<br/>E algum morador associado a grupo ('Cadeirante', 'Acamado' ou 'Mobilidade Reduzida')
 
     alt Condição RN05 satisfeita
         Service-->>Chamador: risco_critico=true
-        Chamador-->>Frontend: Objeto com flag
-        Frontend-->>Usuario: Exibe "Risco Crítico" no cabeçalho/card
+        Chamador-->>Frontend: Retorna objeto com flag risco_critico=true
+        Frontend-->>Usuario: Exibe alerta visual vermelho "Risco Crítico" no card/ficha
     else Condição RN05 não satisfeita
         Service-->>Chamador: risco_critico=false
-        Chamador-->>Frontend: Objeto sem flag crítica
-        Frontend-->>Usuario: Exibe ficha normalmente
+        Chamador-->>Frontend: Retorna objeto com flag risco_critico=false
+        Frontend-->>Usuario: Exibe ficha de consulta sem alerta crítico
     end
 ```
 
@@ -1332,91 +1199,47 @@ Este fluxo representa uma regra transversal, acionada por outros fluxos sempre q
 
 ---
 
-#### FL12 - Validação transversal de integridade cadastral
-
+### FL12 — Validação transversal de integridade cadastral
 ```mermaid
 sequenceDiagram
-    participant Chamador as Fluxo Chamador (Cadastro, Atualização, Arquivamento, Realocação)
-    participant Service as Service
-    participant Repository as Repository
+    participant Chamador as Fluxo Chamador (Cadastro, Atualização, Desvinculo, Realocação)
+    participant Service as FamiliaService
+    participant Repository as FamiliaRepository/MoradiaRepository
     participant DB as Banco de Dados
     participant Frontend as Frontend
     actor Usuario as Usuário
 
-    Note over Service: Regras derivadas das US13 e US14:<br/>família ativa deve possuir responsável ativo<br/>e ocupação ativa em uma moradia válida.
+    Note over Service: Regras derivadas das US13 e US14:<br/>Família ativa exige responsável ativo e moradia ativa vinculada.
 
-    Chamador->>Service: Solicita validação de integridade {id_família}
-    Service->>Repository: Verificar família ativa
-    Repository->>DB: SELECT família WHERE id_familia=:id
-    DB-->>Repository: Família
-    Repository-->>Service: Família
+    Chamador->>Service: Executa validação de integridade cadastral {id_familia}
+    Service->>Repository: Consultar família
+    Repository->>DB: SELECT * FROM vw_familia_ativa WHERE id = :id
+    DB-->>Repository: Registro da família
+    Repository-->>Service: Dados da família
 
-    alt Família inativa
-        Service-->>Chamador: Integridade aprovada para contexto histórico
+    alt Família inativa (deletada)
+        Service-->>Chamador: Validação ignorada (histórico)
     else Família ativa
-        Service->>Repository: Verificar responsável ativo
-        Repository->>DB: SELECT responsável, pessoa<br/>WHERE pessoa.id_família=:id<br/>AND pessoa.status_cadastro=true<br/>AND responsável.id_pessoa=pessoa.id_pessoa
+        Service->>Repository: Verificar se há responsável ativo na família
+        Repository->>DB: SELECT * FROM pessoa_familia pf JOIN vw_pessoa_ativa p JOIN responsavel r ON r.id_pessoa=p.id WHERE pf.id_familia=:id AND pf.data_saida IS NULL
         DB-->>Repository: Responsável ativo ou vazio
         Repository-->>Service: Resultado
 
-        Service->>Repository: Verificar ocupação ativa
-        Repository->>DB: SELECT historico_ocupacao, moradia<br/>WHERE id_família=:id<br/>AND data_saida IS NULL<br/>AND moradia.status='Ativa'
-        DB-->>Repository: Ocupação ativa ou vazio
+        Service->>Repository: Verificar se há moradia ativa vinculada à família
+        Repository->>DB: SELECT * FROM familia_moradia fm JOIN vw_moradia_ativa m ON m.id=fm.id_moradia WHERE fm.id_familia=:id AND fm.data_saida IS NULL
+        DB-->>Repository: Moradia ativa ou vazio
         Repository-->>Service: Resultado
 
-        alt Sem responsável ativo
-            Service-->>Chamador: HTTP 409 Conflict {erro='familia_sem_responsavel'}
-            Chamador-->>Frontend: Bloqueio de operação
-            Frontend-->>Usuario: Solicita definir novo responsável
-        else Sem moradia ativa vinculada
-            Service-->>Chamador: HTTP 409 Conflict {erro='familia_sem_moradia_ativa'}
-            Chamador-->>Frontend: Bloqueio de operação
-            Frontend-->>Usuario: Solicita vincular nova moradia ou inativar família
+        alt Sem responsável ativo (Violação US13)
+            Service-->>Chamador: Falha de Validação (HTTP 409 Conflict)
+            Chamador-->>Frontend: Bloqueia a operação
+            Frontend-->>Usuario: Solicita definir um responsável ativo para a família
+        else Sem moradia ativa vinculada (Violação US14)
+            Service-->>Chamador: Falha de Validação (HTTP 409 Conflict)
+            Chamador-->>Frontend: Bloqueia a operação
+            Frontend-->>Usuario: Solicita vincular a família a uma moradia ativa válida
         else Integridade preservada
-            Service-->>Chamador: Validação OK
-        end
-    end
-```
-```mermaid
-sequenceDiagram
-    participant Chamador as Fluxo Chamador (Cadastro, Atualização, Arquivamento, Realocação)
-    participant Service as Service
-    participant Repository as Repository
-    participant DB as Banco de Dados
-    participant Frontend as Frontend
-    actor Usuario as Usuário
-
-    Note over Service: Regras derivadas das US13 e US14:<br/>família ativa deve possuir responsável ativo<br/>e ocupação ativa em uma moradia válida.
-
-    Chamador->>Service: Solicita validação de integridade {id_família}
-    Service->>Repository: Verificar família ativa
-    Repository->>DB: SELECT família WHERE id_familia=:id
-    DB-->>Repository: Família
-    Repository-->>Service: Família
-
-    alt Família inativa
-        Service-->>Chamador: Integridade aprovada para contexto histórico
-    else Família ativa
-        Service->>Repository: Verificar responsável ativo
-        Repository->>DB: SELECT responsável, pessoa<br/>WHERE pessoa.id_família=:id<br/>AND pessoa.status_cadastro=true<br/>AND responsável.id_pessoa=pessoa.id_pessoa
-        DB-->>Repository: Responsável ativo ou vazio
-        Repository-->>Service: Resultado
-
-        Service->>Repository: Verificar ocupação ativa
-        Repository->>DB: SELECT historico_ocupacao, moradia<br/>WHERE id_família=:id<br/>AND data_saida IS NULL<br/>AND moradia.status='Ativa'
-        DB-->>Repository: Ocupação ativa ou vazio
-        Repository-->>Service: Resultado
-
-        alt Sem responsável ativo
-            Service-->>Chamador: HTTP 409 Conflict {erro='familia_sem_responsavel'}
-            Chamador-->>Frontend: Bloqueio de operação
-            Frontend-->>Usuario: Solicita definir novo responsável
-        else Sem moradia ativa vinculada
-            Service-->>Chamador: HTTP 409 Conflict {erro='familia_sem_moradia_ativa'}
-            Chamador-->>Frontend: Bloqueio de operação
-            Frontend-->>Usuario: Solicita vincular nova moradia ou inativar família
-        else Integridade preservada
-            Service-->>Chamador: Validação OK
+            Service-->>Chamador: Validação Aprovada (OK)
         end
     end
 ```
