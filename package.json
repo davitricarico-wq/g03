@@ -1,0 +1,32 @@
+{
+  "name": "g03",
+  "version": "1.0.0",
+  "description": "<p align=\"center\"> <a href= \"https://www.inteli.edu.br/\"><img src=\"/assets/inteli.png\" alt=\"Inteli - Instituto de Tecnologia e Liderança\" border=\"0\"></a> </p>",
+  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "https://git.inteli.edu.br/graduacao/2026-1b/t25/g03.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc -p src/geoRisco/tsconfig.json",
+    "test": "npm run build && jest --config src/geoRisco/jest.config.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.108.1",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "jest": "^30.4.2",
+    "pg": "^8.21.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/jest": "^30.0.0",
+    "@types/pg": "^8.20.0",
+    "ts-jest": "^29.4.11",
+    "typescript": "^6.0.3"
+  }
+}
