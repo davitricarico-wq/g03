@@ -6,7 +6,7 @@ import type {
     VincularMoradiaFamiliaDto,
     VincularPessoaFamiliaDto
 } from '../../dtos/familia.dto';
-import type { Familia, FamiliaMoradia, PessoaFamilia } from '../../models/familia.model';
+import type { Familia, FamiliaMoradia, PessoaFamilia, PessoaFamiliaRemovida } from '../../models/familia.model';
 import type { Moradia } from '../../models/moradia.model';
 import type { Pessoa } from '../../models/pessoa.model';
 
@@ -20,7 +20,7 @@ export interface IFamiliaService {
     getMoradias(idFamilia: number): Promise<Moradia[]>;
     getHistoricoMoradias(idFamilia: number): Promise<FamiliaMoradiaHistoricoDto[]>;
     vincularPessoa(idFamilia: number, data: VincularPessoaFamiliaDto): Promise<PessoaFamilia>;
-    removerPessoa(idFamilia: number, idPessoa: number): Promise<PessoaFamilia>;
+    removerPessoa(idFamilia: number, idPessoa: number): Promise<PessoaFamiliaRemovida>;
     vincularMoradia(idFamilia: number, data: VincularMoradiaFamiliaDto): Promise<FamiliaMoradia>;
     removerMoradia(idFamilia: number, idMoradia: number): Promise<FamiliaMoradia>;
     cadastrarNucleoFamiliar(data: CreateNucleoFamiliarDto): Promise<NucleoFamiliarCriado>;
