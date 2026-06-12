@@ -1649,6 +1649,72 @@ No contexto do projeto GeoRisco, o BMC não foca na geração de lucro comercial
 
 Link do arquivo: https://miro.com/app/board/uXjVHLRyshY=/?share_link_id=86927684222
 
+<table width="100%" border="1" cellspacing="0" cellpadding="10" style="border-collapse: collapse; text-align: left; vertical-align: top; font-family: sans-serif;">
+  <!-- Linha Superior do Canvas -->
+  <tr>
+    <td rowspan="2" colspan="2" width="20%">
+      <strong>🔗 Parcerias Chave</strong><br><br>
+      • SIGA<br>
+      • IPT (Instituto de Pesquisas Tecnológicas)<br>
+      • Órgãos de ajuda humanitária e doações<br>
+      • Donos dos abrigos
+    </td>
+    <td colspan="2" width="20%">
+      <strong>⚡ Atividades Chave</strong><br><br>
+      • Gerenciamento de dados de pessoas e moradias<br>
+      • Controle de moradores e assistidos<br>
+      • Sincronização automática de dados
+    </td>
+    <td rowspan="2" colspan="2" width="20%">
+      <strong>💎 Proposta de Valor</strong><br><br>
+      • Rastreabilidade atualizada de áreas de maior risco ou vulneráveis<br>
+      • Apoio à tomada de decisões estratégicas em situações de emergência<br>
+      • Relatórios automáticos e quantificados<br>
+      • UI simples<br>
+      • Valor social
+    </td>
+    <td colspan="2" width="20%">
+      <strong>❤️ Relacionamento</strong><br><br>
+      • Contato contínuo até a entrega do projeto<br>
+      • Validações constantes por meio de reuniões<br>
+      • Reuniões de validação ao fim de cada Sprint
+    </td>
+    <td rowspan="2" colspan="2" width="20%">
+      <strong>👥 Segmentos de Clientes</strong><br><br>
+      • Agente Operacional<br>
+      • Gerenciador do Sistema e dos Dados
+    </td>
+  </tr>
+  <!-- Linha Intermediária (Recursos e Canais) -->
+  <tr>
+    <td colspan="2">
+      <strong>🛠️ Recursos Chave</strong><br><br>
+      • Base de dados georreferenciada íntegra<br>
+      • Servidores em nuvem para armazenamento dos dados<br>
+      • Equipe DEV, Negócios e Especialistas da Defesa Civil<br>
+      • Repositório com código-fonte no GitLab
+    </td>
+    <td colspan="2">
+      <strong>🚚 Canais</strong><br><br>
+      • WebApp responsivo<br>
+      • Projeto deployado no Git Pages<br>
+      • Documentação completa no arquivo wad.md no repositório
+    </td>
+  </tr>
+  <!-- Linha Inferior (Financeiro dividido perfeitamente ao meio) -->
+  <tr>
+    <td colspan="5" width="50%">
+      <strong>💰 Estrutura de Custos</strong><br><br>
+      • Servidor de deploy do sistema<br>
+      • Servidor de base de dados com suporte georreferenciado
+    </td>
+    <td colspan="5" width="50%">
+      <strong>💳 Fontes de Receita</strong><br><br>
+      • Valor social (projeto sem fins lucrativos, voltado à Defesa Civil)
+    </td>
+  </tr>
+</table>
+
 ## 6.6. Estratégia de Marketing
 
 *a) Produto/Serviço (até 200 palavras)*
