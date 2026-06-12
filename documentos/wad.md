@@ -559,17 +559,23 @@ O fluxo principal do sistema segue a ordem: `server.ts` inicializa a aplicação
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
-<div align="center">
-    <p>Figura: Diagrama de Classe Arquitetural - Bootstrap e Express</p>
-    <img src="outros/diagramas_arquitetura/diagramaArquitetura-Btstrp&Expr.png">
-    <p>Feito pela própria equipe (2026)</p>
-</div>
+Esta imagem apresenta a visão macro e completa da arquitetura do backend. Ela ilustra o fluxo de ponta a ponta, demonstrando como todas as camadas do sistema se interconectam. O fluxo começa na inicialização da aplicação, passa pela recepção das requisições HTTP, segue pela validação de dados, orquestração das regras de negócio e, finalmente, chega à persistência dos dados no banco. Essa visão é fundamental para entender a separação de responsabilidades (Separation of Concerns) e a modularidade da aplicação.
 
 <div align="center">
     <p>Figura: Diagrama de Classe Arquitetural - Bootstrap e Express</p>
     <img src="outros/diagramas_arquitetura/diagramaArquitetura-Btstrp&Expr.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
+
+Este recorte foca na porta de entrada da aplicação. A camada de Bootstrap (geralmente arquivos como server.ts e app.ts) é responsável por configurar o servidor, aplicar os middlewares essenciais (como tratamento de JSON e CORS) e levantar o serviço. Em conjunto, a camada do Express (Rotas e Controllers) atua interceptando as requisições HTTP recebidas do cliente (frontend), extraindo os parâmetros e o corpo da requisição, e repassando o fluxo para as camadas internas de processamento, sem carregar lógica de negócio.
+
+<div align="center">
+    <p>Figura: Diagrama de Classe Arquitetural - Bootstrap e Express</p>
+    <img src="outros/diagramas_arquitetura/diagramaArquitetura-Btstrp&Expr.png">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
+Este diagrama destaca a camada de Modelos (Models), que representa as entidades fundamentais do domínio da aplicação (como Pessoa, Moradia, Família, etc.). No contexto do projeto, os models atuam definindo os tipos, interfaces e a estrutura dos dados (contratos de dados) que circulam pelo sistema. Eles garantem que todas as outras camadas saibam exatamente qual é o formato correto dos objetos com os quais estão lidando, garantindo a consistência das informações.
 
 <div align="center">
     <p>Figura: Diagrama de Classe Arquitetural - Models</p>
@@ -577,17 +583,23 @@ O fluxo principal do sistema segue a ordem: `server.ts` inicializa a aplicação
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
+Este diagrama destaca a camada de Modelos (Models), que representa as entidades fundamentais do domínio da aplicação (como Pessoa, Moradia, Família, etc.). No contexto do projeto, os models atuam definindo os tipos, interfaces e a estrutura dos dados (contratos de dados) que circulam pelo sistema. Eles garantem que todas as outras camadas saibam exatamente qual é o formato correto dos objetos com os quais estão lidando, garantindo a consistência das informações.
+
 <div align="center">
     <p>Figura: Diagrama de Classe Arquitetural - Validations</p>
     <img src="outros/diagramas_arquitetura/diagramaArquitetura-Validations.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
+A seção de Validations (Validações) e DTOs (Data Transfer Objects) é a barreira de segurança e consistência dos dados. Antes que a requisição chegue ao núcleo da aplicação (os Services), esta camada verifica se as informações enviadas pelo usuário seguem as regras esperadas (por exemplo, se campos obrigatórios foram preenchidos, se o CPF tem o formato correto, etc.). Se os dados forem inválidos, a requisição é barrada aqui e um erro claro é retornado, poupando processamento e evitando inconsistências no banco de dados.
+
 <div align="center">
     <p>Figura: Diagrama de Classe Arquitetural - Repositories e Service</p>
     <img src="outros/diagramas_arquitetura/diagramaArquitetura-Repo&Serv.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
+
+Este recorte exibe o coração da aplicação, onde a lógica e o armazenamento operam em conjunto. A camada de Services é responsável por centralizar as regras de negócio: ela orquestra validações complexas, regras de vinculação (ex: atrelar uma pessoa a uma moradia) e transações. Para buscar ou salvar essas informações, os Services não acessam o banco diretamente; eles delegam essa tarefa para os Repositories. A camada de Repositórios abstrai a comunicação direta com o banco de dados (PostgreSQL/Supabase), contendo as queries e isolando a infraestrutura de dados da lógica central.
 
 Documento disponível do diagrama para navegação e aprofundamento do entendimento: [diagramaArquitetura.md](diagramaArquitetura.md)
 
