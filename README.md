@@ -6,7 +6,7 @@
 
 # Observação: 
 
-O documento README.md do projeto ainda aguarda as últimas finalizações da sprint 5 para conclusão definitiva.
+O documento README.md do projeto ainda aguarda as últimas finalizações da sprint 5 para conclusão definitiva do documento.
 
 # Integrantes: 
 

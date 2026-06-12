@@ -562,10 +562,13 @@ Matriz de cobertura que demonstra quais RN (Regras de Negócio) e endpoints impl
 ---
 
 ## 3.2. Arquitetura (sprints 1 a 5)
+
 A arquitetura projetada para o sistema é, em suma, baseada na Arquitetura de Camadas (Layered Architecture), porém com a aplicação de: Arquitetura de Seis Camadas (6-Tier Architecture) com base em princípios SOLID e de separação de conceitos (Separation of Concerns). Dividindo a aplicação em componentes especializados e com responsabilidades muito bem definidas.
 Assim, fornece um código testável, escalável e de alta manutenibilidade, permitindo que as regras de negócio fiquem isoladas de detalhes de infraestrutura (como o banco de dados) e da interface do usuário.
 
 ### 3.2.1. Diagrama de Arquitetura (sprints 3 e 4)
+
+O diagrama abaixo apresenta uma visão simplificada da estrutura de pastas do backend. Ele mostra como o código está organizado por responsabilidade, separando inicialização da aplicação, rotas, controllers, services, repositories, DTOs, models, validações, banco de dados, storage, views, arquivos públicos, erros e testes.
 
 ```
 src/
@@ -591,12 +594,59 @@ src/
 
 ```
 
+O diagrama de classe arquitetural detalha a organização interna da aplicação a partir das principais camadas do backend. Ele apresenta a inicialização da aplicação em `server.ts` e `app.ts`, a camada de rotas responsável por expor os endpoints HTTP, os controllers que recebem e tratam as requisições, os DTOs e validações que padronizam os dados de entrada e saída, os services que concentram as regras de negócio, os repositories que acessam o banco de dados e os models que representam as entidades de domínio.
+
+O fluxo principal do sistema segue a ordem: `server.ts` inicializa a aplicação, `app.ts` configura o Express e registra as rotas, as rotas encaminham as requisições para os controllers, os controllers normalizam e validam os dados antes de chamar os services, os services executam as regras de negócio e orquestram os repositories, e os repositories realizam as operações de persistência no PostgreSQL. Elementos como `Infrastructure`, `Validations`, `Errors`, `Storage`, `Views`, `Public` e `Tests` aparecem no diagrama como apoios transversais à aplicação.
+
 <div align="center">
-    <p>Figura: Diagrama de Classe Arquitetural</p>
-    <img src="outros/diagrama-classe-arquitetural.drawio.png">
+    <p>Figura: Diagrama de Classe Arquitetural - Ampliado</p>
+    <img src="outros/diagramas_arquitetura/diagramaArquitetura-Ampliado.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
+Esta imagem apresenta a visão macro e completa da arquitetura do backend. Ela ilustra o fluxo de ponta a ponta, demonstrando como todas as camadas do sistema se interconectam. O fluxo começa na inicialização da aplicação, passa pela recepção das requisições HTTP, segue pela validação de dados, orquestração das regras de negócio e, finalmente, chega à persistência dos dados no banco. Essa visão é fundamental para entender a separação de responsabilidades (Separation of Concerns) e a modularidade da aplicação.
+
+<div align="center">
+    <p>Figura: Diagrama de Classe Arquitetural - Bootstrap e Express</p>
+    <img src="outros/diagramas_arquitetura/diagramaArquitetura-Btstrp&Expr.png">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
+Este recorte foca na porta de entrada da aplicação. A camada de Bootstrap (geralmente arquivos como server.ts e app.ts) é responsável por configurar o servidor, aplicar os middlewares essenciais (como tratamento de JSON e CORS) e levantar o serviço. Em conjunto, a camada do Express (Rotas e Controllers) atua interceptando as requisições HTTP recebidas do cliente (frontend), extraindo os parâmetros e o corpo da requisição, e repassando o fluxo para as camadas internas de processamento, sem carregar lógica de negócio.
+
+<div align="center">
+    <p>Figura: Diagrama de Classe Arquitetural - Bootstrap e Express</p>
+    <img src="outros/diagramas_arquitetura/diagramaArquitetura-Btstrp&Expr.png">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
+Este diagrama destaca a camada de Modelos (Models), que representa as entidades fundamentais do domínio da aplicação (como Pessoa, Moradia, Família, etc.). No contexto do projeto, os models atuam definindo os tipos, interfaces e a estrutura dos dados (contratos de dados) que circulam pelo sistema. Eles garantem que todas as outras camadas saibam exatamente qual é o formato correto dos objetos com os quais estão lidando, garantindo a consistência das informações.
+
+<div align="center">
+    <p>Figura: Diagrama de Classe Arquitetural - Models</p>
+    <img src="outros/diagramas_arquitetura/diagramaArquitetura-Models.png">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
+Este diagrama destaca a camada de Modelos (Models), que representa as entidades fundamentais do domínio da aplicação (como Pessoa, Moradia, Família, etc.). No contexto do projeto, os models atuam definindo os tipos, interfaces e a estrutura dos dados (contratos de dados) que circulam pelo sistema. Eles garantem que todas as outras camadas saibam exatamente qual é o formato correto dos objetos com os quais estão lidando, garantindo a consistência das informações.
+
+<div align="center">
+    <p>Figura: Diagrama de Classe Arquitetural - Validations</p>
+    <img src="outros/diagramas_arquitetura/diagramaArquitetura-Validations.png">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
+A seção de Validations (Validações) e DTOs (Data Transfer Objects) é a barreira de segurança e consistência dos dados. Antes que a requisição chegue ao núcleo da aplicação (os Services), esta camada verifica se as informações enviadas pelo usuário seguem as regras esperadas (por exemplo, se campos obrigatórios foram preenchidos, se o CPF tem o formato correto, etc.). Se os dados forem inválidos, a requisição é barrada aqui e um erro claro é retornado, poupando processamento e evitando inconsistências no banco de dados.
+
+<div align="center">
+    <p>Figura: Diagrama de Classe Arquitetural - Repositories e Service</p>
+    <img src="outros/diagramas_arquitetura/diagramaArquitetura-Repo&Serv.png">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
+Este recorte exibe o coração da aplicação, onde a lógica e o armazenamento operam em conjunto. A camada de Services é responsável por centralizar as regras de negócio: ela orquestra validações complexas, regras de vinculação (ex: atrelar uma pessoa a uma moradia) e transações. Para buscar ou salvar essas informações, os Services não acessam o banco diretamente; eles delegam essa tarefa para os Repositories. A camada de Repositórios abstrai a comunicação direta com o banco de dados (PostgreSQL/Supabase), contendo as queries e isolando a infraestrutura de dados da lógica central.
+
+Documento disponível do diagrama para navegação e aprofundamento do entendimento: [diagramaArquitetura.md](diagramaArquitetura.md)
 
 ### 3.2.2. Diagrama de Casos de Uso (sprint 1)
 
@@ -2097,23 +2147,34 @@ A Matriz de Rastreabilidade (RTM - Requirements Traceability Matrix) consolida, 
 
 | # | Persona | US | RF | RN | Endpoint | Método | Tela | Casos de Teste | Evidência |
 |---|---------|----|----|-----|----------|--------|------|----------------|-----------|
-| 1 | Agente de Campo | US01 | RF001 — Cadastro Sociodemográfico e Vínculos | RN01 | `/api/pessoas`<br>`/api/responsaveis`<br>`/api/familias`<br>`/api/familias/nucleo`<br>`/api/familias/{id_familia}/pessoas` | `POST` | Cadastro → Responsável, Moradores, Família | CT01: Pessoa criada com sucesso em `/api/pessoas` (`201`)<br>CT02: Responsável criado com CPF obrigatório em `/api/responsaveis` (`201`)<br>CT03: Família criada em `/api/familias` (`201`)<br>CT04: Núcleo familiar cadastrado em `/api/familias/nucleo` com pessoas vinculadas (`201`)<br>CT05: Pessoa já vinculada à família retorna conflito (`409`)<br>CT06: Campos obrigatórios ausentes retornam `422` | Print da tela de cadastro; logs das respostas `201`; relatório de cobertura dos testes de cadastro |
-| 2 | Agente de Campo | US02, US05 | RF002 — Cadastro Estrutural de Moradias<br>RF003 — Georreferenciamento via GPS | RN04 | `/api/moradias`<br>`/api/familias/{id_familia}/moradias`<br>`/api/moradias/{id_moradia}/fotos/upload-url`<br>`/api/moradias/{id_moradia}/fotos`<br>`/api/cadastros-completos` | `POST` | Cadastro → Moradias | CT07: Moradia criada em `/api/moradias` com dados estruturais (`201`)<br>CT08: Moradia vinculada à família em `/api/familias/{id_familia}/moradias` (`201`)<br>CT09: URL de upload de foto de moradia gerada com sucesso (`200`)<br>CT10: Registro de foto da moradia criado após upload (`201`)<br>CT11: Foto de pessoa bloqueada conforme RN04 (`422`)<br>CT12: Cadastro completo transacional planejado em `/api/cadastros-completos` validado quando disponível | Print do formulário de moradia; log de vínculo família-moradia; evidência da URL de upload e da foto cadastrada |
-| 3 | Gestor | US03 | RF004 — Visualização em Mapa Georreferenciado | — | `/api/moradias`<br>`/api/moradias/mapa` | `GET` | Mapa | CT13: `/api/moradias?status=Ativa` retorna somente moradias ativas (`200`)<br>CT14: Endpoint planejado `/api/moradias/mapa` retorna marcadores com coordenadas válidas (`200`)<br>CT15: Moradias arquivadas ou inativas não aparecem na visão operacional do mapa<br>CT16: Lista vazia retorna `200` sem erro | Print do mapa com marcadores; payload da API com coordenadas; evidência de ausência de moradias inativas |
-| 4 | Gestor | US04 | RF005 — Consulta Integrada de Moradia e Moradores | RN01, RN05 | `/api/moradias/{id_moradia}`<br>`/api/moradias/{id_moradia}/detalhes`<br>`/api/moradias/{id_moradia}/consulta-integrada`<br>`/api/moradias/{id_moradia}/familias/historico` | `GET` | Consulta → Resultado da Busca | CT17: Moradia retornada por ID com dados estruturais (`200`)<br>CT18: Detalhes da moradia retornam localização e ocupantes (`200`)<br>CT19: Histórico de famílias da moradia retorna ocupações com `data_entrada` e `data_saida` (`200`)<br>CT20: Consulta integrada planejada retorna moradia, responsável, moradores e pets<br>CT21: Flag de risco crítico aparece quando a condição da RN05 for satisfeita<br>CT22: Moradia inexistente retorna `404` | Print da ficha detalhada; log da resposta da API; evidência da flag de risco quando aplicável |
-| 5 | Gestor | US06 | RF006 — Filtros Avançados de Moradias | — | `/api/moradias`<br>`/api/pessoas/busca`<br>`/api/pessoas` | `GET` | Consulta / Mapa | CT23: Filtro `status=Ativa` em `/api/moradias` retorna apenas moradias correspondentes (`200`)<br>CT24: Busca textual em `/api/pessoas/busca?q=Maria` retorna pessoas compatíveis (`200`)<br>CT25: Listagem de pessoas retorna registros ativos para consulta gerencial (`200`)<br>CT26: Busca sem resultados retorna array vazio sem erro<br>CT27: Nenhum dado fora do filtro selecionado aparece na resposta | Print dos resultados filtrados; payload dos endpoints de busca; evidência de ausência de registros fora do filtro |
-| 6 | Gestor | US06 | RF006 — Exportação de Moradias Filtradas | — | `/api/moradias/exportar` | `GET` | Consulta | CT28: Exportação planejada gera arquivo CSV ou PDF com headers corretos<br>CT29: Filtros aplicados na exportação refletem os mesmos filtros da listagem<br>CT30: Formato inválido retorna `400`<br>CT31: Usuário sem autenticação recebe `401` | Arquivo exportado como evidência; print do download; log da resposta HTTP |
-| 7 | Agente de Campo | US07 | RF007 — Cadastro de Animais de Estimação | — | `/api/pets`<br>`/api/familias/{id_familia}/pets` | `POST` | Cadastro → Pets | CT32: Pet criado em `/api/pets` com `tipo_pet` obrigatório (`201`)<br>CT33: Pet criado diretamente na família em `/api/familias/{id_familia}/pets` (`201`)<br>CT34: `tipo_pet` ausente retorna `422`<br>CT35: Família inexistente retorna `404` | Print do cadastro de pet; log de inserção no banco; payload da resposta `201` |
-| 8 | Agente de Campo e Gestor | US07 | RF007 — Consulta e Atualização de Pets | — | `/api/pets`<br>`/api/pets/{id_pet}`<br>`/api/familias/{id_familia}/pets` | `GET` / `PUT` | Consulta / Ficha de Emergência / Cadastro → Pets | CT36: Lista geral de pets retorna registros cadastrados (`200`)<br>CT37: Pet por ID retorna dados completos (`200`)<br>CT38: Pets da família aparecem na ficha de emergência (`200`)<br>CT39: Atualização de pet em `/api/pets/{id_pet}` retorna sucesso (`200`)<br>CT40: Pet inexistente retorna `404` | Print da ficha de emergência; log de consulta e atualização; evidência do pet atualizado |
-| 9 | Agente de Campo e Gestor | US07 | RF007 — Fotos de Pets | — | `/api/pets/{id_pet}/fotos`<br>`/api/pets/{id_pet}/fotos/upload-url`<br>`/api/pets/{id_pet}/fotos/{id_foto}` | `GET` / `POST` / `DELETE` | Cadastro → Pets / Ficha de Emergência | CT41: Fotos do pet são listadas com sucesso (`200`)<br>CT42: URL de upload para foto do pet é gerada (`200`)<br>CT43: Registro de foto do pet é criado (`201`)<br>CT44: Remoção de foto do pet retorna sucesso (`200`)<br>CT45: Pet ou foto inexistente retorna `404` | Print da seção de fotos do pet; evidência da URL de upload; log de remoção |
-| 10 | Gestor | US08 | RF008 — Mapa de Calor | RN01 | `/api/indicadores/mapa-calor` | `GET` | Mapa | CT46: Endpoint planejado retorna dados agregados para o layer de calor (`200`)<br>CT47: Filtro por grupo prioritário retorna intensidade coerente com os registros<br>CT48: Agrupamentos de coordenadas próximas geram maior intensidade visual<br>CT49: Array vazio retorna `200` sem erro | Print do mapa de calor; payload agregado; evidência de renderização com filtros |
-| 11 | Gestor | US09 | RF009 — Arquivamento de Moradias | RN03 | `/api/moradias/{id_moradia}`<br>`/api/moradias/{id_moradia}/status`<br>`/api/moradias/{id_moradia}/fotos/{id_foto}` | `DELETE` / `PATCH` | Consulta / Mapa | CT50: Remoção de moradia implementada retorna sucesso (`200`)<br>CT51: Atualização planejada de status arquiva moradia com motivo obrigatório (`200`)<br>CT52: Moradia inexistente retorna `404`<br>CT53: Usuário sem permissão recebe `403`<br>CT54: Foto vinculada à moradia pode ser removida sem apagar o restante da ficha (`200`) | Print do histórico inativo; log da alteração de status; payload de erro `403` quando aplicável |
-| 12 | Gestor | US09, US14 | RF009 — Realocação de Família | RN03 | `/api/familias/{id_familia}/moradias`<br>`/api/familias/{id_familia}/moradias/historico`<br>`/api/familias/{id_familia}/moradias/{id_moradia}`<br>`/api/familias/{id_familia}/realocacoes` | `GET` / `POST` / `DELETE` | Consulta | CT55: Moradias da família são listadas com sucesso (`200`)<br>CT56: Histórico de moradias da família exibe vínculos ativos e encerrados (`200`)<br>CT57: Nova moradia é vinculada à família com `data_entrada` (`201`)<br>CT58: Desvinculação de moradia retorna sucesso (`200`)<br>CT59: Endpoint planejado de realocação cria novo vínculo e encerra o anterior<br>CT60: Conflito de ocupação retorna `409` | Log do `historico_ocupacao`; print de confirmação da realocação; payload de conflito |
-| 13 | Gestor | US10 | RF010 — Arquivamento de Moradores Falecidos | RN03 | `/api/pessoas/{id_cidadao}`<br>`/api/pessoas/inativas`<br>`/api/responsaveis/{id_responsavel}`<br>`/api/familias/{id_familia}`<br>`/api/cidadaos/{id_cidadao}/arquivar` | `DELETE` / `GET` / `PATCH` | Consulta | CT61: Pessoa removida ou inativada retorna sucesso (`200`)<br>CT62: Pessoas inativas são listadas em `/api/pessoas/inativas` (`200`)<br>CT63: Responsável removido exige validação de integridade familiar conforme regra vigente<br>CT64: Família removida por gestor retorna sucesso quando permitido (`200`)<br>CT65: Arquivamento planejado de cidadão preserva histórico e exige data de falecimento<br>CT66: Recurso inexistente retorna `404` | Print da listagem de pessoas inativas; log do arquivamento; evidência de histórico preservado |
-| 14 | Gestor | US11 | RF011 — Alerta Automático de Recadastro (12 meses) | RN02 | `/api/indicadores/recadastro` | `GET` | Mapa / Painel | CT67: Endpoint planejado retorna contadores de cadastros atualizados e desatualizados (`200`)<br>CT68: Ficha com mais de 365 dias sem atualização entra no contador de desatualizados<br>CT69: Após atualização da ficha, contador de desatualizados é reduzido na próxima consulta<br>CT70: Usuário não autenticado recebe `401` | Print do painel com indicador; log da consulta; evidência antes/depois da atualização |
-| 15 | Agente de Campo | US12 | RF012 — Atualização Anual de Dados | RN01, RN02, RN04 | `/api/pessoas/{id_cidadao}`<br>`/api/responsaveis/{id_responsavel}`<br>`/api/moradias/{id_moradia}`<br>`/api/fotos/{id_foto}`<br>`/api/familias/{id_familia}/cadastro-completo` | `PUT` / `GET` | Cadastro (edição) | CT71: Pessoa atualizada com sucesso (`200`)<br>CT72: Responsável atualizado com sucesso (`200`)<br>CT73: Moradia atualizada com sucesso (`200`)<br>CT74: Foto da moradia atualizada sem violar RN04 (`200`)<br>CT75: Cadastro completo planejado é consultado para revisão anual (`200`)<br>CT76: Atualização planejada do cadastro completo limpa alerta de recadastro | Print antes/depois no painel; log de atualização; evidência de alteração da data de atualização |
-| 16 | Gestor | US13 | Regra de responsável obrigatório por família | RN03 | `/api/responsaveis`<br>`/api/responsaveis/{id_responsavel}`<br>`/api/familias/{id_familia}/responsavel` | `GET` / `POST` / `PUT` | Consulta | CT77: Responsáveis são listados para seleção (`200`)<br>CT78: Responsável por ID retorna dados cadastrais (`200`)<br>CT79: Novo responsável é criado quando necessário (`201`)<br>CT80: Dados do responsável são atualizados com sucesso (`200`)<br>CT81: Endpoint planejado define ou substitui responsável familiar (`200`)<br>CT82: CPF ou email duplicado retorna `409` | Log de atualização no banco; print de confirmação; payload de conflito quando aplicável |
-| 17 | Gestor | US04, US05 | RF004 — Visualização em Mapa Georreferenciado<br>RF005 — Consulta Integrada de Moradia e Moradores | RN04 | `/api/fotos`<br>`/api/fotos/{id_foto}`<br>`/api/fotos/{id_foto}/signed-url`<br>`/api/moradias/{id_moradia}/fotos` | `GET` / `PUT` / `DELETE` | Consulta / Mapa / Ficha da Moradia | CT83: Fotos cadastradas são listadas com sucesso (`200`)<br>CT84: Foto por ID retorna tipo e URL (`200`)<br>CT85: URL assinada é gerada para acesso seguro à foto (`200`)<br>CT86: Fotos da moradia são listadas na ficha (`200`)<br>CT87: Atualização de foto retorna sucesso (`200`)<br>CT88: Remoção de foto retorna sucesso sem remover a moradia (`200`) | Print da galeria da moradia; evidência da URL assinada; log de atualização ou remoção |
+| 1 | Agente de Campo | US01 | RF001 — Cadastro Sociodemográfico e Vínculos | RN01, RN02, RN03, RN04 | `/api/pessoas`<br>`/api/responsaveis`<br>`/api/familias`<br>`/api/familias/nucleo`<br>`/api/familias/:id/pessoas` | `POST` | Cadastro → Responsável, Moradores, Família | CT01: Pessoa criada com sucesso em `/api/pessoas` (`201`)<br>CT02: Responsável criado com dados obrigatórios em `/api/responsaveis` (`201`)<br>CT03: Família criada em `/api/familias` (`201`)<br>CT04: Núcleo familiar cadastrado em `/api/familias/nucleo` com pessoas vinculadas (`201`)<br>CT05: Pessoa já vinculada à família retorna conflito (`409`)<br>CT06: Campos obrigatórios ausentes retornam `400` | Print da tela de cadastro; logs das respostas `201`; relatório de cobertura dos testes de cadastro |
+| 2 | Agente de Campo | US02, US06 | RF002 — Cadastro Estrutural de Moradias<br>RF003 — Georreferenciamento via GPS | RN05, RN07, RN08 | `/api/moradias`<br>`/api/familias/:id/moradias`<br>`/api/moradias/:id/fotos/upload-url`<br>`/api/moradias/:id/fotos` | `POST` | Cadastro → Moradias | CT07: Moradia criada em `/api/moradias` com dados estruturais e localização (`201`)<br>CT08: Moradia vinculada à família em `/api/familias/:id/moradias` (`201`)<br>CT09: URL de upload de foto de moradia gerada com sucesso (`201`)<br>CT10: Registro de foto da moradia criado após upload (`201`)<br>CT11: Foto de pessoa bloqueada conforme RN07 (`400`) | Print do formulário de moradia; log de vínculo família-moradia; evidência da URL de upload e da foto cadastrada |
+| 3 | Gestor | US03 | RF004 — Visualização em Mapa Georreferenciado | RN08, RN11 | `/api/moradias` | `GET` | Mapa | CT13: `/api/moradias` retorna moradias para alimentar a visão operacional do mapa (`200`)<br>CT14: Moradias com coordenadas válidas são renderizadas como marcadores na interface<br>CT15: Moradias arquivadas ou inativas não aparecem na visão operacional do mapa<br>CT16: Lista vazia retorna `200` sem erro | Print do mapa com marcadores; payload da API com coordenadas; evidência de ausência de moradias inativas |
+| 4 | Gestor | US04 | RF005 — Consulta Integrada de Moradia e Moradores | RN08, RN10, RN11 | `/api/moradias/:id`<br>`/api/moradias/:id/detalhes`<br>`/api/moradias/:id/familias/historico` | `GET` | Consulta → Resultado da Busca | CT17: Moradia retornada por ID com dados estruturais (`200`)<br>CT18: Detalhes da moradia retornam localização, famílias, pessoas, pets e fotos (`200`)<br>CT19: Histórico de famílias da moradia retorna ocupações com `data_entrada` e `data_saida` (`200`)<br>CT20: Consulta integrada exibe moradia, responsável, moradores e pets a partir dos endpoints implementados<br>CT21: Flag de cadastro incompleto aparece quando a família não possui moradia vinculada<br>CT22: Moradia inexistente retorna `404` | Print da ficha detalhada; log da resposta da API; evidência da flag de cadastro incompleto quando aplicável |
+| 5 | Gestor | US04 | RF006 — Filtros Avançados de Moradias | RN11 | `/api/moradias`<br>`/api/pessoas` | `GET` | Consulta / Mapa | CT23: Filtros disponíveis em `/api/moradias` retornam apenas moradias correspondentes (`200`)<br>CT24: Listagem de pessoas retorna registros para consulta gerencial (`200`)<br>CT25: Listagem de moradias retorna registros ativos para consulta gerencial (`200`)<br>CT26: Busca sem resultados retorna array vazio sem erro<br>CT27: Nenhum dado fora do filtro selecionado aparece na resposta | Print dos resultados filtrados; payload dos endpoints de busca; evidência de ausência de registros fora do filtro |
+| 6 | Gestor | US04 | RF016 — Busca de Pessoas / Responsáveis | RN11 | `/api/pessoas/busca`<br>`/api/pessoas`<br>`/api/responsaveis` | `GET` | Consulta | CT28: Busca por nome em `/api/pessoas/busca?nome=Maria&escopo=ativas` retorna pessoas compatíveis (`200`)<br>CT29: Busca por CPF, e-mail ou telefone retorna pessoas compatíveis (`200`)<br>CT30: Requisição sem filtro obrigatório retorna `400`<br>CT31: Busca sem resultados retorna array vazio sem erro | Print dos resultados filtrados; payload dos endpoints de busca; log da resposta HTTP |
+| 7 | Agente de Campo | US07 | RF007 — Cadastro de Animais de Estimação | RN12 | `/api/pets`<br>`/api/familias/:id/pets` | `POST` | Cadastro → Pets | CT32: Pet criado em `/api/pets` com `tipo` obrigatório (`201`)<br>CT33: Pet criado diretamente na família em `/api/familias/:id/pets` (`201`)<br>CT34: `tipo` ausente retorna `400`<br>CT35: Família inexistente retorna `404` | Print do cadastro de pet; log de inserção no banco; payload da resposta `201` |
+| 8 | Agente de Campo e Gestor | US07 | RF007 — Consulta e Atualização de Pets | RN12 | `/api/pets`<br>`/api/pets/:id`<br>`/api/familias/:id/pets` | `GET` / `PUT` | Consulta / Ficha de Emergência / Cadastro → Pets | CT36: Lista geral de pets retorna registros cadastrados (`200`)<br>CT37: Pet por ID retorna dados completos (`200`)<br>CT38: Pets da família aparecem na ficha de emergência (`200`)<br>CT39: Atualização de pet em `/api/pets/:id` retorna sucesso (`200`)<br>CT40: Pet inexistente retorna `404` | Print da ficha de emergência; log de consulta e atualização; evidência do pet atualizado |
+| 9 | Agente de Campo e Gestor | US07 | RF007 — Fotos de Pets<br>RF018 — Armazenamento Seguro de Fotos | RN12 | `/api/pets/:id/fotos`<br>`/api/pets/:id/fotos/upload-url`<br>`/api/pets/:id/fotos/:fotoId` | `GET` / `POST` / `DELETE` | Cadastro → Pets / Ficha de Emergência | CT41: Fotos do pet são listadas com sucesso (`200`)<br>CT42: URL de upload para foto do pet é gerada (`201`)<br>CT43: Registro de foto do pet é criado (`201`)<br>CT44: Remoção de foto do pet retorna sucesso (`204`)<br>CT45: Pet ou foto inexistente retorna `404` | Print da seção de fotos do pet; evidência da URL de upload; log de remoção |
+| 10 | Gestor | — | RF008 — Mapa de Calor | RN04, RN11 | — (planejado — não executável na entrega atual) | — | Mapa | CT46: Planejado — não executável na entrega atual; endpoint de mapa de calor ainda não implementado<br>CT47: Filtro por grupo prioritário deve retornar intensidade coerente com os registros quando implementado<br>CT48: Agrupamentos de coordenadas próximas devem gerar maior intensidade visual quando implementado<br>CT49: Array vazio deve retornar `200` sem erro quando houver endpoint implementado | Print do mapa de calor; payload agregado; evidência de renderização com filtros |
+| 11 | Gestor | US08 | RF009 — Arquivamento de Moradias | RN06 | `/api/moradias/:id` | `DELETE` | Consulta / Mapa | CT50: Remoção lógica de moradia implementada retorna sucesso (`204`)<br>CT51: Moradia arquivada deixa de aparecer na busca e no mapa operacional<br>CT52: Moradia inexistente retorna `404`<br>CT53: ID inválido retorna `400`<br>CT54: Histórico da moradia permanece preservado após o arquivamento | Print do histórico inativo; log da alteração de status; payload de erro `400` quando aplicável |
+| 12 | Gestor | US01 | RF014 — Gestão de Família e Vínculos | RN01, RN03, RN06 | `/api/familias/:id/moradias`<br>`/api/familias/:id/moradias/historico`<br>`/api/familias/:id/moradias/:moradiaId` | `GET` / `POST` / `DELETE` | Consulta | CT55: Moradias da família são listadas com sucesso (`200`)<br>CT56: Histórico de moradias da família exibe vínculos ativos e encerrados (`200`)<br>CT57: Nova moradia é vinculada à família com `data_entrada` (`201`)<br>CT58: Desvinculação de moradia retorna sucesso (`200`)<br>CT59: Vínculo encerrado preserva histórico de ocupação<br>CT60: Conflito de ocupação retorna `409` | Log do `historico_ocupacao`; print de confirmação da realocação; payload de conflito |
+| 13 | Gestor | US09 | RF010 — Arquivamento de Moradores | RN06 | `/api/pessoas/:id`<br>`/api/pessoas/inativas`<br>`/api/responsaveis/:id`<br>`/api/familias/:id` | `DELETE` / `GET` | Consulta | CT61: Pessoa removida ou inativada retorna sucesso (`204`)<br>CT62: Pessoas inativas são listadas em `/api/pessoas/inativas` (`200`)<br>CT63: Responsável removido exige validação de integridade familiar conforme regra vigente<br>CT64: Família removida por gestor retorna sucesso quando permitido (`204`)<br>CT65: Arquivamento de cidadão preserva histórico sem exclusão física<br>CT66: Recurso inexistente retorna `404` | Print da listagem de pessoas inativas; log do arquivamento; evidência de histórico preservado |
+| 14 | Gestor | US10 | RF011 — Alerta Automático de Recadastro (12 meses) | RN09, RN10 | — (planejado — não executável na entrega atual) | — | Mapa / Painel | CT67: Planejado — não executável na entrega atual; endpoint de recadastro ainda não implementado<br>CT68: Ficha com mais de 365 dias sem atualização deve entrar no contador de desatualizados quando o mecanismo existir<br>CT69: Após atualização da ficha, contador de desatualizados deve ser reduzido na próxima consulta<br>CT70: Requisição inválida deve seguir o padrão de erro do backend atual (`400` ou `500`, conforme causa) | Print do painel com indicador; log da consulta; evidência antes/depois da atualização |
+| 15 | Agente de Campo | US10 | RF012 — Atualização Anual de Dados | RN09, RN10 | `/api/pessoas/:id`<br>`/api/responsaveis/:id`<br>`/api/moradias/:id`<br>`/api/fotos/:id` | `PUT` | Cadastro (edição) | CT71: Pessoa atualizada com sucesso (`200`)<br>CT72: Responsável atualizado com sucesso (`200`)<br>CT73: Moradia atualizada com sucesso (`200`)<br>CT74: Foto da moradia atualizada sem violar RN07 (`200`)<br>CT75: Dados existentes são reabertos para revisão anual<br>CT76: Atualização do cadastro limpa alerta de recadastro quando a condição deixar de existir | Print antes/depois no painel; log de atualização; evidência de alteração da data de atualização |
+| 16 | Agente de Campo e Gestor | US05 | RF019 — Edição de Cadastro | RN05, RN10 | `/api/pessoas/:id`<br>`/api/responsaveis/:id`<br>`/api/moradias/:id` | `PUT` | Cadastro (edição) | CT77: Tela de edição abre cadastro já preenchido a partir da busca ou do mapa<br>CT78: Pessoa, responsável ou moradia são atualizados com sucesso (`200`)<br>CT79: Reposicionamento da localização da moradia é salvo conforme RN05<br>CT80: Indicador de cadastro incompleto é removido quando a condição deixa de existir | Print antes/depois da edição; log de atualização; evidência da limpeza do indicador quando aplicável |
+| 17 | Gestor | US11 | RF001 — Cadastro Sociodemográfico e Vínculos<br>RF014 — Gestão de Família e Vínculos | RN01, RN02 | `/api/responsaveis`<br>`/api/responsaveis/:id`<br>`/api/familias/:id/pessoas`<br>`/api/familias/:id/pessoas/:pessoaId` | `GET` / `POST` / `PUT` / `DELETE` | Consulta | CT81: Responsáveis são listados para seleção (`200`)<br>CT82: Responsável por ID retorna dados cadastrais (`200`)<br>CT83: Novo responsável é criado quando necessário (`201`)<br>CT84: Dados do responsável são atualizados com sucesso (`200`)<br>CT85: Definição ou substituição de responsável familiar preserva a regra de responsável único<br>CT86: CPF ou email duplicado retorna `409` quando a validação estiver ativa | Log de atualização no banco; print de confirmação; payload de conflito quando aplicável |
+| 18 | Gestor | US02, US07 | RF018 — Armazenamento Seguro de Fotos | RN07, RN12 | `/api/fotos`<br>`/api/fotos/:id`<br>`/api/fotos/:id/signed-url`<br>`/api/moradias/:id/fotos`<br>`/api/moradias/:id/fotos/upload-url`<br>`/api/moradias/:id/fotos/:fotoId` | `GET` / `POST` / `PUT` / `DELETE` | Consulta / Mapa / Ficha da Moradia | CT87: Fotos cadastradas são listadas com sucesso (`200`)<br>CT88: Foto por ID retorna URL e metadados (`200`)<br>CT89: URL assinada é gerada para acesso seguro à foto (`200`)<br>CT90: Fotos da moradia são listadas na ficha (`200`)<br>CT91: Atualização de foto retorna sucesso (`200`)<br>CT92: Remoção de foto retorna sucesso sem remover a moradia (`204`) | Print da galeria da moradia; evidência da URL assinada; log de atualização ou remoção |
+| 19 | Agente de Campo | US01, US02, US06, US07 | RF013 — Cadastro Completo da Família (Transacional) | RN01, RN02, RN03, RN05, RN07, RN12 | `/api/familias/nucleo` | `POST` | Cadastro → Responsável, Moradores, Família, Moradias e Pets | CT93: Núcleo familiar completo é cadastrado em `/api/familias/nucleo` (`201`)<br>CT94: Falha em etapa obrigatória impede persistência parcial do cadastro<br>CT95: Moradia, responsável, dependentes, pets e fotos são vinculados ao núcleo criado<br>CT96: Campos obrigatórios ausentes retornam `400` | Print da tela de cadastro; logs das respostas `201`; evidência dos vínculos criados no banco |
+| 20 | Agente de Campo e Gestor | — (requisito de produto sem US vinculada) | RF015 — Marcação Manual da Situação da Moradia | RN08 | `/api/moradias/:id`<br>`/api/moradias/:id/detalhes` | `PUT` / `GET` | Cadastro (edição) / Consulta / Mapa | CT97: Situação da moradia é atualizada manualmente em `/api/moradias/:id` (`200`)<br>CT98: Situação atualizada aparece na consulta detalhada da moradia (`200`)<br>CT99: Sistema registra a situação informada sem inferir risco automaticamente<br>CT100: Moradia inexistente retorna `404` | Print antes/depois da situação da moradia; log de atualização; evidência da situação exibida na consulta |
+| 21 | Agente de Campo e Gestor | US01, US04 | RF017 — Indicador de Cadastro Incompleto | RN01, RN03, RN10 | `/api/familias`<br>`/api/familias/:id`<br>`/api/moradias/:id/detalhes` | `GET` | Consulta → Resultado da Busca | CT101: Família sem moradia vinculada é exibida como cadastro incompleto<br>CT102: Consulta detalhada exibe a flag quando a família não possui moradia vinculada<br>CT103: Vincular moradia à família remove o indicador quando a condição deixa de existir<br>CT104: Família inexistente retorna `404` | Print da ficha detalhada; log da resposta da API; evidência da flag de cadastro incompleto antes/depois do vínculo |
+
+#### **Observações**
+
+Vale ressaltar que nas linhas 10 e 14, que referenciam os requisitos funcionais RF008 e RF011, respectivamente, está indicado que são itens planejados — não executáveis na entrega atual. Isso acontece porque, na definição de requisitos do sistema na seção 3.1, os RF008 e RF011 apresentam funcionalidades importantes para o sistema, mas que ainda não foram implementadas plenamente.
+
+Além disso, na linha 5 o requisito RF006 apresenta endpoints genéricos (`/api/moradias`
+`/api/pessoas`) por que a definição dos filtros exatos ainda não foi implementadas.
 
 ---
 
@@ -2513,6 +2574,8 @@ No Brasil, o contexto é especialmente favorável. O setor público é o maior c
 
 É nesse cenário que soluções como o GeoRisco encontram espaço: endereçando lacunas operacionais reais em municípios que carecem de sistemas digitais integrados para gestão de risco.
 
+Fontes (seção 9): (REF.4, REF.9, REF.10).
+
 ### 6.2.2 Tamanho e Crescimento de Mercado 
 
 O mercado relacionado ao GeoRisco Santo André está inserido no segmento de softwares de gestão de emergências, segurança pública e gerenciamento de crises, que apresenta forte expansão impulsionada pela digitalização dos serviços públicos, aumento da frequência de eventos climáticos extremos e necessidade de respostas mais rápidas e integradas.
@@ -2521,7 +2584,7 @@ O mercado global de **Emergency Management Software (software de gestão de emer
 
 Em uma visão mais ampla, o mercado global de **software para segurança pública**, que engloba plataformas de gestão de incidentes, monitoramento em tempo real e coordenação de emergências, movimentou cerca de US$ 11,48 bilhões em 2025 e possui previsão de atingir US$ 24,23 bilhões até 2034, com crescimento anual médio de 9,2%.
 
-Além disso, este mercado, diretamente relacionado à continuidade operacional e resposta a eventos críticos, foi avaliado em US$ 143,97 bilhões em 2025 e deverá alcançar US$ 310,12 bilhões em 2034, mantendo CAGR de 8,9%.
+Além disso, o mercado de softwares de gestão de emergências está diretamente relacionado à continuidade operacional e resposta a eventos críticos, foi avaliado em US$ 143,97 bilhões em 2025 e deverá alcançar US$ 310,12 bilhões em 2034, mantendo CAGR de 8,9%.
 
 Esses indicadores demonstram um **mercado em expansão consistente**, favorecido pelo aumento dos investimentos governamentais em resiliência urbana, proteção civil e gestão inteligente de riscos.
 
@@ -2557,6 +2620,7 @@ Dessa forma, concluiu-se que a aplicação está direcionada principalmente ao m
 Fontes (seção 9): (REF.14, REF.15, REF.16, REF.17, REF.18).
 
 ### 6.3.2. Perfil do Público-Alvo
+
 O público-alvo do GeoRisco é composto pelos profissionais da Defesa Civil de Santo André responsáveis pela coleta, gestão e análise de informações sobre moradores e áreas de risco do município.
 
 Os Agentes de Defesa Civil, que atuam em campo, são adultos com níveis de familiaridade com tecnologias digitais que variam de baixa a média. Sua rotina envolve visitas domiciliares, vistorias e coleta de dados em locais muitas vezes de difícil acesso e com limitações de informações. Seu comportamento é marcado pela necessidade de mobilidade, agilidade e adaptação a diferentes cenários. Entre suas principais necessidades estão o registro rápido e confiável das informações, a consulta e atualização de dados em campo. Suas principais dores incluem retrabalho, perda de informações, duplicidade de registros e dificuldades de localização de moradias.
@@ -2565,19 +2629,23 @@ Os Gestores Operacionais, por sua vez, atuam no planejamento e coordenação das
 
 Como expectativa comum, ambos os perfis buscam maior precisão, integridade e segurança dos dados, além de processos mais eficientes que apoiem respostas rápidas e assertivas em situações de risco.
 
+Fontes (seção 9): (REF.3, REF.4, REF.16, REF.17, REF.18, REF.19).
+
 ## 6.4. Posicionamento e Branding
 
-## 6.4.1 Proposta de Valor Única
+### 6.4.1 Proposta de Valor
 
-Oferecemos um sistema de gestão de famílias e moradias em área de risco para a prefeitura de Santo André, que precisa manusear de forma prática os dados dos cidadãos em vulnerabilidade, bem como visualizar esses dados de forma estratégica e sem a necessidade do uso de formulários em papel.
+O GeoRisco Santo André entrega valor ao permitir que a Defesa Civil registre, organize e consulte informações de famílias e moradias em áreas de risco de forma centralizada, georreferenciada e rastreável. A aplicação foi concebida para substituir formulários físicos, planilhas dispersas e registros fragmentados por uma base digital integrada, facilitando o trabalho dos agentes de campo e apoiando decisões operacionais da sede.
 
-## 6.4.2 Posicionamento e Branding
+Identificou-se que o principal ganho da solução está na transformação de dados territoriais e socioestruturais em informações acionáveis. Por meio do cadastro de moradores, responsáveis familiares, vulnerabilidades, pets, fotos e localização, torna-se possível visualizar onde estão as famílias expostas ao risco, quais grupos demandam prioridade e quais áreas exigem maior atenção em ações preventivas ou emergenciais.
 
-**Estratégia de Diferenciação**
+Dessa forma, a aplicação contribui para reduzir retrabalho, minimizar perda de informações, acelerar consultas e melhorar a alocação de recursos em situações críticas. Concluiu-se que o valor central do GeoRisco está em fortalecer a capacidade de resposta e planejamento da Defesa Civil, oferecendo uma ferramenta adequada à rotina pública municipal e orientada à proteção de populações vulneráveis.
+
+### 6.4.2 Posicionamento e Diferenciação
 
 A diferenciação do GeoRisco Santo André está em sua adaptação direta à rotina da Defesa Civil municipal, e não apenas na digitalização genérica de cadastros. Enquanto alternativas como planilhas, formulários isolados, sistemas nacionais ou ferramentas de mapa atendem partes do processo, o GeoRisco integra, em uma única aplicação, cadastro de moradias, famílias, moradores, pets, fotos, localização, histórico de ocupação, consulta e visualização territorial.
 
-Essa integração posiciona a solução como uma ferramenta operacional de gestão pública de risco, capaz de apoiar tanto o agente em campo quanto o gestor na sede. O diferencial está na rastreabilidade dos dados, na padronização das informações sensíveis e na leitura geográfica das vulnerabilidades, permitindo priorizar atendimentos, planejar evacuações e reduzir perdas de informação entre etapas.
+Essa integração posiciona a solução como uma ferramenta operacional de gestão pública de risco, capaz de apoiar tanto o agente em campo quanto o gestor na sede. O diferencial está na integração entre cadastro socioestrutural, localização geográfica, composição familiar, vulnerabilidades, pets, fotos, histórico de ocupação e consulta territorial em uma única aplicação. Enquanto ferramentas genéricas atendem apenas partes do processo, o GeoRisco foi pensado a partir da rotina da Defesa Civil de Santo André, com linguagem institucional, interface objetiva e aderência à LGPD.
 
 Por ser desenvolvida com base no contexto de Santo André e nas necessidades reais da Defesa Civil, a aplicação também se diferencia pela linguagem institucional, pela interface objetiva e pelo alinhamento à LGPD. Em vez de competir por apelo comercial, o GeoRisco se destaca pela legitimidade pública, pela aderência ao serviço essencial prestado e pela capacidade de transformar dados territoriais em decisões rápidas, seguras e justificáveis.
 
@@ -2599,7 +2667,6 @@ O GeoRisco Santo André é uma aplicação web voltada à gestão de populaçõe
 
 O principal benefício da aplicação é centralizar dados antes dispersos em processos manuais, planilhas ou registros fragmentados, aumentando a agilidade, a confiabilidade e a rastreabilidade das informações. Seu diferencial está na adequação ao contexto real da Defesa Civil de Santo André, com foco em tomada de decisão rápida, priorização de grupos vulneráveis, apoio à evacuação e melhoria da gestão de abrigos. Assim, o GeoRisco fortalece a capacidade preventiva e operacional do município diante de eventos climáticos extremos.
 
-
 ### 6.6.2. Preço 
 
 O modelo de precificação proposto é B2G (Business to Government), voltado à contratação por órgãos públicos municipais, sem cobrança direta dos cidadãos ou dos agentes que utilizam a aplicação. A solução pode ser implantada por meio de contratação institucional, contemplando custos relacionados à hospedagem, manutenção, suporte técnico e treinamento dos usuários.
@@ -2608,13 +2675,11 @@ Esse modelo é adequado porque a Defesa Civil presta um serviço público essenc
 
 Por se tratar de uma solução destinada ao setor público, não são definidos valores comerciais específicos nesta etapa. A precificação depende de fatores como porte do município, número de usuários, requisitos técnicos, disponibilidade orçamentária e processos de contratação pública. Dessa forma, a proposta prioriza a definição de um modelo de contratação sustentável e compatível com a realidade da administração pública.
 
-
 ### 6.6.3. Praça
 
 A distribuição do GeoRisco ocorrerá por canais digitais institucionais, com acesso seguro por navegador em celulares, tablets e computadores. A aplicação poderá ser disponibilizada em domínio oficial da Prefeitura ou da Defesa Civil, com perfis de permissão adequados às funções de agentes de campo, gestores e administradores. Dessa forma, o sistema atende tanto ao uso operacional em campo quanto à análise estratégica em ambiente de sede.
 
 A entrega da aplicação pode ser feita por infraestrutura em nuvem ou em ambiente tecnológico definido pelo município, garantindo disponibilidade, armazenamento centralizado e padronização dos dados. Para expansão, os canais de distribuição incluem parcerias com prefeituras, Defesa Civil estadual, consórcios intermunicipais, secretarias de meio ambiente, assistência social e tecnologia. Documentação técnica, manuais digitais, treinamentos online e APIs de integração podem apoiar a implantação em novos contextos, permitindo que a solução seja replicada para outros municípios com necessidades semelhantes.
-
 
 ### 6.6.4. Promoção
 
@@ -2625,7 +2690,9 @@ A divulgação também poderá ocorrer por canais institucionais da Prefeitura, 
 ---
 
 # <a name="c7"></a>7. Registro de atualizações (sprint 5)
+
 Início na sprint 2 pois não é possível realizar atualizações na sprint que foi iniciado o projeto;
+
 ### Sprint 2
 Tivemos alterações nas Personas (ambas), User Stories (todas), RF, RNF e RN. Dado que o escopo do projeto estava confuso para a equipe, para melhor seguimento do projeto foi necessária essa reformulação na documentação.
 
@@ -2686,6 +2753,7 @@ Tivemos alterações nas Personas (ambas), User Stories (todas), RF, RNF e RN. D
 
 18. INSTITUTO DE PESQUISAS TECNOLÓGICAS (IPT). Mapeamento e gerenciamento de áreas de risco de deslizamento e solapamento de margem no município de Santo André-SP. São Paulo, 27 mar. 2023. Disponível em: <https://ipt.br/2023/03/27/mapeamento-e-gerenciamento-de-areas-de-risco-de-deslizamento-e-solapamento-de-margem-no-municipio-de-santo-andre-sp/>. Acesso em: 9 jun. 2026.
 
+19. INSTITUTO BRASILEIRO DE GEOGRAFIA E ESTATÍSTICA (IBGE). População em áreas de risco no Brasil. Rio de Janeiro: IBGE, 2018. Disponível em: https://www.ibge.gov.br/geociencias/informacoes-ambientais/estudos-ambientais/21538-populacao-em-areas-de-risco-no-brasil.html. Acesso em: 12 jun. 2026.
 
 # <a name="c10"></a>Anexos
 
