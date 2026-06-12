@@ -2506,6 +2506,8 @@ No Brasil, o contexto é especialmente favorável. O setor público é o maior c
 
 É nesse cenário que soluções como o GeoRisco encontram espaço: endereçando lacunas operacionais reais em municípios que carecem de sistemas digitais integrados para gestão de risco.
 
+Fontes (seção 9): (REF.4, REF.9, REF.10).
+
 ### 6.2.2 Tamanho e Crescimento de Mercado 
 
 O mercado relacionado ao GeoRisco Santo André está inserido no segmento de softwares de gestão de emergências, segurança pública e gerenciamento de crises, que apresenta forte expansão impulsionada pela digitalização dos serviços públicos, aumento da frequência de eventos climáticos extremos e necessidade de respostas mais rápidas e integradas.
