@@ -360,8 +360,18 @@ describe('Controller endpoints - black-box via Supertest', () => {
             service.removerPessoa.mockResolvedValueOnce({ id: 1, idFamilia: 1, idPessoa: 2 } as any);
             await request(app).delete('/api/familias/1/pessoas/2').expect(200, { id: 1, idFamilia: 1, idPessoa: 2 });
 
-            service.removerPessoa.mockRejectedValueOnce(new HttpError(409, 'Familia ativa ficaria sem responsavel'));
-            await request(app).delete('/api/familias/1/pessoas/2').expect(409, { error: 'Familia ativa ficaria sem responsavel' });
+            service.removerPessoa.mockResolvedValueOnce({
+                id: 1,
+                idFamilia: 1,
+                idPessoa: 2,
+                aviso: 'A pessoa removida era responsável da família. Um novo responsável deve ser registrado.'
+            } as any);
+            await request(app).delete('/api/familias/1/pessoas/2').expect(200, {
+                id: 1,
+                idFamilia: 1,
+                idPessoa: 2,
+                aviso: 'A pessoa removida era responsável da família. Um novo responsável deve ser registrado.'
+            });
 
             service.removerPessoa.mockRejectedValueOnce(new HttpError(404, 'Vinculo pessoa-familia ativo nao encontrado'));
             await request(app).delete('/api/familias/1/pessoas/99').expect(404, { error: 'Vinculo pessoa-familia ativo nao encontrado' });

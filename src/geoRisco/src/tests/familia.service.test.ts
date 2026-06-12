@@ -107,11 +107,27 @@ describe('FamiliaService - Suíte Completa', () => {
     describe('Remoção de Vínculos (Pessoa / Moradia)', () => {
         it('Deve remover vínculo de pessoa com sucesso ou lançar 404 se não houver vínculo ativo', async () => {
             familiaRepoMock.getById.mockResolvedValue({ id: 1 });
+            pessoaRepoMock.getById.mockResolvedValueOnce({ id: 2, parentesco: 'Filho' });
             familiaRepoMock.removerPessoa.mockResolvedValueOnce({ id: 10 });
 
             const res = await service.removerPessoa(1, 2);
             expect(res).toEqual({ id: 10 });
 
+            pessoaRepoMock.getById.mockResolvedValueOnce({ id: 2, parentesco: 'Responsável' });
+            familiaRepoMock.removerPessoa.mockResolvedValueOnce({
+                idPessoa: 2,
+                idFamilia: 1,
+                dataEntrada: new Date('2026-01-01T00:00:00.000Z'),
+                dataSaida: new Date('2026-06-11T12:00:00.000Z')
+            });
+
+            await expect(service.removerPessoa(1, 2)).resolves.toMatchObject({
+                idPessoa: 2,
+                idFamilia: 1,
+                aviso: 'A pessoa removida era responsável da família. Um novo responsável deve ser registrado.'
+            });
+
+            pessoaRepoMock.getById.mockResolvedValueOnce({ id: 3, parentesco: 'Filho' });
             familiaRepoMock.removerPessoa.mockResolvedValueOnce(null);
             await expect(service.removerPessoa(1, 3)).rejects.toThrow(new HttpError(404, 'Vínculo pessoa-família ativo não encontrado'));
         });

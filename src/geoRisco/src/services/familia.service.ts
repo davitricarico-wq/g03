@@ -14,7 +14,7 @@ import type { IMoradiaRepository } from '../interfaces/repositories/moradia.repo
 import type { IPessoaRepository } from '../interfaces/repositories/pessoa.repository.interface';
 import type { IPetRepository } from '../interfaces/repositories/pet.repository.interface';
 import type { IFamiliaService } from '../interfaces/services/familia.service.interface';
-import type { Familia, FamiliaMoradia, PessoaFamilia } from '../models/familia.model';
+import type { Familia, FamiliaMoradia, PessoaFamilia, PessoaFamiliaRemovida } from '../models/familia.model';
 import type { Pessoa } from '../models/pessoa.model';
 import type { Moradia } from '../models/moradia.model';
 import type { Pet } from '../models/pet.model';
@@ -104,15 +104,18 @@ export class FamiliaService implements IFamiliaService {
         return this.familiaRepo.vincularPessoa(idFamilia, data.idPessoa, data.dataEntrada ?? null);
     }
 
-    async removerPessoa(idFamilia: number, idPessoa: number): Promise<PessoaFamilia> {
+    async removerPessoa(idFamilia: number, idPessoa: number): Promise<PessoaFamiliaRemovida> {
         await this.getById(idFamilia);
         const pessoa = await this.pessoaRepo.getById(idPessoa);
-        if (pessoa && isParentescoResponsavel(pessoa.parentesco)) {
-            throw new HttpError(409, 'Família ativa ficaria sem responsável');
-        }
         const vinculo = await this.familiaRepo.removerPessoa(idFamilia, idPessoa);
         if (!vinculo) {
             throw new HttpError(404, 'Vínculo pessoa-família ativo não encontrado');
+        }
+        if (pessoa && isParentescoResponsavel(pessoa.parentesco)) {
+            return {
+                ...vinculo,
+                aviso: 'A pessoa removida era responsável da família. Um novo responsável deve ser registrado.'
+            };
         }
         return vinculo;
     }
