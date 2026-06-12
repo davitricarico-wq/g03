@@ -106,6 +106,10 @@ export class FamiliaService implements IFamiliaService {
 
     async removerPessoa(idFamilia: number, idPessoa: number): Promise<PessoaFamilia> {
         await this.getById(idFamilia);
+        const pessoa = await this.pessoaRepo.getById(idPessoa);
+        if (pessoa && isParentescoResponsavel(pessoa.parentesco)) {
+            throw new HttpError(409, 'Família ativa ficaria sem responsável');
+        }
         const vinculo = await this.familiaRepo.removerPessoa(idFamilia, idPessoa);
         if (!vinculo) {
             throw new HttpError(404, 'Vínculo pessoa-família ativo não encontrado');

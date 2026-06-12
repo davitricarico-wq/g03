@@ -180,5 +180,42 @@ describe('FamiliaService - Suíte Completa', () => {
             expect(mockClient.query).toHaveBeenCalledWith('ROLLBACK');
             expect(mockClient.release).toHaveBeenCalled();
         });
+
+        it('Deve cadastrar nucleo familiar completo (moradia, responsavel, dependentes, pets, fotos) com sucesso', async () => {
+            const payload: any = {
+                localizacao: { cidade: 'Santo André', estado: 'SP', latitude: -23.6, longitude: -46.5 },
+                moradia: { tipoConstrucao: 'Alvenaria', usoImovel: 'Residencial', situacaoDeOcupacao: 'Ocupado' },
+                responsavel: { nome: 'Chefe', sexo: 'Masculino', raca: 'Branca', estadoCivil: 'Solteiro' },
+                dependentes: [
+                    { nome: 'Membro 1', dataDeNascimento: new Date('2010-01-01'), parentesco: 'Filho', situacaoOcupacional: 'Estudante', escolaridade: 'Fundamental Incompleto', cronico: false, medicacao: false }
+                ],
+                pets: [
+                    { tipo: 'Cão', nome: 'Bobi', porte: 'Médio', raca: 'Vira-lata', cor: 'Marrom', status: 'Ativo', fotos: [{ url: 'http://pet.jpg' }] }
+                ],
+                fotos: [
+                    { url: 'http://moradia.jpg' }
+                ]
+            };
+
+            moradiaRepoMock.createLocalizacao.mockResolvedValue({ id: 100 });
+            moradiaRepoMock.create.mockResolvedValue({ id: 200 });
+            familiaRepoMock.create.mockResolvedValue({ id: 300 });
+            pessoaRepoMock.create.mockResolvedValueOnce({ id: 400 }); // responsavel
+            pessoaRepoMock.create.mockResolvedValueOnce({ id: 401 }); // dependente
+            pessoaRepoMock.createResponsavel.mockResolvedValue({ id: 500, idPessoa: 400 });
+            petRepoMock.createForFamilia.mockResolvedValue({ id: 600 });
+
+            const res = await service.cadastrarNucleoFamiliar(payload);
+
+            expect(res.familia.id).toBe(300);
+            expect(res.moradia.id).toBe(200);
+            expect(res.responsavel.id).toBe(500);
+            expect(res.dependentes).toHaveLength(1);
+            expect(res.pets).toHaveLength(1);
+
+            expect(mockClient.query).toHaveBeenCalledWith('BEGIN');
+            expect(mockClient.query).toHaveBeenCalledWith('COMMIT');
+            expect(mockClient.release).toHaveBeenCalled();
+        });
     }); 
 });
