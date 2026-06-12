@@ -1677,29 +1677,28 @@ O modelo de dados foi estruturado seguindo as melhores práticas de normalizaç�
 
 #### 1. Herança e Especialização (Pessoa e Responsável)
 Para evitar redundância de dados e focar no Responsável da Família, adotamos o padrão de herança (representado pelo triângulo na notação Chen).
-* **`Pessoa` (Superclasse):** Centraliza os atributos universais (Nome Social, Data de Nascimento, Escolaridade, Situação Ocupacional, Medicação, Status).
-* **`Responsável` (Subclasse):** Herda atributos de Pessoa e agrega dados específicos de gestão familiar: CPF, NIS, Renda, Programas Sociais, dados de contato (Telefone, Email) e informações de residência.
+* **`Pessoa` (Superclasse):** Centraliza os atributos universais (Nome Social, Data de Nascimento, Escolaridade, Situação Ocupacional, Medicação, Status, CPF).
+* **`Responsável` (Subclasse):** Herda atributos de Pessoa e agrega dados específicos de gestão familiar: NIS, Renda, Programas Sociais, dados de contato (Telefone, Email) e informações de residência.
 
 #### 2. Agrupamento Lógico por `Família`
-Em vez de vincular dezenas de indivíduos diretamente a uma moradia de forma solta, criamos a entidade agrupadeira **`Família`**.
-* Toda `Pessoa` está vinculada a uma `Família` (relacionamento *Pertence*) com cardinalidade (0, n).
-* A `Família` possui obrigatoriamente um `Responsável` com cardinalidade (1, n).
-* **Vantagem Técnica:** Essa decisão facilita o trânsito de dados. Se uma enchente desalojar 6 pessoas de uma casa, o sistema precisa atualizar apenas o registro da entidade `Família` na tabela `ocupa`, e todos os membros herdam a mudança automaticamente.
+Em vez de vincular dezenas de indivíduos diretamente a uma moradia de forma solta, criamos a entidade agrupadora **`Família`**.
+* Toda `Pessoa` está vinculada a uma `Família` (relacionamento *Pertence*) com cardinalidade (1, n).
+* **Vantagem Técnica:** Essa decisão facilita o trânsito de dados. Se uma enchente desalojar 6 pessoas de uma casa, o sistema precisa atualizar apenas o registro da entidade `Família` na tabela associativa `familia_moradia` (presente no DER), e todos os membros herdam a mudança automaticamente.
 
 #### 3. Rastreabilidade e Histórico (Relacionamento N:N "ocupa")
 O maior desafio resolvido neste modelo foi a preservação do histórico de ocupação sem duplicar dados físicos. A estrutura da **`Moradia`** (localização geográfica, CEP, características construtivas) é imutável. O que muda é quem mora lá.
-* Criamos o relacionamento **Muitos-para-Muitos (N:N)** chamado **`ocupa`** entre `Família` e `Moradia`, com cardinalidade (0, n) em ambas as extremidades.
-* Este relacionamento gera uma tabela associativa contendo atributos temporais: **`DataEntrada`** e **`DataSaida`**, permitindo rastrear períodos de ocupação.
+* Criamos o relacionamento **Muitos-para-Muitos (N:N)** chamado **`ocupa`** entre `Família` e `Moradia`, com cardinalidade (1, n) em ambas as extremidades.
+* Este relacionamento gera uma tabela associativa contendo atributos temporais: **`Status`**, **`DataEntrada`** e **`DataSaida`**, permitindo rastrear períodos de ocupação.
 * **Como funciona:** Quando uma família se muda ou é evacuada, preenchemos a `DataSaida` do vínculo atual e criamos um novo vínculo com a nova moradia. Assim, temos a linha do tempo exata de por quais imóveis a família passou e quais famílias já ocuparam determinadas moradias de risco, sem perder nenhum dado histórico.
 
 #### 4. Exclusão Lógica (Soft Delete) e Estados Operacionais
 Em conformidade com a LGPD e regras de auditoria pública, **nenhum dado é deletado fisicamente (DROP/DELETE)**.
-* Inserimos o atributo **`Status`** nas entidades vitais (`Pessoa` e `Moradia`).
+* Inserimos o atributo **`Status`** nas entidades vitais (`Pessoa`, `Família` e `Moradia`).
 * Se um morador sai do município, o status da `Pessoa` fica inativo. Se uma moradia é desapropriada ou demolida, o status é atualizado para o estado correspondente. O histórico permanece intacto para auditoria.
 
 #### 5. Entidades Satélites Flexíveis
-* **`Foto`:** Ligada em uma relação (0, n) com `Moradia`, permitindo criar uma galeria de fotos para identificação e documentação visual da moradia.
-* **`Pet`:** Relacionada a `Pessoa` (0, n), registrando animais de estimação dependentes para logística humanitária em evacuações.
+* **`Foto`:** Ligada em uma relação (0, n) com `Moradia` ou `Pet`, permitindo criar galerias de fotos para identificação e documentação visual.
+* **`Pet`:** Relacionada a `Família` (0, n), registrando animais de estimação dependentes para logística humanitária em evacuações.
 * **`GrupoPrioritario`:** Relacionada a `Pessoa` (0, n), permitindo associar cidadãos a listas de vulnerabilidade (ex: Acamados, Deficientes Visuais), agilizando a logística de resgates em emergências.
 
 #### 6. Localização Geográfica e Referência Endereçal
@@ -1726,11 +1725,11 @@ Abaixo é apresentado o esquema visual do banco de dados, ilustrando as tabelas 
 
 **Pessoa**
 Entidade base (superclasse) que guarda os dados demográficos e de saúde básicos de qualquer morador ou cidadão assistido.
-* **Campos:** `id` (PK), `nome`, `nome_social`, `data_de_nascimento`, `parentesco`, `situacao_ocupacional`, `escolaridade`, `cronico`, `medicacao`, `status`, `deleted_at`.
+* **Campos:** `id` (PK), `cpf`, `nome`, `nome_social`, `data_de_nascimento`, `parentesco`, `situacao_ocupacional`, `escolaridade`, `cronico`, `medicacao`, `status`, `deleted_at`.
 
 **Responsável**
 Subclasse de `Pessoa` (Herança 1:1), responsável por isolar e armazenar os dados burocráticos, financeiros e de contacto (dados sensíveis) do chefe de família.
-* **Campos:** `id_pessoa` (PK, FK para `pessoa`), `cpf`, `nis`, `renda`, `sexo`, `raca`, `estado_civil`, `veiculo`, `programa_social`, `email`, `telefone`, `nome_do_pai`, `nome_da_mae`, `local_de_nascimento`, `data_residencia_estado`, `data_residencia_moradia`.
+* **Campos:** `id_pessoa` (PK, FK para `pessoa`), `nis`, `renda`, `sexo`, `raca`, `estado_civil`, `veiculo`, `programa_social`, `email`, `telefone`, `nome_do_pai`, `nome_da_mae`, `local_de_nascimento`, `data_residencia_estado`, `data_residencia_moradia`.
 
 **Família**
 Atua como a entidade agregadora central do sistema (*hub*), permitindo agrupar os cidadãos e os respetivos animais de estimação independentemente da moradia física, o que facilita sobremaneira as transições e relocalizações em casos de desalojamento.
@@ -1754,13 +1753,13 @@ Cataloga as condições de vulnerabilidade ou necessidades especiais (físicas o
 
 **Foto**
 Registos visuais para atestar a condição estrutural e a avaliação de risco no terreno.
-* **Campos:** `id` (PK), `id_moradia` (FK para `moradia`), `url`.
+* **Campos:** `id` (PK), `id_pet` (FK para `pet`), `id_moradia` (FK para `moradia`), `url`.
 
 ---
 
 #### 2. Entidades Associativas e de Histórico (Relacionamentos N:N)
 
-Para garantir a preservação do histórico de ocupações (auditoria pós-desastre e acompanhamento ao longo dos anos), foram modeladas tabelas associativas cuja chave primária composta incorpora sempre uma dimensão temporal (`data_entrada`).
+Para garantir a preservação do histórico de ocupações (auditoria pós-desastre e acompanhamento ao longo dos anos), foram modeladas tabelas associativas temporais cuja chave primária composta incorpora `data_entrada` - campo obrigatório. Já `data_saida` é opcional e não compõe a chave primária, mas também ajuda na organização dos dados das moradias em relação ao histórico de ocupação.
 
 **Pessoa_Família**
 Vincula os indivíduos aos núcleos familiares e regista o seu período de permanência.
@@ -1791,7 +1790,7 @@ Por forma a padronizar as entradas de dados e evitar inconsistências nos formul
 
 * **Integridade Referencial:** Todas as *Foreign Keys* estão acompanhadas da ação `ON DELETE CASCADE`. Deste modo, assegura-se que a base de dados não manterá registos órfãos quando entidades de nível superior (ex: localização ou moradia real) forem limpas.
 * **Exclusão Lógica (*Soft Delete*):** A eliminação física de Famílias, Moradias e Pessoas não ocorre. Qualquer interrogação de `DELETE` ao nível da aplicação é intercetada de modo transparente pelo PostgreSQL (através de `RULES`), passando apenas a atualizar as colunas de estado e preenchendo o campo `deleted_at`.
-* **Unicidade Restrita (`UNIQUE`):** Implementada para impossibilitar redundâncias em documentos de alta criticidade na entidade `responsavel` (`cpf`, `email`, `telefone`) e para garantir o relacionamento um-para-um (1:1) rigoroso do campo `id_localizacao` alocado a cada `moradia`.
+* **Unicidade Restrita (`UNIQUE`):** Implementada para impossibilitar redundâncias em documentos e contatos de alta criticidade (`pessoa.cpf`, `responsavel.email`, `responsavel.telefone`) e para garantir o relacionamento um-para-um (1:1) rigoroso do campo `id_localizacao` alocado a cada `moradia`.
 
 ### 3.6.3. Modelo Físico
 
