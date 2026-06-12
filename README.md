@@ -4,6 +4,10 @@
 <img src="assets/inteli.png">
 </p>
 
+# Observação: 
+
+O documento README.md do projeto ainda aguarda as últimas finalizações da sprint 5 para conclusão definitiva.
+
 # Integrantes: 
 
 - Ali Mustapha Abdallah
