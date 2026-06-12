@@ -1670,6 +1670,42 @@ Abaixo é apresentado o esquema visual do banco de dados, ilustrando as tabelas 
     <img src="outros/DER.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
+
+Link para visualização do diagrama: https://dbdiagram.io/d/DER-6a29e7f05c789b8acb59c0b3 
+
+O modelo lógico/físico apresentado possui elementos visuais voltados para a implementação prática em banco de dados. A seguir, detalham-se os conceitos básicos de cada simbologia utilizada no diagrama:
+
+## 1. Símbolos de Chaves (PK e FK)
+Ao lado dos nomes de alguns atributos, observam-se ícones que representam a hierarquia e as relações de dependência das tabelas do sistema.
+
+* **Chave Primária (PK - Ícone de Chave):** O ícone de chave (presente nos campos de `id`) indica que a coluna é o identificador único e exclusivo daquela tabela. Nenhuma outra linha dentro da mesma tabela possuirá esse mesmo valor, garantindo a unicidade do registro.
+
+* **Chave Estrangeira (FK - Ícone de Elo de Corrente):** O ícone com dois elos de corrente conectados (observado em campos como `id_pessoa` ou `id_familia` dentro de tabelas associativas) significa que o campo faz referência à chave primária de *outra* tabela. Esse atributo atua como a âncora que estabelece a ligação estrutural entre as duas entidades.
+
+
+## 2. Obrigatoriedade de Preenchimento (NN - Not Null)
+
+Ao lado direito de diversas colunas (como em `condicao varchar(100) NN`), nota-se a presença do indicador **NN**. 
+
+* **Definição:** A sigla refere-se a "Not Null" (Não Nulo), uma restrição do banco de dados informando que **o preenchimento do campo é obrigatório**. 
+
+* **Aplicação:** Caso o sistema tente inserir um registro sem fornecer essa informação (por exemplo, cadastrar uma entidade sem a data de nascimento exigida), o banco de dados bloqueará a transação. Atributos que não possuem a marcação "NN" são considerados opcionais e aceitam valores nulos ou vazios.
+
+## 3. Simbologia de Relacionamentos (Notação Crow's Foot / Pé de Galinha)
+
+O diagrama utiliza a **Notação Pé de Galinha (Crow's Foot)**. As extremidades das linhas que conectam as tabelas representam a cardinalidade, ou seja, a quantidade máxima e mínima de registros envolvidos em um relacionamento. 
+
+As representações comportam-se da seguinte maneira:
+
+- **Um para Um (1:1):** A linha possui um pequeno traço perpendicular cruzando sua extremidade. 
+    * *Exemplo no modelo:* A conexão da tabela `responsavel` com a tabela `pessoa` indica que *um* registro de responsável está referenciado a exatamente *um* registro exclusivo de pessoa.
+
+- __Um para Muitos (1:* ou 1:N):__  Uma extremidade da linha apresenta o traço reto (representando "1") e a extremidade oposta divide-se em três traços conectados à tabela (o "pé de galinha", representando "Muitos"). 
+    * *Exemplo no modelo:* Na ligação entre as tabelas `moradia` e `foto`, a extremidade "1" encontra-se na moradia e os múltiplos traços apontam para a tabela foto. A leitura correta é de que uma moradia pode possuir múltiplas fotos associadas a ela.
+
+- **Muitos para Muitos (*:* ou N:M):**  Como os bancos de dados relacionais não suportam relacionamentos "Muitos para Muitos" de forma direta, o diagrama não exibe linhas com múltiplos traços em ambas as extremidades.
+    * *Resolução no modelo:* A relação é decomposta com a criação de uma **Tabela Associativa** (como a tabela `familia_moradia`). O relacionamento N:M converte-se em duas conexões **1:N**, partindo das tabelas originais e direcionando suas extremidades de "muitos" para a tabela intermediária que armazena as chaves de ambas.
+
 ---
 
 #### 1. Entidades Principais e Especializações
