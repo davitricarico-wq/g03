@@ -2247,7 +2247,7 @@ Também é importante que os testes não compartilhem estado mutável entre si. 
 
 Dessa forma, a adoção do padrão AAA combinada ao determinismo contribui para uma estratégia de testes mais clara, confiável e sustentável. Os testes passam a funcionar não apenas como mecanismos de verificação automática, mas também como documentação objetiva do comportamento esperado do sistema.
 
-## 5.1.2 Testes unitários de service
+### 5.1.2 Testes unitários de service
 
 Os testes unitários da camada Service verificam, de forma isolada, as regras de negócio que ficam entre os controllers e os repositories. Essa camada concentra decisões importantes do sistema, como validação de dados obrigatórios, aplicação de regras de recadastro, controle de arquivamento lógico, restrições de geolocalização/fotos e avaliação de risco crítico.
 
@@ -2339,6 +2339,83 @@ npm test -- --coverage
 - RN coberta: RN05 exige flag de risco crítico quando histórico de ocorrência e vulnerabilidade coexistem.
 - Caminho de falha: sem histórico ou sem vulnerabilidade a flag permanece `false`.
 
+### 5.1.3 Testes de Integração de Endpoints
+
+Os testes de integração de endpoints têm como objetivo validar o comportamento observável da API por meio de requisições HTTP executadas em ambiente controlado. Diferentemente dos testes unitários da seção 5.1.2, que verificam a camada de Service com mocks, os testes desta seção devem exercitar a aplicação a partir das rotas HTTP, verificando a integração entre rotas, controllers, services, tratamento de erros e contratos de resposta.
+
+Conforme definido nos critérios do projeto, cada endpoint principal deve contemplar, sempre que aplicável, os quatro cenários-chave:
+
+* **Sucesso**: resposta `200`, `201` ou `204`, conforme o contrato do endpoint;
+* **Falha de validação**: resposta `400`, quando o payload, parâmetro ou identificador for inválido;
+* **Regra de negócio violada**: resposta `409` quando houver conflito explícito, ou status equivalente já implementado pelo backend, como `400` para regra rejeitada por validação de domínio ou `502` para falha controlada de serviço externo;
+* **Recurso não encontrado**: resposta `404`, quando a entidade consultada ou vinculada não existir.
+
+Essa abordagem garante que os fluxos críticos sejam avaliados tanto no caminho feliz quanto em situações de erro previsíveis, mantendo coerência com os status HTTP efetivamente usados pelo backend atual.
+
+#### 5.1.3.1 Cobertura Obrigatória dos Endpoints Principais
+
+A cobertura dos testes de integração foi definida a partir dos requisitos funcionais prioritários da aplicação, garantindo rastreabilidade entre os fluxos de negócio, os contratos HTTP da API e as regras de negócio descritas na Seção 3.1.3. Para cada endpoint principal são contemplados os cenários de sucesso, falha de validação, violação de regra de negócio e recurso não encontrado.
+
+| Endpoint                                     | RF Relacionados            | RN Relacionadas        | Sucesso (200/201/204)                            | Falha de Validação (400/422)                      | Regra de Negócio Violada / Falha Externa (409 ou equivalente)      | Não Encontrado (404)                      |
+| -------------------------------------------- | -------------------------- | ---------------------- | ------------------------------------------------ | ------------------------------------------------- | ------------------------------------------------------------------ | ----------------------------------------- |
+| `POST /api/pessoas`                          | RF001                      | RN04                   | Pessoa cadastrada com sucesso (`201`)            | Campos obrigatórios ausentes ou inválidos (`400`) | Classificação de vulnerabilidade inconsistente (`400`)             | Entidade vinculada inexistente (`404`)    |
+| `GET /api/pessoas/:id`                       | RF001, RF005               | RN11                   | Pessoa encontrada (`200`)                        | ID inválido (`400`)                               | —                                                                  | Pessoa inexistente (`404`)                |
+| `PUT /api/pessoas/:id`                       | RF012, RF019               | RN04, RN09, RN10       | Atualização realizada (`200`)                    | Payload inválido (`400`)                          | Violação das regras de recadastro ou atualização cadastral (`400`) | Pessoa inexistente (`404`)                |
+| `SOFT DELETE /api/pessoas/:id`                    | RF010                      | RN01, RN06             | Morador arquivado (`204`)                        | ID inválido (`400`)                               | Tentativa de arquivar responsável sem substituição prévia (`409`)  | Pessoa inexistente (`404`)                |
+| `GET /api/pessoas/busca`                     | RF016                      | RN11                   | Busca executada com sucesso (`200`)              | Nenhum filtro informado (`400`)                   | Escopo incompatível com regras de consulta (`400`)                 | Lista vazia retorna `200`                 |
+| `POST /api/responsaveis`                     | RF001, RF014               | RN01, RN02             | Responsável cadastrado (`201`)                   | Dados obrigatórios ausentes (`400`)               | Família já possui responsável ativo (`409`)                        | Pessoa inexistente (`404`)                |
+| `PUT /api/responsaveis/:id`                  | RF014                      | RN01, RN02             | Responsável atualizado (`200`)                   | Payload inválido (`400`)                          | Tentativa de manter dois responsáveis ativos (`409`)               | Responsável inexistente (`404`)           |
+| `POST /api/familias`                         | RF001, RF014               | RN01, RN02, RN03       | Família criada (`201`)                           | Dados obrigatórios ausentes (`400`)               | Família sem responsável válido (`400`)                             | —                                         |
+| `POST /api/familias/nucleo`                  | RF013                      | RN01, RN02, RN03, RN12 | Cadastro transacional completo realizado (`201`) | Dados obrigatórios ausentes (`400`)               | Violação das regras de composição familiar (`409`)                 | Entidades vinculadas inexistentes (`404`) |
+| `POST /api/familias/:id/pessoas`             | RF014                      | RN01, RN02             | Pessoa vinculada à família (`201`)               | ID inválido (`400`)                               | Família já possui responsável ativo (`409`)                        | Pessoa ou família inexistente (`404`)     |
+| `SOFT DELETE /api/familias/:id/pessoas/:pessoaId` | RF014                      | RN01, RN06             | Vínculo removido (`200`)                         | IDs inválidos (`400`)                             | Família ativa ficaria sem responsável (`409`)                      | Vínculo inexistente (`404`)               |
+| `POST /api/familias/:id/moradias`            | RF014, RF017               | RN03, RN10             | Moradia vinculada à família (`201`)              | ID inválido (`400`)                               | Associação incompatível (`409`)                                    | Moradia inexistente (`404`)               |
+| `POST /api/moradias`                         | RF002, RF003               | RN05, RN08             | Moradia cadastrada (`201`)                       | Dados estruturais inválidos (`400`)               | Localização não confirmada ou situação inválida (`400`)            | —                                         |
+| `GET /api/moradias/:id`                      | RF002, RF005               | RN11                   | Moradia encontrada (`200`)                       | ID inválido (`400`)                               | —                                                                  | Moradia inexistente (`404`)               |
+| `PUT /api/moradias/:id`                      | RF003, RF012, RF015, RF019 | RN05, RN08, RN09, RN10 | Moradia atualizada (`200`)                       | Payload inválido (`400`)                          | Situação operacional inválida ou atualização incompatível (`400`)  | Moradia inexistente (`404`)               |
+| `SOFT DELETE /api/moradias/:id`                   | RF009                      | RN06                   | Moradia arquivada (`204`)                        | ID inválido (`400`)                               | Violação das regras de arquivamento lógico (`409`)                 | Moradia inexistente (`404`)               |
+| `GET /api/moradias/:id/detalhes`             | RF005                      | RN11                   | Dados consolidados retornados (`200`)            | ID inválido (`400`)                               | Inconsistência de dados agregados (`500` controlado)               | Moradia inexistente (`404`)               |
+| `GET /api/mapa/moradias`                     | RF004                      | RN08, RN11             | Marcadores carregados (`200`)                    | Parâmetros inválidos (`400`)                      | Dados inconsistentes com base oficial (`400`)                      | —                                         |
+| `GET /api/mapa/calor`                        | RF008                      | RN04, RN11             | Heatmap gerado (`200`)                           | Filtro inválido (`400`)                           | Grupo de vulnerabilidade inexistente (`400`)                       | —                                         |
+| `POST /api/pets`                             | RF007                      | RN12                   | Pet cadastrado (`201`)                           | Dados obrigatórios inválidos (`400`)              | Vínculo incompatível com família (`400`)                           | Família inexistente (`404`)               |
+| `PUT /api/pets/:id`                          | RF007, RF019               | RN12                   | Pet atualizado (`200`)                           | Payload inválido (`400`)                          | Violação do vínculo familiar (`400`)                               | Pet inexistente (`404`)                   |
+| `SOFT DELETE /api/pets/:id`                       | RF007                      | RN12                   | Pet removido (`204`)                             | ID inválido (`400`)                               | Restrição de remoção (`409`)                                       | Pet inexistente (`404`)                   |
+| `POST /api/moradias/:id/fotos`               | RF002, RF018               | RN07                   | Foto vinculada à moradia (`201`)                 | Tipo ou tamanho inválido (`400`)                  | Tentativa de cadastro de foto proibida pela LGPD (`400`)           | Moradia inexistente (`404`)               |
+| `POST /api/pets/:id/fotos`                   | RF007, RF018               | RN12                   | Foto vinculada ao pet (`201`)                    | Tipo ou tamanho inválido (`400`)                  | Violação das regras de associação (`400`)                          | Pet inexistente (`404`)                   |
+| `POST /api/moradias/:id/fotos/upload-url`    | RF018                      | RN07                   | URL de upload gerada (`201`)                     | Arquivo inválido (`400`)                          | Falha controlada de armazenamento (`502`)                          | Moradia inexistente (`404`)               |
+| `POST /api/pets/:id/fotos/upload-url`        | RF018                      | RN12                   | URL de upload gerada (`201`)                     | Arquivo inválido (`400`)                          | Falha controlada de armazenamento (`502`)                          | Pet inexistente (`404`)                   |
+| `GET /api/fotos/:id/signed-url`              | RF018                      | RN07                   | URL assinada gerada (`200`)                      | Identificador inválido (`400`)                    | Falha controlada de armazenamento (`502`)                          | Foto inexistente (`404`)                  |
+
+- **OBS:** alguns endpoints terão aplicações das validações, requisitos e funções somente na próxima Sprint: GET /api/mapa/moradias ; GET /api/mapa/calor ; (validações): PUT /api/pessoas/:id ; PUT /api/pessoas/:id.
+
+#### 5.1.3.2 Critérios de Implementação dos Testes
+
+Os testes de integração devem ser implementados exercitando a aplicação Express a partir de requisições HTTP, preferencialmente com Supertest. A suíte deve validar:
+
+* código de status retornado;
+* formato padrão de erro `{ "error": "mensagem" }`;
+* presença dos campos principais no corpo de resposta;
+* comportamento com payload válido;
+* comportamento com payload inválido;
+* comportamento com IDs inexistentes;
+* comportamento diante de conflitos ou regras de negócio rejeitadas.
+
+Como os testes de integração dependem da API montada, recomenda-se criar uma suíte separada, por exemplo:
+
+```txt
+src/geoRisco/src/tests/endpoints.integration.spec.ts
+
+```
+
+Também será necessário adicionar as dependências de teste HTTP, caso ainda não estejam instaladas:
+
+```
+npm install --save-dev supertest @types/supertest
+```
+
+#### 5.1.3.3 Resultado Esperado
+
+A execução da suíte de testes de integração deve demonstrar que todos os endpoints principais da API possuem cobertura para os cenários de sucesso, validação, conflito de negócio e recurso inexistente, garantindo rastreabilidade entre RFs, RNs, endpoints e casos de teste. Dessa forma, os contratos HTTP documentados permanecem alinhados ao comportamento real da aplicação, reduzindo riscos de regressão e aumentando a confiabilidade da solução.
 
 ## 5.2. Testes de usabilidade (sprint 5)
 
