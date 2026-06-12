@@ -12,9 +12,12 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc -p src/geoRisco/tsconfig.json",
+    "test": "npm run build && jest --config src/geoRisco/jest.config.js"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.108.1",
+    "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "jest": "^30.4.2",
     "pg": "^8.21.0"
@@ -22,6 +25,8 @@
   "devDependencies": {
     "@types/express": "^5.0.6",
     "@types/jest": "^30.0.0",
-    "@types/pg": "^8.20.0"
+    "@types/pg": "^8.20.0",
+    "ts-jest": "^29.4.11",
+    "typescript": "^6.0.3"
   }
 }

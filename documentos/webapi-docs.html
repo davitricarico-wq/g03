@@ -3,942 +3,682 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GeoRisco Santo André - WebAPI Documentation</title>
+  <title>GeoRisco Santo Andre - WebAPI</title>
   <style>
+    :root {
+      --bg: #f6f8fb;
+      --surface: #ffffff;
+      --ink: #1f2937;
+      --muted: #64748b;
+      --line: #dbe3ef;
+      --brand: #0f766e;
+      --brand-dark: #115e59;
+      --get: #2563eb;
+      --post: #15803d;
+      --put: #b45309;
+      --delete: #b91c1c;
+      --patch: #7c3aed;
+      --code: #0f172a;
+      --code-bg: #eef4f8;
+    }
+
     * {
-      margin: 0;
-      padding: 0;
       box-sizing: border-box;
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-      line-height: 1.6;
-      color: #333;
-      background: #fafafa;
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.55;
+      color: var(--ink);
+      background: var(--bg);
     }
 
     .container {
-      max-width: 1200px;
+      width: min(1160px, calc(100% - 32px));
       margin: 0 auto;
-      padding: 40px 20px;
+      padding: 32px 0 48px;
     }
 
     header {
-      margin-bottom: 60px;
-      border-bottom: 1px solid #e0e0e0;
-      padding-bottom: 20px;
+      padding: 32px;
+      color: #ffffff;
+      background: linear-gradient(135deg, var(--brand-dark), var(--brand));
+      border-radius: 8px;
+      margin-bottom: 24px;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      margin: 0;
+      line-height: 1.2;
     }
 
     h1 {
-      font-size: 32px;
-      font-weight: 600;
+      font-size: 34px;
       margin-bottom: 8px;
-      color: #1a1a1a;
-    }
-
-    .subtitle {
-      color: #666;
-      font-size: 16px;
-      margin-bottom: 20px;
-    }
-
-    .meta {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 20px;
-      margin-top: 15px;
-      font-size: 14px;
-    }
-
-    .meta-item {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .meta-label {
-      color: #999;
-      font-weight: 500;
-      text-transform: uppercase;
-      font-size: 12px;
-      letter-spacing: 0.5px;
-      margin-bottom: 4px;
-    }
-
-    .meta-value {
-      color: #333;
-      font-family: 'Monaco', 'Menlo', monospace;
-      font-size: 13px;
     }
 
     h2 {
       font-size: 24px;
-      font-weight: 600;
-      margin: 50px 0 20px 0;
-      color: #1a1a1a;
-      border-top: 1px solid #e0e0e0;
-      padding-top: 20px;
-    }
-
-    h2:first-of-type {
-      border-top: none;
-      padding-top: 0;
-      margin-top: 0;
+      color: var(--brand-dark);
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--line);
+      margin-bottom: 18px;
     }
 
     h3 {
-      font-size: 18px;
-      font-weight: 600;
-      margin: 30px 0 15px 0;
-      color: #222;
+      font-size: 19px;
+      color: var(--brand-dark);
+      margin: 24px 0 12px;
     }
 
-    .endpoint {
-      background: #fff;
-      border: 1px solid #e0e0e0;
-      border-radius: 6px;
-      padding: 24px;
-      margin: 24px 0;
-      scroll-margin-top: 100px;
-    }
-
-    .endpoint-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 16px;
-      flex-wrap: wrap;
-    }
-
-    .method {
-      display: inline-block;
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-size: 12px;
-      font-weight: 600;
-      font-family: monospace;
-      letter-spacing: 0.5px;
-    }
-
-    .method.get {
-      background: #e3f2fd;
-      color: #1976d2;
-    }
-
-    .method.post {
-      background: #e8f5e9;
-      color: #388e3c;
-    }
-
-    .method.put {
-      background: #fff3e0;
-      color: #f57c00;
-    }
-
-    .method.patch {
-      background: #fce4ec;
-      color: #c2185b;
-    }
-
-    .method.delete {
-      background: #ffebee;
-      color: #d32f2f;
-    }
-
-    .path {
-      font-family: 'Monaco', 'Menlo', monospace;
-      font-size: 14px;
-      color: #333;
-      font-weight: 500;
-    }
-
-    .endpoint-meta {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 16px;
-      margin: 16px 0;
-      font-size: 13px;
-    }
-
-    .meta-block {
-      padding: 12px;
-      background: #f5f5f5;
-      border-radius: 4px;
-    }
-
-    .meta-block-label {
-      color: #666;
-      font-weight: 600;
+    h4 {
+      font-size: 15px;
+      color: var(--muted);
+      margin: 18px 0 8px;
       text-transform: uppercase;
-      font-size: 11px;
-      letter-spacing: 0.5px;
-      margin-bottom: 4px;
-      display: block;
+      letter-spacing: .04em;
     }
 
-    .meta-block-value {
-      color: #333;
-      font-size: 13px;
-      word-break: break-all;
+    p {
+      margin: 0 0 12px;
     }
 
-    .code-block {
-      background: #f5f5f5;
-      border: 1px solid #e0e0e0;
+    a {
+      color: var(--brand-dark);
+    }
+
+    code {
+      color: var(--code);
+      background: var(--code-bg);
       border-radius: 4px;
-      padding: 16px;
-      margin: 12px 0;
-      overflow-x: auto;
-      font-family: 'Monaco', 'Menlo', monospace;
-      font-size: 12px;
-      line-height: 1.5;
-      color: #333;
+      padding: 2px 5px;
+      font-family: Consolas, Monaco, monospace;
+      font-size: 0.94em;
     }
 
-    .status-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 16px 0;
-      font-size: 13px;
+    .subtitle {
+      font-size: 17px;
+      opacity: .92;
+      margin-bottom: 20px;
     }
 
-    .status-table th,
-    .status-table td {
+    .meta-grid,
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 12px;
+    }
+
+    .meta-item,
+    .card,
+    section {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    header .meta-item {
+      background: rgba(255, 255, 255, .12);
+      border-color: rgba(255, 255, 255, .22);
+      color: #ffffff;
       padding: 12px;
-      text-align: left;
-      border-bottom: 1px solid #e0e0e0;
     }
 
-    .status-table th {
-      background: #f5f5f5;
-      font-weight: 600;
-      color: #333;
+    .meta-label {
+      display: block;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      opacity: .78;
     }
 
-    .status-table tr:hover {
-      background: #fafafa;
+    .meta-value {
+      display: block;
+      margin-top: 4px;
+      font-weight: 700;
     }
 
-    .status-code {
-      font-family: monospace;
-      font-weight: 600;
-      color: #d32f2f;
+    section {
+      padding: 24px;
+      margin-bottom: 18px;
     }
 
-    .status-code.success {
-      color: #388e3c;
+    .callout {
+      padding: 14px 16px;
+      border-left: 4px solid var(--brand);
+      background: #edf8f5;
+      border-radius: 6px;
+      margin: 14px 0;
     }
 
-    .status-code.info {
-      color: #1976d2;
+    .card {
+      padding: 16px;
     }
 
-    .status-code.error {
-      color: #d32f2f;
-    }
-
-    .section-header {
-      background: #f5f5f5;
-      padding: 16px 24px;
-      margin: 40px 0 24px 0;
-      border-radius: 4px;
-      border-left: 4px solid #0066cc;
-    }
-
-    .section-header h2 {
-      margin: 0;
-      border: none;
-      padding: 0;
-      font-size: 20px;
+    .card strong {
+      display: block;
+      color: var(--brand-dark);
+      font-size: 26px;
+      line-height: 1;
+      margin-bottom: 6px;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      margin: 16px 0;
-      font-size: 13px;
+      margin: 12px 0 18px;
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
     }
 
-    table th,
-    table td {
-      padding: 12px;
+    th,
+    td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
       text-align: left;
-      border-bottom: 1px solid #e0e0e0;
+      vertical-align: top;
     }
 
-    table th {
-      background: #f5f5f5;
-      font-weight: 600;
-      color: #333;
+    th {
+      color: #334155;
+      background: #eef4f8;
+      font-weight: 700;
     }
 
-    table tr:hover {
-      background: #fafafa;
+    tr:last-child td {
+      border-bottom: 0;
     }
 
-    p {
-      margin: 12px 0;
-      color: #666;
+    .method {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 66px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 700;
     }
 
-    .query-params {
-      margin: 16px 0;
+    .get { background: var(--get); }
+    .post { background: var(--post); }
+    .put { background: var(--put); }
+    .delete { background: var(--delete); }
+    .patch { background: var(--patch); }
+
+    .status {
+      display: inline-block;
+      min-width: 42px;
+      padding: 3px 7px;
+      border-radius: 4px;
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 700;
+      text-align: center;
+      background: var(--muted);
     }
 
-    .query-param {
-      margin-bottom: 8px;
+    .s200,
+    .s201,
+    .s204 { background: #15803d; }
+
+    .s400,
+    .s404,
+    .s409,
+    .s500,
+    .s502 { background: #b91c1c; }
+
+    pre {
+      margin: 10px 0 18px;
+      padding: 14px;
+      overflow-x: auto;
+      color: #e5edf6;
+      background: #111827;
+      border-radius: 6px;
+      font-family: Consolas, Monaco, monospace;
       font-size: 13px;
     }
 
-    .param-name {
-      font-family: monospace;
-      font-weight: 600;
-      color: #333;
-    }
-
-    .param-type {
-      background: #f5f5f5;
-      padding: 2px 6px;
-      border-radius: 3px;
-      font-size: 11px;
-      font-family: monospace;
-      color: #666;
-      margin-left: 8px;
+    ul {
+      margin-top: 8px;
     }
 
     footer {
-      margin-top: 80px;
-      padding-top: 20px;
-      border-top: 1px solid #e0e0e0;
+      color: var(--muted);
       text-align: center;
-      color: #999;
-      font-size: 12px;
+      padding: 20px 0 0;
+      font-size: 14px;
     }
 
-    .rf-rn {
-      display: inline-block;
-      background: #f5f5f5;
-      padding: 4px 8px;
-      border-radius: 3px;
-      font-size: 12px;
-      font-family: monospace;
-      margin-right: 8px;
-      color: #666;
-    }
+    @media (max-width: 720px) {
+      .container {
+        width: min(100% - 20px, 1160px);
+        padding-top: 16px;
+      }
 
-    .actor {
-      display: inline-block;
-      background: #e3f2fd;
-      padding: 4px 8px;
-      border-radius: 3px;
-      font-size: 12px;
-      color: #1976d2;
-      margin-right: 8px;
+      header,
+      section {
+        padding: 18px;
+      }
+
+      h1 {
+        font-size: 28px;
+      }
+
+      table {
+        display: block;
+        overflow-x: auto;
+      }
     }
   </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <h1>GeoRisco Santo André</h1>
-      <p class="subtitle">WebAPI Documentation</p>
-      <div class="meta">
+      <h1>GeoRisco Santo Andre</h1>
+      <p class="subtitle">Documentacao da WebAPI conforme backend atual em <code>src/geoRisco/src</code>.</p>
+      <div class="meta-grid">
         <div class="meta-item">
-          <span class="meta-label">Base URL</span>
-          <span class="meta-value">/api</span>
+          <span class="meta-label">Base URL local</span>
+          <span class="meta-value">http://localhost:1234/api</span>
         </div>
         <div class="meta-item">
-          <span class="meta-label">Content-Type</span>
+          <span class="meta-label">Formato</span>
           <span class="meta-value">application/json</span>
         </div>
         <div class="meta-item">
-          <span class="meta-label">Versão</span>
-          <span class="meta-value">1.0 (Sprint 3)</span>
+          <span class="meta-label">Atualizacao</span>
+          <span class="meta-value">2026-06-10</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Endpoints API</span>
+          <span class="meta-value">52 implementados</span>
         </div>
       </div>
     </header>
 
     <section>
-      <div class="section-header">
-        <h2>HTTP Status Codes</h2>
+      <h2>Visao Geral</h2>
+      <p>A WebAPI exposta pelo backend Express concentra as operacoes de cadastro, consulta, atualizacao, remocao logica, vinculos familiares, pets e fotos. Os contratos abaixo foram consolidados a partir da documentacao de endpoints e conferidos contra os arquivos de rotas e controllers do backend.</p>
+      <div class="callout">
+        <p><strong>Escopo atual:</strong> as rotas listadas nao possuem middleware de autenticacao ou autorizacao. Por isso, <code>401</code> e <code>403</code> nao fazem parte do contrato implementado nesta versao.</p>
       </div>
+      <div class="cards">
+        <div class="card"><strong>7</strong>Pessoas</div>
+        <div class="card"><strong>5</strong>Responsaveis</div>
+        <div class="card"><strong>7</strong>Moradias</div>
+        <div class="card"><strong>13</strong>Familias</div>
+        <div class="card"><strong>7</strong>Pets</div>
+        <div class="card"><strong>13</strong>Fotos</div>
+      </div>
+    </section>
 
+    <section>
+      <h2>Padroes Gerais</h2>
       <table>
         <thead>
           <tr>
-            <th>Status</th>
-            <th>Descrição</th>
+            <th>Item</th>
+            <th>Padrao</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td><span class="status-code success">200</span></td>
-            <td>OK — Requisição bem-sucedida; recurso obtido ou atualizado</td>
+            <td>Header para corpos JSON</td>
+            <td><code>Content-Type: application/json</code></td>
           </tr>
           <tr>
-            <td><span class="status-code success">201</span></td>
-            <td>Created — Recurso criado com sucesso</td>
+            <td>Formato de erro</td>
+            <td><code>{ "error": "Mensagem do erro" }</code></td>
           </tr>
           <tr>
-            <td><span class="status-code info">400</span></td>
-            <td>Bad Request — Formato inválido ou parâmetros incorretos</td>
+            <td>Identificadores em rota</td>
+            <td><code>:id</code>, <code>:pessoaId</code>, <code>:moradiaId</code>, <code>:fotoId</code></td>
           </tr>
           <tr>
-            <td><span class="status-code error">403</span></td>
-            <td>Forbidden — Usuário sem permissão para acessar</td>
+            <td>Remocao</td>
+            <td>Pessoas, familias e moradias usam soft delete quando aplicavel; deletes sem corpo retornam <code>204</code>.</td>
           </tr>
           <tr>
-            <td><span class="status-code error">404</span></td>
-            <td>Not Found — Recurso não encontrado</td>
-          </tr>
-          <tr>
-            <td><span class="status-code error">409</span></td>
-            <td>Conflict — Violação de regra de negócio (RF/RN)</td>
-          </tr>
-          <tr>
-            <td><span class="status-code error">422</span></td>
-            <td>Unprocessable Entity — Dados sintaticamente válidos, mas conteúdo inválido</td>
-          </tr>
-          <tr>
-            <td><span class="status-code error">500</span></td>
-            <td>Internal Server Error — Erro no servidor</td>
+            <td>Aliases de payload</td>
+            <td>Alguns DTOs aceitam <code>camelCase</code> e <code>snake_case</code>, como <code>nomeSocial</code>/<code>nome_social</code>.</td>
           </tr>
         </tbody>
       </table>
     </section>
 
-    <!-- LISTAR E FILTRAR MORADIAS -->
-    <section id="endpoint-moradias">
-      <div class="endpoint">
-        <div class="endpoint-header">
-          <span class="method get">GET</span>
-          <span class="path">/api/moradias</span>
-        </div>
+    <section>
+      <h2>Status HTTP</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Status</th>
+            <th>Significado no backend atual</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="status s200">200</span></td>
+            <td>Requisicao bem-sucedida com resposta JSON ou HTML.</td>
+          </tr>
+          <tr>
+            <td><span class="status s201">201</span></td>
+            <td>Recurso criado ou URL assinada de upload gerada com sucesso.</td>
+          </tr>
+          <tr>
+            <td><span class="status s204">204</span></td>
+            <td>Operacao concluida sem corpo de resposta.</td>
+          </tr>
+          <tr>
+            <td><span class="status s400">400</span></td>
+            <td>Requisicao invalida, payload invalido, campo obrigatorio ausente ou validacao falhou.</td>
+          </tr>
+          <tr>
+            <td><span class="status s404">404</span></td>
+            <td>Recurso nao encontrado.</td>
+          </tr>
+          <tr>
+            <td><span class="status s409">409</span></td>
+            <td>Conflito de regra de negocio ou integridade.</td>
+          </tr>
+          <tr>
+            <td><span class="status s500">500</span></td>
+            <td>Erro interno ou dependencia obrigatoria nao configurada.</td>
+          </tr>
+          <tr>
+            <td><span class="status s502">502</span></td>
+            <td>Falha ao gerar URL assinada no storage.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
 
-        <div class="endpoint-meta">
-          <div class="meta-block">
-            <span class="meta-block-label">RF/RN</span>
-            <span class="meta-block-value"><span class="rf-rn">RF006</span><span class="rf-rn">RN02</span></span>
-          </div>
-          <div class="meta-block">
-            <span class="meta-block-label">Atores</span>
-            <span class="meta-block-value"><span class="actor">A02</span><span class="actor">A03</span></span>
-          </div>
-          <div class="meta-block">
-            <span class="meta-block-label">Descrição</span>
-            <span class="meta-block-value">Lista com filtros avançados</span>
-          </div>
-        </div>
+    <section id="pessoas">
+      <h2>Pessoas</h2>
+      <p>Endpoints de cadastro, busca, listagem, atualizacao e remocao logica de pessoas.</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Metodo</th>
+            <th>Endpoint</th>
+            <th>Finalidade</th>
+            <th>Sucesso</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="method get">GET</span></td><td><code>/api/pessoas</code></td><td>Lista todas as pessoas.</td><td><span class="status s200">200</span></td></tr>
+          <tr><td><span class="method get">GET</span></td><td><code>/api/pessoas/busca</code></td><td>Busca por <code>nome</code>, <code>cpf</code>, <code>email</code>, <code>telefone</code> e <code>escopo</code>.</td><td><span class="status s200">200</span></td></tr>
+          <tr><td><span class="method get">GET</span></td><td><code>/api/pessoas/inativas</code></td><td>Lista pessoas inativas.</td><td><span class="status s200">200</span></td></tr>
+          <tr><td><span class="method get">GET</span></td><td><code>/api/pessoas/:id</code></td><td>Obtem pessoa por ID.</td><td><span class="status s200">200</span></td></tr>
+          <tr><td><span class="method post">POST</span></td><td><code>/api/pessoas</code></td><td>Cria uma pessoa.</td><td><span class="status s201">201</span></td></tr>
+          <tr><td><span class="method put">PUT</span></td><td><code>/api/pessoas/:id</code></td><td>Atualiza parcialmente uma pessoa.</td><td><span class="status s200">200</span></td></tr>
+          <tr><td><span class="method delete">DELETE</span></td><td><code>/api/pessoas/:id</code></td><td>Remove pessoa via soft delete.</td><td><span class="status s204">204</span></td></tr>
+        </tbody>
+      </table>
+      <h4>Payload de criacao</h4>
+      <pre>{
+  "nome": "Maria Silva",
+  "nomeSocial": null,
+  "dataDeNascimento": "1980-05-10",
+  "parentesco": "Responsavel",
+  "situacaoOcupacional": "Empregado",
+  "escolaridade": "Medio Completo",
+  "cronico": false,
+  "medicacao": false,
+  "status": "Ativo"
+}</pre>
+    </section>
 
-        <h4>Query Parameters</h4>
-        <div class="query-params">
-          <div class="query-param">
-            <span class="param-name">status</span>
-            <span class="param-type">string</span>
-            — Ativa, Demolida, Evacuada, Desapropriada
-          </div>
-          <div class="query-param">
-            <span class="param-name">grupo_prioritario</span>
-            <span class="param-type">string</span>
-            — Idoso, Criança, Gestante, PCD, Acamado
-          </div>
-          <div class="query-param">
-            <span class="param-name">desatualizado</span>
-            <span class="param-type">boolean</span>
-            — Cadastros sem atualização há 365+ dias
-          </div>
-          <div class="query-param">
-            <span class="param-name">condicao_ocupacao</span>
-            <span class="param-type">string</span>
-            — Própria, Alugada, Cedida
-          </div>
-        </div>
+    <section id="responsaveis">
+      <h2>Responsaveis</h2>
+      <p>Responsavel e tratado como pessoa com campos adicionais. Na criacao, o backend forca <code>parentesco</code> para <code>Responsavel</code>.</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Metodo</th>
+            <th>Endpoint</th>
+            <th>Finalidade</th>
+            <th>Sucesso</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="method get">GET</span></td><td><code>/api/responsaveis</code></td><td>Lista todos os responsaveis.</td><td><span class="status s200">200</span></td></tr>
+          <tr><td><span class="method get">GET</span></td><td><code>/api/responsaveis/:id</code></td><td>Obtem responsavel pelo ID da pessoa.</td><td><span class="status s200">200</span></td></tr>
+          <tr><td><span class="method post">POST</span></td><td><code>/api/responsaveis</code></td><td>Cria pessoa responsavel e dados adicionais.</td><td><span class="status s201">201</span></td></tr>
+          <tr><td><span class="method put">PUT</span></td><td><code>/api/responsaveis/:id</code></td><td>Atualiza parcialmente um responsavel.</td><td><span class="status s200">200</span></td></tr>
+          <tr><td><span class="method delete">DELETE</span></td><td><code>/api/responsaveis/:id</code></td><td>Remove responsavel.</td><td><span class="status s204">204</span></td></tr>
+        </tbody>
+      </table>
+      <h4>Campos adicionais</h4>
+      <pre>{
+  "cpf": "12345678901",
+  "nis": null,
+  "renda": 1500,
+  "sexo": "Feminino",
+  "raca": "Parda",
+  "estadoCivil": "Solteiro",
+  "veiculo": false,
+  "programaSocial": true,
+  "email": "maria@example.com",
+  "telefone": "11999999999"
+}</pre>
+    </section>
 
-        <h4>Request</h4>
-        <div class="code-block">GET /api/moradias?status=Ativa&grupo_prioritario=Acamado</div>
-
-        <h4>Response <span class="status-code success">200</span></h4>
-        <div class="code-block">[
-  {
-    "id_moradia": 1,
+    <section id="moradias">
+      <h2>Moradias</h2>
+      <p>Endpoints de moradia combinam dados estruturais do imovel com localizacao georreferenciada.</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Metodo</th>
+            <th>Endpoint</th>
+            <th>Finalidade</th>
+            <th>Sucesso</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="method get">GET</span></td><td><code>/api/moradias</code></td><td>Lista moradias.</td><td><span class="status s200">200</span></td></tr>
+          <tr><td><span class="method get">GET</span></td><td><code>/api/moradias/:id</code></td><td>Obtem moradia por ID.</td><td><span class="status s200">200</span></td></tr>
+          <tr><td><span class="method get">GET</span></td><td><code>/api/moradias/:id/detalhes</code></td><td>Obtem familias, pessoas, pets e fotos associados.</td><td><span class="status s200">200</span></td></tr>
+          <tr><td><span class="method get">GET</span></td><td><code>/api/moradias/:id/familias/historico</code></td><td>Lista historico de familias vinculadas a moradia.</td><td><span class="status s200">200</span></td></tr>
+          <tr><td><span class="method post">POST</span></td><td><code>/api/moradias</code></td><td>Cria moradia com localizacao.</td><td><span class="status s201">201</span></td></tr>
+          <tr><td><span class="method put">PUT</span></td><td><code>/api/moradias/:id</code></td><td>Atualiza parcialmente moradia e/ou localizacao.</td><td><span class="status s200">200</span></td></tr>
+          <tr><td><span class="method delete">DELETE</span></td><td><code>/api/moradias/:id</code></td><td>Remove moradia via soft delete.</td><td><span class="status s204">204</span></td></tr>
+        </tbody>
+      </table>
+      <h4>Payload de criacao</h4>
+      <pre>{
+  "localizacao": {
+    "logradouro": "Rua das Flores",
+    "numero": "123",
     "bairro": "Centro",
-    "status": "Ativa",
-    "desatualizado": true,
-    "risco_critico": true
+    "cidade": "Santo Andre",
+    "estado": "SP",
+    "cep": "09010000",
+    "latitude": -23.6639,
+    "longitude": -46.5383
+  },
+  "moradia": {
+    "tipoConstrucao": "Alvenaria",
+    "usoImovel": "Residencial",
+    "situacaoDeOcupacao": "Alugada",
+    "pavimentos": 1
   }
-]</div>
-
-        <h4>Status Possíveis</h4>
-        <table>
-          <tbody>
-            <tr>
-              <td><span class="status-code success">200</span></td>
-              <td>Lista retornada (pode estar vazia)</td>
-            </tr>
-            <tr>
-              <td><span class="status-code info">400</span></td>
-              <td>Filtro inválido</td>
-            </tr>
-            <tr>
-              <td><span class="status-code error">403</span></td>
-              <td>Sem permissão</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+}</pre>
     </section>
 
-    <!-- LISTAR PETS DA FAMÍLIA -->
-    <section id="endpoint-pets-get">
-      <div class="endpoint">
-        <div class="endpoint-header">
-          <span class="method get">GET</span>
-          <span class="path">/api/familias/{id_familia}/pets</span>
-        </div>
-
-        <div class="endpoint-meta">
-          <div class="meta-block">
-            <span class="meta-block-label">RF/RN</span>
-            <span class="meta-block-value"><span class="rf-rn">RF007</span></span>
-          </div>
-          <div class="meta-block">
-            <span class="meta-block-label">Atores</span>
-            <span class="meta-block-value"><span class="actor">A01</span><span class="actor">A02</span><span class="actor">A03</span></span>
-          </div>
-          <div class="meta-block">
-            <span class="meta-block-label">Descrição</span>
-            <span class="meta-block-value">Lista pets da família</span>
-          </div>
-        </div>
-
-        <h4>Request</h4>
-        <div class="code-block">GET /api/familias/1/pets</div>
-
-        <h4>Response <span class="status-code success">200</span></h4>
-        <div class="code-block">[
-  {
-    "id_pet": 1,
-    "tipo_pet": "Cão",
-    "porte_pet": "Pequeno",
-    "nome": "Rex",
-    "cor": "Caramelo"
-  }
-]</div>
-
-        <h4>Status Possíveis</h4>
-        <table>
-          <tbody>
-            <tr>
-              <td><span class="status-code success">200</span></td>
-              <td>Pets retornados (pode estar vazia)</td>
-            </tr>
-            <tr>
-              <td><span class="status-code error">404</span></td>
-              <td>Família não encontrada</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <section id="familias">
+      <h2>Familias</h2>
+      <p>Os endpoints de familia controlam o cadastro do nucleo familiar, seus vinculos com pessoas e seus vinculos historicos com moradias.</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Metodo</th>
+            <th>Endpoint</th>
+            <th>Finalidade</th>
+            <th>Sucesso</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="method get">GET</span></td><td><code>/api/familias</code></td><td>Lista familias.</td><td><span class="status s200">200</span></td></tr>
+          <tr><td><span class="method get">GET</span></td><td><code>/api/familias/:id</code></td><td>Obtem familia por ID.</td><td><span class="status s200">200</span></td></tr>
+          <tr><td><span class="method post">POST</span></td><td><code>/api/familias</code></td><td>Cria familia.</td><td><span class="status s201">201</span></td></tr>
+          <tr><td><span class="method delete">DELETE</span></td><td><code>/api/familias/:id</code></td><td>Remove familia via soft delete.</td><td><span class="status s204">204</span></td></tr>
+          <tr><td><span class="method post">POST</span></td><td><code>/api/familias/nucleo</code></td><td>Cadastra nucleo familiar completo.</td><td><span class="status s201">201</span></td></tr>
+          <tr><td><span class="method get">GET</span></td><td><code>/api/familias/:id/pessoas</code></td><td>Lista pessoas vinculadas a familia.</td><td><span class="status s200">200</span></td></tr>
+          <tr><td><span class="method get">GET</span></td><td><code>/api/familias/:id/pessoas/historico</code></td><td>Lista historico de pessoas da familia.</td><td><span class="status s200">200</span></td></tr>
+          <tr><td><span class="method post">POST</span></td><td><code>/api/familias/:id/pessoas</code></td><td>Vincula pessoa a familia.</td><td><span class="status s201">201</span></td></tr>
+          <tr><td><span class="method delete">DELETE</span></td><td><code>/api/familias/:id/pessoas/:pessoaId</code></td><td>Remove vinculo ativo entre pessoa e familia.</td><td><span class="status s200">200</span></td></tr>
+          <tr><td><span class="method get">GET</span></td><td><code>/api/familias/:id/moradias</code></td><td>Lista moradias vinculadas a familia.</td><td><span class="status s200">200</span></td></tr>
+          <tr><td><span class="method get">GET</span></td><td><code>/api/familias/:id/moradias/historico</code></td><td>Lista historico de moradias da familia.</td><td><span class="status s200">200</span></td></tr>
+          <tr><td><span class="method post">POST</span></td><td><code>/api/familias/:id/moradias</code></td><td>Vincula moradia a familia.</td><td><span class="status s201">201</span></td></tr>
+          <tr><td><span class="method delete">DELETE</span></td><td><code>/api/familias/:id/moradias/:moradiaId</code></td><td>Remove vinculo ativo entre moradia e familia.</td><td><span class="status s200">200</span></td></tr>
+        </tbody>
+      </table>
+      <h4>Payload de vinculo de pessoa</h4>
+      <pre>{
+  "idPessoa": 3,
+  "dataEntrada": "2026-06-10"
+}</pre>
     </section>
 
-    <!-- CRIAR PET -->
-    <section id="endpoint-pets-post">
-      <div class="endpoint">
-        <div class="endpoint-header">
-          <span class="method post">POST</span>
-          <span class="path">/api/familias/{id_familia}/pets</span>
-        </div>
-
-        <div class="endpoint-meta">
-          <div class="meta-block">
-            <span class="meta-block-label">RF/RN</span>
-            <span class="meta-block-value"><span class="rf-rn">RF007</span></span>
-          </div>
-          <div class="meta-block">
-            <span class="meta-block-label">Atores</span>
-            <span class="meta-block-value"><span class="actor">A01</span></span>
-          </div>
-          <div class="meta-block">
-            <span class="meta-block-label">Descrição</span>
-            <span class="meta-block-value">Cadastra novo pet</span>
-          </div>
-        </div>
-
-        <h4>Request</h4>
-        <div class="code-block">{
-  "tipo_pet": "Cão",
-  "porte_pet": "Pequeno",
+    <section id="pets">
+      <h2>Pets</h2>
+      <p>Os endpoints de pets registram animais associados a familias, incluindo dados de identificacao e status.</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Metodo</th>
+            <th>Endpoint</th>
+            <th>Finalidade</th>
+            <th>Sucesso</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="method get">GET</span></td><td><code>/api/pets</code></td><td>Lista pets.</td><td><span class="status s200">200</span></td></tr>
+          <tr><td><span class="method get">GET</span></td><td><code>/api/pets/:id</code></td><td>Obtem pet por ID.</td><td><span class="status s200">200</span></td></tr>
+          <tr><td><span class="method post">POST</span></td><td><code>/api/pets</code></td><td>Cria pet informando <code>idFamilia</code> no corpo.</td><td><span class="status s201">201</span></td></tr>
+          <tr><td><span class="method put">PUT</span></td><td><code>/api/pets/:id</code></td><td>Atualiza parcialmente pet.</td><td><span class="status s200">200</span></td></tr>
+          <tr><td><span class="method delete">DELETE</span></td><td><code>/api/pets/:id</code></td><td>Remove pet.</td><td><span class="status s204">204</span></td></tr>
+          <tr><td><span class="method get">GET</span></td><td><code>/api/familias/:id/pets</code></td><td>Lista pets de uma familia.</td><td><span class="status s200">200</span></td></tr>
+          <tr><td><span class="method post">POST</span></td><td><code>/api/familias/:id/pets</code></td><td>Cria pet vinculado a familia da URL.</td><td><span class="status s201">201</span></td></tr>
+        </tbody>
+      </table>
+      <h4>Payload de criacao</h4>
+      <pre>{
+  "idFamilia": 1,
+  "tipo": "cachorro",
   "nome": "Rex",
+  "porte": "Medio",
+  "raca": "SRD",
   "cor": "Caramelo",
-  "observacoes": "Acompanha em evacuação"
-}</div>
-
-        <h4>Response <span class="status-code success">201</span></h4>
-        <div class="code-block">{
-  "message": "Pet cadastrado com sucesso",
-  "id_pet": 1
-}</div>
-
-        <h4>Status Possíveis</h4>
-        <table>
-          <tbody>
-            <tr>
-              <td><span class="status-code success">201</span></td>
-              <td>Pet criado</td>
-            </tr>
-            <tr>
-              <td><span class="status-code error">404</span></td>
-              <td>Família não encontrada</td>
-            </tr>
-            <tr>
-              <td><span class="status-code error">422</span></td>
-              <td>tipo_pet ausente ou inválido</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+  "status": "Ativo",
+  "observacao": "Animal acompanha a familia em evacuacao"
+}</pre>
     </section>
 
-    <!-- ATUALIZAR PET -->
-    <section id="endpoint-pet-put">
-      <div class="endpoint">
-        <div class="endpoint-header">
-          <span class="method put">PUT</span>
-          <span class="path">/api/pets/{id_pet}</span>
-        </div>
-
-        <div class="endpoint-meta">
-          <div class="meta-block">
-            <span class="meta-block-label">RF/RN</span>
-            <span class="meta-block-value"><span class="rf-rn">RF007</span></span>
-          </div>
-          <div class="meta-block">
-            <span class="meta-block-label">Atores</span>
-            <span class="meta-block-value"><span class="actor">A01</span><span class="actor">A03</span></span>
-          </div>
-          <div class="meta-block">
-            <span class="meta-block-label">Descrição</span>
-            <span class="meta-block-value">Atualiza dados de um pet</span>
-          </div>
-        </div>
-
-        <h4>Request</h4>
-        <div class="code-block">{
-  "tipo_pet": "Gato",
-  "porte_pet": "Médio",
-  "nome": "Mimi",
-  "cor": "Preto",
-  "observacoes": "Necessita transporte especial"
-}</div>
-
-        <h4>Response <span class="status-code success">200</span></h4>
-        <div class="code-block">{
-  "message": "Pet atualizado com sucesso",
-  "id_pet": 1
-}</div>
-
-        <h4>Status Possíveis</h4>
-        <table>
-          <tbody>
-            <tr>
-              <td><span class="status-code success">200</span></td>
-              <td>Pet atualizado</td>
-            </tr>
-            <tr>
-              <td><span class="status-code error">404</span></td>
-              <td>Pet não encontrado</td>
-            </tr>
-            <tr>
-              <td><span class="status-code error">422</span></td>
-              <td>Campo inválido</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <section id="fotos">
+      <h2>Fotos</h2>
+      <p>A API separa o arquivo fisico da foto de seu registro no banco. O fluxo principal e gerar uma URL assinada de upload, enviar o arquivo ao storage e registrar o caminho da foto no backend.</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Metodo</th>
+            <th>Endpoint</th>
+            <th>Finalidade</th>
+            <th>Sucesso</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="method get">GET</span></td><td><code>/api/fotos</code></td><td>Lista fotos.</td><td><span class="status s200">200</span></td></tr>
+          <tr><td><span class="method get">GET</span></td><td><code>/api/fotos/:id</code></td><td>Obtem foto por ID.</td><td><span class="status s200">200</span></td></tr>
+          <tr><td><span class="method get">GET</span></td><td><code>/api/fotos/:id/signed-url</code></td><td>Gera URL assinada para acessar a foto.</td><td><span class="status s200">200</span></td></tr>
+          <tr><td><span class="method put">PUT</span></td><td><code>/api/fotos/:id</code></td><td>Atualiza a URL da foto.</td><td><span class="status s200">200</span></td></tr>
+          <tr><td><span class="method delete">DELETE</span></td><td><code>/api/fotos/:id</code></td><td>Remove foto.</td><td><span class="status s204">204</span></td></tr>
+          <tr><td><span class="method get">GET</span></td><td><code>/api/moradias/:id/fotos</code></td><td>Lista fotos de uma moradia.</td><td><span class="status s200">200</span></td></tr>
+          <tr><td><span class="method post">POST</span></td><td><code>/api/moradias/:id/fotos/upload-url</code></td><td>Gera URL assinada de upload para moradia.</td><td><span class="status s201">201</span></td></tr>
+          <tr><td><span class="method post">POST</span></td><td><code>/api/moradias/:id/fotos</code></td><td>Cria registro de foto vinculado a moradia.</td><td><span class="status s201">201</span></td></tr>
+          <tr><td><span class="method delete">DELETE</span></td><td><code>/api/moradias/:id/fotos/:fotoId</code></td><td>Remove foto vinculada a moradia.</td><td><span class="status s204">204</span></td></tr>
+          <tr><td><span class="method get">GET</span></td><td><code>/api/pets/:id/fotos</code></td><td>Lista fotos de um pet.</td><td><span class="status s200">200</span></td></tr>
+          <tr><td><span class="method post">POST</span></td><td><code>/api/pets/:id/fotos/upload-url</code></td><td>Gera URL assinada de upload para pet.</td><td><span class="status s201">201</span></td></tr>
+          <tr><td><span class="method post">POST</span></td><td><code>/api/pets/:id/fotos</code></td><td>Cria registro de foto vinculado ao pet.</td><td><span class="status s201">201</span></td></tr>
+          <tr><td><span class="method delete">DELETE</span></td><td><code>/api/pets/:id/fotos/:fotoId</code></td><td>Remove foto vinculada ao pet.</td><td><span class="status s204">204</span></td></tr>
+        </tbody>
+      </table>
+      <h4>Payload para URL de upload</h4>
+      <pre>{
+  "fileName": "fachada.jpg",
+  "contentType": "image/jpeg",
+  "upsert": false
+}</pre>
+      <h4>Resposta de upload assinado</h4>
+      <pre>{
+  "bucket": "fotos",
+  "path": "private/fotos/moradias/1/fachada.jpg",
+  "signedUrl": "https://...",
+  "token": "...",
+  "expiresIn": 3600
+}</pre>
     </section>
 
-    <!-- FOTOS DA MORADIA -->
-    <section id="endpoint-fotos-moradia-get">
-      <div class="endpoint">
-        <div class="endpoint-header">
-          <span class="method get">GET</span>
-          <span class="path">/api/moradias/{id_moradia}/fotos</span>
-        </div>
-
-        <div class="endpoint-meta">
-          <div class="meta-block">
-            <span class="meta-block-label">RF/RN</span>
-            <span class="meta-block-value"><span class="rf-rn">RF002</span></span>
-          </div>
-          <div class="meta-block">
-            <span class="meta-block-label">Atores</span>
-            <span class="meta-block-value"><span class="actor">A01</span><span class="actor">A02</span><span class="actor">A03</span></span>
-          </div>
-          <div class="meta-block">
-            <span class="meta-block-label">Descrição</span>
-            <span class="meta-block-value">Lista fotos de uma moradia</span>
-          </div>
-        </div>
-
-        <h4>Request</h4>
-        <div class="code-block">GET /api/moradias/1/fotos</div>
-
-        <h4>Response <span class="status-code success">200</span></h4>
-        <div class="code-block">[
-  {
-    "id_foto": 1,
-    "url": "https://storage.example.com/fotos/moradia-1.jpg",
-    "descricao": "Fachada principal",
-    "data_upload": "2026-05-25"
-  }
-]</div>
-
-        <h4>Status Possíveis</h4>
-        <table>
-          <tbody>
-            <tr>
-              <td><span class="status-code success">200</span></td>
-              <td>Fotos retornadas (pode estar vazia)</td>
-            </tr>
-            <tr>
-              <td><span class="status-code error">404</span></td>
-              <td>Moradia não encontrada</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <section>
+      <h2>Rotas HTML Fora da API JSON</h2>
+      <p>As rotas abaixo existem no backend, mas nao fazem parte do contrato JSON principal sob <code>/api</code>.</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Metodo</th>
+            <th>Endpoint</th>
+            <th>Finalidade</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="method get">GET</span></td><td><code>/</code></td><td>Redireciona para <code>/pessoas/novo</code>.</td></tr>
+          <tr><td><span class="method get">GET</span></td><td><code>/pessoas/novo</code></td><td>Renderiza formulario de pessoa.</td></tr>
+          <tr><td><span class="method get">GET</span></td><td><code>/pessoas</code></td><td>Renderiza lista de pessoas.</td></tr>
+          <tr><td><span class="method get">GET</span></td><td><code>/pessoas.json</code></td><td>Lista pessoas em JSON fora do prefixo <code>/api</code>.</td></tr>
+          <tr><td><span class="method post">POST</span></td><td><code>/pessoas/</code></td><td>Cria pessoa fora do prefixo <code>/api</code>.</td></tr>
+        </tbody>
+      </table>
     </section>
 
-    <!-- UPLOAD URL FOTO MORADIA -->
-    <section id="endpoint-fotos-moradia-upload">
-      <div class="endpoint">
-        <div class="endpoint-header">
-          <span class="method post">POST</span>
-          <span class="path">/api/moradias/{id_moradia}/fotos/upload-url</span>
-        </div>
-
-        <div class="endpoint-meta">
-          <div class="meta-block">
-            <span class="meta-block-label">RF/RN</span>
-            <span class="meta-block-value"><span class="rf-rn">RF002</span></span>
-          </div>
-          <div class="meta-block">
-            <span class="meta-block-label">Atores</span>
-            <span class="meta-block-value"><span class="actor">A01</span><span class="actor">A03</span></span>
-          </div>
-          <div class="meta-block">
-            <span class="meta-block-label">Descrição</span>
-            <span class="meta-block-value">Gera URL pré-assinada para upload de foto da moradia</span>
-          </div>
-        </div>
-
-        <h4>Request</h4>
-        <div class="code-block">{
-  "nome_arquivo": "fachada.jpg",
-  "content_type": "image/jpeg"
-}</div>
-
-        <h4>Response <span class="status-code success">201</span></h4>
-        <div class="code-block">{
-  "upload_url": "https://storage.example.com/signed-url/...",
-  "id_foto": 42,
-  "expira_em": "2026-05-25T15:00:00Z"
-}</div>
-
-        <h4>Status Possíveis</h4>
-        <table>
-          <tbody>
-            <tr>
-              <td><span class="status-code success">201</span></td>
-              <td>URL gerada com sucesso</td>
-            </tr>
-            <tr>
-              <td><span class="status-code error">404</span></td>
-              <td>Moradia não encontrada</td>
-            </tr>
-            <tr>
-              <td><span class="status-code error">422</span></td>
-              <td>nome_arquivo ou content_type ausente/inválido</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- BUSCA DE PESSOAS -->
-    <section id="endpoint-pessoas-busca">
-      <div class="endpoint">
-        <div class="endpoint-header">
-          <span class="method get">GET</span>
-          <span class="path">/api/pessoas/busca</span>
-        </div>
-
-        <div class="endpoint-meta">
-          <div class="meta-block">
-            <span class="meta-block-label">RF/RN</span>
-            <span class="meta-block-value"><span class="rf-rn">RF006</span></span>
-          </div>
-          <div class="meta-block">
-            <span class="meta-block-label">Atores</span>
-            <span class="meta-block-value"><span class="actor">A01</span><span class="actor">A02</span><span class="actor">A03</span></span>
-          </div>
-          <div class="meta-block">
-            <span class="meta-block-label">Descrição</span>
-            <span class="meta-block-value">Busca pessoas por nome, CPF ou outros critérios</span>
-          </div>
-        </div>
-
-        <h4>Query Parameters</h4>
-        <div class="query-params">
-          <div class="query-param">
-            <span class="param-name">q</span>
-            <span class="param-type">string</span>
-            — Termo de busca (nome ou CPF)
-          </div>
-        </div>
-
-        <h4>Request</h4>
-        <div class="code-block">GET /api/pessoas/busca?q=Maria</div>
-
-        <h4>Response <span class="status-code success">200</span></h4>
-        <div class="code-block">[
-  {
-    "id_pessoa": 1,
-    "nome_completo": "Maria Silva",
-    "cpf": "123.456.789-00",
-    "status_cadastro": true
-  }
-]</div>
-
-        <h4>Status Possíveis</h4>
-        <table>
-          <tbody>
-            <tr>
-              <td><span class="status-code success">200</span></td>
-              <td>Resultados retornados (pode estar vazia)</td>
-            </tr>
-            <tr>
-              <td><span class="status-code info">400</span></td>
-              <td>Parâmetro de busca ausente ou inválido</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- CRIAR PESSOA -->
-    <section id="endpoint-pessoas-post">
-      <div class="endpoint">
-        <div class="endpoint-header">
-          <span class="method post">POST</span>
-          <span class="path">/api/pessoas</span>
-        </div>
-
-        <div class="endpoint-meta">
-          <div class="meta-block">
-            <span class="meta-block-label">Atores</span>
-            <span class="meta-block-value"><span class="actor">A01</span><span class="actor">A03</span></span>
-          </div>
-          <div class="meta-block">
-            <span class="meta-block-label">Descrição</span>
-            <span class="meta-block-value">Cadastra nova pessoa</span>
-          </div>
-        </div>
-
-        <h4>Request</h4>
-        <div class="code-block">{
-  "nome_completo": "João Souza",
-  "cpf": "987.654.321-00",
-  "data_nascimento": "1990-03-15",
-  "celular": "11977777777"
-}</div>
-
-        <h4>Response <span class="status-code success">201</span></h4>
-        <div class="code-block">{
-  "message": "Pessoa cadastrada com sucesso",
-  "id_pessoa": 10
-}</div>
-
-        <h4>Status Possíveis</h4>
-        <table>
-          <tbody>
-            <tr>
-              <td><span class="status-code success">201</span></td>
-              <td>Pessoa criada</td>
-            </tr>
-            <tr>
-              <td><span class="status-code error">409</span></td>
-              <td>CPF já cadastrado</td>
-            </tr>
-            <tr>
-              <td><span class="status-code error">422</span></td>
-              <td>Campo obrigatório ausente ou inválido</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- CRIAR RESPONSÁVEL -->
-    <section id="endpoint-responsaveis-post">
-      <div class="endpoint">
-        <div class="endpoint-header">
-          <span class="method post">POST</span>
-          <span class="path">/api/responsaveis</span>
-        </div>
-
-        <div class="endpoint-meta">
-          <div class="meta-block">
-            <span class="meta-block-label">Atores</span>
-            <span class="meta-block-value"><span class="actor">A01</span><span class="actor">A03</span></span>
-          </div>
-          <div class="meta-block">
-            <span class="meta-block-label">Descrição</span>
-            <span class="meta-block-value">Cadastra responsável familiar</span>
-          </div>
-        </div>
-
-        <h4>Request</h4>
-        <div class="code-block">{
-  "id_pessoa": 10,
-  "celular": "11988888888",
-  "renda": 2500.00,
-  "grau_instrucao": "Ensino Médio"
-}</div>
-
-        <h4>Response <span class="status-code success">201</span></h4>
-        <div class="code-block">{
-  "message": "Responsável cadastrado com sucesso",
-  "id_responsavel": 5
-}</div>
-
-        <h4>Status Possíveis</h4>
-        <table>
-          <tbody>
-            <tr>
-              <td><span class="status-code success">201</span></td>
-              <td>Responsável criado</td>
-            </tr>
-            <tr>
-              <td><span class="status-code error">404</span></td>
-              <td>Pessoa não encontrada</td>
-            </tr>
-            <tr>
-              <td><span class="status-code error">409</span></td>
-              <td>Pessoa já é responsável de outra família</td>
-            </tr>
-            <tr>
-              <td><span class="status-code error">422</span></td>
-              <td>Campo obrigatório ausente ou inválido</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <section>
+      <h2>Endpoints Planejados</h2>
+      <p>Os endpoints abaixo apareciam em versoes anteriores da documentacao, mas nao existem nas rotas atuais do backend. Portanto, devem ser tratados como planejados, nao como contrato implementado.</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Metodo</th>
+            <th>Endpoint</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="method post">POST</span></td><td><code>/api/cadastros-completos</code></td></tr>
+          <tr><td><span class="method get">GET</span></td><td><code>/api/moradias/mapa</code></td></tr>
+          <tr><td><span class="method get">GET</span></td><td><code>/api/moradias/:id_moradia/consulta-integrada</code></td></tr>
+          <tr><td><span class="method get">GET</span></td><td><code>/api/moradias/exportar</code></td></tr>
+          <tr><td><span class="method get">GET</span></td><td><code>/api/familias/:id_familia/cadastro-completo</code></td></tr>
+          <tr><td><span class="method put">PUT</span></td><td><code>/api/familias/:id_familia/cadastro-completo</code></td></tr>
+          <tr><td><span class="method put">PUT</span></td><td><code>/api/familias/:id_familia/responsavel</code></td></tr>
+          <tr><td><span class="method get">GET</span></td><td><code>/api/indicadores/mapa-calor</code></td></tr>
+          <tr><td><span class="method get">GET</span></td><td><code>/api/indicadores/recadastro</code></td></tr>
+          <tr><td><span class="method patch">PATCH</span></td><td><code>/api/moradias/:id_moradia/status</code></td></tr>
+          <tr><td><span class="method post">POST</span></td><td><code>/api/familias/:id_familia/realocacoes</code></td></tr>
+          <tr><td><span class="method patch">PATCH</span></td><td><code>/api/cidadaos/:id_cidadao/arquivar</code></td></tr>
+        </tbody>
+      </table>
     </section>
 
     <footer>
-      <p>GeoRisco Santo André — WebAPI v1.0 (Sprint 3)</p>
-      <p>Para mais detalhes sobre implementação, veja <code>documentos/outros/endpoints.md</code></p>
+      <p>GeoRisco Santo Andre - WebAPI v1.0</p>
+      <p>Referencia detalhada: <code>documentos/outros/endpoints.md</code></p>
     </footer>
   </div>
 </body>

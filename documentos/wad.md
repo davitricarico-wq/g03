@@ -261,7 +261,7 @@ Apresenta-se a seguir a lista de User Stories levantadas para o projeto GeoRisco
 
 ---
 
-### cadastro - cidadãos
+### Cadastro - Cidadãos
 
 | Identificação | US01 |
 |---|---|
@@ -274,7 +274,7 @@ Apresenta-se a seguir a lista de User Stories levantadas para o projeto GeoRisco
 | Critério de aceite 5 | CR5: Dado que o agente informa o CPF de um cidadão, quando o CPF já estiver cadastrado no sistema, então o sistema deve bloquear o cadastro duplicado e sinalizar que a pessoa já existe. |
 | Critérios INVEST | Independente: O módulo de cadastro pessoal não depende da implementação da funcionalidade de mapas.; Negociável: Os campos sociodemográficos e de vulnerabilidade, bem como as regras de marcação do responsável, podem ser ajustados.; Valiosa: Fornece a base de dados central para que a Defesa Civil identifique e proteja vidas humanas.; Estimável: É um formulário CRUD tradicional, com validações previsíveis de campos obrigatórios, responsável, grupos de vulnerabilidade e unicidade de CPF.; Pequena: Foca no cadastro dos dados da família/moradores, na designação do responsável e na classificação de vulnerabilidade, sem abranger mapa ou edição posterior.; Testável: O testador pode inserir dados simulados e validar a gravação, o aviso de "cadastro incompleto" quando não há moradia, o bloqueio do envio sem responsável, a classificação nos grupos de vulnerabilidade e o bloqueio de CPF já cadastrado. |
 
-### cadastro - moradias
+### Cadastro - Moradias
 
 | Identificação | US02 |
 |---|---|
@@ -284,7 +284,7 @@ Apresenta-se a seguir a lista de User Stories levantadas para o projeto GeoRisco
 | Critério de aceite 2 | CR2: Dado que o agente está cadastrando a moradia, quando desejar registrar evidências visuais do imóvel, então o sistema deve permitir anexar fotos da moradia (ex.: fachada e entorno) ao cadastro. |
 | Critérios INVEST | Independente: A gestão de infraestrutura pode ser tratada de forma modular no banco de dados.; Negociável: A quantidade máxima de fotos por moradia pode ser discutida tecnicamente.; Valiosa: Essencial para calcular o risco de desabamento ou alagamento de uma edificação específica.; Estimável: Os atributos presentes na ficha física delimitam o escopo exato do front-end.; Pequena: O escopo limita-se à estrutura da edificação, separando-se da localização por GPS.; Testável: O sistema deve ser capaz de receber os uploads de imagem e retornar os atributos estruturais salvos em um GET. |
 
-### mapa
+### Mapa
 
 | Identificação | US03 |
 |---|---|
@@ -294,7 +294,7 @@ Apresenta-se a seguir a lista de User Stories levantadas para o projeto GeoRisco
 | Critério de aceite 2 | CR2: Dado que o gestor está visualizando o mapa, quando ele clica sobre o marcador de um imóvel, então um card informativo deve ser exibido com os dados basicos da moradia. |
 | Critérios INVEST | Independente: Consome os dados de geolocalização existentes sem interferir em como são cadastrados.; Negociável: O tipo de mapa (Satelite, Terreno) pode ser alterado conforme a biblioteca utilizada.; Valiosa: Entrega alto valor estratégico ao permitir a visualização espacial das zonas de perigo.; Estimável: A integração com APIs de mapas possui documentação robusta.; Pequena: Foca apenas na plotagem básica dos marcadores.; Testável: É possível criar coordenadas *mockadas* e verificar a correta plotagem na interface. |
 
-### busca
+### Busca
 
 | Identificação | US04 |
 |---|---|
@@ -304,7 +304,7 @@ Apresenta-se a seguir a lista de User Stories levantadas para o projeto GeoRisco
 | Critério de aceite 2 | CR2: Dado que o gestor visualiza os dados de uma família, quando a família estiver sem moradia vinculada, então o sistema deve exibir a flag visual de "cadastro incompleto" no cabeçalho da consulta. |
 | Critérios INVEST | Independente: Utiliza joins de dados já populados pelas US01 e US02.; Negociável: O layout de exibição e os níveis de alerta crítico podem ser ajustados.; Valiosa: Facilita o trabalho do gestor que não precisará cruzar tabelas manualmente em planilhas.; Estimável: A consulta a dados relacionados tem esforço facilmente mensurável.; Pequena: Trata-se de uma view (Visualização de dados) de leitura integrada.; Testável: O teste garante que as informações da ficha física batam com o que está sendo exibido digitalmente. |
 
-### edição
+### Edição
 
 | Identificação | US05 |
 |---|---|
@@ -315,18 +315,17 @@ Apresenta-se a seguir a lista de User Stories levantadas para o projeto GeoRisco
 | Critério de aceite 3 | CR3: Dado que o gestor edita uma moradia já cadastrada, quando a tela de edição da moradia carregar, então o mini-mapa deve exibir o pin já posicionado nas coordenadas salvas, permitindo confirmá-lo ou reposicioná-lo (tocando no mapa ou arrastando o pin), sendo obrigatório manter coordenadas válidas para concluir o salvamento. |
 | Critérios INVEST | Independente: Atua apenas sobre registros já existentes fechando o ciclo de vida do dado.; Negociável: A necessidade de manter versionamento de histórico pode ser discutida.; Valiosa: Garante que o banco da Defesa Civil reflita sempre a realidade do ano vigente.; Estimável: É um reaproveitamento do formulário de criação adaptado para Update.; Pequena: Foca unicamente na ação de editar e limpar os alertas.; Testável: Atestar que salvar a edição atualiza os dados no banco e remove o indicador de "cadastro incompleto" quando os dados obrigatórios passam a estar completos. |
 
-### cadastro - localização
+### Cadastro - Localização
 
 | Identificação | US06 |
 |---|---|
 | Persona | João Silva (Agente de Campo) |
-| User Story | "Como agente de campo, quero que a localização da moradia utilize minha posição no momento do cadastro como referência, para que eu tenha salvo o local exato mesmo em zonas remotas." |
-| Critério de aceite 1 | CR1: Dado que o agente de campo entra na tela de cadastro de nova moradia, quando a tela carregar, então o sistema deve solicitar permissão do dispositivo e preencher automaticamente a Latitude e Longitude. |
-| Critério de aceite 2 | CR2: Dado que o agente tenha cadastrado os dados das familias de outro lugar que não seja a moradia atual, quando o mesmo for fazer o cadastro, então o sistema deve possuir um retorno visual indicando se a localização já foi obtida, um botão de apagar a localização registrada e outro de re-registrar a localização utilizando a localização atual. |
-| Critério de aceite 3 | CR3: Dado que o agente entra na tela de cadastro de moradia, quando a permissão de localização é negada ou não há sinal de GPS disponível, então o sistema deve permitir o preenchimento manual da localização por meio do manuseamento do marcador (pin) no mapa, mantendo o cadastro possível mesmo sem a captura automática. |
-| Critérios INVEST | Independente: A funcionalidade de captura de hardware é independente dos campos de texto do formulário.; Negociável: A precisão exigida (ex: margem de 5 a 10 metros) pode ser acordada com o time.; Valiosa: Elimina o erro humano da digitação de coordenadas numéricas longas.; Estimável: Utilizar APIs nativas de geolocalização mobile é padrão na indústria.; Pequena: Cobre especificamente um único componente de auto-preenchimento.; Testável: Pode-se simular diferentes coordenadas GPS em emuladores para validar a captura. |
+| User Story | "Como agente de campo, quero registrar a localização exata da moradia confirmando minha posição em um mini-mapa no momento do cadastro, para garantir o local correto da residência." |
+| Critério de aceite 1 | CR1: Dado que o agente está cadastrando uma nova moradia, quando clica no botão "cadastrar localização", então o sistema deve exibir um mini-mapa de confirmação centralizado na posição obtida automaticamente do dispositivo em segundo plano, com um pin reposicionável; a localização só é registrada após o agente confirmar o pin. |
+| Critério de aceite 2 | CR2: Dado que o agente está em local diferente da moradia real ou precisa corrigir o ponto, quando interage com o mini-mapa, então o sistema deve permitir reposicionar o pin (por toque ou arrasto) e refazer o registro (apagar e re-registrar com a posição atual), sem digitação manual de coordenadas. |
+| Critérios INVEST | Independente: A captura de geolocalização e o mini-mapa de confirmação são independentes dos demais campos do formulário de moradia.; Negociável: A precisão exigida (ex.: margem de 5 a 10 metros) e o mapa-base utilizado podem ser acordados com o time.; Valiosa: Garante coordenadas confiáveis ao permitir confirmar e ajustar visualmente o pin, eliminando o erro humano na localização da casa.; Estimável: Reutiliza a biblioteca de mapas e a API nativa de geolocalização, com esforço previsível.; Pequena: Cobre a captura automática da posição e a confirmação/reposicionamento do pin no mini-mapa.; Testável: Simular coordenadas em emulador e validar a exibição do mini-mapa, o reposicionamento do pin e o registro somente após a confirmação. |
 
-### cadastro - pets
+### Cadastro - Pets
 
 | Identificação | US07 |
 |---|---|
@@ -336,7 +335,7 @@ Apresenta-se a seguir a lista de User Stories levantadas para o projeto GeoRisco
 | Critério de aceite 2 | CR2: Dado que o agente precisa cadastrar o pet da familia, quando houver mais de um pet no núcleo, então o sistema deve permitir o cadastro de multiplos pets de maneira organizada. |
 | Critérios INVEST | Independente: O cadastro de animais não afeta os dados vitais dos seres humanos.; Negociável: A lista de categorias pode ser estendida para animais de grande porte dependendo da região.; Valiosa: Reduz a recusa de moradores em abandonar áreas de risco por causa de seus animais.; Estimável: É uma adição simples de atributos numéricos à entidade Domicílio.; Pequena: Pode ser finalizada em um ou dois dias de desenvolvimento.; Testável: Verificação da persistência e retorno no JSON do perfil do assistido. |
 
-### arquivo
+### Arquivo - Moradia
 
 | Identificação | US08 |
 |---|---|
@@ -347,6 +346,8 @@ Apresenta-se a seguir a lista de User Stories levantadas para o projeto GeoRisco
 | Critério de aceite 3 | CR3: Dado que uma moradia com moradores vinculados é arquivada, quando o arquivamento é confirmado, então os moradores permanecem ativos e passam a ser sinalizados com o indicador de "cadastro incompleto" (motivo: sem moradia). |
 | Critérios INVEST | Independente: A inativação lógica (soft delete) e o desarquivamento não dependem de novos registros.; Negociável: Os motivos do arquivamento podem ser populados a partir de um domínio expansível.; Valiosa: Mantém a integridade do banco de dados enquanto limpa a visão operacional.; Estimável: Requer flags de status, atualização das queries e a propagação do aviso aos moradores vinculados.; Pequena: Funcionalidade contida — arquivar, desarquivar e sinalizar os moradores — e de rápida implementação.; Testável: Garantir que moradias arquivadas não retornem em chamadas ativas, que o botão de desarquivar as reative e que os moradores vinculados fiquem com "cadastro incompleto". |
 
+### Arquivo - Morador
+
 | Identificação | US09 |
 |---|---|
 | Persona | Wesley Souza (Gestor Operacional) |
@@ -356,7 +357,7 @@ Apresenta-se a seguir a lista de User Stories levantadas para o projeto GeoRisco
 | Critério de aceite 3 | CR3: Dado que o morador a ser arquivado é o responsável pela família, quando o gestor confirma o arquivamento, então o sistema deve exigir a definição de um novo responsável entre os demais moradores ativos antes de concluir a operação. |
 | Critérios INVEST | Independente: O arquivamento lógico do morador pode ser implementado sem impactar o cadastro ativo.; Negociável: Os campos e motivos relacionados à inativação (morte, desaparecimento, mudança) podem ser ajustados conforme as regras do sistema.; Valiosa: Mantém o histórico populacional preservado sem interferir nas operações correntes.; Estimável: Requer status lógico, filtros de consulta, desarquivamento e a regra de substituição do responsável.; Pequena: Escopo restrito a arquivar/desarquivar o morador e tratar a substituição quando ele for o responsável.; Testável: Garantir que moradores arquivados não retornem em consultas ativas, que o desarquivamento os reative e que o sistema exija um novo responsável ao arquivar o chefe da família. |
 
-### aviso 1 ano
+### Aviso 1 ano
 
 | Identificação | US10 |
 |---|---|
@@ -366,8 +367,7 @@ Apresenta-se a seguir a lista de User Stories levantadas para o projeto GeoRisco
 | Critério de aceite 2 | CR2: Dado que o agente revisa e re-salva os dados de um núcleo familiar com alerta de desatualização, quando o formulário é enviado com sucesso, então a data de última modificação é renovada e o indicador de "cadastro desatualizado" no painel do Gestor Operacional deve desaparecer. |
 | Critérios INVEST | Independente: A rotina roda em background e não interfere no fluxo de cadastro diário.; Negociável: O prazo de aviso pode ser parametrizável.; Valiosa: Evita o sucateamento dos dados em áreas de risco dinâmico.; Estimável: Configuração de uma job e um painel de notificações são tarefas comuns.; Pequena: Apenas identifica e lista pendências.; Testável: Alterar a data de modificação de um teste no banco para "Data Atual - 366 dias" e validar se o alerta dispara. |
 
-## transformar em regras de Negócio
-### obrigatoriedade - responsavel na familia 
+### Obrigatoriedade - Responsavel na familia 
 
 | Identificação | US11 |
 |---|---|
@@ -384,7 +384,7 @@ Apresenta-se a seguir a lista de User Stories levantadas para o projeto GeoRisco
 
 Este documento formaliza o que o sistema deve fazer, sob quais regras e com quais qualidades, com base nas User Stories levantadas para o projeto. O sistema tem como propósito central permitir a compreensão precisa da quantidade de pessoas em territórios de risco, operando de forma georreferenciada para identificar residências mesmo em locais sem endereçamento oficial — como barracos ou vielas —, utilizando coordenadas GPS capturadas no momento do cadastro.
 
-O sistema atende primordialmente ao Agente de Campo (A01) no que tange à operatividade e à coleta de dados in loco, e ao Gestor Operacional (A03) na tomada de decisão estratégica. As funcionalidades de cadastro, visualização em mapa, filtros avançados e alertas de recadastro derivam diretamente das necessidades mapeadas nas US01 a US12.
+O sistema atende primordialmente ao Agente de Campo (A01) no que tange à operatividade e à coleta de dados in loco, e ao Gestor Operacional (A02) na tomada de decisão estratégica. As funcionalidades de cadastro, visualização em mapa, filtros avançados e alertas de recadastro derivam diretamente das necessidades mapeadas nas US01 a US12.
 
 ---
 
@@ -392,9 +392,8 @@ O sistema atende primordialmente ao Agente de Campo (A01) no que tange à operat
 
 | ID  | Nome do Ator                           | Descrição                                                                                                                                                                                      | Frequência de Uso | Proficiência Tecnológica |
 |---|---|---|---|---|
-| A01 | Agente de Defesa Civil (Campo)         | Coleta dados georreferenciados in loco, realiza vistorias em áreas de risco e alimenta o sistema com informações de interdições ou rotas obstruídas.                                           | Diária            | Média / Baixa            |
-| A02 | Agente de Defesa Civil (Interno)       | Visualiza todas as informações coletadas e gera relatórios a partir delas. _(a validar com o grupo: papel distinto de A03 ou a ser colapsado)_                                                | Diária            | Média                    |
-| A03 | Agente de Defesa Civil (Administração) | Gerencia os parâmetros de monitoramento e extrai relatórios, análises e mapas de calor. Subsidia a tomada de decisão e o planejamento de contingência da prefeitura. | Diária            | Média / Alta             |
+| A01 | Agente de campo da Defesa Civil         | Coleta dados georreferenciados in loco, realiza vistorias em áreas de risco e alimenta o sistema com informações de interdições ou rotas obstruídas.                                           | Diária            | Média / Baixa            |
+| A02 | Gestor operacional | Gerencia os parâmetros de monitoramento e extrai relatórios, análises e mapas de calor. Subsidia a tomada de decisão e o planejamento de contingência da prefeitura. | Diária            | Média             |
 
 ---
 
@@ -402,34 +401,71 @@ O sistema atende primordialmente ao Agente de Campo (A01) no que tange à operat
 
 | ID | Nome | Descrição | Tipo | Prioridade | Atores | US Origem | Status |
 |---|---|---|---|---|---|---|---|
-| RF001 | Cadastro de Dados Sociodemográficos e Vínculos | O sistema deve registrar os dados pessoais dos cidadãos (nome, CPF, data de nascimento, condições de saúde, doenças crônicas e uso de medicação contínua) e os indicadores de vulnerabilidade (idoso, criança 0–12 anos, gestante/lactante, PCD), vinculando obrigatoriamente cada pessoa à sua respectiva moradia. | Cadastro | Alta | A01, A03 | US01 | Planejado |
-| RF002 | Cadastro Estrutural de Moradias | O sistema deve registrar as características físicas do imóvel, incluindo tipo de construção (Madeira, Alvenaria, Misto), número de pavimentos, condição de ocupação (Própria, Alugada, Cedida), sinais de alerta observados e upload opcional de até 2 fotos (fachada e entorno). | Cadastro | Alta | A01, A03 | US02 | Planejado |
-| RF003 | Georreferenciamento de Moradias via GPS | O sistema deve capturar automaticamente as coordenadas geográficas (latitude e longitude) do dispositivo do agente no momento do cadastro da moradia, registrando-as no sistema ao confirmar o cadastro. | Cadastro | Alta | A01 | US05 | Planejado |
-| RF004 | Visualização de Moradias em Mapa Georreferenciado | O sistema deve exibir marcadores (pins) no mapa correspondentes às coordenadas de todas as moradias cadastradas, apresentando um card informativo com os dados do imóvel ao clicar sobre o marcador. | Relatório / Consulta | Alta | A02, A03 | US03 | Planejado |
-| RF005 | Consulta Integrada de Moradia e Moradores | O sistema deve consolidar, em uma única tela, os dados estruturais do imóvel e os dados sociodemográficos de todos os seus ocupantes, exibindo automaticamente a flag visual "Risco Crítico" quando a moradia possuir histórico de ocorrência e ao menos um morador com mobilidade reduzida ou acamado. _(escopo a validar com o grupo)_ | Consulta | Alta | A02, A03 | US04 | **A validar** |
-| RF006 | Filtros Avançados de Moradias e Assistidos | O sistema deve permitir filtrar a lista de domicílios por atributos de vulnerabilidade e características do imóvel. _(os filtros exatos disponíveis serão definidos durante a implementação; exportação de lista removida do escopo desta entrega)_ | Consulta | Média | A02, A03 | US06 | **A validar** |
-| RF007 | Cadastro de Animais de Estimação | O sistema deve registrar a quantidade de animais de estimação por categoria (Cães, Gatos, Aves, Outros) vinculada ao domicílio, permitindo o upload de uma foto por animal, tornando essas informações acessíveis na consulta do domicílio para apoio ao planejamento logístico de evacuação. | Cadastro | Baixa | A01 | US07 | Planejado |
-| RF008 | Visualização de Mapa de Calor | O sistema deve gerar uma camada (layer) de mapa de calor cruzada com filtros selecionáveis (ex.: idosos, PCDs), recalculando dinamicamente os clusters térmicos ao realizar zoom in/out. | Relatório | Média | A02, A03 | US08 | **Futuro** |
-| RF009 | Arquivamento de Moradias | O sistema deve inativar logicamente (soft delete) imóveis destruídos, evacuados ou desapropriados, exigindo a seleção de um motivo obrigatório antes da confirmação, e deve impedir que imóveis arquivados apareçam em operações ativas, mantendo-os apenas no Histórico Inativo. | Atualização | Média | A03 | US09 | Planejado |
-| RF010 | Arquivamento de Moradores Falecidos | O sistema deve inativar logicamente o cadastro de moradores falecidos, exigindo o preenchimento da data de falecimento e a confirmação da ação, removendo-os de todas as listagens e relatórios ativos e preservando-os no Histórico de Moradores. | Atualização | Média | A02, A03 | US10 | Planejado |
-| RF011 | Alerta Automático de Recadastro (12 meses) | O sistema deve detectar automaticamente fichas sem modificação há 365 dias e sinalizar a necessidade de recadastro, exibindo no painel de visualização/mapa o total de cadastros desatualizados versus atualizados. _(o mecanismo de notificação ao gestor será definido durante a implementação)_ | Outro | Média | A02, A03 | US11 | Planejado |
-| RF012 | Atualização Anual de Dados pelo Agente de Campo | O sistema deve permitir a reedição dos dados estruturais e sociodemográficos de domicílios com alerta de desatualização ativo, removendo automaticamente o indicador "desatualizado" do painel do gestor após o salvamento. | Atualização | Média | A01 | US12 | Planejado |
+| RF001 | Cadastro de Dados Sociodemográficos e Vínculos | O sistema deve registrar os dados sociodemográficos dos cidadãos (nome, CPF único e válido, data de nascimento, escolaridade, situação ocupacional, indicador de doença crônica e de uso de medicação contínua) e resolver a classificação de vulnerabilidade de cada pessoa: associação a um ou mais grupos (N:N), com 'idoso' e 'criança 0–12 anos' derivados automaticamente da data de nascimento e os demais (gestante/lactante, PCD, mobilidade reduzida/acamado) marcados manualmente, recebendo 'nenhuma' quando nenhum se aplica. Cada cidadão é vinculado a uma família, que deve possuir exatamente um responsável (com NIS e renda informados); CPF duplicado bloqueia o cadastro. O vínculo da família a uma moradia é opcional — quando ausente, a família permanece ativa e recebe o indicador 'cadastro incompleto' (motivo: sem moradia). | Cadastro | Alta | A01, A02 | US01 | Parcial |
+| RF002 | Cadastro Estrutural de Moradias | O sistema deve registrar as características físicas do imóvel — tipo de construção, número de pavimentos e condição de ocupação (valores conforme os enums definidos no modelo físico, seção 3.6) — e o endereço textual da moradia (logradouro, número, bairro, núcleo, complemento, referência e CEP; opcional, complementando as coordenadas capturadas no RF003) — além de um campo livre de observações, com upload opcional de até 2 fotos da fachada e do entorno (proibida foto de pessoas, RN07). | Cadastro | Alta | A01, A02 | US02 | Implementado |
+| RF003 | Georreferenciamento de Moradias via GPS | O sistema deve obter automaticamente, em segundo plano, a posição do dispositivo do agente para pré-centralizar um mini-mapa de confirmação. O registro das coordenadas (latitude e longitude) é uma ação explícita: o sistema exibe um pin reposicionável (toque ou arrasto) e salva a localização somente após a confirmação, sem digitação manual; o registro pode ser refeito/reposicionado depois, inclusive na edição (pin exibido na posição salva). As coordenadas confirmadas são persistidas com a moradia. | Cadastro | Alta | A01, A02 | US06 | Parcial |
+| RF004 | Visualização de Moradias em Mapa Georreferenciado | O sistema deve exibir no mapa marcadores (pins) correspondentes às coordenadas de todas as moradias ativas, lendo os dados persistidos no banco (RN11). Ao clicar em um marcador, o sistema abre um card resumido com os dados da moradia (incluindo a situação definida manualmente pelo gestor, RN08) e da família vinculada; o card contém um botão que redireciona para a aba de busca com a família aberta, onde estão as informações completas e o acesso à área de edição. O sistema não infere risco automaticamente. | Relatório / Consulta | Alta | A02 | US03 | Planejado |
+| RF005 | Consulta Integrada de Moradia e Moradores | O sistema deve consolidar, em uma única tela, os dados estruturais do imóvel (incluindo a situação da moradia marcada manualmente pelo gestor, RN08) e os dados sociodemográficos de todos os ocupantes vinculados (responsável, moradores, indicadores de vulnerabilidade e pets), refletindo sempre o estado atual do banco (RN11). Quando a família não tiver moradia vinculada, exibir a flag 'cadastro incompleto'. | Consulta | Alta | A02 | US04 | Parcial |
+| RF006 | Filtros Avançados de Moradias e Assistidos | O sistema deve permitir consultar e filtrar a lista de moradias e moradores a partir dos dados persistidos no banco (fonte oficial, RN11). Filtros previstos: atributos de vulnerabilidade (grupos prioritários) e características estruturais do imóvel (tipo de construção, pavimentos, condição de ocupação, situação). _(os filtros exatos serão definidos durante a implementação; exportação de lista está fora do escopo desta entrega)_ | Consulta | Média | A02 | US04 | **A validar** |
+| RF007 | Cadastro de Animais de Estimação | O sistema deve permitir o cadastro individual dos animais de estimação de cada família (tipo — cachorro, gato, réptil, ave, roedor ou outros —, nome, porte, raça e cor), com upload opcional de foto por animal. O pet é vinculado à família (não à moradia), acompanhando-a em caso de mudança de domicílio (RN12). As informações ficam acessíveis na consulta da família/moradia para conhecer a população animal das áreas de risco. | Cadastro | Baixa | A01 | US07 | Implementado |
+| RF008 | Visualização de Mapa de Calor | O sistema deve gerar uma camada (layer) de mapa de calor sobre o mapa georreferenciado, cruzada com filtros de grupos de vulnerabilidade selecionáveis (ex.: idosos, PCDs), agrupando as coordenadas das moradias ativas por intensidade e recalculando os clusters ao realizar zoom in/out. Os dados vêm do banco oficial (RN11) e respeitam a classificação de vulnerabilidade (RN04), sem inferir prioridade automática. | Relatório | Média | A02 | — | **Futuro** |
+| RF009 | Arquivamento e Desarquivamento de Moradias | O sistema deve inativar logicamente (soft delete) moradias (ex.: destruídas, evacuadas ou desapropriadas), sem exigir motivo nem confirmação adicional (RN06), ocultando-as automaticamente da busca e do mapa de operações ativas e mantendo-as visíveis apenas no Histórico Inativo (filtro 'moradias inativas'). Deve permitir desarquivar uma moradia inativa, retornando-a ao estado ativo. Ao arquivar uma moradia com moradores vinculados, estes permanecem ativos e passam a exibir o indicador 'cadastro incompleto' (motivo: sem moradia). | Atualização | Média | A02 | US08 | Parcial |
+| RF010 | Arquivamento e Desarquivamento de Moradores | O sistema deve inativar logicamente (soft delete) moradores que deixem de pertencer à área (ex.: falecimento, desaparecimento ou mudança), sem exigir motivo, data ou confirmação adicional (RN06), removendo-os das listagens, buscas e estatísticas ativas e preservando o registro no Histórico de Moradores (filtro 'moradores inativos'). Quando o morador inativado for o responsável pela família, o sistema deve exigir a definição de um novo responsável entre os moradores ativos antes de concluir; se não restar nenhum morador, a família é arquivada. Deve permitir desarquivar um morador inativo, retornando-o ao estado ativo. | Atualização | Média | A02 | US09 | Parcial |
+| RF011 | Alerta Automático de Recadastro (12 meses) | O sistema deve detectar automaticamente fichas sem modificação há mais de 365 dias e sinalizar a necessidade de recadastro, exibindo no painel de visualização/mapa o total de cadastros desatualizados versus atualizados. _(o mecanismo de notificação ao gestor será definido durante a implementação)_ | Outro | Média | A01, A02 | US10 | Planejado |
+| RF012 | Atualização Anual de Dados pelo Agente de Campo | O sistema deve permitir a reedição dos dados estruturais e sociodemográficos de domicílios com alerta de desatualização ativo, removendo automaticamente o indicador "desatualizado" do painel do gestor após o salvamento. | Atualização | Média | A01 | US05, US10 | Parcial |
+| RF013 | Cadastro Completo da Família (Transacional) | O sistema deve permitir ao Agente de Defesa Civil (A01) registrar, em uma única ação transacional, a moradia com sua localização, a família, o responsável, os dependentes e os pets — garantindo que nenhum dado parcial seja persistido caso a operação falhe (tudo-ou-nada). | Cadastro | Alta | A01 | US01, US02, US06, US07 | Implementado |
+| RF014 | Gestão de Família e Vínculos | O sistema deve tratar a família como entidade própria, vinculando pessoas a famílias e famílias a moradias em relação N:N, e preservando o histórico de entrada e saída desses vínculos (registrando data de saída em vez de apagar o registro). A inativação de uma família é lógica (soft delete), conforme RN06; uma família que fique sem nenhuma pessoa ativa é arquivada (RN01). | Cadastro / Atualização | Alta | A01, A02 | US01 | Parcial |
+| RF015 | Marcação Manual da Situação da Moradia | O sistema deve permitir ao agente de campo e ao gestor (A01, A02) definir e atualizar manualmente a situação da moradia entre Ativa, Interditada, Em Risco e Demolida, registrando apenas a marcação informada — o sistema não infere risco automaticamente (RN08). A situação é refletida no card do mapa e na consulta da moradia. | Atualização | Média | A01, A02 | — | Parcial |
+| RF016 | Busca de Pessoas / Responsáveis | O sistema deve permitir buscar pessoas por nome, CPF, e-mail ou telefone (normalizando dígitos quando aplicável), com escopo configurável (ativas, inativas/arquivadas ou todas), retornando os dados básicos das pessoas encontradas a partir do banco oficial (RN11). | Consulta | Média | A02 | US04 | Implementado |
+| RF017 | Indicador de Cadastro Incompleto | O sistema deve sinalizar automaticamente como "cadastro incompleto" as famílias sem moradia vinculada — único motivo possível, já que toda família ativa tem responsável (RN01). O indicador é exibido na busca/consulta e removido automaticamente quando a família passa a ter uma moradia vinculada (RN03, RN10). | Outro | Média | A01, A02 | US01, US04 | Planejado |
+| RF018 | Armazenamento Seguro de Fotos | O sistema deve armazenar as fotos de moradias e de pets em bucket privado, gerando URLs de upload e de leitura assinadas e temporárias, validando tipo (jpeg/png/webp) e tamanho máximo do arquivo. Não há armazenamento de foto de pessoas (RN07). | Outro | Média | A01, A02 | US02, US07 | Implementado |
+| RF019 | Edição de Cadastro | O sistema deve permitir, a partir da busca ou do mapa, editar os dados de qualquer família, morador ou moradia, abrindo o formulário de cadastro já pré-preenchido (independentemente de existir indicador de desatualização). Inclui a reedição dos dados sociodemográficos e estruturais e, na moradia, o reposicionamento da localização no mini-mapa (RF003). Ao salvar com os dados obrigatórios completos, o indicador 'cadastro incompleto' é removido quando aplicável (RN10). | Atualização | Alta | A01, A02 | US05 | Parcial |
 
 ---
 
 ### 3.1.3 Regras de Negócio
 
-| ID   | Nome                                                   | Descrição                                                                                                                                                                                                                                                                   | Pré-condição                                                                              | Consequência do Descumprimento                                                                        | Atores       | RFs Associados      |
-|------|--------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------|--------------|---------------------|
-| RN01 | Registro Obrigatório de Indicadores de Vulnerabilidade | Toda pessoa cadastrada deve ter seus indicadores de vulnerabilidade corretamente preenchidos (idoso, criança 0–12 anos, gestante/lactante, PCD, mobilidade reduzida/acamado). A priorização de atendimento durante evacuações é responsabilidade operacional dos agentes com base nesses dados — o sistema não exibe hierarquia automática de priorização. | Existência de registro de pessoa vinculada a uma moradia.                                  | Indicadores ausentes comprometem o planejamento de evacuação pelos agentes de campo.                  | A01, A03     | RF001               |
-| RN02 | Recadastro Obrigatório a cada 12 Meses                 | O sistema deve detectar fichas de moradores e moradias sem atualização há 365 dias e emitir alerta automático. O alerta persiste até que o agente de campo revisite e re-salve os dados.                                                                                     | Ficha cadastrada há mais de 12 meses sem edição.                                          | Dados desatualizados podem comprometer planos de evacuação e distribuição de recursos humanitários.   | A02, A03     | RF011, RF012        |
-| RN03 | Arquivamento Lógico de Moradias e Moradores (LGPD)     | Registros de moradores falecidos e imóveis destruídos/evacuados/desapropriados devem ser inativados logicamente (soft delete), com registro de motivo e data. Os dados são preservados para fins históricos, auditoria e rastreabilidade, em conformidade com a LGPD.        | Ação confirmada pelo gestor com motivo e data preenchidos.                                | Deleção física viola a LGPD e elimina histórico necessário para relatórios e auditorias.              | A02, A03     | RF009, RF010        |
-| RN04 | Captura de Geolocalização e Proibição de Foto de Pessoas | O sistema deve capturar automaticamente as coordenadas GPS do dispositivo no cadastro de moradia. É estritamente proibido o registro fotográfico das pessoas cadastradas; apenas fotos de fachada e entorno do imóvel são permitidas (máx. 2 por imóvel).                    | Permissão de GPS concedida pelo dispositivo.                                              | Foto de pessoas cadastradas viola a LGPD e direitos de imagem.                                        | A01          | RF002, RF003        |
-| RN05 | Flag de Risco Crítico na Consulta Integrada            | Quando uma moradia possuir histórico de ocorrência registrado **E** tiver pelo menos um morador com mobilidade reduzida ou acamado, o sistema deve exibir automaticamente a flag visual "Risco Crítico" no cabeçalho da consulta integrada.                                 | Campos "Histórico de ocorrência" e "Mobilidade reduzida/acamado" preenchidos.             | Omissão da flag pode levar à negligência de vítimas em situação crítica.                              | A02, A03     | RF005               |
+| ID | Nome | Descrição | Pré-condição | Consequência do Descumprimento | Atores | RFs Associados |
+|---|---|---|---|---|---|---|
+| RN01 | Família Ativa Deve Possuir Responsável | Toda família ativa deve ter um cidadão definido manualmente como responsável, e esse responsável deve ter seus dados obrigatórios preenchidos (conforme as VC do cidadão e do responsável). O cadastro da família só é concluído com um responsável vinculado e completo, mesmo sem moradia associada. Uma família que fique sem nenhuma pessoa deve ser arquivada (não pode permanecer ativa). | Família ativa em criação ou edição. | Família sem responsável (ou com responsável incompleto) prejudica contato, recadastro e evacuação. | A01, A02 | RF001 |
+| RN02 | Responsável Único por Família | Cada família ativa tem exatamente um responsável; o sistema não permite dois responsáveis ativos simultâneos na mesma família. Ao tentar trocar o responsável, o sistema exige uma confirmação antes de aplicar a mudança — confirmada, o responsável anterior deixa de sê-lo e o novo assume. | Família ativa, com um cidadão sendo definido ou trocado como responsável. | Duplicidade de responsabilidade gera conflito de contato e leitura errada dos núcleos familiares. | A01, A02 | RF001 |
+| RN03 | Família Pode Ser Cadastrada Sem Moradia (Cadastro Incompleto) | É permitido cadastrar uma família sem moradia vinculada; nesse caso ela permanece ativa, porém sinalizada com o indicador "cadastro incompleto" (motivo: sem moradia) até ser vinculada a uma moradia ou situação de abrigo/realocação. | Dados obrigatórios da família e do responsável preenchidos (ver RN01). | Famílias vulneráveis sem residência definida deixariam de ser registradas, prejudicando o acompanhamento social e a resposta emergencial. | A01, A02 | RF001 |
+| RN04 | Registro Obrigatório de Indicadores de Vulnerabilidade | Toda pessoa cadastrada deve ter sua classificação de vulnerabilidade resolvida: pode estar associada a um ou mais grupos de vulnerabilidade (relação N:N) e, quando nenhum se aplica, recebe "nenhuma". Os grupos "idoso" e "criança (0–12 anos)" são atribuídos automaticamente pela data de nascimento; os demais (gestante/lactante, PCD, mobilidade reduzida/acamado) são marcados manualmente. A priorização de atendimento em evacuações é responsabilidade operacional dos agentes com base nesses dados; o sistema não exibe hierarquia automática de priorização. | Existência de registro de pessoa vinculada a uma família. | Classificação de vulnerabilidade ausente ou incorreta compromete o planejamento de evacuação pelos agentes de campo. | A01, A02 | RF001 |
+| RN05 | Captura e Confirmação de Geolocalização da Moradia | A obtenção da posição do dispositivo é feita automaticamente pelo sistema em segundo plano (chamada ao serviço de localização, sem interação visível), para agilizar o preenchimento — especialmente na edição. O registro da localização é uma ação explícita do agente: ao clicar em "cadastrar localização", o sistema exibe um mini-mapa de confirmação com pin reposicionável (toque ou arrasto); a localização só é salva após a confirmação, podendo ser refeita/reposicionada posteriormente. | Cadastro ou edição de moradia em andamento (assume-se conexão e GPS disponíveis). | Sem localização confirmada, a moradia não aparece no mapa nem pode ser localizada em resgates. | A01 | RF002, RF003 |
+| RN06 | Arquivamento Lógico (Soft Delete) e Conformidade LGPD | Moradores, famílias e moradias nunca são excluídos fisicamente do banco: são inativados logicamente (soft delete), com o status alterado para inativo e o registro preservado para histórico, auditoria e rastreabilidade, em conformidade com a LGPD. Não é exigido motivo nem confirmação adicional para a inativação. | Existência de um registro ativo (morador, família ou moradia) selecionado para inativação. | Deleção física viola a LGPD e elimina o histórico necessário para relatórios e auditorias. | A01, A02 | RF009, RF010 |
+| RN07 | Proibição de Foto de Pessoas (LGPD) | É estritamente proibido o registro fotográfico de pessoas cadastradas. Apenas fotos da fachada e do entorno do imóvel são permitidas, limitadas a no máximo 2 por moradia. | Upload de foto vinculada a uma moradia. | Foto de pessoas viola a LGPD e os direitos de imagem dos cidadãos. | A01 | RF002 |
+| RN08 | Marcação Manual da Situação da Moradia | A situação operacional da moradia (Ativa, Interditada, Em Risco, Demolida) é definida manualmente pelo agente de campo ou pelo gestor; o sistema apenas registra a marcação, não infere risco automaticamente. | Moradia ativa cadastrada. | Sem a situação marcada, perde-se a visão operacional do estado físico e de risco do imóvel. | A01, A02 | RF002, RF004, RF015 |
+| RN09 | Recadastro Obrigatório a cada 12 Meses | O sistema deve detectar automaticamente fichas de moradores e moradias cuja data de última modificação ultrapasse 365 dias e sinalizá-las com o indicador "cadastro desatualizado". O alerta persiste até que os dados sejam revisados e re-salvos (recadastro). | Ficha com data de última modificação superior a 365 dias. | Dados desatualizados podem comprometer planos de evacuação e a distribuição de recursos humanitários. | A01 | RF011, RF012 |
+| RN10 | Limpeza Automática dos Indicadores | Os indicadores "cadastro incompleto" e "cadastro desatualizado" são removidos automaticamente quando a condição que os gerou deixa de existir (dados obrigatórios completados; ficha revisada e re-salva). | Registro com indicador ativo sendo editado/completado. | Indicadores que não somem geram ruído e mascaram as pendências reais. | A01, A02 | RF005, RF011, RF012 |
+| RN11 | Fonte Oficial dos Dados Operacionais | Consultas, filtros, busca textual e mapa devem usar os dados persistidos no banco (Supabase) como fonte oficial — nunca dados fixos/mockados na interface. As telas devem refletir sempre o estado atual do banco (registros ativos e suas coordenadas). | Dados cadastrados no banco e consulta feita pela aplicação. | Gestores veriam informação divergente da base real, comprometendo decisões. | A02 | RF004, RF005, RF006 |
+| RN12 | Pet Vinculado à Família (Não à Moradia) | Pets são vinculados à família, e não diretamente à moradia; quando a família muda de moradia, os pets a acompanham automaticamente. | Família cadastrada; cadastro de pet. | Vincular o pet à moradia faria o animal "sumir" quando a família se mudasse, perdendo o controle da população animal das áreas de risco. | A01 | RF007 |
 
 ---
 
-### 3.1.4 Requisitos Não Funcionais — ISO/IEC 25010:2011
+### 3.1.4 Validações de Campo (VC)
+
+As Validações de Campo (VC) definem as restrições de preenchimento obrigatório, unicidade e domínio aplicadas a cada campo no momento do cadastro/edição, antes da persistência. Elas se distinguem das Regras de Negócio (3.1.3): a VC atua sobre um único campo/registro, enquanto a RN expressa políticas e relações entre entidades.
+
+| ID | Campo / Validação | Entidade | Tipo | Observação |
+|---|---|---|---|---|
+| VC01 | Nome completo preenchido | Cidadão | Obrigatório | — |
+| VC02 | Data de nascimento preenchida | Cidadão | Obrigatório | Base para derivar automaticamente "idoso" e "criança (0–12 anos)" |
+| VC03 | CPF preenchido, único e válido | Cidadão | Obrigatório + Único | Vale para todos os cidadãos; bloqueia cadastro duplicado; precisa ser válido |
+| VC04 | Vínculo a uma família | Cidadão | Obrigatório | Todo cidadão pertence a uma família |
+| VC05 | Classificação de vulnerabilidade (≥ 1 grupo) | Cidadão | Obrigatório | Relação N:N (cidadão ↔ vulnerabilidade); recebe "nenhuma" quando nenhum grupo se aplica; "idoso"/"criança" derivados da data de nascimento |
+| VC06 | Grau de parentesco com o responsável | Cidadão | Obrigatório | — |
+| VC07 | NIS único; renda ≥ 0 | Responsável | Único + Range | O responsável é um cidadão marcado manualmente; o CPF é validado na VC03 (Cidadão) |
+| VC08 | Tipo de construção, nº de pavimentos e condição de ocupação | Moradia | Obrigatório | — |
+| VC09 | Coordenadas (latitude e longitude) | Moradia | Obrigatório | Endereço textual (rua, número) é opcional |
+| VC10 | Limite de fotos da moradia | Moradia | Máx. 2 | Apenas fachada/entorno; proibida foto de pessoa (ver RN de geolocalização/LGPD) |
+| VC11 | Escolaridade preenchida | Cidadão | Obrigatório (enum) | — |
+| VC12 | Situação ocupacional preenchida | Cidadão | Obrigatório (enum) | — |
+| VC13 | Indicador de doença crônica | Cidadão | Obrigatório (booleano) | Default "não"; nunca nulo |
+| VC14 | Indicador de uso de medicação contínua | Cidadão | Obrigatório (booleano) | Default "não"; nunca nulo |
+
+---
+
+### 3.1.5 Requisitos Não Funcionais — ISO/IEC 25010:2011
 | ID | Eixo | Descrição | Derivação e Contexto do Parceiro | Evolução do conceitual para técnico | Métrica / Critério de Aceite | Conexão com RFs | Como Verificar |
 |---|---|---|---|---|---|---|---|
 | RNF001 | **Usabilidade** | O sistema deve facilitar o preenchimento e a consulta de cadastros por meio de payloads padronizados, validações de entrada e respostas de erro compreensíveis. Evitando assim, a escrita de dados errados, inconsistentes e dados não padronizados.  | Derivado da US01 e US02: agentes atuam em áreas de risco sob pressão e precisam registrar dados de pessoas, moradias e famílias com o menor número possível de inconsistências. | O requisito evoluiu para decisões técnicas como uso de DTOs, funções de normalização em `request-utils.ts` e validações específicas em `validations/`, reduzindo erros de entrada antes que os dados cheguem aos services. | Payloads obrigatórios devem ser validados antes da persistência; requisições inválidas devem retornar mensagens de erro claras. | RF001, RF002, RF005, RF012 | Testar chamadas da API com dados válidos e inválidos, verificando se os erros retornados orientam a correção do preenchimento. |
@@ -441,9 +477,9 @@ O sistema atende primordialmente ao Agente de Campo (A01) no que tange à operat
 | RNF007 | **Compatibilidade** | O sistema deve separar o armazenamento de metadados do armazenamento de arquivos, permitindo integração entre PostgreSQL e serviço externo de storage. | Derivado da necessidade de registrar fotos de moradias e pets sem sobrecarregar o banco relacional com arquivos binários. | O requisito evoluiu para endpoints próprios de fotos e upload mediado por Supabase Storage. O banco mantém vínculos e metadados, enquanto o storage externo armazena os arquivos. | O sistema deve permitir gerar URL assinada, cadastrar metadados da foto e vincular o arquivo à moradia ou ao pet correspondente. | RF002, RF007 | Testar criação de URL assinada, cadastro de foto e vínculo com moradia ou pet, verificando integração entre API, banco e storage. |
 | RNF008 | **Manutenibilidade** | O projeto deve manter uma estrutura organizada, auditável e segura para evolução, testes e uso de dados fictícios durante o desenvolvimento. | Derivado da necessidade de evolução contínua do projeto em sprints, com separação clara de responsabilidades e redução do risco de uso indevido de dados reais. | O requisito evoluiu para a organização do backend em `controllers`, `services`, `repositories`, `dtos`, `models`, `validations`, `errors`, `db` e `storage`, além do uso de variáveis de ambiente para configurações sensíveis. | A estrutura do código deve permitir manutenção por módulos e facilitar auditoria do que é regra de negócio, persistência, validação ou infraestrutura. | Todos os RFs | Revisar estrutura de pastas, testes e dados utilizados em desenvolvimento, garantindo que a evolução do sistema não dependa de dados reais. |
 
-## 3.1.5. Matriz RF → RN → Endpoint (sprints 3 a 5)
+## 3.1.6. Matriz RF → RN → Endpoint (sprints 3 a 5)
  
-Matriz de cobertura que demonstra quais RN (Regras de Negócio) e endpoints implementam cada RF (Requisito Funcional). Os endpoints listados abaixo estão implementados no backend e formalizados no arquivo `documentos/outros/webapi-docs.html`.
+Matriz de cobertura que demonstra quais RN (Regras de Negócio) e endpoints implementam cada RF (Requisito Funcional). Os endpoints listados abaixo estão implementados no backend e formalizados nos arquivos `documentos/webapi-docs.html` e `documentos/outros/endpoints.md`.
  
 | RF | RN associadas | Endpoint | Método |
 |----|---------------|----------|--------|
@@ -587,22 +623,22 @@ Os doze fluxos documentados nesta seção cobrem o ciclo principal de uso do sis
 
 ---
 
-#### FL01 — Cadastro de Pessoa e Vínculo à Moradia
+### FL01 — Cadastro completo de família, moradia e ocupação
 
 ```mermaid
 sequenceDiagram
     actor Agente as Agente de Campo (A01)
     participant Frontend as Frontend PWA Mobile
     participant Cache as Cache Local (IndexedDB)
-    participant Controller as CadastroController
-    participant Service as CadastroService
-    participant Repository as CadastroRepository
+    participant Controller as FamiliaController
+    participant Service as FamiliaService
+    participant Repository as FamiliaRepository/MoradiaRepository/PessoaRepository/PetRepository/FotoRepository
     participant DB as Banco de Dados
 
     Note over Agente,DB: Preenchimento em campo
 
     Agente->>Frontend: Inicia novo cadastro
-    Frontend-->>Agente: Exibe seções de moradia, localização, família,<br/>responsável, moradores, grupos prioritários,<br/>gestante, pets e fotos
+    Frontend-->>Agente: Exibe seções de moradia, localização, família,<br/>responsável, moradores, grupos prioritários, pets e fotos
 
     Agente->>Frontend: Preenche dados estruturais da moradia
     Frontend->>Frontend: Captura GPS do dispositivo (RN04)
@@ -616,163 +652,80 @@ sequenceDiagram
 
     Agente->>Frontend: Anexa até 2 fotos (fachada e entorno)
     Frontend->>Frontend: Valida RN04: foto não pode conter pessoas
-    Agente->>Frontend: Informa responsável, demais cidadãos,<br/>vulnerabilidades, gestação quando houver e pets
+    Agente->>Frontend: Informa responsável, demais dependentes,<br/>vulnerabilidades (grupos prioritários) e pets
 
     Note over Agente,DB: Envio ou persistência local
 
     Agente->>Frontend: Confirma cadastro
 
-        Frontend->>Controller: POST /api/familias/nucleo<br/>{localização, moradia, família,<br/>responsável, cidadãos, grupos,<br/>gestantes, pets, fotos}
-        Controller->>Service: Validar payload, RN01 e RN04
-        Service->>Service: Validar integridade:<br/>família ativa deve ter responsável<br/>e ocupação ativa
-        Service->>Repository: Abrir transação
+    alt Dispositivo online
+        Frontend->>Controller: POST /api/familias/nucleo<br/>{localizacao, moradia, responsavel, dependentes, pets, fotos}
+        Controller->>Service: Validar payload, RN04 (fotos de pessoas)
+        Service->>Service: Validar integridade:<br/>Família ativa exige moradia ativa e responsável ativo (US13, US14)
+        Service->>Repository: Iniciar transação (BEGIN)
 
         Repository->>DB: INSERT localização
-        DB-->>Repository: id_localização
-        Repository->>DB: INSERT moradia {id_localização, status='Ativa'}
+        DB-->>Repository: id_localizacao
+        Repository->>DB: INSERT moradia {id_localizacao, status='Ativa'}
         DB-->>Repository: id_moradia
-        Repository->>DB: INSERT família {status_ativo=true}
-        DB-->>Repository: id_família
-        Repository->>DB: INSERT historico_ocupacao<br/>{id_família, id_moradia, data_entrada=hoje,<br/>data_saida=NULL, status='Regular'}
-        DB-->>Repository: id_historico_ocupacao
-        Repository->>DB: INSERT pessoa do responsável<br/>{id_família, status_cadastro=true}
+        Repository->>DB: INSERT família {status='Ativo'}
+        DB-->>Repository: id_familia
+        Repository->>DB: INSERT familia_moradia<br/>{id_familia, id_moradia, data_entrada=hoje,<br/>data_saida=NULL, status='Regular'}
+        DB-->>Repository: OK
+        Repository->>DB: INSERT pessoa do responsável<br/>{parentesco='Responsável', status='Ativo'}
         DB-->>Repository: id_pessoa_responsavel
-        Repository->>DB: INSERT responsável<br/>{id_pessoa_responsavel, cpf, renda, contato, NIS}
-        DB-->>Repository: id_responsavel
+        Repository->>DB: INSERT responsavel<br/>{id_pessoa, cpf, renda, NIS, sexo, raca, estado_civil}
+        DB-->>Repository: OK
+        Repository->>DB: INSERT pessoa_familia<br/>{id_pessoa_responsavel, id_familia, data_entrada=hoje}
+        DB-->>Repository: OK
 
         loop Para cada morador dependente
-            Repository->>DB: INSERT pessoa {id_família, status_cadastro=true}
+            Repository->>DB: INSERT pessoa {parentesco, status='Ativo'}
             DB-->>Repository: id_pessoa
-            opt Morador pertence a grupos prioritários
-                Repository->>DB: INSERT pessoa_grupo_prioritario<br/>{id_pessoa, id_grupo_prioritario}
-                DB-->>Repository: OK
-            end
-            opt Morador gestante
-                Repository->>DB: INSERT gestante<br/>{id_pessoa, data_prevista, data_inicio}
+            Repository->>DB: INSERT pessoa_familia {id_pessoa, id_familia, data_entrada=hoje}
+            DB-->>Repository: OK
+            opt Pertence a grupos prioritários
+                Repository->>DB: INSERT pessoa_grupo_prioritario {id_pessoa, id_grupo_prioritario}
                 DB-->>Repository: OK
             end
         end
 
         loop Para cada pet informado
-            Repository->>DB: INSERT pet<br/>{id_família, tipo_pet, porte_pet, nome, observações}
-            DB-->>Repository: OK
-        end
-
-        loop Para cada foto de moradia
-            Repository->>DB: INSERT foto_moradia {id_moradia, tipo_foto, url}
-            DB-->>Repository: OK
-        end
-
-        Repository-->>Service: Commit da transação
-        Service-->>Controller: HTTP 201 Created<br/>{id_família, id_moradia, id_responsavel}
-        Controller-->>Frontend: HTTP 201 Created
-        Frontend-->>Agente: Exibe confirmação do cadastro
-
-    Note over Agente,DB: Falhas principais
-
-    alt CPF, email ou NIS duplicado
-        Service-->>Controller: HTTP 409 Conflict
-        Controller-->>Frontend: HTTP 409 Conflict
-        Frontend-->>Agente: Exibe opção de buscar cadastro ou revisar dados
-    else Campos obrigatórios inválidos
-        Service-->>Controller: HTTP 422 Unprocessable Entity
-        Controller-->>Frontend: Lista de campos inválidos
-        Frontend-->>Agente: Destaca campos para correção
-    end
-```
-
-
-Este fluxo descreve a jornada de cadastro conduzida pelo **Agente de Campo (A01)** a partir do aplicativo mobile. O processo é estruturado em cinco sessões sequenciais: Moradia, Localização, Chefe de Família, Composição Familiar e Pets. Cada uma liberada somente após a confirmação da anterior, garantindo a integridade referencial dos dados antes do envio. Ao submeter o formulário completo, o Frontend dispara uma sequência ordenada de requisições `POST` que cria os registros em cascata (`LOCALIZACAO → MORADIA → PESSOA → RESPONSAVEL → PET → FORMULARIO`), enquanto o Service aplica as regras de negócio RN01 (classificação de risco) e RN04 (restrição de fotos). O **caminho de exceção** de duplicidade de cadastro, que oferece ao agente as opções de busca, atualização ou cancelamento.
-#### FL01 — Cadastro de Pessoa e Vínculo à Moradia
-
-```mermaid
-sequenceDiagram
-    actor Agente as Agente de Campo (A01)
-    participant Frontend as Frontend PWA Mobile
-    participant Cache as Cache Local (IndexedDB)
-    participant Controller as CadastroController
-    participant Service as CadastroService
-    participant Repository as CadastroRepository
-    participant DB as Banco de Dados
-
-    Note over Agente,DB: Preenchimento em campo
-
-    Agente->>Frontend: Inicia novo cadastro
-    Frontend-->>Agente: Exibe seções de moradia, localização, família,<br/>responsável, moradores, grupos prioritários,<br/>gestante, pets e fotos
-
-    Agente->>Frontend: Preenche dados estruturais da moradia
-    Frontend->>Frontend: Captura GPS do dispositivo (RN04)
-
-    alt GPS permitido e disponível
-        Frontend->>Frontend: Preenche latitude e longitude
-    else GPS indisponível ou negado
-        Frontend-->>Agente: Solicita CEP, logradouro, bairro,<br/>número, cidade, UF e ponto de referência
-        Agente->>Frontend: Informa localização manual
-    end
-
-    Agente->>Frontend: Anexa até 2 fotos (fachada e entorno)
-    Frontend->>Frontend: Valida RN04: foto não pode conter pessoas
-    Agente->>Frontend: Informa responsável, demais cidadãos,<br/>vulnerabilidades, gestação quando houver e pets
-
-    Note over Agente,DB: Envio ou persistência local
-
-    Agente->>Frontend: Confirma cadastro
-
-        Frontend->>Controller: POST /api/familias/nucleo<br/>{localização, moradia, família,<br/>responsável, cidadãos, grupos,<br/>gestantes, pets, fotos}
-        Controller->>Service: Validar payload, RN01 e RN04
-        Service->>Service: Validar integridade:<br/>família ativa deve ter responsável<br/>e ocupação ativa
-        Service->>Repository: Abrir transação
-
-        Repository->>DB: INSERT localização
-        DB-->>Repository: id_localização
-        Repository->>DB: INSERT moradia {id_localização, status='Ativa'}
-        DB-->>Repository: id_moradia
-        Repository->>DB: INSERT família {status_ativo=true}
-        DB-->>Repository: id_família
-        Repository->>DB: INSERT historico_ocupacao<br/>{id_família, id_moradia, data_entrada=hoje,<br/>data_saida=NULL, status='Regular'}
-        DB-->>Repository: id_historico_ocupacao
-        Repository->>DB: INSERT pessoa do responsável<br/>{id_família, status_cadastro=true}
-        DB-->>Repository: id_pessoa_responsavel
-        Repository->>DB: INSERT responsável<br/>{id_pessoa_responsavel, cpf, renda, contato, NIS}
-        DB-->>Repository: id_responsavel
-
-        loop Para cada morador dependente
-            Repository->>DB: INSERT pessoa {id_família, status_cadastro=true}
-            DB-->>Repository: id_pessoa
-            opt Morador pertence a grupos prioritários
-                Repository->>DB: INSERT pessoa_grupo_prioritario<br/>{id_pessoa, id_grupo_prioritario}
-                DB-->>Repository: OK
-            end
-            opt Morador gestante
-                Repository->>DB: INSERT gestante<br/>{id_pessoa, data_prevista, data_inicio}
+            Repository->>DB: INSERT pet {id_familia, tipo, nome, porte, raca, cor}
+            DB-->>Repository: id_pet
+            loop Para cada foto do pet
+                Repository->>DB: INSERT foto {id_pet, url}
                 DB-->>Repository: OK
             end
         end
 
-        loop Para cada pet informado
-            Repository->>DB: INSERT pet<br/>{id_família, tipo_pet, porte_pet, nome, observações}
-            DB-->>Repository: OK
-        end
-
         loop Para cada foto de moradia
-            Repository->>DB: INSERT foto_moradia {id_moradia, tipo_foto, url}
+            Repository->>DB: INSERT foto {id_moradia, url}
             DB-->>Repository: OK
         end
 
-        Repository-->>Service: Commit da transação
-        Service-->>Controller: HTTP 201 Created<br/>{id_família, id_moradia, id_responsavel}
+        Repository-->>Service: Commit da transação (COMMIT)
+        Service-->>Controller: DTO do núcleo criado
         Controller-->>Frontend: HTTP 201 Created
         Frontend-->>Agente: Exibe confirmação do cadastro
 
+    else Dispositivo offline
+        Frontend->>Cache: Salva cadastro completo com UUID local e estado PENDENTE
+        Cache-->>Frontend: Persistido localmente
+        Frontend-->>Agente: Exibe "Salvo localmente, aguardando sincronização"
+        Cache->>Frontend: Ao reconectar, aciona sync
+        Frontend->>Controller: POST /api/familias/nucleo {uuid_local, payload}
+    end
+
     Note over Agente,DB: Falhas principais
 
-    alt CPF, email ou NIS duplicado
+    alt CPF, email ou telefone duplicado
         Service-->>Controller: HTTP 409 Conflict
         Controller-->>Frontend: HTTP 409 Conflict
-        Frontend-->>Agente: Exibe opção de buscar cadastro ou revisar dados
-    else Campos obrigatórios inválidos
-        Service-->>Controller: HTTP 422 Unprocessable Entity
-        Controller-->>Frontend: Lista de campos inválidos
+        Frontend-->>Agente: Exibe mensagem de erro (Cadastro Duplicado)
+    else Campos obrigatórios inválidos / Foto com pessoas (RN04)
+        Service-->>Controller: HTTP 400 Bad Request
+        Controller-->>Frontend: Lista de erros de validação
         Frontend-->>Agente: Destaca campos para correção
     end
 ```
@@ -780,393 +733,206 @@ sequenceDiagram
 
 Este fluxo descreve a jornada de cadastro conduzida pelo **Agente de Campo (A01)** a partir do aplicativo mobile. O processo é estruturado em cinco sessões sequenciais: Moradia, Localização, Chefe de Família, Composição Familiar e Pets. Cada uma liberada somente após a confirmação da anterior, garantindo a integridade referencial dos dados antes do envio. Ao submeter o formulário completo, o Frontend dispara uma sequência ordenada de requisições `POST` que cria os registros em cascata (`LOCALIZACAO → MORADIA → PESSOA → RESPONSAVEL → PET → FORMULARIO`), enquanto o Service aplica as regras de negócio RN01 (classificação de risco) e RN04 (restrição de fotos). O **caminho de exceção** de duplicidade de cadastro, que oferece ao agente as opções de busca, atualização ou cancelamento.
 
----
-
-#### FL02 — Visualização de Moradias em Mapa Georreferenciado
-#### FL02 — Visualização de Moradias em Mapa Georreferenciado
+### FL02 — Visualização de moradias em mapa georreferenciado
 
 ```mermaid
 sequenceDiagram
-    actor Gestor as Gestor Operacional (A03)
+    actor Gestor as Gestor Operacional (A02/A03)
     participant Frontend as Frontend Painel Desktop
     participant Controller as MoradiaController
     participant Service as MoradiaService
-    participant Repository as MoradiaRepository
+    participant Repository as MoradiaRepository/FamiliaRepository/FotoRepository
     participant DB as Banco de Dados
 
     Gestor->>Frontend: Acessa módulo de mapa
-    Frontend->>Controller: GET /api/moradias?status=Ativa
-    Controller->>Service: Solicitar moradias ativas com localização
-    Service->>Repository: Consultar moradias ativas com localização
-    Repository->>DB: SELECT moradia.id, localização.latitude,<br/>localização.longitude, moradia.status<br/>FROM moradia JOIN localização
-    DB-->>Repository: Lista de marcadores
-    Repository-->>Service: Lista de marcadores
-    Service-->>Controller: DTO de marcadores
-    Controller-->>Frontend: HTTP 200 OK [{id, lat, lng, status}]
+    Frontend->>Controller: GET /api/moradias
+    Controller->>Service: Solicitar moradias ativas
+    Service->>Repository: Consultar moradias da view ativa
+    Repository->>DB: SELECT id, status, lat, lng FROM vw_moradia_ativa m JOIN localizacao l ON l.id = m.id_localizacao
+    DB-->>Repository: Lista de moradias com localização
+    Repository-->>Service: Lista de moradias
+    Service-->>Controller: DTO de moradias
+    Controller-->>Frontend: HTTP 200 OK [{id, status, localizacao: {latitude, longitude}}]
 
     alt Existem moradias georreferenciadas
         Frontend->>Frontend: Renderiza pins no mapa
     else Nenhum registro encontrado
-        Frontend-->>Gestor: Exibe mapa vazio e mensagem<br/>"Nenhuma moradia ativa encontrada"
+        Frontend-->>Gestor: Exibe mapa vazio e mensagem "Nenhuma moradia ativa encontrada"
     end
 
     Gestor->>Frontend: Clica em um marcador
     Frontend->>Controller: GET /api/moradias/{id}/detalhes
-    Controller->>Service: Carregar moradia, famílias, pessoas, pets e fotos
-    Service->>Repository: Buscar dados integrados
-    Repository->>DB: SELECT moradia, localização, família,<br/>cidadão, pet, foto_moradia
+    Controller->>Service: Carregar moradia, famílias, moradores, pets, fotos e grupos prioritários
+    Service->>Repository: Buscar dados integrados (vw_moradia_ativa, vw_familia_ativa, vw_pessoa_ativa, pet, foto, pessoa_grupo_prioritario)
+    Repository->>DB: SELECT moradia, familia, pessoa, responsavel, pet, foto, grupo_prioritario
     DB-->>Repository: Dados integrados
     Repository-->>Service: Dados integrados
-    Service-->>Controller: Objeto de consulta integrada
-    Controller-->>Frontend: HTTP 200 OK<br/>{moradia, famílias, pessoas, pets, fotos}
-    Frontend-->>Gestor: Exibe card com dados da moradia
-
-    alt Falha na API de mapa
-        Frontend-->>Gestor: Exibe fallback em lista tabular
-    end
+    Service->>Service: Aplicar RN05: Risco Crítico<br/>(moradia.status = 'Em Risco' E morador com grupo prioritário acamado/cadeirante)
+    Service-->>Controller: Objeto de consulta detalhada
+    Controller-->>Frontend: HTTP 200 OK {moradia, familias: [{familia, pessoas, pets}], fotos, risco_critico}
+    Frontend-->>Gestor: Exibe card com detalhes e flag de risco se aplicável
 ```
+Este fluxo descreve a consulta de informações espaciais executada pelo **Gestor Operacional (A02/A03)** a partir do painel administrativo desktop. O Frontend solicita a listagem de registros georreferenciados para renderização no mapa da região. O Service, por meio do Repository, realiza a busca lendo diretamente da view de leitura **`vw_moradia_ativa`** em conjunto com a tabela **`localizacao`** para obter as coordenadas de latitude e longitude dos imóveis que não sofreram exclusão lógica. Ao receber o conjunto de dados, o Frontend renderiza pins interativos na interface geográfica. Quando o gestor clica sobre um marcador específico, o sistema dispara a requisição de consulta consolidada (`GET /api/moradias/{id}/detalhes`), carregando os dados do imóvel, moradores ativos, pets e fotos, ao mesmo tempo em que calcula e exibe a flag visual de Risco Crítico (RN05) em um card sobreposto no próprio mapa.
 
-**NOTA IMPORTANTE (Implementação Atual)**:
-- RN05 (Risco Crítico) **não está implementado** - falta tabela `historico_ocorrencia` no banco
-- Endpoint `/api/moradias/{id}/detalhes` retorna dados integrados sem flag de risco
+### FL03 — Consulta integrada de moradia e moradores
+
 ```mermaid
 sequenceDiagram
-    actor Gestor as Gestor Operacional (A03)
+    actor Gestor as Gestor Operacional (A02/A03)
     participant Frontend as Frontend Painel Desktop
     participant Controller as MoradiaController
     participant Service as MoradiaService
-    participant Repository as MoradiaRepository
-    participant DB as Banco de Dados
-
-    Gestor->>Frontend: Acessa módulo de mapa
-    Frontend->>Controller: GET /api/moradias?status=Ativa
-    Controller->>Service: Solicitar moradias ativas com localização
-    Service->>Repository: Consultar moradias ativas com localização
-    Repository->>DB: SELECT moradia.id, localização.latitude,<br/>localização.longitude, moradia.status<br/>FROM moradia JOIN localização
-    DB-->>Repository: Lista de marcadores
-    Repository-->>Service: Lista de marcadores
-    Service-->>Controller: DTO de marcadores
-    Controller-->>Frontend: HTTP 200 OK [{id, lat, lng, status}]
-
-    alt Existem moradias georreferenciadas
-        Frontend->>Frontend: Renderiza pins no mapa
-    else Nenhum registro encontrado
-        Frontend-->>Gestor: Exibe mapa vazio e mensagem<br/>"Nenhuma moradia ativa encontrada"
-    end
-
-    Gestor->>Frontend: Clica em um marcador
-    Frontend->>Controller: GET /api/moradias/{id}/detalhes
-    Controller->>Service: Carregar moradia, famílias, pessoas, pets e fotos
-    Service->>Repository: Buscar dados integrados
-    Repository->>DB: SELECT moradia, localização, família,<br/>cidadão, pet, foto_moradia
-    DB-->>Repository: Dados integrados
-    Repository-->>Service: Dados integrados
-    Service-->>Controller: Objeto de consulta integrada
-    Controller-->>Frontend: HTTP 200 OK<br/>{moradia, famílias, pessoas, pets, fotos}
-    Frontend-->>Gestor: Exibe card com dados da moradia
-
-    alt Falha na API de mapa
-        Frontend-->>Gestor: Exibe fallback em lista tabular
-    end
-```
-
-**NOTA IMPORTANTE (Implementação Atual)**:
-- RN05 (Risco Crítico) **não está implementado** - falta tabela `historico_ocorrencia` no banco
-- Endpoint `/api/moradias/{id}/detalhes` retorna dados integrados sem flag de risco
-
----
-
-#### FL03 - Consulta integrada de moradia e moradores
-
-```mermaid
-sequenceDiagram
-    actor Gestor as Gestor Operacional (A03)
-    participant Frontend as Frontend Painel Desktop
-    participant Controller as ConsultaController
-    participant Service as ConsultaService
-    participant Repository as ConsultaRepository
+    participant Repository as MoradiaRepository/FamiliaRepository/FotoRepository
     participant DB as Banco de Dados
 
     Gestor->>Frontend: Acessa módulo de consulta
     Frontend->>Controller: GET /api/moradias?busca={termo}
-    Controller->>Service: Buscar moradias por termo, status ou localização
-    Service->>Repository: Consultar moradias candidatas
-    Repository->>DB: SELECT moradia, localização<br/>WHERE status <> 'Demolida' OR filtro informado
+    Controller->>Service: Buscar moradias por termo
+    Service->>Repository: Consultar moradias ativas correspondentes
+    Repository->>DB: SELECT * FROM vw_moradia_ativa WHERE nome_responsavel ILIKE termo OR logradouro ILIKE termo
     DB-->>Repository: Lista resumida
     Repository-->>Service: Lista resumida
-    Service-->>Controller: Resultado resumido
-    Controller-->>Frontend: HTTP 200 OK
-    Frontend-->>Gestor: Exibe lista de fichas
+    Service-->>Controller: DTO de busca
+    Controller-->>Frontend: HTTP 200 OK [{id, status, localizacao, responsavel}]
+    Frontend-->>Gestor: Exibe lista de moradias encontradas
 
-    Gestor->>Frontend: Seleciona uma ficha
+    Gestor->>Frontend: Seleciona uma moradia
     Frontend->>Controller: GET /api/moradias/{id}/detalhes
-    Controller->>Service: Montar ficha integrada
-    Service->>Repository: Consultar ocupação ativa
-    Repository->>DB: SELECT historico_ocupacao, família, cidadão,<br/>responsável, gestante, grupo_prioritario,<br/>pet, foto_moradia<br/>WHERE id_moradia=:id AND data_saida IS NULL
-    DB-->>Repository: Dados da ocupação ativa
-    Repository-->>Service: Dados da ocupação ativa
+    Controller->>Service: Montar ficha integrada da moradia
+    Service->>Repository: Consultar moradia, famílias, pessoas, responsáveis, pets, fotos e grupos prioritários
+    Repository->>DB: SELECT * FROM vw_moradia_ativa WHERE id = :id;<br/>SELECT * FROM familia_moradia JOIN vw_familia_ativa JOIN vw_pessoa_ativa JOIN pessoa_grupo_prioritario JOIN pet JOIN foto
+    DB-->>Repository: Dados da moradia e moradores ativos
+    Repository-->>Service: Dados consolidados
 
     alt Moradia sem ocupação ativa
-        Service-->>Controller: HTTP 200 OK {moradia, ocupacao_atual=null, historico=true}
-        Controller-->>Frontend: Moradia sem família residente
-        Frontend-->>Gestor: Exibe ficha do imóvel sem moradores ativos
+        Service-->>Controller: HTTP 200 OK {moradia, familias=[], fotos}
+        Controller-->>Frontend: Exibe moradia sem família residente
+        Frontend-->>Gestor: Exibe dados físicos do imóvel sem moradores
     else Ocupação ativa encontrada
-        Service->>Service: Classificar prioridade RN01
-        Service->>Service: Aplicar RN05 (hist. ocorrência + mobilidade reduzida/acamado)
-        Service-->>Controller: Ficha integrada
-        Controller-->>Frontend: HTTP 200 OK<br/>{moradia, família, responsável, moradores,<br/>grupos, pets, prioridade, risco_critico}
-        Frontend-->>Gestor: Exibe consulta consolidada
+        Service->>Service: Classificar prioridade (RN01)
+        Service->>Service: Avaliar RN05: Risco Crítico<br/>(status 'Em Risco' + grupo acamado/cadeirante)
+        Service-->>Controller: Ficha detalhada
+        Controller-->>Frontend: HTTP 200 OK {moradia, familias: [{familia, pessoas, pets}], fotos, prioridade, risco_critico}
+        Frontend-->>Gestor: Exibe ficha de consulta consolidada
     end
 ```
-
-```mermaid
-sequenceDiagram
-    actor Gestor as Gestor Operacional (A03)
-    participant Frontend as Frontend Painel Desktop
-    participant Controller as ConsultaController
-    participant Service as ConsultaService
-    participant Repository as ConsultaRepository
-    participant DB as Banco de Dados
-
-    Gestor->>Frontend: Acessa módulo de consulta
-    Frontend->>Controller: GET /api/moradias?busca={termo}
-    Controller->>Service: Buscar moradias por termo, status ou localização
-    Service->>Repository: Consultar moradias candidatas
-    Repository->>DB: SELECT moradia, localização<br/>WHERE status <> 'Demolida' OR filtro informado
-    DB-->>Repository: Lista resumida
-    Repository-->>Service: Lista resumida
-    Service-->>Controller: Resultado resumido
-    Controller-->>Frontend: HTTP 200 OK
-    Frontend-->>Gestor: Exibe lista de fichas
-
-    Gestor->>Frontend: Seleciona uma ficha
-    Frontend->>Controller: GET /api/moradias/{id}/detalhes
-    Controller->>Service: Montar ficha integrada
-    Service->>Repository: Consultar ocupação ativa
-    Repository->>DB: SELECT historico_ocupacao, família, cidadão,<br/>responsável, gestante, grupo_prioritario,<br/>pet, foto_moradia<br/>WHERE id_moradia=:id AND data_saida IS NULL
-    DB-->>Repository: Dados da ocupação ativa
-    Repository-->>Service: Dados da ocupação ativa
-
-    alt Moradia sem ocupação ativa
-        Service-->>Controller: HTTP 200 OK {moradia, ocupacao_atual=null, historico=true}
-        Controller-->>Frontend: Moradia sem família residente
-        Frontend-->>Gestor: Exibe ficha do imóvel sem moradores ativos
-    else Ocupação ativa encontrada
-        Service->>Service: Classificar prioridade RN01
-        Service->>Service: Aplicar RN05 (hist. ocorrência + mobilidade reduzida/acamado)
-        Service-->>Controller: Ficha integrada
-        Controller-->>Frontend: HTTP 200 OK<br/>{moradia, família, responsável, moradores,<br/>grupos, pets, prioridade, risco_critico}
-        Frontend-->>Gestor: Exibe consulta consolidada
-    end
-```
-
 
 Este fluxo detalha a consulta integrada executada pelo **Gestor Operacional (A02/A03)** ao pesquisar ou selecionar uma ficha. O Frontend solicita uma listagem resumida de moradias e, após a seleção de um registro, carrega os dados completos da moradia, localização, ocupação ativa, família, responsável, moradores, gestantes, grupos prioritários, pets e fotos. A consulta utiliza o `historico_ocupacao` para identificar a família atualmente vinculada à moradia, considerando apenas ocupações com `data_saida` nula. Caso não exista ocupação ativa, o sistema retorna a ficha do imóvel sem moradores ativos. Quando há ocupação ativa, o Service calcula a prioridade de evacuação (RN01) e avalia a flag de Risco Crítico (RN05).
-
 ---
 
-#### FL04 - Filtros avançados de moradias e assistidos
-
+### FL04 — Filtros avançados de moradias e assistidos (Backlog)
 ```mermaid
 sequenceDiagram
-    actor Gestor as Gestor Operacional (A03)
+    actor Gestor as Gestor Operacional (A02/A03)
     participant Frontend as Frontend Painel Desktop
-    participant Controller as FiltroController
-    participant Service as FiltroService
-    participant Repository as FiltroRepository
+    participant Controller as MoradiaController
+    participant Service as MoradiaService
+    participant Repository as MoradiaRepository
     participant DB as Banco de Dados
 
-    Gestor->>Frontend: Acessa tela de gerenciamento de dados
-    Frontend-->>Gestor: Exibe filtros de moradia, vulnerabilidade,<br/>ocupação, destino de evacuação e status
-    Gestor->>Frontend: Seleciona filtros combinados
+    Gestor->>Frontend: Acessa tela de filtros e relatórios
+    Frontend-->>Gestor: Exibe filtros de moradia e vulnerabilidade (FL04 - Backlog)
+    Gestor->>Frontend: Aplica filtros combinados
 
-    Frontend->>Controller: GET /api/moradias?filtros=...
-    Controller->>Service: Validar filtros permitidos
-    Service->>Repository: Montar consulta dinâmica
-    Repository->>DB: SELECT moradia, localização, família,<br/>cidadão, grupo_prioritario, historico_ocupacao<br/>WHERE filtros aplicados<br/>AND ocupação atual quando necessário
-    DB-->>Repository: Resultado filtrado
-    Repository-->>Service: Resultado filtrado
-    Service->>Service: Aplicar RN01 para ordenação<br/>por prioridade quando solicitado
-    Service-->>Controller: Lista filtrada
+    Note over Frontend,DB: O backend atual não processa filtros avançados nem exportação (Backlog de Sprint Futura)
+
+    Frontend->>Controller: GET /api/moradias (sem filtros dinâmicos de vulnerabilidade)
+    Controller->>Service: Solicitar listagem de moradias
+    Service->>Repository: Buscar moradias da view ativa
+    Repository->>DB: SELECT * FROM vw_moradia_ativa
+    DB-->>Repository: Lista de moradias
+    Repository-->>Service: Lista de moradias
+    Service-->>Controller: DTO de moradias
     Controller-->>Frontend: HTTP 200 OK
+    Frontend-->>Gestor: Exibe lista completa de moradias ativas
 
-    alt Resultado vazio
-        Frontend-->>Gestor: Exibe "Nenhum registro encontrado"
-    else Resultado encontrado
-        Frontend-->>Gestor: Exibe tabela filtrada com dados exportáveis
-
-        opt Gestor solicita exportação
-            Gestor->>Frontend: Clica em Exportar
-            Frontend->>Controller: GET /moradias/exportar?filtros=...
-            Controller->>Service: Reexecutar consulta com mesmos filtros
-            Service->>Repository: Buscar dataset exportável
-            Repository->>DB: SELECT dataset filtrado
-            DB-->>Repository: Dataset
-            Repository-->>Service: Dataset
-            Service->>Service: Serializar CSV ou PDF
-            Service-->>Controller: Arquivo gerado
-            Controller-->>Frontend: HTTP 200 OK arquivo para download
-            Frontend-->>Gestor: Inicia download
-        end
+    opt Gestor tenta exportar (Futura Sprint)
+        Gestor->>Frontend: Clica em Exportar CSV/PDF
+        Frontend-->>Gestor: Alerta "Exportação será implementada em sprints futuras"
     end
 ```
 
-```mermaid
-sequenceDiagram
-    actor Gestor as Gestor Operacional (A03)
-    participant Frontend as Frontend Painel Desktop
-    participant Controller as FiltroController
-    participant Service as FiltroService
-    participant Repository as FiltroRepository
-    participant DB as Banco de Dados
-
-    Gestor->>Frontend: Acessa tela de gerenciamento de dados
-    Frontend-->>Gestor: Exibe filtros de moradia, vulnerabilidade,<br/>ocupação, destino de evacuação e status
-    Gestor->>Frontend: Seleciona filtros combinados
-
-    Frontend->>Controller: GET /api/moradias?filtros=...
-    Controller->>Service: Validar filtros permitidos
-    Service->>Repository: Montar consulta dinâmica
-    Repository->>DB: SELECT moradia, localização, família,<br/>cidadão, grupo_prioritario, historico_ocupacao<br/>WHERE filtros aplicados<br/>AND ocupação atual quando necessário
-    DB-->>Repository: Resultado filtrado
-    Repository-->>Service: Resultado filtrado
-    Service->>Service: Aplicar RN01 para ordenação<br/>por prioridade quando solicitado
-    Service-->>Controller: Lista filtrada
-    Controller-->>Frontend: HTTP 200 OK
-
-    alt Resultado vazio
-        Frontend-->>Gestor: Exibe "Nenhum registro encontrado"
-    else Resultado encontrado
-        Frontend-->>Gestor: Exibe tabela filtrada com dados exportáveis
-
-        opt Gestor solicita exportação
-            Gestor->>Frontend: Clica em Exportar
-            Frontend->>Controller: GET /moradias/exportar?filtros=...
-            Controller->>Service: Reexecutar consulta com mesmos filtros
-            Service->>Repository: Buscar dataset exportável
-            Repository->>DB: SELECT dataset filtrado
-            DB-->>Repository: Dataset
-            Repository-->>Service: Dataset
-            Service->>Service: Serializar CSV ou PDF
-            Service-->>Controller: Arquivo gerado
-            Controller-->>Frontend: HTTP 200 OK arquivo para download
-            Frontend-->>Gestor: Inicia download
-        end
-    end
-```
-
-
-Este fluxo representa o uso de filtros avançados pelo **Gestor Operacional (A02/A03)** na tela de gerenciamento de dados. O usuário pode combinar critérios como status da moradia, condição de ocupação, grupos prioritários, vulnerabilidades, destino em caso de evacuação e situação de recadastro. O Frontend envia os filtros ao Controller, que delega ao Service a validação dos parâmetros e a montagem da consulta. O Repository cruza as tabelas `moradia`, `localizacao`, `historico_ocupacao`, `familia`, `pessoa`, `pessoa_grupo_prioritario` e `grupo_prioritario`, retornando uma lista filtrada. Quando não há resultados, o painel exibe uma mensagem orientativa. Quando há registros, o gestor pode exportar a listagem em formato CSV ou PDF.
 Este fluxo representa o uso de filtros avançados pelo **Gestor Operacional (A02/A03)** na tela de gerenciamento de dados. O usuário pode combinar critérios como status da moradia, condição de ocupação, grupos prioritários, vulnerabilidades, destino em caso de evacuação e situação de recadastro. O Frontend envia os filtros ao Controller, que delega ao Service a validação dos parâmetros e a montagem da consulta. O Repository cruza as tabelas `moradia`, `localizacao`, `historico_ocupacao`, `familia`, `pessoa`, `pessoa_grupo_prioritario` e `grupo_prioritario`, retornando uma lista filtrada. Quando não há resultados, o painel exibe uma mensagem orientativa. Quando há registros, o gestor pode exportar a listagem em formato CSV ou PDF.
 
 ---
 
-#### FL05 - Atualização anual de dados pelo agente de campo
-
+### FL05 — Atualização anual de dados pelo agente de campo (Endpoints Separados)
 ```mermaid
 sequenceDiagram
     actor Agente as Agente de Campo (A01)
     participant Frontend as Frontend PWA Mobile
-    participant Cache as Cache Local (IndexedDB)
-    participant Controller as CadastroController
-    participant Service as CadastroService
-    participant Repository as CadastroRepository
+    participant Controller as MoradiaController/PessoaController
+    participant Service as MoradiaService/PessoaService
+    participant Repository as MoradiaRepository/PessoaRepository/FamiliaRepository
     participant DB as Banco de Dados
 
-    Agente->>Frontend: Abre ficha marcada para recadastro
-    Frontend->>Controller: GET /familias/{id_familia}/cadastro-completo
-    Controller->>Service: Carregar cadastro atual
-    Service->>Repository: Consultar família, ocupação ativa,<br/>moradia, localização, cidadãos,<br/>responsável, gestantes, pets e fotos
-    Repository->>DB: SELECT dados integrados<br/>WHERE família.id_familia=:id<br/>AND historico_ocupacao.data_saida IS NULL
-    DB-->>Repository: Dados atuais
-    Repository-->>Service: Dados atuais
-    Service-->>Controller: Cadastro completo
+    Agente->>Frontend: Abre formulário de recadastro da família
+    Frontend->>Controller: GET /api/moradias/{id_moradia}/detalhes
+    Controller->>Service: Carregar dados completos
+    Service->>Repository: Consultar moradia, famílias, pessoas, responsáveis, pets e fotos
+    Repository->>DB: SELECT dados integrados de vw_moradia_ativa, vw_familia_ativa, vw_pessoa_ativa
+    DB-->>Repository: Dados da moradia e moradores
+    Repository-->>Service: Dados integrados
+    Service-->>Controller: DTO detalhado da moradia
     Controller-->>Frontend: HTTP 200 OK
     Frontend-->>Agente: Exibe formulário pré-preenchido
 
     Agente->>Frontend: Revisa e edita dados
-    Frontend->>Frontend: Valida campos obrigatórios e fotos permitidas
-    Agente->>Frontend: Salva atualização
+    Frontend->>Frontend: Valida campos obrigatórios e fotos (RN04)
+    Agente->>Frontend: Confirma e salva atualização
+
+    Note over Frontend,DB: Como os endpoints NÃO foram unificados, o Frontend realiza chamadas CRUD separadas:
 
     alt Online
-        Frontend->>Controller: PUT /familias/{id_familia}/cadastro-completo<br/>{dados_atualizados}
-        Controller->>Service: Validar RN01, RN04, RN02 e integridade
-        Service->>Repository: Abrir transação
-        Repository->>DB: UPDATE família SET status_ativo=...
-        Repository->>DB: UPDATE/INSERT pessoa, responsável, gestante,<br/>pessoa_grupo_prioritario, pet conforme alterações
-        Repository->>DB: UPDATE moradia SET ultima_atualizacao=CURRENT_DATE
-        Repository->>DB: UPDATE localização quando alterada
+        par Atualizar dados físicos e de localização da moradia
+            Frontend->>Controller: PUT /api/moradias/{id_moradia} {moradia, localizacao}
+            Controller->>Service: Atualizar moradia/localização
+            Service->>Repository: Iniciar transação (BEGIN)
+            Repository->>DB: UPDATE localizacao SET ...; UPDATE moradia SET data_modificacao=now() ...
+            Repository-->>Service: Commit (COMMIT)
+            Service-->>Controller: Moradia atualizada
+            Controller-->>Frontend: HTTP 200 OK
 
-        opt Família mudou de moradia
-            Repository->>DB: UPDATE historico_ocupacao atual<br/>SET data_saida=CURRENT_DATE, status='Mudança/Evacuação'
-            Repository->>DB: INSERT historico_ocupacao<br/>{id_família, nova_moradia,<br/>data_entrada=CURRENT_DATE, data_saida=NULL}
+        and Atualizar dados pessoais de cada dependente
+            loop Para cada morador dependente atualizado
+                Frontend->>Controller: PUT /api/pessoas/{id_pessoa} {dados_morador}
+                Controller->>Service: Atualizar pessoa
+                Service->>Repository: UPDATE pessoa SET status='Ativo', data_modificacao=now() ...
+                Repository-->>Service: Pessoa atualizada
+                Service-->>Controller: Pessoa atualizada
+                Controller-->>Frontend: HTTP 200 OK
+            end
+
+        and Atualizar dados específicos do Responsável
+            Frontend->>Controller: PUT /api/responsaveis/{id_pessoa} {dados_financeiros_sociais}
+            Controller->>Service: Atualizar responsável
+            Service->>Repository: Iniciar transação (BEGIN)
+            Repository->>DB: UPDATE pessoa ... ; UPDATE responsavel ...
+            Repository-->>Service: Commit (COMMIT)
+            Service-->>Controller: Responsável atualizado
+            Controller-->>Frontend: HTTP 200 OK
         end
 
-        Repository-->>Service: Commit
-        Service->>Service: Remover indicador de desatualizado
-        Service-->>Controller: HTTP 200 OK
-        Controller-->>Frontend: HTTP 200 OK
-        Frontend-->>Agente: Exibe "Cadastro atualizado"
+        opt Mudança de moradia detectada
+            Frontend->>Controller: DELETE /api/familias/{id_familia}/moradias/{id_moradia_antiga}
+            Controller->>Service: Desvincular moradia antiga
+            Service->>Repository: UPDATE familia_moradia SET data_saida=now() WHERE data_saida IS NULL
+            DB-->>Repository: OK
+            Service-->>Controller: Desvinculado
+            Controller-->>Frontend: HTTP 200 OK
 
-    else Offline
-        Frontend->>Cache: Enfileira atualização com UUID local
-        Cache-->>Frontend: Atualização salva localmente
-        Frontend-->>Agente: Exibe "Aguardando sincronização"
-        Cache->>Frontend: Ao reconectar, sincroniza
-        Frontend->>Controller: PUT /familias/{id}/cadastro-completo<br/>{uuid_local, dados_atualizados}
-    end
-```
-```mermaid
-sequenceDiagram
-    actor Agente as Agente de Campo (A01)
-    participant Frontend as Frontend PWA Mobile
-    participant Cache as Cache Local (IndexedDB)
-    participant Controller as CadastroController
-    participant Service as CadastroService
-    participant Repository as CadastroRepository
-    participant DB as Banco de Dados
-
-    Agente->>Frontend: Abre ficha marcada para recadastro
-    Frontend->>Controller: GET /familias/{id_familia}/cadastro-completo
-    Controller->>Service: Carregar cadastro atual
-    Service->>Repository: Consultar família, ocupação ativa,<br/>moradia, localização, cidadãos,<br/>responsável, gestantes, pets e fotos
-    Repository->>DB: SELECT dados integrados<br/>WHERE família.id_familia=:id<br/>AND historico_ocupacao.data_saida IS NULL
-    DB-->>Repository: Dados atuais
-    Repository-->>Service: Dados atuais
-    Service-->>Controller: Cadastro completo
-    Controller-->>Frontend: HTTP 200 OK
-    Frontend-->>Agente: Exibe formulário pré-preenchido
-
-    Agente->>Frontend: Revisa e edita dados
-    Frontend->>Frontend: Valida campos obrigatórios e fotos permitidas
-    Agente->>Frontend: Salva atualização
-
-    alt Online
-        Frontend->>Controller: PUT /familias/{id_familia}/cadastro-completo<br/>{dados_atualizados}
-        Controller->>Service: Validar RN01, RN04, RN02 e integridade
-        Service->>Repository: Abrir transação
-        Repository->>DB: UPDATE família SET status_ativo=...
-        Repository->>DB: UPDATE/INSERT pessoa, responsável, gestante,<br/>pessoa_grupo_prioritario, pet conforme alterações
-        Repository->>DB: UPDATE moradia SET ultima_atualizacao=CURRENT_DATE
-        Repository->>DB: UPDATE localização quando alterada
-
-        opt Família mudou de moradia
-            Repository->>DB: UPDATE historico_ocupacao atual<br/>SET data_saida=CURRENT_DATE, status='Mudança/Evacuação'
-            Repository->>DB: INSERT historico_ocupacao<br/>{id_família, nova_moradia,<br/>data_entrada=CURRENT_DATE, data_saida=NULL}
+            Frontend->>Controller: POST /api/familias/{id_familia}/moradias {idMoradia: nova_moradia}
+            Controller->>Service: Vincular nova moradia
+            Service->>Repository: INSERT INTO familia_moradia (id_familia, id_moradia, data_entrada) VALUES (...)
+            DB-->>Repository: OK
+            Service-->>Controller: Vinculado
+            Controller-->>Frontend: HTTP 201 Created
         end
 
-        Repository-->>Service: Commit
-        Service->>Service: Remover indicador de desatualizado
-        Service-->>Controller: HTTP 200 OK
-        Controller-->>Frontend: HTTP 200 OK
-        Frontend-->>Agente: Exibe "Cadastro atualizado"
+        Frontend-->>Agente: Exibe "Cadastro anual atualizado com sucesso" (Tag de recadastro renovada)
 
     else Offline
-        Frontend->>Cache: Enfileira atualização com UUID local
-        Cache-->>Frontend: Atualização salva localmente
-        Frontend-->>Agente: Exibe "Aguardando sincronização"
-        Cache->>Frontend: Ao reconectar, sincroniza
-        Frontend->>Controller: PUT /familias/{id}/cadastro-completo<br/>{uuid_local, dados_atualizados}
+        Note over Frontend, Agente: Enfileira as requisições no cache local (IndexedDB) para sincronizar ao reconectar
     end
 ```
 
@@ -1174,8 +940,7 @@ Este fluxo descreve a revisão anual de uma família marcada para recadastro, co
 
 ---
 
-#### FL06 - Cadastro e manutenção de pets vinculados à família
-
+### FL06 — Cadastro e manutenção de pets vinculados à família
 ```mermaid
 sequenceDiagram
     actor Agente as Agente de Campo (A01)
@@ -1186,272 +951,124 @@ sequenceDiagram
     participant DB as Banco de Dados
 
     Agente->>Frontend: Acessa seção Animais de Estimação
-    Frontend->>Controller: GET /familias/{id_familia}/pets
+    Frontend->>Controller: GET /api/familias/{id_familia}/pets
     Controller->>Service: Listar pets da família
-    Service->>Repository: Consultar pets ativos da família
-    Repository->>DB: SELECT pet WHERE id_familia=:id_familia
+    Service->>Repository: Consultar pets vinculados
+    Repository->>DB: SELECT * FROM pet WHERE id_familia = :id_familia
     DB-->>Repository: Lista de pets
     Repository-->>Service: Lista de pets
     Service-->>Controller: Lista de pets
     Controller-->>Frontend: HTTP 200 OK
-    Frontend-->>Agente: Exibe pets já cadastrados
+    Frontend-->>Agente: Exibe pets cadastrados
 
-    Agente->>Frontend: Adiciona ou edita pet
-    Frontend->>Controller: POST /familias/{id_familia}/pets<br/>ou PUT /pets/{id_pet}
-    Controller->>Service: Validar tipo_pet obrigatório<br/>e porte_pet quando informado
-    Service->>Repository: Persistir pet vinculado à família
-    Repository->>DB: INSERT/UPDATE pet<br/>{id_família, tipo_pet, porte_pet,<br/>nome, cor, observações, foto_url}
-    DB-->>Repository: OK
-    Repository-->>Service: OK
-    Service-->>Controller: HTTP 200/201
-    Controller-->>Frontend: HTTP 200/201
-    Frontend-->>Agente: Atualiza lista de pets
-
-    Note over Service,DB: Pet pertence à família, não diretamente à moradia.<br/>Se a família for realocada, o histórico de ocupação<br/>muda, mas os pets acompanham o mesmo id_família.
-```
-```mermaid
-sequenceDiagram
-    actor Agente as Agente de Campo (A01)
-    participant Frontend as Frontend PWA Mobile
-    participant Controller as PetController
-    participant Service as PetService
-    participant Repository as PetRepository
-    participant DB as Banco de Dados
-
-    Agente->>Frontend: Acessa seção Animais de Estimação
-    Frontend->>Controller: GET /familias/{id_familia}/pets
-    Controller->>Service: Listar pets da família
-    Service->>Repository: Consultar pets ativos da família
-    Repository->>DB: SELECT pet WHERE id_familia=:id_familia
-    DB-->>Repository: Lista de pets
-    Repository-->>Service: Lista de pets
-    Service-->>Controller: Lista de pets
-    Controller-->>Frontend: HTTP 200 OK
-    Frontend-->>Agente: Exibe pets já cadastrados
-
-    Agente->>Frontend: Adiciona ou edita pet
-    Frontend->>Controller: POST /familias/{id_familia}/pets<br/>ou PUT /pets/{id_pet}
-    Controller->>Service: Validar tipo_pet obrigatório<br/>e porte_pet quando informado
-    Service->>Repository: Persistir pet vinculado à família
-    Repository->>DB: INSERT/UPDATE pet<br/>{id_família, tipo_pet, porte_pet,<br/>nome, cor, observações, foto_url}
-    DB-->>Repository: OK
-    Repository-->>Service: OK
-    Service-->>Controller: HTTP 200/201
-    Controller-->>Frontend: HTTP 200/201
-    Frontend-->>Agente: Atualiza lista de pets
-
-    Note over Service,DB: Pet pertence à família, não diretamente à moradia.<br/>Se a família for realocada, o histórico de ocupação<br/>muda, mas os pets acompanham o mesmo id_família.
+    Agente->>Frontend: Cadastra novo pet ou atualiza existente
+    alt Novo Pet
+        Frontend->>Controller: POST /api/familias/{id_familia}/pets {nome, tipo, porte, raca, cor}
+        Controller->>Service: Validar dados do pet
+        Service->>Repository: Salvar pet na família
+        Repository->>DB: INSERT INTO pet (id_familia, nome, tipo, porte, raca, cor) VALUES (...)
+        DB-->>Repository: Pet criado
+        Repository-->>Service: Pet criado
+        Service-->>Controller: Pet criado
+        Controller-->>Frontend: HTTP 201 Created
+    else Editar Pet
+        Frontend->>Controller: PUT /api/pets/{id_pet} {nome, tipo, porte, raca, cor}
+        Controller->>Service: Validar dados do pet
+        Service->>Repository: Atualizar pet
+        Repository->>DB: UPDATE pet SET ... WHERE id = :id_pet
+        DB-->>Repository: Pet atualizado
+        Repository-->>Service: Pet atualizado
+        Service-->>Controller: Pet atualizado
+        Controller-->>Frontend: HTTP 200 OK
+    end
+    Frontend-->>Agente: Atualiza tela de pets da família
 ```
 
 Este fluxo detalha a manutenção dos animais de estimação informados pelo **Agente de Campo (A01)**. O Frontend consulta os pets já vinculados à família e permite adicionar ou editar registros, sempre associando o animal ao `id_familia`, e não diretamente à moradia. Essa decisão acompanha o modelo de dados atual: se a família for realocada, os pets permanecem associados ao mesmo núcleo familiar, enquanto o histórico de ocupação registra a mudança de moradia. O Service valida os campos obrigatórios, como `tipo_pet`, e o Repository persiste os dados na tabela `pet`.
 
 ---
 
-#### FL07 - Mapa de calor e indicadores de vulnerabilidade
-
+### FL07 — Mapa de calor e indicadores de vulnerabilidade (Backlog)
 ```mermaid
 sequenceDiagram
-    actor Gestor as Gestor Operacional (A03)
+    actor Gestor as Gestor Operacional (A02/A03)
     participant Frontend as Frontend Painel Desktop
     participant Controller as IndicadorController
     participant Service as IndicadorService
-    participant Repository as IndicadorRepository
-    participant DB as Banco de Dados
 
-    Gestor->>Frontend: Ativa camada de mapa de calor
-    Gestor->>Frontend: Seleciona filtro<br/>(ex.: idosos, PCD, acamados, gestantes, crianças)
+    Gestor->>Frontend: Ativa camada de mapa de calor / indicadores (FL07 - Backlog)
 
-    Frontend->>Controller: GET /indicadores/mapa-calor?filtro=...&zoom=...
-    Controller->>Service: Calcular clusters térmicos
-    Service->>Repository: Buscar coordenadas de moradias<br/>com famílias/moradores filtrados
-    Repository->>DB: SELECT localização.latitude, localização.longitude,<br/>COUNT(pessoa.id_pessoa)<br/>FROM moradia JOIN localização<br/>JOIN historico_ocupacao JOIN família JOIN pessoa<br/>LEFT JOIN pessoa_grupo_prioritario<br/>WHERE moradia.status='Ativa'<br/>AND historico_ocupacao.data_saida IS NULL<br/>AND filtros aplicados GROUP BY cluster
-    DB-->>Repository: Coordenadas e intensidades
-    Repository-->>Service: Dataset de calor
-    Service-->>Controller: {lat, lng, intensidade}
-    Controller-->>Frontend: HTTP 200 OK
-    Frontend->>Frontend: Renderiza layer de calor
+    Note over Frontend, Service: Funcionalidade de Mapa de Calor (FL07) está programada para a próxima sprint.
 
-    loop Alteração de zoom ou filtro
-        Gestor->>Frontend: Ajusta zoom/filtro
-        Frontend->>Controller: GET /indicadores/mapa-calor?filtro=novo&zoom=novo
-        Controller->>Service: Recalcular clusters
-        Service->>Repository: Consultar nova granularidade
-        Repository->>DB: SELECT agregado atualizado
-        DB-->>Repository: Dataset atualizado
-        Repository-->>Service: Dataset atualizado
-        Service-->>Controller: Dataset atualizado
-        Controller-->>Frontend: HTTP 200 OK
-        Frontend->>Frontend: Re-renderiza mapa de calor
-    end
-
-    par Indicadores de recadastro
-        Frontend->>Controller: GET /indicadores/recadastro
-        Controller->>Service: Calcular atualizados x desatualizados
-        Service->>Repository: Consultar moradias ativas com ultima_atualizacao
-        Repository->>DB: SELECT COUNT(*) total,<br/>COUNT(*) FILTER (WHERE ultima_atualizacao < CURRENT_DATE - INTERVAL '365 days') desatualizadas<br/>FROM moradia WHERE status='Ativa'
-        DB-->>Repository: Totais
-        Repository-->>Service: Totais
-        Service-->>Controller: {total, atualizadas, desatualizadas}
-        Controller-->>Frontend: HTTP 200 OK
-        Frontend-->>Gestor: Exibe indicadores no painel
-    end
-```
-```mermaid
-sequenceDiagram
-    actor Gestor as Gestor Operacional (A03)
-    participant Frontend as Frontend Painel Desktop
-    participant Controller as IndicadorController
-    participant Service as IndicadorService
-    participant Repository as IndicadorRepository
-    participant DB as Banco de Dados
-
-    Gestor->>Frontend: Ativa camada de mapa de calor
-    Gestor->>Frontend: Seleciona filtro<br/>(ex.: idosos, PCD, acamados, gestantes, crianças)
-
-    Frontend->>Controller: GET /indicadores/mapa-calor?filtro=...&zoom=...
-    Controller->>Service: Calcular clusters térmicos
-    Service->>Repository: Buscar coordenadas de moradias<br/>com famílias/moradores filtrados
-    Repository->>DB: SELECT localização.latitude, localização.longitude,<br/>COUNT(pessoa.id_pessoa)<br/>FROM moradia JOIN localização<br/>JOIN historico_ocupacao JOIN família JOIN pessoa<br/>LEFT JOIN pessoa_grupo_prioritario<br/>WHERE moradia.status='Ativa'<br/>AND historico_ocupacao.data_saida IS NULL<br/>AND filtros aplicados GROUP BY cluster
-    DB-->>Repository: Coordenadas e intensidades
-    Repository-->>Service: Dataset de calor
-    Service-->>Controller: {lat, lng, intensidade}
-    Controller-->>Frontend: HTTP 200 OK
-    Frontend->>Frontend: Renderiza layer de calor
-
-    loop Alteração de zoom ou filtro
-        Gestor->>Frontend: Ajusta zoom/filtro
-        Frontend->>Controller: GET /indicadores/mapa-calor?filtro=novo&zoom=novo
-        Controller->>Service: Recalcular clusters
-        Service->>Repository: Consultar nova granularidade
-        Repository->>DB: SELECT agregado atualizado
-        DB-->>Repository: Dataset atualizado
-        Repository-->>Service: Dataset atualizado
-        Service-->>Controller: Dataset atualizado
-        Controller-->>Frontend: HTTP 200 OK
-        Frontend->>Frontend: Re-renderiza mapa de calor
-    end
-
-    par Indicadores de recadastro
-        Frontend->>Controller: GET /indicadores/recadastro
-        Controller->>Service: Calcular atualizados x desatualizados
-        Service->>Repository: Consultar moradias ativas com ultima_atualizacao
-        Repository->>DB: SELECT COUNT(*) total,<br/>COUNT(*) FILTER (WHERE ultima_atualizacao < CURRENT_DATE - INTERVAL '365 days') desatualizadas<br/>FROM moradia WHERE status='Ativa'
-        DB-->>Repository: Totais
-        Repository-->>Service: Totais
-        Service-->>Controller: {total, atualizadas, desatualizadas}
-        Controller-->>Frontend: HTTP 200 OK
-        Frontend-->>Gestor: Exibe indicadores no painel
-    end
+    Frontend-->>Gestor: Exibe aviso "Funcionalidade de mapa de calor em desenvolvimento para a próxima sprint"
 ```
 
 Este fluxo descreve a geração do mapa de calor utilizado pelo **Gestor Operacional (A02/A03)** para visualizar concentrações de vulnerabilidade no território. O usuário ativa a camada de calor e seleciona filtros como idosos, PCDs, acamados, gestantes ou crianças. O backend consulta moradias ativas, ocupações atuais e moradores vinculados aos grupos prioritários, agrupando coordenadas por intensidade. O Frontend renderiza a camada sobre o mapa e recalcula os clusters quando o usuário altera zoom ou filtro. Em paralelo, o painel pode consultar os indicadores de recadastro, exibindo o total de registros atualizados e desatualizados.
 
 ---
 
-#### FL08 - Arquivamento lógico de moradia
-
+### FL08 — Arquivamento lógico de moradia (Endpoints Separados)
 ```mermaid
 sequenceDiagram
     actor Gestor as Gestor Operacional (A03)
     participant Frontend as Frontend Painel Desktop
-    participant Controller as MoradiaController
-    participant Service as MoradiaService
-    participant Repository as MoradiaRepository
+    participant MoradiaController as MoradiaController
+    participant FamiliaController as FamiliaController
+    participant Service as MoradiaService/FamiliaService
+    participant Repository as MoradiaRepository/FamiliaRepository
     participant DB as Banco de Dados
 
     Gestor->>Frontend: Localiza moradia ativa
-    Gestor->>Frontend: Aciona Arquivar Moradia
-    Frontend-->>Gestor: Exibe modal com motivo<br/>(Demolida, Interditada, Área de Risco Evacuada)
-    Gestor->>Frontend: Confirma motivo
+    Gestor->>Frontend: Clica em "Arquivar Imóvel" (Soft Delete)
 
-    Frontend->>Controller: PATCH /moradias/{id_moradia}/status {status, motivo}
-    Controller->>Service: Validar motivo obrigatório
-    Service->>Repository: Verificar ocupação ativa
-    Repository->>DB: SELECT historico_ocupacao, família<br/>WHERE id_moradia=:id AND data_saida IS NULL
-    DB-->>Repository: Ocupação atual ou vazio
-    Repository-->>Service: Resultado
+    Note over Frontend, DB: Não há justificativa de motivo. A data de arquivamento será a data da requisição (salva em deleted_at).
 
-    alt Existe família ativa ocupando a moradia
-        Service->>Service: Aplicar integridade US14:<br/>família ativa precisa de moradia ativa
-        Service-->>Controller: HTTP 409 Conflict {requer_realocacao=true}
-        Controller-->>Frontend: HTTP 409 Conflict
-        Frontend-->>Gestor: Solicita selecionar nova moradia<br/>ou inativar família antes do arquivamento
+    Frontend->>MoradiaController: DELETE /api/moradias/{id_moradia}
+    MoradiaController->>Service: Validar ocupação da moradia antes de excluir
+    Service->>Repository: Verificar se há família com data_saida IS NULL vinculada
+    Repository->>DB: SELECT * FROM familia_moradia WHERE id_moradia = :id AND data_saida IS NULL
+    DB-->>Repository: Ocupação atual (família ativa encontrada)
+    Repository-->>Service: Ocupação encontrada
 
-        opt Gestor informa nova moradia
-            Frontend->>Controller: POST /familias/{id_familia}/realocacoes<br/>{nova_moradia, status_saida}
-            Controller->>Service: Encerrar ocupação atual e criar nova ocupação
-            Service->>Repository: Abrir transação
-            Repository->>DB: UPDATE historico_ocupacao<br/>SET data_saida=CURRENT_DATE, status=:motivo
-            Repository->>DB: INSERT historico_ocupacao<br/>{id_família, nova_moradia,<br/>data_entrada=CURRENT_DATE, data_saida=NULL}
-            Repository->>DB: UPDATE moradia antiga SET status=:status
+    alt Existe família ativa morando no imóvel
+        Service->>Service: Validar integridade US14 (família ativa exige moradia ativa)
+        Service-->>MoradiaController: Bloquear exclusão (HTTP 409 Conflict)
+        MoradiaController-->>Frontend: HTTP 409 Conflict {error: 'moradia_ocupada'}
+        Frontend-->>Gestor: Bloqueia arquivamento e solicita realocação manual da família
+
+        opt Gestor realiza realocação manual da família (Split Endpoints)
+            Frontend->>FamiliaController: DELETE /api/familias/{id_familia}/moradias/{id_moradia}
+            FamiliaController->>Service: Desvincular moradia antiga
+            Service->>Repository: UPDATE familia_moradia SET data_saida=now() WHERE id_familia=:id_familia AND id_moradia=:id_moradia AND data_saida IS NULL
             DB-->>Repository: OK
-            Repository-->>Service: Commit
-            Service-->>Controller: HTTP 200 OK
-            Controller-->>Frontend: HTTP 200 OK
-            Frontend-->>Gestor: Confirma arquivamento e realocação
-        end
+            Service-->>FamiliaController: Desvinculado
+            FamiliaController-->>Frontend: HTTP 200 OK
 
-    else Não existe ocupação ativa
-        Service->>Repository: Atualizar status da moradia
-        Repository->>DB: UPDATE moradia SET status=:status WHERE id_moradia=:id
+            Frontend->>FamiliaController: POST /api/familias/{id_familia}/moradias {idMoradia: nova_moradia}
+            FamiliaController->>Service: Vincular nova moradia
+            Service->>Repository: INSERT INTO familia_moradia (id_familia, id_moradia, data_entrada) VALUES (...)
+            DB-->>Repository: OK
+            Service-->>FamiliaController: Vinculado
+            FamiliaController-->>Frontend: HTTP 201 Created
+
+            Note over Frontend, MoradiaController: Com a família realocada, a moradia está livre para arquivamento:
+            Frontend->>MoradiaController: DELETE /api/moradias/{id_moradia}
+            MoradiaController->>Service: Validar ocupação (agora livre)
+            Service->>Repository: Executar exclusão lógica
+            Repository->>DB: DELETE FROM moradia WHERE id = :id_moradia<br/>(PostgreSQL rule altera para UPDATE status='Excluída', deleted_at=now())
+            DB-->>Repository: OK
+            Service-->>MoradiaController: OK
+            MoradiaController-->>Frontend: HTTP 200 OK
+            Frontend-->>Gestor: Imóvel arquivado com sucesso
+        end
+    else Moradia está vazia
+        Service->>Repository: Executar exclusão lógica
+        Repository->>DB: DELETE FROM moradia WHERE id = :id_moradia<br/>(PostgreSQL rule altera para UPDATE status='Excluída', deleted_at=now())
         DB-->>Repository: OK
         Repository-->>Service: OK
-        Service-->>Controller: HTTP 200 OK
-        Controller-->>Frontend: HTTP 200 OK
-        Frontend->>Frontend: Remove moradia de mapas/listas ativas
-        Frontend-->>Gestor: Confirma arquivamento
-    end
-```
-```mermaid
-sequenceDiagram
-    actor Gestor as Gestor Operacional (A03)
-    participant Frontend as Frontend Painel Desktop
-    participant Controller as MoradiaController
-    participant Service as MoradiaService
-    participant Repository as MoradiaRepository
-    participant DB as Banco de Dados
-
-    Gestor->>Frontend: Localiza moradia ativa
-    Gestor->>Frontend: Aciona Arquivar Moradia
-    Frontend-->>Gestor: Exibe modal com motivo<br/>(Demolida, Interditada, Área de Risco Evacuada)
-    Gestor->>Frontend: Confirma motivo
-
-    Frontend->>Controller: PATCH /moradias/{id_moradia}/status {status, motivo}
-    Controller->>Service: Validar motivo obrigatório
-    Service->>Repository: Verificar ocupação ativa
-    Repository->>DB: SELECT historico_ocupacao, família<br/>WHERE id_moradia=:id AND data_saida IS NULL
-    DB-->>Repository: Ocupação atual ou vazio
-    Repository-->>Service: Resultado
-
-    alt Existe família ativa ocupando a moradia
-        Service->>Service: Aplicar integridade US14:<br/>família ativa precisa de moradia ativa
-        Service-->>Controller: HTTP 409 Conflict {requer_realocacao=true}
-        Controller-->>Frontend: HTTP 409 Conflict
-        Frontend-->>Gestor: Solicita selecionar nova moradia<br/>ou inativar família antes do arquivamento
-
-        opt Gestor informa nova moradia
-            Frontend->>Controller: POST /familias/{id_familia}/realocacoes<br/>{nova_moradia, status_saida}
-            Controller->>Service: Encerrar ocupação atual e criar nova ocupação
-            Service->>Repository: Abrir transação
-            Repository->>DB: UPDATE historico_ocupacao<br/>SET data_saida=CURRENT_DATE, status=:motivo
-            Repository->>DB: INSERT historico_ocupacao<br/>{id_família, nova_moradia,<br/>data_entrada=CURRENT_DATE, data_saida=NULL}
-            Repository->>DB: UPDATE moradia antiga SET status=:status
-            DB-->>Repository: OK
-            Repository-->>Service: Commit
-            Service-->>Controller: HTTP 200 OK
-            Controller-->>Frontend: HTTP 200 OK
-            Frontend-->>Gestor: Confirma arquivamento e realocação
-        end
-
-    else Não existe ocupação ativa
-        Service->>Repository: Atualizar status da moradia
-        Repository->>DB: UPDATE moradia SET status=:status WHERE id_moradia=:id
-        DB-->>Repository: OK
-        Repository-->>Service: OK
-        Service-->>Controller: HTTP 200 OK
-        Controller-->>Frontend: HTTP 200 OK
-        Frontend->>Frontend: Remove moradia de mapas/listas ativas
-        Frontend-->>Gestor: Confirma arquivamento
+        Service-->>MoradiaController: OK
+        MoradiaController-->>Frontend: HTTP 200 OK
+        Frontend-->>Gestor: Imóvel arquivado com sucesso (status='Excluída')
     end
 ```
 
@@ -1459,370 +1076,193 @@ Este fluxo representa o arquivamento lógico de uma moradia pelo **Gestor Operac
 
 ---
 
-#### FL09 - Arquivamento lógico de morador falecido
-
+### FL09 — Arquivamento lógico de morador falecido (Endpoints Separados)
 ```mermaid
 sequenceDiagram
-    actor Gestor as Gestor Operacional (A03)
+    actor Gestor as Gestor Operacional (A02/A03)
     participant Frontend as Frontend Painel Desktop
-    participant Controller as PessoaController
+    participant PessoaController as PessoaController
     participant Service as PessoaService
-    participant Repository as PessoaRepository
+    participant Repository as PessoaRepository/FamiliaRepository
     participant DB as Banco de Dados
 
     Gestor->>Frontend: Acessa ficha do morador
-    Gestor->>Frontend: Aciona Arquivar Morador
-    Frontend-->>Gestor: Solicita data de falecimento
-    Gestor->>Frontend: Confirma dados
+    Gestor->>Frontend: Clica em "Arquivar Morador" (Soft Delete por Óbito)
 
-    Frontend->>Controller: PATCH /pessoas/{id_pessoa}/arquivar<br/>{motivo='Falecimento', data_falecimento}
-    Controller->>Service: Validar data e permissão
-    Service->>Repository: Verificar família da pessoa e se é responsável
-    Repository->>DB: SELECT pessoa, família, responsável<br/>WHERE pessoa.id_pessoa=:id
-    DB-->>Repository: Dados da pessoa
-    Repository-->>Service: Dados da pessoa
+    Note over Frontend, DB: A data do óbito será a data da requisição (salva em deleted_at).
 
-    alt Pessoa é responsável da família
-        Service->>Repository: Buscar outras pessoas ativas da mesma família
-        Repository->>DB: SELECT pessoa<br/>WHERE id_família=:id_familia<br/>AND status_cadastro=true<br/>AND id_pessoa <> :id
-        DB-->>Repository: Possíveis novos responsáveis
+    Frontend->>PessoaController: DELETE /api/pessoas/{id_pessoa}
+    PessoaController->>Service: Validar exclusão do morador
+    Service->>Repository: Verificar se o morador é o responsável ativo da família
+    Repository->>DB: SELECT * FROM vw_pessoa_ativa p INNER JOIN responsavel r ON r.id_pessoa=p.id WHERE p.id=:id AND p.parentesco='Responsável'
+    DB-->>Repository: Registro de responsável ativo encontrado
+    Repository-->>Service: Confirmado (morador é o responsável atual)
+
+    alt Morador é o responsável ativo da família
+        Service->>Repository: Buscar outros moradores ativos da mesma família
+        Repository->>DB: SELECT * FROM pessoa_familia pf INNER JOIN vw_pessoa_ativa p ON p.id=pf.id_pessoa WHERE pf.id_familia=:id_familia AND p.id <> :id
+        DB-->>Repository: Lista de membros ativos
         Repository-->>Service: Lista de candidatos
 
-        alt Não há outro morador ativo
-            Service-->>Controller: HTTP 409 Conflict {requer_acao_familia=true}
-            Controller-->>Frontend: HTTP 409 Conflict
-            Frontend-->>Gestor: Informa que a família ficará<br/>sem responsável e sem membros ativos
-        else Há candidato a novo responsável
-            Service-->>Controller: HTTP 409 Conflict<br/>{requer_novo_responsavel=true, candidatos}
-            Controller-->>Frontend: Lista de candidatos
-            Frontend-->>Gestor: Solicita novo responsável
-            Gestor->>Frontend: Seleciona novo responsável
-            Frontend->>Controller: PUT /familias/{id_familia}/responsavel {id_pessoa_nova}
-            Controller->>Service: Criar ou atualizar especialização<br/>responsável da nova pessoa
-            Service->>Repository: INSERT/UPDATE responsável {id_pessoa_nova}
-            Repository->>DB: INSERT/UPDATE responsável
-            DB-->>Repository: OK
+        alt Não há outros moradores ativos
+            Service-->>PessoaController: Bloquear exclusão (HTTP 409 Conflict)
+            PessoaController-->>Frontend: HTTP 409 Conflict {error: 'ultimo_membro_familia'}
+            Frontend-->>Gestor: Exibe alerta: Família ficará sem membros ativos. Solicita inativar família inteira.
+        else Existem outros membros ativos (Exige definição manual de novo responsável)
+            Service-->>PessoaController: Bloquear exclusão (HTTP 409 Conflict)
+            PessoaController-->>Frontend: HTTP 409 Conflict {error: 'requer_novo_responsavel', candidatos}
+            Frontend-->>Gestor: Solicita definir o novo responsável entre os membros ativos
+
+            opt Gestor promove novo responsável (Split Endpoints)
+                Gestor->>Frontend: Seleciona candidato e informa dados sociais/financeiros
+
+                Frontend->>PessoaController: PUT /api/pessoas/{id_novo_responsavel} {parentesco: 'Responsável'}
+                PessoaController->>Service: Alterar parentesco para Responsável
+                Service->>Repository: UPDATE pessoa SET parentesco='Responsável' WHERE id=:id
+                DB-->>Repository: OK
+                Service-->>PessoaController: OK
+                PessoaController-->>Frontend: HTTP 200 OK
+
+                Frontend->>PessoaController: POST /api/responsaveis {idPessoa: id_novo, cpf, renda, NIS, sexo, raca, estado_civil}
+                PessoaController->>Service: Criar registro de responsável financeiro/social
+                Service->>Repository: INSERT INTO responsavel (...) VALUES (...)
+                DB-->>Repository: OK
+                Service-->>PessoaController: OK
+                PessoaController-->>Frontend: HTTP 201 Created
+
+                Note over Frontend, PessoaController: Agora o morador antigo pode ser arquivado por óbito:
+                Frontend->>PessoaController: DELETE /api/pessoas/{id_pessoa}
+                PessoaController->>Service: Validar exclusão (agora com novo responsável ativo já definido)
+                Service->>Repository: Executar exclusão lógica
+                Repository->>DB: DELETE FROM pessoa WHERE id = :id_pessoa<br/>(PostgreSQL rule altera para UPDATE status='Inativo', deleted_at=now())
+                DB-->>Repository: OK
+                Service-->>PessoaController: OK
+                PessoaController-->>Frontend: HTTP 200 OK
+                Frontend-->>Gestor: Morador arquivado com sucesso
+            end
         end
+    else Morador comum (dependente)
+        Service->>Repository: Executar exclusão lógica
+        Repository->>DB: DELETE FROM pessoa WHERE id = :id_pessoa<br/>(PostgreSQL rule altera para UPDATE status='Inativo', deleted_at=now())
+        DB-->>Repository: OK
+        Repository-->>Service: OK
+        Service-->>PessoaController: OK
+        PessoaController-->>Frontend: HTTP 200 OK
+        Frontend-->>Gestor: Morador arquivado com sucesso
     end
-
-    Frontend->>Controller: PATCH /pessoas/{id_pessoa}/arquivar {confirmado=true}
-    Controller->>Service: Arquivar pessoa
-    Service->>Repository: Atualizar status lógico
-    Repository->>DB: UPDATE pessoa SET status_cadastro=false<br/>WHERE id_pessoa=:id
-    DB-->>Repository: OK
-    Repository-->>Service: OK
-    Service->>Service: Reavaliar RN01 e RN05<br/>para a família/moradia atual
-    Service-->>Controller: HTTP 200 OK
-    Controller-->>Frontend: HTTP 200 OK
-    Frontend-->>Gestor: Atualiza ficha e histórico
-```
-```mermaid
-sequenceDiagram
-    actor Gestor as Gestor Operacional (A03)
-    participant Frontend as Frontend Painel Desktop
-    participant Controller as PessoaController
-    participant Service as PessoaService
-    participant Repository as PessoaRepository
-    participant DB as Banco de Dados
-
-    Gestor->>Frontend: Acessa ficha do morador
-    Gestor->>Frontend: Aciona Arquivar Morador
-    Frontend-->>Gestor: Solicita data de falecimento
-    Gestor->>Frontend: Confirma dados
-
-    Frontend->>Controller: PATCH /pessoas/{id_pessoa}/arquivar<br/>{motivo='Falecimento', data_falecimento}
-    Controller->>Service: Validar data e permissão
-    Service->>Repository: Verificar família da pessoa e se é responsável
-    Repository->>DB: SELECT pessoa, família, responsável<br/>WHERE pessoa.id_pessoa=:id
-    DB-->>Repository: Dados da pessoa
-    Repository-->>Service: Dados da pessoa
-
-    alt Pessoa é responsável da família
-        Service->>Repository: Buscar outras pessoas ativas da mesma família
-        Repository->>DB: SELECT pessoa<br/>WHERE id_família=:id_familia<br/>AND status_cadastro=true<br/>AND id_pessoa <> :id
-        DB-->>Repository: Possíveis novos responsáveis
-        Repository-->>Service: Lista de candidatos
-
-        alt Não há outro morador ativo
-            Service-->>Controller: HTTP 409 Conflict {requer_acao_familia=true}
-            Controller-->>Frontend: HTTP 409 Conflict
-            Frontend-->>Gestor: Informa que a família ficará<br/>sem responsável e sem membros ativos
-        else Há candidato a novo responsável
-            Service-->>Controller: HTTP 409 Conflict<br/>{requer_novo_responsavel=true, candidatos}
-            Controller-->>Frontend: Lista de candidatos
-            Frontend-->>Gestor: Solicita novo responsável
-            Gestor->>Frontend: Seleciona novo responsável
-            Frontend->>Controller: PUT /familias/{id_familia}/responsavel {id_pessoa_nova}
-            Controller->>Service: Criar ou atualizar especialização<br/>responsável da nova pessoa
-            Service->>Repository: INSERT/UPDATE responsável {id_pessoa_nova}
-            Repository->>DB: INSERT/UPDATE responsável
-            DB-->>Repository: OK
-        end
-    end
-
-    Frontend->>Controller: PATCH /pessoas/{id_pessoa}/arquivar {confirmado=true}
-    Controller->>Service: Arquivar pessoa
-    Service->>Repository: Atualizar status lógico
-    Repository->>DB: UPDATE pessoa SET status_cadastro=false<br/>WHERE id_pessoa=:id
-    DB-->>Repository: OK
-    Repository-->>Service: OK
-    Service->>Service: Reavaliar RN01 e RN05<br/>para a família/moradia atual
-    Service-->>Controller: HTTP 200 OK
-    Controller-->>Frontend: HTTP 200 OK
-    Frontend-->>Gestor: Atualiza ficha e histórico
 ```
 
-Este fluxo descreve o arquivamento lógico de um morador falecido realizado pelo **Gestor Operacional (A02/A03)**. O gestor informa a data de falecimento e confirma a operação. O Service verifica se o cidadão é o responsável da família. Caso seja, o sistema exige a escolha de um novo responsável ativo antes de concluir o arquivamento, preservando a integridade definida pela US13. Quando a substituição é resolvida, o cadastro do cidadão é inativado por meio de `status_cadastro=false`, sem deleção física. Após a atualização, o Service reavalia a prioridade da família e a regra de Risco Crítico, garantindo que consultas e relatórios ativos não exibam moradores arquivados.
+Este fluxo descreve o arquivamento lógico de um morador falecido realizado pelo **Gestor Operacional (A02)**. O gestor informa a data de falecimento e confirma a operação. O Service verifica se o cidadão é o responsável da família. Caso seja, o sistema exige a escolha de um novo responsável ativo antes de concluir o arquivamento, preservando a integridade definida pela US13. Quando a substituição é resolvida, o cadastro do cidadão é inativado por meio de `status_cadastro=false`, sem deleção física. Após a atualização, o Service reavalia a prioridade da família e a regra de Risco Crítico, garantindo que consultas e relatórios ativos não exibam moradores arquivados.
 
 ---
 
-#### FL10 - Alerta automático de recadastro a cada 12 meses
-
+### FL10 — Alerta automático de recadastro (Tag de 12 meses)
 ```mermaid
 sequenceDiagram
-    participant Cron as Job Agendado (Diário)
-    participant Service as RecadastroService
-    participant Repository as RecadastroRepository
-    participant DB as Banco de Dados
-    actor Gestor as Gestor Operacional (A03)
+    actor Gestor as Gestor Operacional (A02/A03)
     participant Frontend as Frontend Painel Desktop
-    participant Controller as IndicadorController
-
-    Note over Cron,DB: Rotina automática
-
-    Cron->>Service: Executar verificação diária RN02
-    Service->>Repository: Buscar moradias ativas sem atualização há 365 dias
-    Repository->>DB: SELECT moradia, historico_ocupacao, família<br/>FROM moradia JOIN historico_ocupacao JOIN família<br/>WHERE moradia.status='Ativa'<br/>AND historico_ocupacao.data_saida IS NULL<br/>AND família.status_ativo=true<br/>AND moradia.ultima_atualizacao < CURRENT_DATE - INTERVAL '365 days'
-    DB-->>Repository: Cadastros desatualizados
-    Repository-->>Service: Lista de pendências
-    Service->>Service: Montar alerta operacional para o painel do gestor
-
-    Note over Service,DB: O WAD descreve o alerta de recadastro,<br/>mas o modelo físico atual não define uma<br/>tabela NOTIFICACAO. Este fluxo trata o alerta<br/>como indicador derivado da consulta.
-
-    Note over Cron,Controller: Consulta no painel
-
-    Gestor->>Frontend: Abre painel ou mapa
-    Frontend->>Controller: GET /indicadores/recadastro
-    Controller->>Service: Solicitar totais RN02
-    Service->>Repository: Contar cadastros atualizados e desatualizados
-    Repository->>DB: SELECT totais por ultima_atualizacao<br/>FROM moradia WHERE status='Ativa'
-    DB-->>Repository: Totais
-    Repository-->>Service: Totais
-    Service-->>Controller: {atualizados, desatualizados}
-    Controller-->>Frontend: HTTP 200 OK
-    Frontend-->>Gestor: Exibe contador de cadastros desatualizados
-
-    Gestor->>Frontend: Clica no contador
-    Frontend->>Controller: GET /moradias?desatualizado=true
-    Controller->>Service: Listar moradias pendentes
-    Service->>Repository: Consultar moradias vencidas
-    Repository->>DB: SELECT dados para revisita
-    DB-->>Repository: Lista
-    Repository-->>Service: Lista
-    Service-->>Controller: Lista filtrada
-    Controller-->>Frontend: HTTP 200 OK
-    Frontend-->>Gestor: Exibe lista para recadastro
-```
-```mermaid
-sequenceDiagram
-    participant Cron as Job Agendado (Diário)
-    participant Service as RecadastroService
-    participant Repository as RecadastroRepository
+    participant Controller as MoradiaController
+    participant Service as MoradiaService
+    participant Repository as MoradiaRepository
     participant DB as Banco de Dados
-    actor Gestor as Gestor Operacional (A03)
-    participant Frontend as Frontend Painel Desktop
-    participant Controller as IndicadorController
 
-    Note over Cron,DB: Rotina automática
+    Note over Gestor, DB: O alerta de recadastro (FL10) é uma Tag calculada sob demanda pelas listagens/detalhes (Job Cron no Backlog).
 
-    Cron->>Service: Executar verificação diária RN02
-    Service->>Repository: Buscar moradias ativas sem atualização há 365 dias
-    Repository->>DB: SELECT moradia, historico_ocupacao, família<br/>FROM moradia JOIN historico_ocupacao JOIN família<br/>WHERE moradia.status='Ativa'<br/>AND historico_ocupacao.data_saida IS NULL<br/>AND família.status_ativo=true<br/>AND moradia.ultima_atualizacao < CURRENT_DATE - INTERVAL '365 days'
-    DB-->>Repository: Cadastros desatualizados
-    Repository-->>Service: Lista de pendências
-    Service->>Service: Montar alerta operacional para o painel do gestor
+    Gestor->>Frontend: Acessa o Painel de Gestão
+    Frontend->>Controller: GET /api/moradias (ou listagem com flag desatualizado)
+    Controller->>Service: Solicitar moradias ativas e calcular flags de recadastro
+    Service->>Repository: Consultar moradias da view ativa
+    Repository->>DB: SELECT * FROM vw_moradia_ativa
+    DB-->>Repository: Lista de moradias com data_modificacao e data_registro
+    Repository-->>Service: Lista de moradias
 
-    Note over Service,DB: O WAD descreve o alerta de recadastro,<br/>mas o modelo físico atual não define uma<br/>tabela NOTIFICACAO. Este fluxo trata o alerta<br/>como indicador derivado da consulta.
+    Service->>Service: Calcular para cada moradia:<br/>Se (data_modificacao OU data_registro) < (hoje - 365 dias) -> marcar flag 'desatualizado=true'
 
-    Note over Cron,Controller: Consulta no painel
-
-    Gestor->>Frontend: Abre painel ou mapa
-    Frontend->>Controller: GET /indicadores/recadastro
-    Controller->>Service: Solicitar totais RN02
-    Service->>Repository: Contar cadastros atualizados e desatualizados
-    Repository->>DB: SELECT totais por ultima_atualizacao<br/>FROM moradia WHERE status='Ativa'
-    DB-->>Repository: Totais
-    Repository-->>Service: Totais
-    Service-->>Controller: {atualizados, desatualizados}
-    Controller-->>Frontend: HTTP 200 OK
-    Frontend-->>Gestor: Exibe contador de cadastros desatualizados
-
-    Gestor->>Frontend: Clica no contador
-    Frontend->>Controller: GET /moradias?desatualizado=true
-    Controller->>Service: Listar moradias pendentes
-    Service->>Repository: Consultar moradias vencidas
-    Repository->>DB: SELECT dados para revisita
-    DB-->>Repository: Lista
-    Repository-->>Service: Lista
-    Service-->>Controller: Lista filtrada
-    Controller-->>Frontend: HTTP 200 OK
-    Frontend-->>Gestor: Exibe lista para recadastro
+    Service-->>Controller: Lista de moradias com tags de recadastro
+    Controller-->>Frontend: HTTP 200 OK [{id, status, desatualizado: true/false}]
+    Frontend-->>Gestor: Exibe lista com tags visuais de alerta (Tag de Recadastro) nas moradias vencidas
 ```
 
 Este fluxo documenta a rotina de recadastro obrigatório prevista pela RN02. Um job agendado verifica diariamente moradias ativas cuja `ultima_atualizacao` tenha ultrapassado 365 dias. A consulta considera moradias com ocupação ativa e família ativa, evitando alertas sobre registros apenas históricos. No painel, o **Gestor Operacional (A02/A03)** consulta os indicadores de recadastro e visualiza o total de cadastros atualizados e desatualizados. Ao clicar no indicador, o Frontend redireciona para a listagem de moradias com o filtro `desatualizado=true`, permitindo organizar as revisitas de campo.
 
 ---
 
-#### FL11 - Regra transversal de Risco Crítico (RN05)
-
+### FL11 — Regra transversal de Risco Crítico (RN05)
 ```mermaid
 sequenceDiagram
-    participant Chamador as Fluxo Chamador (FL02/FL03/FL04/FL05/FL07/FL09)
-    participant Service as Service
-    participant Repository as Repository
+    participant Chamador as Fluxo Chamador (FL02/FL03/FL05/FL09)
+    participant Service as MoradiaService/PessoaService
+    participant Repository as MoradiaRepository/FamiliaRepository
     participant DB as Banco de Dados
     participant Frontend as Frontend
     actor Usuario as Usuário
 
-    Note over Chamador,Service: RN05 não é um fluxo independente.<br/>É aplicada quando a consulta integrada,<br/>mapa, filtro, relatório ou atualização<br/>carrega moradia com ocupação ativa.
+    Note over Chamador, Service: RN05 não é um fluxo independente. É aplicada automaticamente ao consultar os detalhes de uma moradia ativa.
 
-    Chamador->>Service: Solicita avaliação RN05 {id_moradia}
-    Service->>Repository: Buscar moradia, ocorrências<br/>e moradores ativos da ocupação atual
-    Repository->>DB: SELECT indicador de historico_ocorrencia,<br/>pessoa.id_pessoa, grupo_prioritario.nome<br/>FROM moradia JOIN historico_ocupacao<br/>JOIN família JOIN pessoa<br/>LEFT JOIN pessoa_grupo_prioritario<br/>LEFT JOIN grupo_prioritario<br/>WHERE moradia.id_moradia=:id<br/>AND historico_ocupacao.data_saida IS NULL<br/>AND pessoa.status_cadastro=true
-    DB-->>Repository: Dados para avaliação
-    Repository-->>Service: Dados para avaliação
+    Chamador->>Service: Solicita avaliação de Risco Crítico {id_moradia}
+    Service->>Repository: Buscar status da moradia e grupos prioritários dos moradores ativos
+    Repository->>DB: SELECT m.status, gp.condicao FROM vw_moradia_ativa m JOIN familia_moradia fm JOIN pessoa_familia pf JOIN vw_pessoa_ativa p JOIN pessoa_grupo_prioritario pgp JOIN grupo_prioritario gp WHERE m.id = :id AND fm.data_saida IS NULL AND pf.data_saida IS NULL
+    DB-->>Repository: Status do imóvel e condições dos moradores
+    Repository-->>Service: Dados estruturados
 
-    Service->>Service: Verificar condição:<br/>historico_ocorrencia=true<br/>E algum morador em grupo<br/>'Mobilidade reduzida' ou 'Acamado'
-
-    alt Condição RN05 satisfeita
-        Service-->>Chamador: risco_critico=true
-        Chamador-->>Frontend: Objeto com flag
-        Frontend-->>Usuario: Exibe "Risco Crítico" no cabeçalho/card
-    else Condição RN05 não satisfeita
-        Service-->>Chamador: risco_critico=false
-        Chamador-->>Frontend: Objeto sem flag crítica
-        Frontend-->>Usuario: Exibe ficha normalmente
-    end
-```
-```mermaid
-sequenceDiagram
-    participant Chamador as Fluxo Chamador (FL02/FL03/FL04/FL05/FL07/FL09)
-    participant Service as Service
-    participant Repository as Repository
-    participant DB as Banco de Dados
-    participant Frontend as Frontend
-    actor Usuario as Usuário
-
-    Note over Chamador,Service: RN05 não é um fluxo independente.<br/>É aplicada quando a consulta integrada,<br/>mapa, filtro, relatório ou atualização<br/>carrega moradia com ocupação ativa.
-
-    Chamador->>Service: Solicita avaliação RN05 {id_moradia}
-    Service->>Repository: Buscar moradia, ocorrências<br/>e moradores ativos da ocupação atual
-    Repository->>DB: SELECT indicador de historico_ocorrencia,<br/>pessoa.id_pessoa, grupo_prioritario.nome<br/>FROM moradia JOIN historico_ocupacao<br/>JOIN família JOIN pessoa<br/>LEFT JOIN pessoa_grupo_prioritario<br/>LEFT JOIN grupo_prioritario<br/>WHERE moradia.id_moradia=:id<br/>AND historico_ocupacao.data_saida IS NULL<br/>AND pessoa.status_cadastro=true
-    DB-->>Repository: Dados para avaliação
-    Repository-->>Service: Dados para avaliação
-
-    Service->>Service: Verificar condição:<br/>historico_ocorrencia=true<br/>E algum morador em grupo<br/>'Mobilidade reduzida' ou 'Acamado'
+    Service->>Service: Verificar condição:<br/>(moradia.status = 'Em Risco' OR 'Interditada')<br/>E algum morador associado a grupo ('Cadeirante', 'Acamado' ou 'Mobilidade Reduzida')
 
     alt Condição RN05 satisfeita
         Service-->>Chamador: risco_critico=true
-        Chamador-->>Frontend: Objeto com flag
-        Frontend-->>Usuario: Exibe "Risco Crítico" no cabeçalho/card
+        Chamador-->>Frontend: Retorna objeto com flag risco_critico=true
+        Frontend-->>Usuario: Exibe alerta visual vermelho "Risco Crítico" no card/ficha
     else Condição RN05 não satisfeita
         Service-->>Chamador: risco_critico=false
-        Chamador-->>Frontend: Objeto sem flag crítica
-        Frontend-->>Usuario: Exibe ficha normalmente
+        Chamador-->>Frontend: Retorna objeto com flag risco_critico=false
+        Frontend-->>Usuario: Exibe ficha de consulta sem alerta crítico
     end
 ```
 
-Este fluxo representa uma regra transversal, acionada por outros fluxos sempre que uma moradia e seus moradores ativos são carregados para exibição. O Service consulta a moradia, a ocupação ativa, a família residente e os cidadãos vinculados aos grupos prioritários. A condição RN05 é satisfeita quando a moradia possui histórico de ocorrência e existe ao menos um morador ativo classificado com mobilidade reduzida ou acamado. Quando a condição é verdadeira, a resposta recebe `risco_critico=true`, permitindo que o Frontend destaque a flag "Risco Crítico" em cards, fichas e consultas integradas. Quando a condição não é satisfeita, a ficha é exibida sem o alerta.
+Este fluxo representa uma regra transversal, acionada por outros fluxos sempre que uma moradia e seus moradores ativos são carregados para exibição. O Service consulta a moradia, a ocupação ativa, a família residente e os cidadãos vinculados aos grupos prioritários. A condição RN05 é satisfeito quando a moradia possui histórico de ocorrência e existe ao menos um morador ativo classificado com mobilidade reduzida ou acamado. Quando a condição é verdadeira, a resposta recebe `risco_critico=true`, permitindo que o Frontend destaque a flag \"Risco Crítico\" em cards, fichas e consultas integradas. Quando a condição não é satisfeita, a ficha é exibida sem o alerta.
 
 ---
 
-#### FL12 - Validação transversal de integridade cadastral
-
+### FL12 — Validação transversal de integridade cadastral
 ```mermaid
 sequenceDiagram
-    participant Chamador as Fluxo Chamador (Cadastro, Atualização, Arquivamento, Realocação)
-    participant Service as Service
-    participant Repository as Repository
+    participant Chamador as Fluxo Chamador (Cadastro, Atualização, Desvinculo, Realocação)
+    participant Service as FamiliaService
+    participant Repository as FamiliaRepository/MoradiaRepository
     participant DB as Banco de Dados
     participant Frontend as Frontend
     actor Usuario as Usuário
 
-    Note over Service: Regras derivadas das US13 e US14:<br/>família ativa deve possuir responsável ativo<br/>e ocupação ativa em uma moradia válida.
+    Note over Service: Regras derivadas das US13 e US14:<br/>Família ativa exige responsável ativo e moradia ativa vinculada.
 
-    Chamador->>Service: Solicita validação de integridade {id_família}
-    Service->>Repository: Verificar família ativa
-    Repository->>DB: SELECT família WHERE id_familia=:id
-    DB-->>Repository: Família
-    Repository-->>Service: Família
+    Chamador->>Service: Executa validação de integridade cadastral {id_familia}
+    Service->>Repository: Consultar família
+    Repository->>DB: SELECT * FROM vw_familia_ativa WHERE id = :id
+    DB-->>Repository: Registro da família
+    Repository-->>Service: Dados da família
 
-    alt Família inativa
-        Service-->>Chamador: Integridade aprovada para contexto histórico
+    alt Família inativa (deletada)
+        Service-->>Chamador: Validação ignorada (histórico)
     else Família ativa
-        Service->>Repository: Verificar responsável ativo
-        Repository->>DB: SELECT responsável, pessoa<br/>WHERE pessoa.id_família=:id<br/>AND pessoa.status_cadastro=true<br/>AND responsável.id_pessoa=pessoa.id_pessoa
+        Service->>Repository: Verificar se há responsável ativo na família
+        Repository->>DB: SELECT * FROM pessoa_familia pf JOIN vw_pessoa_ativa p JOIN responsavel r ON r.id_pessoa=p.id WHERE pf.id_familia=:id AND pf.data_saida IS NULL
         DB-->>Repository: Responsável ativo ou vazio
         Repository-->>Service: Resultado
 
-        Service->>Repository: Verificar ocupação ativa
-        Repository->>DB: SELECT historico_ocupacao, moradia<br/>WHERE id_família=:id<br/>AND data_saida IS NULL<br/>AND moradia.status='Ativa'
-        DB-->>Repository: Ocupação ativa ou vazio
+        Service->>Repository: Verificar se há moradia ativa vinculada à família
+        Repository->>DB: SELECT * FROM familia_moradia fm JOIN vw_moradia_ativa m ON m.id=fm.id_moradia WHERE fm.id_familia=:id AND fm.data_saida IS NULL
+        DB-->>Repository: Moradia ativa ou vazio
         Repository-->>Service: Resultado
 
-        alt Sem responsável ativo
-            Service-->>Chamador: HTTP 409 Conflict {erro='familia_sem_responsavel'}
-            Chamador-->>Frontend: Bloqueio de operação
-            Frontend-->>Usuario: Solicita definir novo responsável
-        else Sem moradia ativa vinculada
-            Service-->>Chamador: HTTP 409 Conflict {erro='familia_sem_moradia_ativa'}
-            Chamador-->>Frontend: Bloqueio de operação
-            Frontend-->>Usuario: Solicita vincular nova moradia ou inativar família
+        alt Sem responsável ativo (Violação US13)
+            Service-->>Chamador: Falha de Validação (HTTP 409 Conflict)
+            Chamador-->>Frontend: Bloqueia a operação
+            Frontend-->>Usuario: Solicita definir um responsável ativo para a família
+        else Sem moradia ativa vinculada (Violação US14)
+            Service-->>Chamador: Falha de Validação (HTTP 409 Conflict)
+            Chamador-->>Frontend: Bloqueia a operação
+            Frontend-->>Usuario: Solicita vincular a família a uma moradia ativa válida
         else Integridade preservada
-            Service-->>Chamador: Validação OK
-        end
-    end
-```
-```mermaid
-sequenceDiagram
-    participant Chamador as Fluxo Chamador (Cadastro, Atualização, Arquivamento, Realocação)
-    participant Service as Service
-    participant Repository as Repository
-    participant DB as Banco de Dados
-    participant Frontend as Frontend
-    actor Usuario as Usuário
-
-    Note over Service: Regras derivadas das US13 e US14:<br/>família ativa deve possuir responsável ativo<br/>e ocupação ativa em uma moradia válida.
-
-    Chamador->>Service: Solicita validação de integridade {id_família}
-    Service->>Repository: Verificar família ativa
-    Repository->>DB: SELECT família WHERE id_familia=:id
-    DB-->>Repository: Família
-    Repository-->>Service: Família
-
-    alt Família inativa
-        Service-->>Chamador: Integridade aprovada para contexto histórico
-    else Família ativa
-        Service->>Repository: Verificar responsável ativo
-        Repository->>DB: SELECT responsável, pessoa<br/>WHERE pessoa.id_família=:id<br/>AND pessoa.status_cadastro=true<br/>AND responsável.id_pessoa=pessoa.id_pessoa
-        DB-->>Repository: Responsável ativo ou vazio
-        Repository-->>Service: Resultado
-
-        Service->>Repository: Verificar ocupação ativa
-        Repository->>DB: SELECT historico_ocupacao, moradia<br/>WHERE id_família=:id<br/>AND data_saida IS NULL<br/>AND moradia.status='Ativa'
-        DB-->>Repository: Ocupação ativa ou vazio
-        Repository-->>Service: Resultado
-
-        alt Sem responsável ativo
-            Service-->>Chamador: HTTP 409 Conflict {erro='familia_sem_responsavel'}
-            Chamador-->>Frontend: Bloqueio de operação
-            Frontend-->>Usuario: Solicita definir novo responsável
-        else Sem moradia ativa vinculada
-            Service-->>Chamador: HTTP 409 Conflict {erro='familia_sem_moradia_ativa'}
-            Chamador-->>Frontend: Bloqueio de operação
-            Frontend-->>Usuario: Solicita vincular nova moradia ou inativar família
-        else Integridade preservada
-            Service-->>Chamador: Validação OK
+            Service-->>Chamador: Validação Aprovada (OK)
         end
     end
 ```
@@ -2489,87 +1929,140 @@ A consulta #3 só retorna resultado quando o cidadão está ativo, possui regist
 A consulta #4 só realiza a atualização quando o registro informado existe no contexto da operação e a moradia está previamente classificada em um status não operacional reversível.
 
 ## 3.7. WebAPI e endpoints (sprints 3 e 4)
- 
-A documentação completa dos endpoints implementados está disponível em [`documentos/outros/webapi-docs.html`](outros/webapi-docs.html). O arquivo descreve a base URL, headers, formato padrão de erro, métodos HTTP, endpoints, atores, RF/RN relacionados, exemplos de request/response e status codes possíveis.
- 
+
+A WebAPI do GeoRisco foi implementada em Express e expõe endpoints HTTP sob o prefixo `/api`, com contratos JSON para cadastro, consulta, atualização, remoção lógica, vínculos familiares, registro de pets e gerenciamento de metadados de fotos. A documentação de referência dos contratos está consolidada em [`documentos/outros/endpoints.md`](outros/endpoints.md), enquanto a versão navegável da documentação está em [`documentos/webapi-docs.html`](webapi-docs.html).
+
+O levantamento atual foi conferido contra os arquivos de rotas e controllers do backend (`pessoa.routes.ts`, `moradia.routes.ts`, `familia.routes.ts`, `pet.routes.ts` e `foto.routes.ts`). No estado atual do projeto, existem **52 endpoints implementados no prefixo `/api`**, distribuídos entre Pessoas, Responsáveis, Moradias, Famílias, Pets e Fotos. Também existem rotas HTML auxiliares fora do prefixo `/api`, usadas para renderização de telas EJS e listagem JSON legada de pessoas.
+
+### Padrões gerais da WebAPI
+
+| Item | Padrão adotado |
+|------|----------------|
+| Base URL local | `http://localhost:1234/api` |
+| Formato principal | JSON |
+| Header esperado em requisições com corpo | `Content-Type: application/json` |
+| Formato de erro atual | `{ "error": "Mensagem do erro" }` |
+| Autenticação/autorização | Não há middleware de autenticação ou autorização nas rotas listadas nesta versão |
+| Remoção de pessoas, moradias e famílias | Preferencialmente por soft delete, preservando histórico |
+| Upload de fotos | Mediado por URL assinada do storage, mantendo no banco apenas vínculo e metadados |
+
+### Status HTTP implementados
+
+| Status | Uso na API atual |
+|--------|------------------|
+| `200 OK` | Consulta, atualização ou operação com retorno JSON bem-sucedida |
+| `201 Created` | Criação de recurso ou geração de URL assinada de upload |
+| `204 No Content` | Remoção concluída sem corpo de resposta |
+| `400 Bad Request` | ID inválido, payload inválido, campo obrigatório ausente ou validação de entrada falhou |
+| `404 Not Found` | Recurso não encontrado |
+| `409 Conflict` | Conflito de regra de negócio, como violação de vínculo ou integridade |
+| `500 Internal Server Error` | Erro interno ou dependência obrigatória não configurada |
+| `502 Bad Gateway` | Falha específica ao gerar URL assinada no serviço de storage |
+
+> Observação: `401 Unauthorized` e `403 Forbidden` não fazem parte do contrato implementado nos controllers atuais, pois a autenticação e o controle de acesso ainda não estão presentes no backend desta entrega.
+
 ### Endpoints implementados por domínio
- 
+
 #### Pessoas e Responsáveis
- 
-| Método | Endpoint | Descrição | RF |
-|--------|----------|-----------|-----|
-| GET | `/api/pessoas` | Lista todas as pessoas | RF001, RF006 |
-| GET | `/api/pessoas/busca` | Busca pessoas por nome ou CPF | RF006 |
-| GET | `/api/pessoas/inativas` | Lista pessoas inativas | RF010 |
-| GET | `/api/pessoas/{id}` | Retorna pessoa por ID | RF001 |
-| POST | `/api/pessoas` | Cadastra nova pessoa | RF001 |
-| PUT | `/api/pessoas/{id}` | Atualiza dados de uma pessoa | RF012 |
-| DELETE | `/api/pessoas/{id}` | Remove pessoa | RF010 |
-| GET | `/api/responsaveis` | Lista todos os responsáveis | RF001 |
-| GET | `/api/responsaveis/{id}` | Retorna responsável por ID | RF001 |
-| POST | `/api/responsaveis` | Cadastra novo responsável | RF001 |
-| PUT | `/api/responsaveis/{id}` | Atualiza dados de um responsável | RF012 |
-| DELETE | `/api/responsaveis/{id}` | Remove responsável | RF010 |
- 
-#### Famílias
- 
-| Método | Endpoint | Descrição | RF |
-|--------|----------|-----------|-----|
-| GET | `/api/familias` | Lista todas as famílias | RF001 |
-| GET | `/api/familias/{id}` | Retorna família por ID | RF001 |
-| POST | `/api/familias` | Cria nova família | RF001 |
-| DELETE | `/api/familias/{id}` | Remove família | RF009 |
-| POST | `/api/familias/nucleo` | Cadastra núcleo familiar completo | RF001 |
-| GET | `/api/familias/{id}/pessoas` | Lista pessoas de uma família | RF001 |
-| POST | `/api/familias/{id}/pessoas` | Vincula pessoa à família | RF001 |
-| DELETE | `/api/familias/{id}/pessoas/{pessoaId}` | Remove vínculo de pessoa da família | RF010 |
-| GET | `/api/familias/{id}/pessoas/historico` | Histórico de pessoas da família | RF005, RF012 |
-| GET | `/api/familias/{id}/moradias` | Lista moradias vinculadas à família | RF009, RF012 |
-| POST | `/api/familias/{id}/moradias` | Vincula moradia à família | RF002, RF003 |
-| DELETE | `/api/familias/{id}/moradias/{moradiaId}` | Remove vínculo de moradia da família | RF009 |
-| GET | `/api/familias/{id}/moradias/historico` | Histórico de ocupações da família | RF009, RF012 |
-| GET | `/api/familias/{id}/pets` | Lista pets da família | RF007 |
-| POST | `/api/familias/{id}/pets` | Cadastra novo pet na família | RF007 |
- 
+
+| Método | Endpoint | Descrição | Resposta de sucesso | RF relacionado |
+|--------|----------|-----------|---------------------|----------------|
+| GET | `/api/pessoas` | Lista todas as pessoas cadastradas | `200` | RF001, RF016 |
+| GET | `/api/pessoas/busca` | Busca pessoas por filtros como `nome`, `cpf`, `email`, `telefone` e `escopo` | `200` | RF016 |
+| GET | `/api/pessoas/inativas` | Lista pessoas inativas | `200` | RF010 |
+| GET | `/api/pessoas/{id}` | Retorna pessoa por ID | `200` | RF001 |
+| POST | `/api/pessoas` | Cadastra nova pessoa | `201` | RF001 |
+| PUT | `/api/pessoas/{id}` | Atualiza parcialmente uma pessoa | `200` | RF012, RF019 |
+| DELETE | `/api/pessoas/{id}` | Remove pessoa por soft delete | `204` | RF010 |
+| GET | `/api/responsaveis` | Lista todos os responsáveis | `200` | RF001, RF014 |
+| GET | `/api/responsaveis/{id}` | Retorna responsável pelo ID da pessoa | `200` | RF001, RF014 |
+| POST | `/api/responsaveis` | Cadastra pessoa responsável e seus dados adicionais | `201` | RF001, RF014 |
+| PUT | `/api/responsaveis/{id}` | Atualiza parcialmente um responsável | `200` | RF012, RF014, RF019 |
+| DELETE | `/api/responsaveis/{id}` | Remove responsável | `204` | RF010 |
+
+Os endpoints de pessoa aceitam os campos principais `nome`, `dataDeNascimento`, `parentesco`, `situacaoOcupacional`, `escolaridade`, `cronico`, `medicacao` e `status`, incluindo aliases em `snake_case` para alguns atributos. Responsáveis são tratados como pessoas com dados complementares, como `cpf`, `nis`, `renda`, `sexo`, `raca`, `estadoCivil`, `email`, `telefone`, vínculos familiares e datas de residência.
+
 #### Moradias
- 
-| Método | Endpoint | Descrição | RF |
-|--------|----------|-----------|-----|
-| GET | `/api/moradias` | Lista moradias com filtros avançados | RF004, RF006 |
-| GET | `/api/moradias/{id}` | Retorna moradia por ID | RF005 |
-| GET | `/api/moradias/{id}/detalhes` | Retorna moradia com localização e ocupantes | RF005 |
-| GET | `/api/moradias/{id}/familias/historico` | Histórico de famílias que ocuparam a moradia | RF005, RF009 |
-| POST | `/api/moradias` | Cria nova moradia | RF002, RF003 |
-| PUT | `/api/moradias/{id}` | Atualiza dados da moradia | RF012 |
-| DELETE | `/api/moradias/{id}` | Remove moradia | RF009 |
- 
-#### Fotos
- 
-| Método | Endpoint | Descrição | RF |
-|--------|----------|-----------|-----|
-| GET | `/api/fotos` | Lista todas as fotos | RF002, RF007 |
-| GET | `/api/fotos/{id}` | Retorna foto por ID | RF002, RF007 |
-| GET | `/api/fotos/{id}/signed-url` | Gera URL assinada para acesso seguro | RF002, RF007 |
-| PUT | `/api/fotos/{id}` | Atualiza metadados de uma foto | RF002, RF007 |
-| DELETE | `/api/fotos/{id}` | Remove foto | RF002 |
-| GET | `/api/moradias/{id}/fotos` | Lista fotos de uma moradia | RF002 |
-| POST | `/api/moradias/{id}/fotos/upload-url` | Gera URL pré-assinada para upload | RF002 |
-| POST | `/api/moradias/{id}/fotos` | Registra metadados da foto após upload | RF002 |
-| DELETE | `/api/moradias/{id}/fotos/{fotoId}` | Remove foto de uma moradia | RF002 |
-| GET | `/api/pets/{id}/fotos` | Lista fotos de um pet | RF007 |
-| POST | `/api/pets/{id}/fotos/upload-url` | Gera URL pré-assinada para upload de foto de pet | RF007 |
-| POST | `/api/pets/{id}/fotos` | Registra metadados da foto do pet após upload | RF007 |
-| DELETE | `/api/pets/{id}/fotos/{fotoId}` | Remove foto de um pet | RF007 |
- 
+
+| Método | Endpoint | Descrição | Resposta de sucesso | RF relacionado |
+|--------|----------|-----------|---------------------|----------------|
+| GET | `/api/moradias` | Lista moradias | `200` | RF004, RF006 |
+| GET | `/api/moradias/{id}` | Retorna moradia por ID | `200` | RF005 |
+| GET | `/api/moradias/{id}/detalhes` | Retorna detalhes da moradia, incluindo famílias, pessoas, pets e fotos associados | `200` | RF005 |
+| GET | `/api/moradias/{id}/familias/historico` | Lista o histórico de famílias vinculadas à moradia | `200` | RF014 |
+| POST | `/api/moradias` | Cria moradia com localização | `201` | RF002, RF003 |
+| PUT | `/api/moradias/{id}` | Atualiza parcialmente moradia e/ou localização | `200` | RF012, RF015, RF019 |
+| DELETE | `/api/moradias/{id}` | Remove moradia por soft delete | `204` | RF009 |
+
+A criação de moradia espera um corpo com os grupos `localizacao` e `moradia`. Em `localizacao`, os campos mínimos são `cidade`, `estado`, `latitude` e `longitude`. Em `moradia`, os campos mínimos são `tipoConstrucao`, `usoImovel` e `situacaoDeOcupacao`, também com aliases em `snake_case` para integração com clientes que adotem esse padrão.
+
+#### Famílias
+
+| Método | Endpoint | Descrição | Resposta de sucesso | RF relacionado |
+|--------|----------|-----------|---------------------|----------------|
+| GET | `/api/familias` | Lista famílias | `200` | RF014 |
+| GET | `/api/familias/{id}` | Retorna família por ID | `200` | RF014 |
+| POST | `/api/familias` | Cria uma família | `201` | RF001, RF014, RF017 |
+| DELETE | `/api/familias/{id}` | Remove família por soft delete | `204` | RF014 |
+| POST | `/api/familias/nucleo` | Cadastra núcleo familiar completo, incluindo localização, moradia, responsável, dependentes, pets e fotos | `201` | RF013 |
+| GET | `/api/familias/{id}/pessoas` | Lista pessoas vinculadas à família | `200` | RF014 |
+| GET | `/api/familias/{id}/pessoas/historico` | Lista histórico de pessoas vinculadas à família | `200` | RF014 |
+| POST | `/api/familias/{id}/pessoas` | Vincula pessoa à família | `201` | RF014 |
+| DELETE | `/api/familias/{id}/pessoas/{pessoaId}` | Remove vínculo ativo entre pessoa e família | `200` | RF014 |
+| GET | `/api/familias/{id}/moradias` | Lista moradias vinculadas à família | `200` | RF014 |
+| GET | `/api/familias/{id}/moradias/historico` | Lista histórico de moradias vinculadas à família | `200` | RF014 |
+| POST | `/api/familias/{id}/moradias` | Vincula moradia à família | `201` | RF014, RF017 |
+| DELETE | `/api/familias/{id}/moradias/{moradiaId}` | Remove vínculo ativo entre moradia e família | `200` | RF014 |
+
+Os endpoints de vínculo preservam o histórico de composição familiar e ocupação da moradia por meio de datas de entrada e saída. O endpoint `/api/familias/nucleo` consolida o fluxo principal de cadastro, permitindo registrar em uma única operação o núcleo familiar completo usado pelo processo operacional da Defesa Civil.
+
 #### Pets
- 
-| Método | Endpoint | Descrição | RF |
-|--------|----------|-----------|-----|
-| GET | `/api/pets` | Lista todos os pets | RF007 |
-| GET | `/api/pets/{id}` | Retorna pet por ID | RF007 |
-| POST | `/api/pets` | Cria novo pet | RF007 |
-| PUT | `/api/pets/{id}` | Atualiza dados de um pet | RF007 |
-| DELETE | `/api/pets/{id}` | Remove pet | RF007 |
+
+| Método | Endpoint | Descrição | Resposta de sucesso | RF relacionado |
+|--------|----------|-----------|---------------------|----------------|
+| GET | `/api/pets` | Lista todos os pets | `200` | RF007 |
+| GET | `/api/pets/{id}` | Retorna pet por ID | `200` | RF007 |
+| POST | `/api/pets` | Cria pet informando `idFamilia` no corpo | `201` | RF007 |
+| PUT | `/api/pets/{id}` | Atualiza parcialmente um pet | `200` | RF007, RF019 |
+| DELETE | `/api/pets/{id}` | Remove pet | `204` | RF007 |
+| GET | `/api/familias/{id}/pets` | Lista pets de uma família | `200` | RF007, RF014 |
+| POST | `/api/familias/{id}/pets` | Cria pet vinculado à família informada na URL | `201` | RF007, RF014 |
+
+Os pets aceitam campos como `tipo`, `nome`, `porte`, `raca`, `cor`, `status` e `observacao`. Os tipos previstos no modelo são `cachorro`, `gato`, `reptil`, `ave`, `roedor` e `outros`; os status aceitos são `Ativo`, `Inativo`, `Desaparecido` e `Falecido`.
+
+#### Fotos
+
+| Método | Endpoint | Descrição | Resposta de sucesso | RF relacionado |
+|--------|----------|-----------|---------------------|----------------|
+| GET | `/api/fotos` | Lista todas as fotos | `200` | RF018 |
+| GET | `/api/fotos/{id}` | Retorna foto por ID | `200` | RF018 |
+| GET | `/api/fotos/{id}/signed-url` | Gera URL assinada para acesso à foto | `200` | RF018 |
+| PUT | `/api/fotos/{id}` | Atualiza a URL da foto | `200` | RF018 |
+| DELETE | `/api/fotos/{id}` | Remove foto | `204` | RF018 |
+| GET | `/api/moradias/{id}/fotos` | Lista fotos de uma moradia | `200` | RF002, RF018 |
+| POST | `/api/moradias/{id}/fotos/upload-url` | Gera URL assinada de upload para foto de moradia | `201` | RF018 |
+| POST | `/api/moradias/{id}/fotos` | Cria registro de foto vinculado à moradia | `201` | RF002, RF018 |
+| DELETE | `/api/moradias/{id}/fotos/{fotoId}` | Remove foto vinculada à moradia | `204` | RF018 |
+| GET | `/api/pets/{id}/fotos` | Lista fotos de um pet | `200` | RF007, RF018 |
+| POST | `/api/pets/{id}/fotos/upload-url` | Gera URL assinada de upload para foto de pet | `201` | RF018 |
+| POST | `/api/pets/{id}/fotos` | Cria registro de foto vinculado ao pet | `201` | RF007, RF018 |
+| DELETE | `/api/pets/{id}/fotos/{fotoId}` | Remove foto vinculada ao pet | `204` | RF018 |
+
+A API separa o arquivo físico da foto de seu metadado. Primeiro, o cliente solicita uma URL assinada de upload com `fileName`, `contentType` e, opcionalmente, `upsert`. Depois do envio ao storage, registra no backend apenas a `url` ou caminho do arquivo, associando o metadado à moradia ou ao pet correspondente.
+
+### Rotas HTML auxiliares fora do prefixo `/api`
+
+| Método | Endpoint | Finalidade |
+|--------|----------|------------|
+| GET | `/` | Redireciona para `/pessoas/novo` |
+| GET | `/pessoas/novo` | Renderiza formulário de pessoa |
+| GET | `/pessoas` | Renderiza lista de pessoas |
+| GET | `/pessoas.json` | Lista pessoas em JSON fora do prefixo `/api` |
+| POST | `/pessoas/` | Cria pessoa fora do prefixo `/api` |
+
+### Endpoints planejados e fora do contrato atual
+
+Alguns endpoints apareceram em versões anteriores da documentação, mas ainda não existem nas rotas atuais do backend. Eles devem ser tratados como planejados, e não como contrato implementado. Entre eles estão `/api/cadastros-completos`, `/api/moradias/mapa`, `/api/moradias/{id_moradia}/consulta-integrada`, `/api/moradias/exportar`, `/api/familias/{id_familia}/cadastro-completo`, `/api/indicadores/mapa-calor`, `/api/indicadores/recadastro`, `/api/moradias/{id_moradia}/status`, `/api/familias/{id_familia}/realocacoes` e `/api/cidadaos/{id_cidadao}/arquivar`.
 
 ## 3.8. Autenticação, Autorização e Resiliência (sprint 5)
 
@@ -2809,6 +2302,176 @@ Também é importante que os testes não compartilhem estado mutável entre si. 
 
 Dessa forma, a adoção do padrão AAA combinada ao determinismo contribui para uma estratégia de testes mais clara, confiável e sustentável. Os testes passam a funcionar não apenas como mecanismos de verificação automática, mas também como documentação objetiva do comportamento esperado do sistema.
 
+### 5.1.2 Testes unitários de service
+
+Os testes unitários da camada Service verificam, de forma isolada, as regras de negócio que ficam entre os controllers e os repositories. Essa camada concentra decisões importantes do sistema, como validação de dados obrigatórios, aplicação de regras de recadastro, controle de arquivamento lógico, restrições de geolocalização/fotos e avaliação de risco crítico.
+
+Esses testes são feitos para garantir que as regras documentadas no WAD continuem funcionando mesmo quando a API, o banco de dados ou a interface mudarem. Para isso, os repositories, transações e serviços externos são substituídos por mocks, permitindo validar apenas o comportamento do Service. Essa abordagem torna os testes mais rápidos, determinísticos e adequados para evidenciar cobertura de regra de negócio sem depender de infraestrutura externa.
+
+O conjunto também serve como evidência de rastreabilidade entre casos de teste e regras de negócio. Os casos prioritários foram nomeados explicitamente no formato `CTxx -> RNxx`, permitindo demonstrar quais regras foram cobertas, qual caminho feliz foi validado e qual caminho de falha foi exercitado.
+
+## Escopo e execução
+
+Os testes unitários da camada Service ficam em `src/geoRisco/src/services/*.spec.ts`.
+
+Comando de evidência:
+
+```bash
+npm test -- --coverage
+```
+Caso o comando acima não funcione por restrições do powershell, rode:
+
+```bash
+npm.cmd test -- --coverage
+```
+
+O Jest gera o relatório de cobertura da camada Service em `coverage/services`.
+
+A evidência visual da execução do comando `npm test -- --coverage` é apresentada abaixo:
+
+![Evidência da cobertura dos testes unitários de Service](outros/porcentagemTesteService.png)
+
+## Dependências necessárias
+
+Para permitir a execução dos testes, foram adicionadas as seguintes dependências:
+
+| Dependência | Tipo | Justificativa |
+|---|---|---|
+| `typescript` | devDependency | Necessária para compilar o projeto TypeScript antes da execução do Jest. |
+| `dotenv` | dependency | Necessária porque o projeto importa `dotenv/config` em arquivos de infraestrutura. |
+| `@supabase/supabase-js` | dependency | Necessária porque `foto-storage.service.ts` depende do cliente Supabase Storage. |
+
+Essas dependências já estão registradas no `package.json` e no `package-lock.json`. Portanto, em outro computador, não é necessário instalar cada pacote manualmente: basta executar `npm install` na raiz do projeto para que o npm baixe as versões corretas.
+
+Os testes unitários não dependem do `.env` real do projeto. Durante a execução do Jest, o arquivo `src/geoRisco/src/tests/jest.setup.ts` define valores fictícios para `DATABASE_URL`, `SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY`, permitindo que os imports de infraestrutura funcionem sem acessar banco de dados ou Supabase reais. As chamadas externas usadas nos Services são substituídas por mocks.
+
+Após clonar o projeto, basta executar:
+
+```bash
+npm install
+npm test -- --coverage
+```
+
+## Casos prioritários
+
+| Caso | RN | Arquivo | Objetivo |
+|---|---|---|---|
+| CT01 | RN01 | `pessoa.service.spec.ts` | Validar cadastro de pessoa com dados obrigatórios e falha quando o nome está ausente. |
+| CT02 | RN02 | `moradia.service.spec.ts` | Validar alerta de recadastro quando a última atualização tem 365 dias ou mais. |
+| CT03 | RN03 | `familia.service.spec.ts` | Validar arquivamento lógico delegado ao repositório e falha para vínculos inexistentes. |
+| CT04 | RN04 | `moradia.service.spec.ts` e `foto.service.spec.ts` | Validar geolocalização obrigatória e registro de foto com exatamente um dono permitido. |
+| CT05 | RN05 | `moradia.service.spec.ts` | Validar flag de risco crítico quando há histórico de ocorrência e morador vulnerável. |
+
+## Explicação dos 5 prioritários
+
+**CT01 -> RN01**
+- AAA: arrange cria repositório mockado e payload válido; act chama `PessoaService.cadastrar`; assert verifica retorno e chamada do repositório com nome normalizado, `nomeSocial` nulo e `status` padrão.
+- Determinismo: usa data fixa e mocks, sem banco ou rede.
+- RN coberta: RN01 exige dados essenciais para cadastro de pessoa.
+- Caminho de falha: payload sem nome rejeita com `HttpError 400` e não chama o repositório.
+
+**CT02 -> RN02**
+- AAA: arrange define data de referência fixa; act chama `MoradiaService.deveAlertarRecadastro`; assert compara `true` para 365 dias e `false` para 364 dias.
+- Determinismo: a data de referência é injetada no teste.
+- RN coberta: RN02 exige alerta para fichas sem atualização há 365 dias.
+- Caminho de falha: data inválida rejeita com `HttpError 400`.
+
+**CT03 -> RN03**
+- AAA: arrange cria família existente e repositório mockado; act chama `FamiliaService.remover`; assert verifica delegação para `delete`, que no banco é soft delete.
+- Determinismo: usa apenas mocks de repositório.
+- RN coberta: RN03 preserva histórico por arquivamento lógico.
+- Caminho de falha: vínculo pessoa-família ou família-moradia inexistente retorna `HttpError 404`.
+
+**CT04 -> RN04**
+- AAA: arrange prepara moradia com latitude/longitude e transação mockada; act chama `MoradiaService.cadastrar`; assert verifica commit e persistência com localização. O teste de foto prepara uma moradia existente, chama `FotoService.cadastrarNaMoradia` e confere exatamente um dono.
+- Determinismo: coordenadas, payloads e transação são fixos e mockados.
+- RN coberta: RN04 exige geolocalização no cadastro de moradia e restringe fotos ao imóvel/pet.
+- Caminho de falha: latitude inválida impede transação; foto sem dono ou com dois donos retorna `HttpError 400`.
+
+**CT05 -> RN05**
+- AAA: arrange cria entrada com histórico de ocorrência e moradores; act chama `MoradiaService.avaliarRiscoCritico`; assert verifica flag `true` para mobilidade reduzida/acamado.
+- Determinismo: entrada em memória, sem banco ou clock.
+- RN coberta: RN05 exige flag de risco crítico quando histórico de ocorrência e vulnerabilidade coexistem.
+- Caminho de falha: sem histórico ou sem vulnerabilidade a flag permanece `false`.
+
+### 5.1.3 Testes de Integração de Endpoints
+
+Os testes de integração de endpoints têm como objetivo validar o comportamento observável da API por meio de requisições HTTP executadas em ambiente controlado. Diferentemente dos testes unitários da seção 5.1.2, que verificam a camada de Service com mocks, os testes desta seção devem exercitar a aplicação a partir das rotas HTTP, verificando a integração entre rotas, controllers, services, tratamento de erros e contratos de resposta.
+
+Conforme definido nos critérios do projeto, cada endpoint principal deve contemplar, sempre que aplicável, os quatro cenários-chave:
+
+* **Sucesso**: resposta `200`, `201` ou `204`, conforme o contrato do endpoint;
+* **Falha de validação**: resposta `400`, quando o payload, parâmetro ou identificador for inválido;
+* **Regra de negócio violada**: resposta `409` quando houver conflito explícito, ou status equivalente já implementado pelo backend, como `400` para regra rejeitada por validação de domínio ou `502` para falha controlada de serviço externo;
+* **Recurso não encontrado**: resposta `404`, quando a entidade consultada ou vinculada não existir.
+
+Essa abordagem garante que os fluxos críticos sejam avaliados tanto no caminho feliz quanto em situações de erro previsíveis, mantendo coerência com os status HTTP efetivamente usados pelo backend atual.
+
+#### 5.1.3.1 Cobertura Obrigatória dos Endpoints Principais
+
+A cobertura dos testes de integração foi definida a partir dos requisitos funcionais prioritários da aplicação, garantindo rastreabilidade entre os fluxos de negócio, os contratos HTTP da API e as regras de negócio descritas na Seção 3.1.3. Para cada endpoint principal são contemplados os cenários de sucesso, falha de validação, violação de regra de negócio e recurso não encontrado.
+
+| Endpoint                                     | RF Relacionados            | RN Relacionadas        | Sucesso (200/201/204)                            | Falha de Validação (400/422)                      | Regra de Negócio Violada / Falha Externa (409 ou equivalente)      | Não Encontrado (404)                      |
+| -------------------------------------------- | -------------------------- | ---------------------- | ------------------------------------------------ | ------------------------------------------------- | ------------------------------------------------------------------ | ----------------------------------------- |
+| `POST /api/pessoas`                          | RF001                      | RN04                   | Pessoa cadastrada com sucesso (`201`)            | Campos obrigatórios ausentes ou inválidos (`400`) | Classificação de vulnerabilidade inconsistente (`400`)             | Entidade vinculada inexistente (`404`)    |
+| `GET /api/pessoas/:id`                       | RF001, RF005               | RN11                   | Pessoa encontrada (`200`)                        | ID inválido (`400`)                               | —                                                                  | Pessoa inexistente (`404`)                |
+| `PUT /api/pessoas/:id`                       | RF012, RF019               | RN04, RN09, RN10       | Atualização realizada (`200`)                    | Payload inválido (`400`)                          | Violação das regras de recadastro ou atualização cadastral (`400`) | Pessoa inexistente (`404`)                |
+| `SOFT DELETE /api/pessoas/:id`                    | RF010                      | RN01, RN06             | Morador arquivado (`204`)                        | ID inválido (`400`)                               | Tentativa de arquivar responsável sem substituição prévia (`409`)  | Pessoa inexistente (`404`)                |
+| `GET /api/pessoas/busca`                     | RF016                      | RN11                   | Busca executada com sucesso (`200`)              | Nenhum filtro informado (`400`)                   | Escopo incompatível com regras de consulta (`400`)                 | Lista vazia retorna `200`                 |
+| `POST /api/responsaveis`                     | RF001, RF014               | RN01, RN02             | Responsável cadastrado (`201`)                   | Dados obrigatórios ausentes (`400`)               | Família já possui responsável ativo (`409`)                        | Pessoa inexistente (`404`)                |
+| `PUT /api/responsaveis/:id`                  | RF014                      | RN01, RN02             | Responsável atualizado (`200`)                   | Payload inválido (`400`)                          | Tentativa de manter dois responsáveis ativos (`409`)               | Responsável inexistente (`404`)           |
+| `POST /api/familias`                         | RF001, RF014               | RN01, RN02, RN03       | Família criada (`201`)                           | Dados obrigatórios ausentes (`400`)               | Família sem responsável válido (`400`)                             | —                                         |
+| `POST /api/familias/nucleo`                  | RF013                      | RN01, RN02, RN03, RN12 | Cadastro transacional completo realizado (`201`) | Dados obrigatórios ausentes (`400`)               | Violação das regras de composição familiar (`409`)                 | Entidades vinculadas inexistentes (`404`) |
+| `POST /api/familias/:id/pessoas`             | RF014                      | RN01, RN02             | Pessoa vinculada à família (`201`)               | ID inválido (`400`)                               | Família já possui responsável ativo (`409`)                        | Pessoa ou família inexistente (`404`)     |
+| `SOFT DELETE /api/familias/:id/pessoas/:pessoaId` | RF014                      | RN01, RN06             | Vínculo removido (`200`)                         | IDs inválidos (`400`)                             | Família ativa ficaria sem responsável (`409`)                      | Vínculo inexistente (`404`)               |
+| `POST /api/familias/:id/moradias`            | RF014, RF017               | RN03, RN10             | Moradia vinculada à família (`201`)              | ID inválido (`400`)                               | Associação incompatível (`409`)                                    | Moradia inexistente (`404`)               |
+| `POST /api/moradias`                         | RF002, RF003               | RN05, RN08             | Moradia cadastrada (`201`)                       | Dados estruturais inválidos (`400`)               | Localização não confirmada ou situação inválida (`400`)            | —                                         |
+| `GET /api/moradias/:id`                      | RF002, RF005               | RN11                   | Moradia encontrada (`200`)                       | ID inválido (`400`)                               | —                                                                  | Moradia inexistente (`404`)               |
+| `PUT /api/moradias/:id`                      | RF003, RF012, RF015, RF019 | RN05, RN08, RN09, RN10 | Moradia atualizada (`200`)                       | Payload inválido (`400`)                          | Situação operacional inválida ou atualização incompatível (`400`)  | Moradia inexistente (`404`)               |
+| `SOFT DELETE /api/moradias/:id`                   | RF009                      | RN06                   | Moradia arquivada (`204`)                        | ID inválido (`400`)                               | Violação das regras de arquivamento lógico (`409`)                 | Moradia inexistente (`404`)               |
+| `GET /api/moradias/:id/detalhes`             | RF005                      | RN11                   | Dados consolidados retornados (`200`)            | ID inválido (`400`)                               | Inconsistência de dados agregados (`500` controlado)               | Moradia inexistente (`404`)               |
+| `GET /api/mapa/moradias`                     | RF004                      | RN08, RN11             | Marcadores carregados (`200`)                    | Parâmetros inválidos (`400`)                      | Dados inconsistentes com base oficial (`400`)                      | —                                         |
+| `GET /api/mapa/calor`                        | RF008                      | RN04, RN11             | Heatmap gerado (`200`)                           | Filtro inválido (`400`)                           | Grupo de vulnerabilidade inexistente (`400`)                       | —                                         |
+| `POST /api/pets`                             | RF007                      | RN12                   | Pet cadastrado (`201`)                           | Dados obrigatórios inválidos (`400`)              | Vínculo incompatível com família (`400`)                           | Família inexistente (`404`)               |
+| `PUT /api/pets/:id`                          | RF007, RF019               | RN12                   | Pet atualizado (`200`)                           | Payload inválido (`400`)                          | Violação do vínculo familiar (`400`)                               | Pet inexistente (`404`)                   |
+| `SOFT DELETE /api/pets/:id`                       | RF007                      | RN12                   | Pet removido (`204`)                             | ID inválido (`400`)                               | Restrição de remoção (`409`)                                       | Pet inexistente (`404`)                   |
+| `POST /api/moradias/:id/fotos`               | RF002, RF018               | RN07                   | Foto vinculada à moradia (`201`)                 | Tipo ou tamanho inválido (`400`)                  | Tentativa de cadastro de foto proibida pela LGPD (`400`)           | Moradia inexistente (`404`)               |
+| `POST /api/pets/:id/fotos`                   | RF007, RF018               | RN12                   | Foto vinculada ao pet (`201`)                    | Tipo ou tamanho inválido (`400`)                  | Violação das regras de associação (`400`)                          | Pet inexistente (`404`)                   |
+| `POST /api/moradias/:id/fotos/upload-url`    | RF018                      | RN07                   | URL de upload gerada (`201`)                     | Arquivo inválido (`400`)                          | Falha controlada de armazenamento (`502`)                          | Moradia inexistente (`404`)               |
+| `POST /api/pets/:id/fotos/upload-url`        | RF018                      | RN12                   | URL de upload gerada (`201`)                     | Arquivo inválido (`400`)                          | Falha controlada de armazenamento (`502`)                          | Pet inexistente (`404`)                   |
+| `GET /api/fotos/:id/signed-url`              | RF018                      | RN07                   | URL assinada gerada (`200`)                      | Identificador inválido (`400`)                    | Falha controlada de armazenamento (`502`)                          | Foto inexistente (`404`)                  |
+
+- **OBS:** alguns endpoints terão aplicações das validações, requisitos e funções somente na próxima Sprint: GET /api/mapa/moradias ; GET /api/mapa/calor ; (validações): PUT /api/pessoas/:id ; PUT /api/pessoas/:id.
+
+#### 5.1.3.2 Critérios de Implementação dos Testes
+
+Os testes de integração devem ser implementados exercitando a aplicação Express a partir de requisições HTTP, preferencialmente com Supertest. A suíte deve validar:
+
+* código de status retornado;
+* formato padrão de erro `{ "error": "mensagem" }`;
+* presença dos campos principais no corpo de resposta;
+* comportamento com payload válido;
+* comportamento com payload inválido;
+* comportamento com IDs inexistentes;
+* comportamento diante de conflitos ou regras de negócio rejeitadas.
+
+Como os testes de integração dependem da API montada, recomenda-se criar uma suíte separada, por exemplo:
+
+```txt
+src/geoRisco/src/tests/endpoints.integration.spec.ts
+
+```
+
+Também será necessário adicionar as dependências de teste HTTP, caso ainda não estejam instaladas:
+
+```
+npm install --save-dev supertest @types/supertest
+```
+
+#### 5.1.3.3 Resultado Esperado
+
+A execução da suíte de testes de integração deve demonstrar que todos os endpoints principais da API possuem cobertura para os cenários de sucesso, validação, conflito de negócio e recurso inexistente, garantindo rastreabilidade entre RFs, RNs, endpoints e casos de teste. Dessa forma, os contratos HTTP documentados permanecem alinhados ao comportamento real da aplicação, reduzindo riscos de regressão e aumentando a confiabilidade da solução.
+
 ## 5.2. Testes de usabilidade (sprint 5)
 
 ### 5.2.1. Relatório de testes de guerrilha
@@ -3020,8 +2683,7 @@ Tivemos alterações nas Personas (ambas), User Stories (todas), RF, RNF e RN. D
 
 18. INSTITUTO DE PESQUISAS TECNOLÓGICAS (IPT). Mapeamento e gerenciamento de áreas de risco de deslizamento e solapamento de margem no município de Santo André-SP. São Paulo, 27 mar. 2023. Disponível em: <https://ipt.br/2023/03/27/mapeamento-e-gerenciamento-de-areas-de-risco-de-deslizamento-e-solapamento-de-margem-no-municipio-de-santo-andre-sp/>. Acesso em: 9 jun. 2026.
 
-19. 
-
+19. INSTITUTO BRASILEIRO DE GEOGRAFIA E ESTATÍSTICA (IBGE). População em áreas de risco no Brasil. Rio de Janeiro: IBGE, 2018. Disponível em: https://www.ibge.gov.br/geociencias/informacoes-ambientais/estudos-ambientais/21538-populacao-em-areas-de-risco-no-brasil.html. Acesso em: 12 jun. 2026.
 
 # <a name="c10"></a>Anexos
 
