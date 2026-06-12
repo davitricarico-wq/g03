@@ -2303,13 +2303,13 @@ Dentre as dificuldades, encontramos problemas diversos considerando o prazo de e
 
 #### 5.1.1.1 Separação por camada
 
-A estratégia de testes automatizados do projeto deve seguir a separação por camadas da arquitetura da aplicação, definindo abordagens diferentes para Service, Controller e Repository, conforme a responsabilidade de cada camada.
+A estratégia de testes automatizados do projeto segue a separação por camadas da arquitetura da aplicação, definindo abordagens diferentes para Service, Controller e Repository, conforme a responsabilidade de cada camada. Essa separação evita que um único tipo de teste tente validar todo o sistema ao mesmo tempo e torna mais claro o que cada evidência comprova.
 
-Na camada de Service, os testes devem ser tratados como testes unitários white-box, pois essa camada concentra regras de negócio, validações, tratamentos de exceção e decisões internas da aplicação. Por isso, os testes devem exercitar os principais fluxos internos do serviço, incluindo cenários de sucesso, dados inválidos, entidades inexistentes, conflitos de regra de negócio e falhas esperadas. As dependências externas da camada, como repositórios ou outros serviços, devem ser substituídas por mocks, permitindo verificar tanto o resultado retornado quanto as interações esperadas com essas dependências.
+Na camada de Service, os testes são tratados como testes unitários white-box, pois essa camada concentra regras de negócio, validações, tratamentos de exceção, transações e decisões internas da aplicação. Por isso, a suíte exercita os principais fluxos internos dos serviços, incluindo cenários de sucesso, dados inválidos, entidades inexistentes, conflitos de regra de negócio e falhas esperadas. As dependências externas da camada, como repositories, conexão com banco, storage e outros services, são substituídas por mocks, permitindo verificar tanto o resultado retornado quanto as interações esperadas com essas dependências. Para este artefato, a camada Service deve apresentar no mínimo 80% de cobertura no relatório gerado pelo Jest.
 
-Na camada de Controller, a abordagem recomendada é o teste de integração black-box por meio do Supertest. Nesse caso, o foco não deve estar na implementação interna dos controllers, mas sim no comportamento observável da API. Os testes devem exercitar os endpoints HTTP da aplicação, validando códigos de status, corpo da resposta, mensagens retornadas e tratamento adequado de entradas válidas, inválidas e cenários de erro. Dessa forma, os controllers são avaliados a partir do contrato externo da aplicação, simulando de maneira mais fiel o uso real da API.
+Na camada de Controller, a abordagem adotada é o teste black-box do contrato HTTP por meio do Supertest, com o uso do test runner Jest. Nesse caso, o foco não está na implementação interna dos controllers, mas no comportamento observável da API: código de status, corpo da resposta, mensagens de erro e tratamento de entradas válidas ou inválidas. Para manter o teste determinístico e isolado, os services são mockados. Assim, a suíte valida rotas e controllers sem depender de banco de dados, repositories ou integrações externas.
 
-Na camada de Repository, os testes são opcionais e devem ser aplicados apenas quando houver lógica não trivial de consulta ou persistência. Isso inclui situações como montagem dinâmica de filtros, joins, consultas com múltiplas condições, soft delete, regras dependentes do banco de dados, views ou relacionamentos relevantes entre entidades. Quando necessários, esses testes devem utilizar um banco controlado ou ambiente isolado, evitando dependência de dados externos ou residuais.
+Na camada de Repository, os testes são opcionais e devem ser aplicados apenas quando houver lógica não trivial de consulta ou persistência. Isso inclui situações como montagem dinâmica de filtros, joins, consultas com múltiplas condições, soft delete, regras dependentes do banco de dados, views ou relacionamentos relevantes entre entidades. Quando necessários, esses testes devem utilizar banco controlado ou ambiente isolado, com transações e ROLLBACK, evitando dependência de dados externos ou residuais. Como a lógica prioritária deste artefato está concentrada em Service e Controller, a suíte atual prioriza essas duas camadas.
 
 #### 5.1.1.2 Padrão AAA e Determinismo
 
@@ -2327,15 +2327,15 @@ Dessa forma, a adoção do padrão AAA combinada ao determinismo contribui para 
 
 ### 5.1.2 Testes unitários de service
 
-Os testes unitários da camada Service verificam, de forma isolada, as regras de negócio que ficam entre os controllers e os repositories. Essa camada concentra decisões importantes do sistema, como validação de dados obrigatórios, aplicação de regras de recadastro, controle de arquivamento lógico, restrições de geolocalização/fotos e avaliação de risco crítico.
+Os testes unitários da camada Service verificam, de forma isolada, as regras de negócio que ficam entre os controllers e os repositories. Essa camada concentra decisões importantes do sistema, como validação de dados obrigatórios, vínculo entre família, pessoa e moradia, controle de arquivamento lógico, restrições para responsáveis, operações transacionais, validação de fotos e integração controlada com storage.
 
-Esses testes são feitos para garantir que as regras documentadas no WAD continuem funcionando mesmo quando a API, o banco de dados ou a interface mudarem. Para isso, os repositories, transações e serviços externos são substituídos por mocks, permitindo validar apenas o comportamento do Service. Essa abordagem torna os testes mais rápidos, determinísticos e adequados para evidenciar cobertura de regra de negócio sem depender de infraestrutura externa.
+Esses testes são feitos para garantir que as regras documentadas no WAD continuem funcionando mesmo quando a API, o banco de dados ou a interface mudarem. Para isso, repositories, transações e serviços externos são substituídos por mocks, permitindo validar apenas o comportamento do Service. Essa abordagem torna os testes mais rápidos, determinísticos e adequados para evidenciar cobertura de regra de negócio sem depender de infraestrutura externa.
 
-O conjunto também serve como evidência de rastreabilidade entre casos de teste e regras de negócio. Os casos prioritários foram nomeados explicitamente no formato `CTxx -> RNxx`, permitindo demonstrar quais regras foram cobertas, qual caminho feliz foi validado e qual caminho de falha foi exercitado.
+O conjunto também serve como evidência de rastreabilidade entre casos de teste e regras de negócio. A suíte está centralizada em `src/geoRisco/src/tests`, separando os arquivos de teste dos arquivos que implementam a lógica do backend. Os casos prioritários são documentados no formato `CTxx -> RNxx`, indicando a regra associada, o arquivo em que a validação ocorre, o caminho feliz e o caminho de falha exercitado.
 
 ## Escopo e execução
 
-Os testes unitários da camada Service ficam em `src/geoRisco/src/services/*.spec.ts`.
+Os testes unitários da camada Service ficam em `src/geoRisco/src/tests/*.service.test.ts`.
 
 Comando de evidência:
 
@@ -2348,9 +2348,9 @@ Caso o comando acima não funcione por restrições do powershell, rode:
 npm.cmd test -- --coverage
 ```
 
-O Jest gera o relatório de cobertura da camada Service em `coverage/services`.
+O Jest gera o relatório de cobertura a partir da configuração `src/geoRisco/jest.config.js`, e a camada Service é avaliada no agrupamento `src/services` do relatório.
 
-A evidência visual da execução do comando `npm test -- --coverage` é apresentada abaixo:
+A evidência visual da execução do comando `npm test -- --coverage`, ou `npm.cmd test -- --coverage` é apresentada abaixo:
 
 ![Evidência da cobertura dos testes unitários de Service](outros/porcentagemTesteService.png)
 
@@ -2379,43 +2379,43 @@ npm test -- --coverage
 
 | Caso | RN | Arquivo | Objetivo |
 |---|---|---|---|
-| CT01 | RN01 | `pessoa.service.spec.ts` | Validar cadastro de pessoa com dados obrigatórios e falha quando o nome está ausente. |
-| CT02 | RN02 | `moradia.service.spec.ts` | Validar alerta de recadastro quando a última atualização tem 365 dias ou mais. |
-| CT03 | RN03 | `familia.service.spec.ts` | Validar arquivamento lógico delegado ao repositório e falha para vínculos inexistentes. |
-| CT04 | RN04 | `moradia.service.spec.ts` e `foto.service.spec.ts` | Validar geolocalização obrigatória e registro de foto com exatamente um dono permitido. |
-| CT05 | RN05 | `moradia.service.spec.ts` | Validar flag de risco crítico quando há histórico de ocorrência e morador vulnerável. |
+| CT01 | RN02 | `familia.service.test.ts` | Validar que uma família ativa não recebe outro responsável ativo diferente. |
+| CT02 | RN01 | `familia.service.test.ts` | Validar que pessoa com parentesco de responsável precisa existir também como responsável. |
+| CT03 | RN06 | `familia.service.test.ts` e `pessoa.service.test.ts` | Validar arquivamento lógico e bloqueios para remoções que violem integridade familiar. |
+| CT04 | RN05 | `moradia.service.test.ts` | Validar cadastro transacional de moradia com localização controlada. |
+| CT05 | RN05 | `moradia.service.test.ts` | Validar montagem da consulta detalhada de moradia com família, pessoas, pets e fotos. |
 
 ## Explicação dos 5 prioritários
 
-**CT01 -> RN01**
-- AAA: arrange cria repositório mockado e payload válido; act chama `PessoaService.cadastrar`; assert verifica retorno e chamada do repositório com nome normalizado, `nomeSocial` nulo e `status` padrão.
-- Determinismo: usa data fixa e mocks, sem banco ou rede.
-- RN coberta: RN01 exige dados essenciais para cadastro de pessoa.
-- Caminho de falha: payload sem nome rejeita com `HttpError 400` e não chama o repositório.
+**CT01 -> RN02**
+- AAA: arrange cria família existente, pessoa com parentesco de responsável e responsável ativo diferente; act chama `FamiliaService.vincularPessoa`; assert verifica rejeição com conflito.
+- Determinismo: usa repositories mockados e dados fixos.
+- RN coberta: RN02 exige responsável único por família ativa.
+- Caminho de falha: tentativa de vincular outro responsável retorna `HttpError 409`.
 
-**CT02 -> RN02**
-- AAA: arrange define data de referência fixa; act chama `MoradiaService.deveAlertarRecadastro`; assert compara `true` para 365 dias e `false` para 364 dias.
-- Determinismo: a data de referência é injetada no teste.
-- RN coberta: RN02 exige alerta para fichas sem atualização há 365 dias.
-- Caminho de falha: data inválida rejeita com `HttpError 400`.
+**CT02 -> RN01**
+- AAA: arrange cria família existente e pessoa marcada como responsável, mas sem registro correspondente na tabela de responsáveis; act chama `FamiliaService.vincularPessoa`; assert verifica erro controlado.
+- Determinismo: usa mocks de família e pessoa, sem banco real.
+- RN coberta: RN01 exige que a família ativa possua responsável válido e completo.
+- Caminho de falha: responsável incompleto retorna `HttpError 400`.
 
-**CT03 -> RN03**
-- AAA: arrange cria família existente e repositório mockado; act chama `FamiliaService.remover`; assert verifica delegação para `delete`, que no banco é soft delete.
+**CT03 -> RN06**
+- AAA: arrange cria entidade existente e repository mockado; act chama métodos de remoção dos services; assert verifica delegação para `delete` ou rejeição quando a remoção quebra uma regra de integridade.
 - Determinismo: usa apenas mocks de repositório.
-- RN coberta: RN03 preserva histórico por arquivamento lógico.
-- Caminho de falha: vínculo pessoa-família ou família-moradia inexistente retorna `HttpError 404`.
+- RN coberta: RN06 preserva histórico por arquivamento lógico e evita exclusão física.
+- Caminho de falha: remoção inválida retorna `HttpError 404` ou conflito de integridade quando aplicável.
 
-**CT04 -> RN04**
-- AAA: arrange prepara moradia com latitude/longitude e transação mockada; act chama `MoradiaService.cadastrar`; assert verifica commit e persistência com localização. O teste de foto prepara uma moradia existente, chama `FotoService.cadastrarNaMoradia` e confere exatamente um dono.
+**CT04 -> RN05**
+- AAA: arrange prepara payload de moradia com localização e client transacional mockado; act chama `MoradiaService.cadastrar`; assert verifica criação da localização, criação da moradia e conclusão da transação.
 - Determinismo: coordenadas, payloads e transação são fixos e mockados.
-- RN coberta: RN04 exige geolocalização no cadastro de moradia e restringe fotos ao imóvel/pet.
-- Caminho de falha: latitude inválida impede transação; foto sem dono ou com dois donos retorna `HttpError 400`.
+- RN coberta: RN05 exige captura e confirmação de geolocalização da moradia.
+- Caminho de falha: se a moradia criada não puder ser recuperada na confirmação, o service executa ROLLBACK e retorna erro controlado.
 
 **CT05 -> RN05**
-- AAA: arrange cria entrada com histórico de ocorrência e moradores; act chama `MoradiaService.avaliarRiscoCritico`; assert verifica flag `true` para mobilidade reduzida/acamado.
-- Determinismo: entrada em memória, sem banco ou clock.
-- RN coberta: RN05 exige flag de risco crítico quando histórico de ocorrência e vulnerabilidade coexistem.
-- Caminho de falha: sem histórico ou sem vulnerabilidade a flag permanece `false`.
+- AAA: arrange prepara moradia existente, famílias vinculadas, pessoas, pets e fotos mockadas; act chama `MoradiaService.getDetalhes`; assert verifica a árvore consolidada retornada.
+- Determinismo: todos os dados são fixtures em memória, sem banco, rede ou relógio real.
+- RN coberta: RN05 sustenta a consulta georreferenciada e detalhada da moradia para uso operacional.
+- Caminho de falha: quando dependências auxiliares não são configuradas, o service retorna erro controlado em vez de produzir resposta incompleta.
 
 ### 5.1.3 Testes de Integração de Endpoints
 
@@ -2481,7 +2481,7 @@ Os testes de integração devem ser implementados exercitando a aplicação Expr
 Como os testes de integração dependem da API montada, recomenda-se criar uma suíte separada, por exemplo:
 
 ```txt
-src/geoRisco/src/tests/endpoints.integration.spec.ts
+src/geoRisco/src/tests/endpoints.integration.test.ts
 
 ```
 
@@ -2494,6 +2494,103 @@ npm install --save-dev supertest @types/supertest
 #### 5.1.3.3 Resultado Esperado
 
 A execução da suíte de testes de integração deve demonstrar que todos os endpoints principais da API possuem cobertura para os cenários de sucesso, validação, conflito de negócio e recurso inexistente, garantindo rastreabilidade entre RFs, RNs, endpoints e casos de teste. Dessa forma, os contratos HTTP documentados permanecem alinhados ao comportamento real da aplicação, reduzindo riscos de regressão e aumentando a confiabilidade da solução.
+
+
+### 5.1.4 Evidências de Execução
+
+As evidências abaixo foram obtidas a partir da execução da suíte automatizada da WebAPI com Jest, TypeScript e Supertest. Os testes estão versionados no repositório na pasta `src/geoRisco/src/tests`, seguindo a nomenclatura `*.service.test.ts` para testes unitários de Service e `api.controller.test.ts` para os testes de integração dos endpoints.
+
+#### 5.1.4.1 Execução da suíte automatizada
+
+Comando executado:
+
+```bash
+npm test -- --no-cache
+```
+
+Resultado observado:
+
+```txt
+Test Suites: 7 passed, 7 total
+Tests:       65 passed, 65 total
+Snapshots:   0 total
+```
+
+Arquivos de teste executados:
+
+| Arquivo | Camada | Tipo |
+|---|---|---|
+| `src/geoRisco/src/tests/pessoa.service.test.ts` | Service | Unitário white-box |
+| `src/geoRisco/src/tests/familia.service.test.ts` | Service | Unitário white-box |
+| `src/geoRisco/src/tests/moradia.service.test.ts` | Service | Unitário white-box |
+| `src/geoRisco/src/tests/pet.service.test.ts` | Service | Unitário white-box |
+| `src/geoRisco/src/tests/foto.service.test.ts` | Service | Unitário white-box |
+| `src/geoRisco/src/tests/foto-storage.service.test.ts` | Service | Unitário white-box |
+| `src/geoRisco/src/tests/api.controller.test.ts` | Controller/Endpoint | Integração black-box via Supertest |
+
+#### 5.1.4.2 Relatório de cobertura
+
+Comando executado:
+
+```bash
+npm test -- --coverage
+```
+
+Resultado observado:
+
+```txt
+Test Suites: 7 passed, 7 total
+Tests:       65 passed, 65 total
+Snapshots:   0 total
+```
+
+Resumo de cobertura por camada:
+
+| Camada | % Statements | % Branch | % Functions | % Lines |
+|---|---:|---:|---:|---:|
+| Controllers | 87.81 | 64.01 | 96.70 | 87.81 |
+| Services | 93.16 | 82.65 | 95.23 | 93.16 |
+| Validations | 61.30 | 67.07 | 74.07 | 61.67 |
+| Models | 92.85 | 100.00 | 100.00 | 92.85 |
+| Projeto completo | 55.57 | 48.52 | 66.01 | 57.78 |
+
+Cobertura individual dos Services:
+
+| Arquivo | % Statements | % Branch | % Functions | % Lines |
+|---|---:|---:|---:|---:|
+| `familia.service.ts` | 96.62 | 79.31 | 100.00 | 96.62 |
+| `foto-storage.service.ts` | 93.93 | 82.35 | 100.00 | 93.93 |
+| `foto.service.ts` | 88.46 | 80.00 | 92.30 | 88.46 |
+| `moradia.service.ts` | 100.00 | 90.00 | 100.00 | 100.00 |
+| `pessoa.service.ts` | 81.35 | 80.55 | 84.61 | 81.35 |
+| `pet.service.ts` | 100.00 | 100.00 | 100.00 | 100.00 |
+
+Assim, a camada Service atende ao critério mínimo de 80% de cobertura, tanto no agregado da camada quanto nos arquivos individuais de Service.
+
+#### 5.1.4.3 Mapeamento CT -> RN -> RF
+
+| Caso | RN | RF relacionado | Evidência automatizada |
+|---|---|---|---|
+| CT01 | RN01 | RF001 | `pessoa.service.test.ts` valida cadastro de pessoa com dados obrigatórios e falha controlada para payload sem nome. |
+| CT02 | RN06 | RF009 | `moradia.service.test.ts` valida arquivamento de moradia e falha `404` ao tentar arquivar moradia inexistente. |
+| CT03 | RN03 | RF014 / RF017 | `familia.service.test.ts` valida remoção/arquivamento lógico e falhas em vínculos inexistentes. |
+| CT04 | RN04 | RF002 / RF018 | `moradia.service.test.ts` e `foto.service.test.ts` validam geolocalização obrigatória e vínculo válido de fotos. |
+| CT05 | RN11 | RF005 | `moradia.service.test.ts` valida busca/detalhamento da moradia por ID com dados consolidados de família, pessoas, pets e fotos. |
+
+#### 5.1.4.4 Evidência dos testes de endpoints
+
+A suíte `api.controller.test.ts` executa requisições HTTP com Supertest contra uma aplicação Express montada em ambiente controlado, usando controllers reais e services mockados. A suíte cobre os principais contratos HTTP implementados para:
+
+| Grupo de endpoints | Exemplos cobertos | Cenários verificados |
+|---|---|---|
+| Pessoas e responsáveis | `/api/pessoas`, `/api/pessoas/:id`, `/api/pessoas/busca`, `/api/responsaveis` | Sucesso, validação `400`, conflito/regra de negócio e `404` |
+| Famílias e vínculos | `/api/familias`, `/api/familias/nucleo`, `/api/familias/:id/pessoas`, `/api/familias/:id/moradias` | Sucesso, validação `400`, conflito `409` e `404` |
+| Moradias | `/api/moradias`, `/api/moradias/:id`, `/api/moradias/:id/detalhes` | Sucesso, validação `400`, erro controlado e `404` |
+| Pets | `/api/pets`, `/api/pets/:id`, `/api/familias/:id/pets` | Sucesso, validação `400`, conflito/regra de negócio e `404` |
+| Fotos e storage | `/api/fotos`, `/api/moradias/:id/fotos`, `/api/pets/:id/fotos`, `/upload-url`, `/signed-url` | Sucesso, validação `400`, falha externa controlada `502` e `404` |
+
+Os endpoints planejados que ainda não existem no backend atual, como `/api/mapa/moradias` e `/api/mapa/calor`, permanecem registrados na matriz como cobertura futura.
+
 
 ## 5.2. Testes de usabilidade (sprint 5)
 
