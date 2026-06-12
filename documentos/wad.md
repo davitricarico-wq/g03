@@ -2255,11 +2255,135 @@ Dentre as dificuldades, encontramos problemas diversos considerando o prazo de e
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
-
-
 ## 4.2. Segunda versão da aplicação web (sprint 4)
 
-*Descreva e ilustre aqui o desenvolvimento da segunda versão do sistema web, com foco no que foi consolidado entre a primeira versão funcional e o sistema operacional integrado. Utilize prints de tela para ilustrar. Indique obrigatoriamente: (a) o que foi implementado, (b) o que não foi concluído, (c) dificuldades técnicas enfrentadas e próximos passos.*
+### 4.2.1 O que foi implementado
+
+Esta sprint foi dedicada à consolidação e refatoração da API, corrigindo inconsistências de contrato, alinhando nomes de campos ao padrão camelCase e entregando funcionalidades que estavam planejadas mas incompletas na sprint anterior.
+
+#### Refatoração do Contrato da API (Renomeação de Campos)
+
+Todos os campos foram padronizados em camelCase, mantendo aliases snake_case para compatibilidade. As principais mudanças foram:
+
+**Pessoas:**
+| Campo antigo | Campo novo | Tipo alterado? |
+|---|---|---|
+| `id_cidadao` | `id` | — |
+| `nome_completo` | `nome` | — |
+| `data_nascimento` | `dataDeNascimento` | — |
+| `doencas_cronicas` | `cronico` | ✅ string → boolean |
+| `medicamentos` | `medicacao` | ✅ string → boolean |
+| `grau_parentesco_responsavel` | `parentesco` | — |
+| `status_cadastro` | `status` | ✅ boolean → string (`"Ativo"`) |
+
+**Responsáveis:**
+- `celular` → `telefone`
+- `programas_sociais` → `programaSocial`
+- `local_nascimento` → `localDeNascimento`
+- Novos campos: `nomeDoPai`, `nomeDaMae`, `dataResidenciaEstado`, `dataResidenciaMoradia`
+- O `id_responsavel` foi eliminado — responsável agora compartilha o `id` da pessoa
+
+**Moradias:**
+- `condicao_ocupacao` → `situacaoDeOcupacao`
+- `tipo_uso_imovel` → `usoImovel`
+- `observacoes` → `descricao`
+- `data_cadastro` → `dataRegistro`
+- Campo `telefone` **removido** do modelo de moradia
+- Campo `pavimentos` **adicionado**
+
+**Pets:**
+- `tipo_pet` → `tipo` (agora enum: `cachorro`, `gato`, `reptil`, `ave`, `roedor`, `outros`)
+- `porte_pet` → `porte`
+- `observacoes` → `observacao`
+- `id_familia` → `idFamilia`
+- Novos campos obrigatórios: `raca` e `status` (`Ativo`, `Inativo`, `Desaparecido`, `Falecido`)
+
+**Fotos:**
+- Campo `tipo_foto` **removido** — backend usa apenas `url`
+- Upload: `nome_arquivo` → `fileName`; novos campos `contentType` e `upsert`
+- Resposta de upload reformulada: `{ bucket, path, signedUrl, token, expiresIn }`
+
+#### Reformulação do `POST /api/moradias`
+
+O endpoint de criação de moradia passou a exigir dois sub-objetos obrigatórios no corpo da requisição:
+
+```json
+{
+  "localizacao": { "cidade", "estado", "latitude", "longitude", ... },
+  "moradia": { "tipoConstrucao", "usoImovel", "situacaoDeOcupacao", ... }
+}
+```
+
+Antes, os campos eram enviados de forma plana sem separação de contexto.
+
+#### Cadastro Completo via `POST /api/familias/nucleo` (RF001)
+
+O endpoint `/api/familias/nucleo` foi completamente reformulado. Na versão anterior, servia apenas para agrupar IDs de pessoas já existentes em uma família. Agora, é o endpoint de **cadastro completo transacional**, criando em uma única operação:
+- Localização + Moradia
+- Família e vínculo família-moradia
+- Responsável (pessoa + dados extras)
+- Dependentes (array)
+- Pets com fotos
+
+Isso substitui o endpoint `/api/cadastros-completos` que estava listado como planejado na sprint anterior.
+
+#### Padronização dos Endpoints DELETE (Soft Delete)
+
+Todos os DELETEs de recursos principais passaram de `200 OK` com corpo JSON para `204 No Content` sem corpo, implementando soft delete via `deleted_at`:
+
+| Endpoint | Sprint 3 | Sprint 4 |
+|---|---|---|
+| `DELETE /api/pessoas/:id` | `200` + JSON | `204` sem corpo |
+| `DELETE /api/responsaveis/:id` | `200` + JSON | `204` sem corpo |
+| `DELETE /api/moradias/:id` | `200` + JSON | `204` sem corpo |
+| `DELETE /api/familias/:id` | `200` + JSON | `204` sem corpo |
+| `DELETE /api/pets/:id` | `200` + JSON | `204` sem corpo |
+| `DELETE /api/fotos/:id` | `200` + JSON | `204` sem corpo |
+
+Exceção mantida: `DELETE /api/familias/:id/pessoas/:pessoaId` e `DELETE /api/familias/:id/moradias/:moradiaId` continuam retornando `200` com o vínculo atualizado.
+
+#### Expansão da Busca de Pessoas
+
+O endpoint `GET /api/pessoas/busca` passou de um parâmetro genérico `q` para filtros específicos: `nome`, `cpf`, `email`, `telefone` e `escopo` (`ativas`, `inativas`, `todas`).
+
+#### Autenticação (Estado Atual)
+
+O middleware de autenticação **ainda não foi implementado**. Os status `401` e `403`, previstos na documentação inicial, não fazem parte do contrato atual. Os endpoints estão abertos sem controle de acesso.
+
+---
+
+### 4.2.2 O que não foi concluído
+
+- **Mapa Georreferenciado (RF004):** `GET /api/moradias/mapa` ainda não implementado
+- **Mapa de Calor (RF008):** `GET /api/indicadores/mapa-calor` planejado, não entregue
+- **Alerta de Recadastro (RF011):** Job agendado de fichas desatualizadas não implementado
+- **Consulta Integrada (RF005):** `GET /api/moradias/:id/consulta-integrada` ausente
+- **Exportação de Relatórios (RF006):** `GET /api/moradias/exportar` em CSV/PDF não implementado
+- **Grupos Prioritários:** As tabelas `grupo_prioritario` e `pessoa_grupo_prioritario` existem no banco mas o código as ignora — nenhuma rota, repositório ou service implementado para essa funcionalidade
+- **CPF de Pessoa:** O CPF ainda está restrito à tabela `responsavel`, impossibilitando o registro de CPF para cidadãos não-responsáveis
+- **Validação de vínculo família-moradia:** O sistema permite vincular uma família ativa a uma moradia interditada ou inativa sem retornar erro (US14 não implementada)
+
+---
+
+### 4.2.3 Dificuldades técnicas encontradas
+
+**Inconsistência status vs. deleted_at em Moradias:** Identificou-se um bug de estado zumbi: o endpoint `PUT /api/moradias/:id` aceita `{ "status": "Excluída" }` e retorna `200 OK`, mas grava apenas o campo `status` sem atualizar `deleted_at`. Como as views de listagem (`vw_moradia_ativa`) filtram por `deleted_at IS NULL` e não pelo campo `status`, a moradia aparece nas listagens como ativa com status mentiroso de "Excluída". A rule de soft delete do banco (`soft_delete_moradia`) corrige ambos os campos ao mesmo tempo, mas só é acionada via `DELETE`, não via `PUT`. A correção planejada é restringir os valores aceitos pela API a `STATUS_MORADIA_CLIENTE = ['Ativa', 'Interditada', 'Demolida', 'Em Risco']`, impedindo que "Excluída" seja enviado via `PUT`.
+
+**Divergência entre model TypeScript e banco de dados:** O model `grupo-prioritario.model.ts` declara o campo `dataPrevistaParto: Date | null`, mas a tabela `grupo_prioritario` no banco não possui essa coluna. Isso precisa ser resolvido antes de ativar a funcionalidade de grupos prioritários — seja adicionando a coluna via migration, seja removendo o campo do model.
+
+**Eliminação do `id_responsavel`:** A unificação do responsável como uma extensão de pessoa exigiu revisão de todas as queries e repositórios que antes referenciavam `id_responsavel` como chave separada. Todos os endpoints de responsável passaram a usar o `id` da pessoa.
+
+---
+
+### 4.2.4 Próximos passos (Sprint 5)
+
+1. **Corrigir bug de estado zumbi em moradia:** Implementar `STATUS_MORADIA_CLIENTE` na validação do `PUT /api/moradias/:id`
+2. **Migrar CPF para a tabela `pessoa`:** Remover coluna `cpf` de `responsavel`, adicionar em `pessoa` com constraint `UNIQUE`; atualizar model, DTO, repository e busca
+3. **Implementar Grupos Prioritários:** Criar repositório, service e rotas para `grupo_prioritario`; adicionar campo `gruposPrioritarios: number[]` nos payloads de criação/atualização de pessoa
+4. **Validação US14:** Impedir vínculo de família ativa com moradia interditada ou inativa no `FamiliaService.vincularMoradia`
+5. **Autenticação:** Implementar middleware de autenticação JWT nas rotas da API
+6. **Mapa e Indicadores:** Endpoints `/api/moradias/mapa` e `/api/indicadores/mapa-calor`
+
 
 ## 4.3. Versão final da aplicação web (sprint 5)
 
