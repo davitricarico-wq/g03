@@ -479,7 +479,7 @@ As Validações de Campo (VC) definem as restrições de preenchimento obrigató
 
 ## 3.1.6. Matriz RF → RN → Endpoint (sprints 3 a 5)
  
-Matriz de cobertura que demonstra quais RN (Regras de Negócio) e endpoints implementam cada RF (Requisito Funcional). Os endpoints listados abaixo estão implementados no backend e formalizados no arquivo `documentos/outros/webapi-docs.html`.
+Matriz de cobertura que demonstra quais RN (Regras de Negócio) e endpoints implementam cada RF (Requisito Funcional). Os endpoints listados abaixo estão implementados no backend e formalizados nos arquivos `documentos/webapi-docs.html` e `documentos/outros/endpoints.md`.
  
 | RF | RN associadas | Endpoint | Método |
 |----|---------------|----------|--------|
@@ -1929,87 +1929,140 @@ A consulta #3 só retorna resultado quando o cidadão está ativo, possui regist
 A consulta #4 só realiza a atualização quando o registro informado existe no contexto da operação e a moradia está previamente classificada em um status não operacional reversível.
 
 ## 3.7. WebAPI e endpoints (sprints 3 e 4)
- 
-A documentação completa dos endpoints implementados está disponível em [`documentos/outros/webapi-docs.html`](outros/webapi-docs.html). O arquivo descreve a base URL, headers, formato padrão de erro, métodos HTTP, endpoints, atores, RF/RN relacionados, exemplos de request/response e status codes possíveis.
- 
+
+A WebAPI do GeoRisco foi implementada em Express e expõe endpoints HTTP sob o prefixo `/api`, com contratos JSON para cadastro, consulta, atualização, remoção lógica, vínculos familiares, registro de pets e gerenciamento de metadados de fotos. A documentação de referência dos contratos está consolidada em [`documentos/outros/endpoints.md`](outros/endpoints.md), enquanto a versão navegável da documentação está em [`documentos/webapi-docs.html`](webapi-docs.html).
+
+O levantamento atual foi conferido contra os arquivos de rotas e controllers do backend (`pessoa.routes.ts`, `moradia.routes.ts`, `familia.routes.ts`, `pet.routes.ts` e `foto.routes.ts`). No estado atual do projeto, existem **52 endpoints implementados no prefixo `/api`**, distribuídos entre Pessoas, Responsáveis, Moradias, Famílias, Pets e Fotos. Também existem rotas HTML auxiliares fora do prefixo `/api`, usadas para renderização de telas EJS e listagem JSON legada de pessoas.
+
+### Padrões gerais da WebAPI
+
+| Item | Padrão adotado |
+|------|----------------|
+| Base URL local | `http://localhost:1234/api` |
+| Formato principal | JSON |
+| Header esperado em requisições com corpo | `Content-Type: application/json` |
+| Formato de erro atual | `{ "error": "Mensagem do erro" }` |
+| Autenticação/autorização | Não há middleware de autenticação ou autorização nas rotas listadas nesta versão |
+| Remoção de pessoas, moradias e famílias | Preferencialmente por soft delete, preservando histórico |
+| Upload de fotos | Mediado por URL assinada do storage, mantendo no banco apenas vínculo e metadados |
+
+### Status HTTP implementados
+
+| Status | Uso na API atual |
+|--------|------------------|
+| `200 OK` | Consulta, atualização ou operação com retorno JSON bem-sucedida |
+| `201 Created` | Criação de recurso ou geração de URL assinada de upload |
+| `204 No Content` | Remoção concluída sem corpo de resposta |
+| `400 Bad Request` | ID inválido, payload inválido, campo obrigatório ausente ou validação de entrada falhou |
+| `404 Not Found` | Recurso não encontrado |
+| `409 Conflict` | Conflito de regra de negócio, como violação de vínculo ou integridade |
+| `500 Internal Server Error` | Erro interno ou dependência obrigatória não configurada |
+| `502 Bad Gateway` | Falha específica ao gerar URL assinada no serviço de storage |
+
+> Observação: `401 Unauthorized` e `403 Forbidden` não fazem parte do contrato implementado nos controllers atuais, pois a autenticação e o controle de acesso ainda não estão presentes no backend desta entrega.
+
 ### Endpoints implementados por domínio
- 
+
 #### Pessoas e Responsáveis
- 
-| Método | Endpoint | Descrição | RF |
-|--------|----------|-----------|-----|
-| GET | `/api/pessoas` | Lista todas as pessoas | RF001, RF006 |
-| GET | `/api/pessoas/busca` | Busca pessoas por nome ou CPF | RF006 |
-| GET | `/api/pessoas/inativas` | Lista pessoas inativas | RF010 |
-| GET | `/api/pessoas/{id}` | Retorna pessoa por ID | RF001 |
-| POST | `/api/pessoas` | Cadastra nova pessoa | RF001 |
-| PUT | `/api/pessoas/{id}` | Atualiza dados de uma pessoa | RF012 |
-| DELETE | `/api/pessoas/{id}` | Remove pessoa | RF010 |
-| GET | `/api/responsaveis` | Lista todos os responsáveis | RF001 |
-| GET | `/api/responsaveis/{id}` | Retorna responsável por ID | RF001 |
-| POST | `/api/responsaveis` | Cadastra novo responsável | RF001 |
-| PUT | `/api/responsaveis/{id}` | Atualiza dados de um responsável | RF012 |
-| DELETE | `/api/responsaveis/{id}` | Remove responsável | RF010 |
- 
-#### Famílias
- 
-| Método | Endpoint | Descrição | RF |
-|--------|----------|-----------|-----|
-| GET | `/api/familias` | Lista todas as famílias | RF001 |
-| GET | `/api/familias/{id}` | Retorna família por ID | RF001 |
-| POST | `/api/familias` | Cria nova família | RF001 |
-| DELETE | `/api/familias/{id}` | Remove família | RF009 |
-| POST | `/api/familias/nucleo` | Cadastra núcleo familiar completo | RF001 |
-| GET | `/api/familias/{id}/pessoas` | Lista pessoas de uma família | RF001 |
-| POST | `/api/familias/{id}/pessoas` | Vincula pessoa à família | RF001 |
-| DELETE | `/api/familias/{id}/pessoas/{pessoaId}` | Remove vínculo de pessoa da família | RF010 |
-| GET | `/api/familias/{id}/pessoas/historico` | Histórico de pessoas da família | RF005, RF012 |
-| GET | `/api/familias/{id}/moradias` | Lista moradias vinculadas à família | RF009, RF012 |
-| POST | `/api/familias/{id}/moradias` | Vincula moradia à família | RF002, RF003 |
-| DELETE | `/api/familias/{id}/moradias/{moradiaId}` | Remove vínculo de moradia da família | RF009 |
-| GET | `/api/familias/{id}/moradias/historico` | Histórico de ocupações da família | RF009, RF012 |
-| GET | `/api/familias/{id}/pets` | Lista pets da família | RF007 |
-| POST | `/api/familias/{id}/pets` | Cadastra novo pet na família | RF007 |
- 
+
+| Método | Endpoint | Descrição | Resposta de sucesso | RF relacionado |
+|--------|----------|-----------|---------------------|----------------|
+| GET | `/api/pessoas` | Lista todas as pessoas cadastradas | `200` | RF001, RF016 |
+| GET | `/api/pessoas/busca` | Busca pessoas por filtros como `nome`, `cpf`, `email`, `telefone` e `escopo` | `200` | RF016 |
+| GET | `/api/pessoas/inativas` | Lista pessoas inativas | `200` | RF010 |
+| GET | `/api/pessoas/{id}` | Retorna pessoa por ID | `200` | RF001 |
+| POST | `/api/pessoas` | Cadastra nova pessoa | `201` | RF001 |
+| PUT | `/api/pessoas/{id}` | Atualiza parcialmente uma pessoa | `200` | RF012, RF019 |
+| DELETE | `/api/pessoas/{id}` | Remove pessoa por soft delete | `204` | RF010 |
+| GET | `/api/responsaveis` | Lista todos os responsáveis | `200` | RF001, RF014 |
+| GET | `/api/responsaveis/{id}` | Retorna responsável pelo ID da pessoa | `200` | RF001, RF014 |
+| POST | `/api/responsaveis` | Cadastra pessoa responsável e seus dados adicionais | `201` | RF001, RF014 |
+| PUT | `/api/responsaveis/{id}` | Atualiza parcialmente um responsável | `200` | RF012, RF014, RF019 |
+| DELETE | `/api/responsaveis/{id}` | Remove responsável | `204` | RF010 |
+
+Os endpoints de pessoa aceitam os campos principais `nome`, `dataDeNascimento`, `parentesco`, `situacaoOcupacional`, `escolaridade`, `cronico`, `medicacao` e `status`, incluindo aliases em `snake_case` para alguns atributos. Responsáveis são tratados como pessoas com dados complementares, como `cpf`, `nis`, `renda`, `sexo`, `raca`, `estadoCivil`, `email`, `telefone`, vínculos familiares e datas de residência.
+
 #### Moradias
- 
-| Método | Endpoint | Descrição | RF |
-|--------|----------|-----------|-----|
-| GET | `/api/moradias` | Lista moradias com filtros avançados | RF004, RF006 |
-| GET | `/api/moradias/{id}` | Retorna moradia por ID | RF005 |
-| GET | `/api/moradias/{id}/detalhes` | Retorna moradia com localização e ocupantes | RF005 |
-| GET | `/api/moradias/{id}/familias/historico` | Histórico de famílias que ocuparam a moradia | RF005, RF009 |
-| POST | `/api/moradias` | Cria nova moradia | RF002, RF003 |
-| PUT | `/api/moradias/{id}` | Atualiza dados da moradia | RF012 |
-| DELETE | `/api/moradias/{id}` | Remove moradia | RF009 |
- 
-#### Fotos
- 
-| Método | Endpoint | Descrição | RF |
-|--------|----------|-----------|-----|
-| GET | `/api/fotos` | Lista todas as fotos | RF002, RF007 |
-| GET | `/api/fotos/{id}` | Retorna foto por ID | RF002, RF007 |
-| GET | `/api/fotos/{id}/signed-url` | Gera URL assinada para acesso seguro | RF002, RF007 |
-| PUT | `/api/fotos/{id}` | Atualiza metadados de uma foto | RF002, RF007 |
-| DELETE | `/api/fotos/{id}` | Remove foto | RF002 |
-| GET | `/api/moradias/{id}/fotos` | Lista fotos de uma moradia | RF002 |
-| POST | `/api/moradias/{id}/fotos/upload-url` | Gera URL pré-assinada para upload | RF002 |
-| POST | `/api/moradias/{id}/fotos` | Registra metadados da foto após upload | RF002 |
-| DELETE | `/api/moradias/{id}/fotos/{fotoId}` | Remove foto de uma moradia | RF002 |
-| GET | `/api/pets/{id}/fotos` | Lista fotos de um pet | RF007 |
-| POST | `/api/pets/{id}/fotos/upload-url` | Gera URL pré-assinada para upload de foto de pet | RF007 |
-| POST | `/api/pets/{id}/fotos` | Registra metadados da foto do pet após upload | RF007 |
-| DELETE | `/api/pets/{id}/fotos/{fotoId}` | Remove foto de um pet | RF007 |
- 
+
+| Método | Endpoint | Descrição | Resposta de sucesso | RF relacionado |
+|--------|----------|-----------|---------------------|----------------|
+| GET | `/api/moradias` | Lista moradias | `200` | RF004, RF006 |
+| GET | `/api/moradias/{id}` | Retorna moradia por ID | `200` | RF005 |
+| GET | `/api/moradias/{id}/detalhes` | Retorna detalhes da moradia, incluindo famílias, pessoas, pets e fotos associados | `200` | RF005 |
+| GET | `/api/moradias/{id}/familias/historico` | Lista o histórico de famílias vinculadas à moradia | `200` | RF014 |
+| POST | `/api/moradias` | Cria moradia com localização | `201` | RF002, RF003 |
+| PUT | `/api/moradias/{id}` | Atualiza parcialmente moradia e/ou localização | `200` | RF012, RF015, RF019 |
+| DELETE | `/api/moradias/{id}` | Remove moradia por soft delete | `204` | RF009 |
+
+A criação de moradia espera um corpo com os grupos `localizacao` e `moradia`. Em `localizacao`, os campos mínimos são `cidade`, `estado`, `latitude` e `longitude`. Em `moradia`, os campos mínimos são `tipoConstrucao`, `usoImovel` e `situacaoDeOcupacao`, também com aliases em `snake_case` para integração com clientes que adotem esse padrão.
+
+#### Famílias
+
+| Método | Endpoint | Descrição | Resposta de sucesso | RF relacionado |
+|--------|----------|-----------|---------------------|----------------|
+| GET | `/api/familias` | Lista famílias | `200` | RF014 |
+| GET | `/api/familias/{id}` | Retorna família por ID | `200` | RF014 |
+| POST | `/api/familias` | Cria uma família | `201` | RF001, RF014, RF017 |
+| DELETE | `/api/familias/{id}` | Remove família por soft delete | `204` | RF014 |
+| POST | `/api/familias/nucleo` | Cadastra núcleo familiar completo, incluindo localização, moradia, responsável, dependentes, pets e fotos | `201` | RF013 |
+| GET | `/api/familias/{id}/pessoas` | Lista pessoas vinculadas à família | `200` | RF014 |
+| GET | `/api/familias/{id}/pessoas/historico` | Lista histórico de pessoas vinculadas à família | `200` | RF014 |
+| POST | `/api/familias/{id}/pessoas` | Vincula pessoa à família | `201` | RF014 |
+| DELETE | `/api/familias/{id}/pessoas/{pessoaId}` | Remove vínculo ativo entre pessoa e família | `200` | RF014 |
+| GET | `/api/familias/{id}/moradias` | Lista moradias vinculadas à família | `200` | RF014 |
+| GET | `/api/familias/{id}/moradias/historico` | Lista histórico de moradias vinculadas à família | `200` | RF014 |
+| POST | `/api/familias/{id}/moradias` | Vincula moradia à família | `201` | RF014, RF017 |
+| DELETE | `/api/familias/{id}/moradias/{moradiaId}` | Remove vínculo ativo entre moradia e família | `200` | RF014 |
+
+Os endpoints de vínculo preservam o histórico de composição familiar e ocupação da moradia por meio de datas de entrada e saída. O endpoint `/api/familias/nucleo` consolida o fluxo principal de cadastro, permitindo registrar em uma única operação o núcleo familiar completo usado pelo processo operacional da Defesa Civil.
+
 #### Pets
- 
-| Método | Endpoint | Descrição | RF |
-|--------|----------|-----------|-----|
-| GET | `/api/pets` | Lista todos os pets | RF007 |
-| GET | `/api/pets/{id}` | Retorna pet por ID | RF007 |
-| POST | `/api/pets` | Cria novo pet | RF007 |
-| PUT | `/api/pets/{id}` | Atualiza dados de um pet | RF007 |
-| DELETE | `/api/pets/{id}` | Remove pet | RF007 |
+
+| Método | Endpoint | Descrição | Resposta de sucesso | RF relacionado |
+|--------|----------|-----------|---------------------|----------------|
+| GET | `/api/pets` | Lista todos os pets | `200` | RF007 |
+| GET | `/api/pets/{id}` | Retorna pet por ID | `200` | RF007 |
+| POST | `/api/pets` | Cria pet informando `idFamilia` no corpo | `201` | RF007 |
+| PUT | `/api/pets/{id}` | Atualiza parcialmente um pet | `200` | RF007, RF019 |
+| DELETE | `/api/pets/{id}` | Remove pet | `204` | RF007 |
+| GET | `/api/familias/{id}/pets` | Lista pets de uma família | `200` | RF007, RF014 |
+| POST | `/api/familias/{id}/pets` | Cria pet vinculado à família informada na URL | `201` | RF007, RF014 |
+
+Os pets aceitam campos como `tipo`, `nome`, `porte`, `raca`, `cor`, `status` e `observacao`. Os tipos previstos no modelo são `cachorro`, `gato`, `reptil`, `ave`, `roedor` e `outros`; os status aceitos são `Ativo`, `Inativo`, `Desaparecido` e `Falecido`.
+
+#### Fotos
+
+| Método | Endpoint | Descrição | Resposta de sucesso | RF relacionado |
+|--------|----------|-----------|---------------------|----------------|
+| GET | `/api/fotos` | Lista todas as fotos | `200` | RF018 |
+| GET | `/api/fotos/{id}` | Retorna foto por ID | `200` | RF018 |
+| GET | `/api/fotos/{id}/signed-url` | Gera URL assinada para acesso à foto | `200` | RF018 |
+| PUT | `/api/fotos/{id}` | Atualiza a URL da foto | `200` | RF018 |
+| DELETE | `/api/fotos/{id}` | Remove foto | `204` | RF018 |
+| GET | `/api/moradias/{id}/fotos` | Lista fotos de uma moradia | `200` | RF002, RF018 |
+| POST | `/api/moradias/{id}/fotos/upload-url` | Gera URL assinada de upload para foto de moradia | `201` | RF018 |
+| POST | `/api/moradias/{id}/fotos` | Cria registro de foto vinculado à moradia | `201` | RF002, RF018 |
+| DELETE | `/api/moradias/{id}/fotos/{fotoId}` | Remove foto vinculada à moradia | `204` | RF018 |
+| GET | `/api/pets/{id}/fotos` | Lista fotos de um pet | `200` | RF007, RF018 |
+| POST | `/api/pets/{id}/fotos/upload-url` | Gera URL assinada de upload para foto de pet | `201` | RF018 |
+| POST | `/api/pets/{id}/fotos` | Cria registro de foto vinculado ao pet | `201` | RF007, RF018 |
+| DELETE | `/api/pets/{id}/fotos/{fotoId}` | Remove foto vinculada ao pet | `204` | RF018 |
+
+A API separa o arquivo físico da foto de seu metadado. Primeiro, o cliente solicita uma URL assinada de upload com `fileName`, `contentType` e, opcionalmente, `upsert`. Depois do envio ao storage, registra no backend apenas a `url` ou caminho do arquivo, associando o metadado à moradia ou ao pet correspondente.
+
+### Rotas HTML auxiliares fora do prefixo `/api`
+
+| Método | Endpoint | Finalidade |
+|--------|----------|------------|
+| GET | `/` | Redireciona para `/pessoas/novo` |
+| GET | `/pessoas/novo` | Renderiza formulário de pessoa |
+| GET | `/pessoas` | Renderiza lista de pessoas |
+| GET | `/pessoas.json` | Lista pessoas em JSON fora do prefixo `/api` |
+| POST | `/pessoas/` | Cria pessoa fora do prefixo `/api` |
+
+### Endpoints planejados e fora do contrato atual
+
+Alguns endpoints apareceram em versões anteriores da documentação, mas ainda não existem nas rotas atuais do backend. Eles devem ser tratados como planejados, e não como contrato implementado. Entre eles estão `/api/cadastros-completos`, `/api/moradias/mapa`, `/api/moradias/{id_moradia}/consulta-integrada`, `/api/moradias/exportar`, `/api/familias/{id_familia}/cadastro-completo`, `/api/indicadores/mapa-calor`, `/api/indicadores/recadastro`, `/api/moradias/{id_moradia}/status`, `/api/familias/{id_familia}/realocacoes` e `/api/cidadaos/{id_cidadao}/arquivar`.
 
 ## 3.8. Autenticação, Autorização e Resiliência (sprint 5)
 
@@ -2260,7 +2313,7 @@ Também é importante que os testes não compartilhem estado mutável entre si. 
 
 Dessa forma, a adoção do padrão AAA combinada ao determinismo contribui para uma estratégia de testes mais clara, confiável e sustentável. Os testes passam a funcionar não apenas como mecanismos de verificação automática, mas também como documentação objetiva do comportamento esperado do sistema.
 
-## 5.1.2 Testes unitários de service
+### 5.1.2 Testes unitários de service
 
 Os testes unitários da camada Service verificam, de forma isolada, as regras de negócio que ficam entre os controllers e os repositories. Essa camada concentra decisões importantes do sistema, como validação de dados obrigatórios, aplicação de regras de recadastro, controle de arquivamento lógico, restrições de geolocalização/fotos e avaliação de risco crítico.
 
@@ -2352,6 +2405,83 @@ npm test -- --coverage
 - RN coberta: RN05 exige flag de risco crítico quando histórico de ocorrência e vulnerabilidade coexistem.
 - Caminho de falha: sem histórico ou sem vulnerabilidade a flag permanece `false`.
 
+### 5.1.3 Testes de Integração de Endpoints
+
+Os testes de integração de endpoints têm como objetivo validar o comportamento observável da API por meio de requisições HTTP executadas em ambiente controlado. Diferentemente dos testes unitários da seção 5.1.2, que verificam a camada de Service com mocks, os testes desta seção devem exercitar a aplicação a partir das rotas HTTP, verificando a integração entre rotas, controllers, services, tratamento de erros e contratos de resposta.
+
+Conforme definido nos critérios do projeto, cada endpoint principal deve contemplar, sempre que aplicável, os quatro cenários-chave:
+
+* **Sucesso**: resposta `200`, `201` ou `204`, conforme o contrato do endpoint;
+* **Falha de validação**: resposta `400`, quando o payload, parâmetro ou identificador for inválido;
+* **Regra de negócio violada**: resposta `409` quando houver conflito explícito, ou status equivalente já implementado pelo backend, como `400` para regra rejeitada por validação de domínio ou `502` para falha controlada de serviço externo;
+* **Recurso não encontrado**: resposta `404`, quando a entidade consultada ou vinculada não existir.
+
+Essa abordagem garante que os fluxos críticos sejam avaliados tanto no caminho feliz quanto em situações de erro previsíveis, mantendo coerência com os status HTTP efetivamente usados pelo backend atual.
+
+#### 5.1.3.1 Cobertura Obrigatória dos Endpoints Principais
+
+A cobertura dos testes de integração foi definida a partir dos requisitos funcionais prioritários da aplicação, garantindo rastreabilidade entre os fluxos de negócio, os contratos HTTP da API e as regras de negócio descritas na Seção 3.1.3. Para cada endpoint principal são contemplados os cenários de sucesso, falha de validação, violação de regra de negócio e recurso não encontrado.
+
+| Endpoint                                     | RF Relacionados            | RN Relacionadas        | Sucesso (200/201/204)                            | Falha de Validação (400/422)                      | Regra de Negócio Violada / Falha Externa (409 ou equivalente)      | Não Encontrado (404)                      |
+| -------------------------------------------- | -------------------------- | ---------------------- | ------------------------------------------------ | ------------------------------------------------- | ------------------------------------------------------------------ | ----------------------------------------- |
+| `POST /api/pessoas`                          | RF001                      | RN04                   | Pessoa cadastrada com sucesso (`201`)            | Campos obrigatórios ausentes ou inválidos (`400`) | Classificação de vulnerabilidade inconsistente (`400`)             | Entidade vinculada inexistente (`404`)    |
+| `GET /api/pessoas/:id`                       | RF001, RF005               | RN11                   | Pessoa encontrada (`200`)                        | ID inválido (`400`)                               | —                                                                  | Pessoa inexistente (`404`)                |
+| `PUT /api/pessoas/:id`                       | RF012, RF019               | RN04, RN09, RN10       | Atualização realizada (`200`)                    | Payload inválido (`400`)                          | Violação das regras de recadastro ou atualização cadastral (`400`) | Pessoa inexistente (`404`)                |
+| `SOFT DELETE /api/pessoas/:id`                    | RF010                      | RN01, RN06             | Morador arquivado (`204`)                        | ID inválido (`400`)                               | Tentativa de arquivar responsável sem substituição prévia (`409`)  | Pessoa inexistente (`404`)                |
+| `GET /api/pessoas/busca`                     | RF016                      | RN11                   | Busca executada com sucesso (`200`)              | Nenhum filtro informado (`400`)                   | Escopo incompatível com regras de consulta (`400`)                 | Lista vazia retorna `200`                 |
+| `POST /api/responsaveis`                     | RF001, RF014               | RN01, RN02             | Responsável cadastrado (`201`)                   | Dados obrigatórios ausentes (`400`)               | Família já possui responsável ativo (`409`)                        | Pessoa inexistente (`404`)                |
+| `PUT /api/responsaveis/:id`                  | RF014                      | RN01, RN02             | Responsável atualizado (`200`)                   | Payload inválido (`400`)                          | Tentativa de manter dois responsáveis ativos (`409`)               | Responsável inexistente (`404`)           |
+| `POST /api/familias`                         | RF001, RF014               | RN01, RN02, RN03       | Família criada (`201`)                           | Dados obrigatórios ausentes (`400`)               | Família sem responsável válido (`400`)                             | —                                         |
+| `POST /api/familias/nucleo`                  | RF013                      | RN01, RN02, RN03, RN12 | Cadastro transacional completo realizado (`201`) | Dados obrigatórios ausentes (`400`)               | Violação das regras de composição familiar (`409`)                 | Entidades vinculadas inexistentes (`404`) |
+| `POST /api/familias/:id/pessoas`             | RF014                      | RN01, RN02             | Pessoa vinculada à família (`201`)               | ID inválido (`400`)                               | Família já possui responsável ativo (`409`)                        | Pessoa ou família inexistente (`404`)     |
+| `SOFT DELETE /api/familias/:id/pessoas/:pessoaId` | RF014                      | RN01, RN06             | Vínculo removido (`200`)                         | IDs inválidos (`400`)                             | Família ativa ficaria sem responsável (`409`)                      | Vínculo inexistente (`404`)               |
+| `POST /api/familias/:id/moradias`            | RF014, RF017               | RN03, RN10             | Moradia vinculada à família (`201`)              | ID inválido (`400`)                               | Associação incompatível (`409`)                                    | Moradia inexistente (`404`)               |
+| `POST /api/moradias`                         | RF002, RF003               | RN05, RN08             | Moradia cadastrada (`201`)                       | Dados estruturais inválidos (`400`)               | Localização não confirmada ou situação inválida (`400`)            | —                                         |
+| `GET /api/moradias/:id`                      | RF002, RF005               | RN11                   | Moradia encontrada (`200`)                       | ID inválido (`400`)                               | —                                                                  | Moradia inexistente (`404`)               |
+| `PUT /api/moradias/:id`                      | RF003, RF012, RF015, RF019 | RN05, RN08, RN09, RN10 | Moradia atualizada (`200`)                       | Payload inválido (`400`)                          | Situação operacional inválida ou atualização incompatível (`400`)  | Moradia inexistente (`404`)               |
+| `SOFT DELETE /api/moradias/:id`                   | RF009                      | RN06                   | Moradia arquivada (`204`)                        | ID inválido (`400`)                               | Violação das regras de arquivamento lógico (`409`)                 | Moradia inexistente (`404`)               |
+| `GET /api/moradias/:id/detalhes`             | RF005                      | RN11                   | Dados consolidados retornados (`200`)            | ID inválido (`400`)                               | Inconsistência de dados agregados (`500` controlado)               | Moradia inexistente (`404`)               |
+| `GET /api/mapa/moradias`                     | RF004                      | RN08, RN11             | Marcadores carregados (`200`)                    | Parâmetros inválidos (`400`)                      | Dados inconsistentes com base oficial (`400`)                      | —                                         |
+| `GET /api/mapa/calor`                        | RF008                      | RN04, RN11             | Heatmap gerado (`200`)                           | Filtro inválido (`400`)                           | Grupo de vulnerabilidade inexistente (`400`)                       | —                                         |
+| `POST /api/pets`                             | RF007                      | RN12                   | Pet cadastrado (`201`)                           | Dados obrigatórios inválidos (`400`)              | Vínculo incompatível com família (`400`)                           | Família inexistente (`404`)               |
+| `PUT /api/pets/:id`                          | RF007, RF019               | RN12                   | Pet atualizado (`200`)                           | Payload inválido (`400`)                          | Violação do vínculo familiar (`400`)                               | Pet inexistente (`404`)                   |
+| `SOFT DELETE /api/pets/:id`                       | RF007                      | RN12                   | Pet removido (`204`)                             | ID inválido (`400`)                               | Restrição de remoção (`409`)                                       | Pet inexistente (`404`)                   |
+| `POST /api/moradias/:id/fotos`               | RF002, RF018               | RN07                   | Foto vinculada à moradia (`201`)                 | Tipo ou tamanho inválido (`400`)                  | Tentativa de cadastro de foto proibida pela LGPD (`400`)           | Moradia inexistente (`404`)               |
+| `POST /api/pets/:id/fotos`                   | RF007, RF018               | RN12                   | Foto vinculada ao pet (`201`)                    | Tipo ou tamanho inválido (`400`)                  | Violação das regras de associação (`400`)                          | Pet inexistente (`404`)                   |
+| `POST /api/moradias/:id/fotos/upload-url`    | RF018                      | RN07                   | URL de upload gerada (`201`)                     | Arquivo inválido (`400`)                          | Falha controlada de armazenamento (`502`)                          | Moradia inexistente (`404`)               |
+| `POST /api/pets/:id/fotos/upload-url`        | RF018                      | RN12                   | URL de upload gerada (`201`)                     | Arquivo inválido (`400`)                          | Falha controlada de armazenamento (`502`)                          | Pet inexistente (`404`)                   |
+| `GET /api/fotos/:id/signed-url`              | RF018                      | RN07                   | URL assinada gerada (`200`)                      | Identificador inválido (`400`)                    | Falha controlada de armazenamento (`502`)                          | Foto inexistente (`404`)                  |
+
+- **OBS:** alguns endpoints terão aplicações das validações, requisitos e funções somente na próxima Sprint: GET /api/mapa/moradias ; GET /api/mapa/calor ; (validações): PUT /api/pessoas/:id ; PUT /api/pessoas/:id.
+
+#### 5.1.3.2 Critérios de Implementação dos Testes
+
+Os testes de integração devem ser implementados exercitando a aplicação Express a partir de requisições HTTP, preferencialmente com Supertest. A suíte deve validar:
+
+* código de status retornado;
+* formato padrão de erro `{ "error": "mensagem" }`;
+* presença dos campos principais no corpo de resposta;
+* comportamento com payload válido;
+* comportamento com payload inválido;
+* comportamento com IDs inexistentes;
+* comportamento diante de conflitos ou regras de negócio rejeitadas.
+
+Como os testes de integração dependem da API montada, recomenda-se criar uma suíte separada, por exemplo:
+
+```txt
+src/geoRisco/src/tests/endpoints.integration.spec.ts
+
+```
+
+Também será necessário adicionar as dependências de teste HTTP, caso ainda não estejam instaladas:
+
+```
+npm install --save-dev supertest @types/supertest
+```
+
+#### 5.1.3.3 Resultado Esperado
+
+A execução da suíte de testes de integração deve demonstrar que todos os endpoints principais da API possuem cobertura para os cenários de sucesso, validação, conflito de negócio e recurso inexistente, garantindo rastreabilidade entre RFs, RNs, endpoints e casos de teste. Dessa forma, os contratos HTTP documentados permanecem alinhados ao comportamento real da aplicação, reduzindo riscos de regressão e aumentando a confiabilidade da solução.
 
 ## 5.2. Testes de usabilidade (sprint 5)
 
