@@ -517,10 +517,13 @@ Matriz de cobertura que demonstra quais RN (Regras de Negócio) e endpoints impl
 ---
 
 ## 3.2. Arquitetura (sprints 1 a 5)
+
 A arquitetura projetada para o sistema é, em suma, baseada na Arquitetura de Camadas (Layered Architecture), porém com a aplicação de: Arquitetura de Seis Camadas (6-Tier Architecture) com base em princípios SOLID e de separação de conceitos (Separation of Concerns). Dividindo a aplicação em componentes especializados e com responsabilidades muito bem definidas.
 Assim, fornece um código testável, escalável e de alta manutenibilidade, permitindo que as regras de negócio fiquem isoladas de detalhes de infraestrutura (como o banco de dados) e da interface do usuário.
 
 ### 3.2.1. Diagrama de Arquitetura (sprints 3 e 4)
+
+O diagrama abaixo apresenta uma visão simplificada da estrutura de pastas do backend. Ele mostra como o código está organizado por responsabilidade, separando inicialização da aplicação, rotas, controllers, services, repositories, DTOs, models, validações, banco de dados, storage, views, arquivos públicos, erros e testes.
 
 ```
 src/
@@ -546,12 +549,47 @@ src/
 
 ```
 
+O diagrama de classe arquitetural detalha a organização interna da aplicação a partir das principais camadas do backend. Ele apresenta a inicialização da aplicação em `server.ts` e `app.ts`, a camada de rotas responsável por expor os endpoints HTTP, os controllers que recebem e tratam as requisições, os DTOs e validações que padronizam os dados de entrada e saída, os services que concentram as regras de negócio, os repositories que acessam o banco de dados e os models que representam as entidades de domínio.
+
+O fluxo principal do sistema segue a ordem: `server.ts` inicializa a aplicação, `app.ts` configura o Express e registra as rotas, as rotas encaminham as requisições para os controllers, os controllers normalizam e validam os dados antes de chamar os services, os services executam as regras de negócio e orquestram os repositories, e os repositories realizam as operações de persistência no PostgreSQL. Elementos como `Infrastructure`, `Validations`, `Errors`, `Storage`, `Views`, `Public` e `Tests` aparecem no diagrama como apoios transversais à aplicação.
+
 <div align="center">
-    <p>Figura: Diagrama de Classe Arquitetural</p>
-    <img src="outros/diagrama-classe-arquitetural.drawio.png">
+    <p>Figura: Diagrama de Classe Arquitetural - Ampliado</p>
+    <img src="outros/diagramas_arquitetura/diagramaArquitetura-Ampliado.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
+<div align="center">
+    <p>Figura: Diagrama de Classe Arquitetural - Bootstrap e Express</p>
+    <img src="outros/diagramas_arquitetura/diagramaArquitetura-Btstrp&Expr.png">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
+<div align="center">
+    <p>Figura: Diagrama de Classe Arquitetural - Bootstrap e Express</p>
+    <img src="outros/diagramas_arquitetura/diagramaArquitetura-Btstrp&Expr.png">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
+<div align="center">
+    <p>Figura: Diagrama de Classe Arquitetural - Models</p>
+    <img src="outros/diagramas_arquitetura/diagramaArquitetura-Models.png">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
+<div align="center">
+    <p>Figura: Diagrama de Classe Arquitetural - Validations</p>
+    <img src="outros/diagramas_arquitetura/diagramaArquitetura-Validations.png">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
+<div align="center">
+    <p>Figura: Diagrama de Classe Arquitetural - Repositories e Service</p>
+    <img src="outros/diagramas_arquitetura/diagramaArquitetura-Repo&Serv.png">
+    <p>Feito pela própria equipe (2026)</p>
+</div>
+
+Documento disponível do diagrama para navegação e aprofundamento do entendimento: [diagramaArquitetura.md](diagramaArquitetura.md)
 
 ### 3.2.2. Diagrama de Casos de Uso (sprint 1)
 
@@ -2468,6 +2506,8 @@ No Brasil, o contexto é especialmente favorável. O setor público é o maior c
 
 É nesse cenário que soluções como o GeoRisco encontram espaço: endereçando lacunas operacionais reais em municípios que carecem de sistemas digitais integrados para gestão de risco.
 
+Fontes (seção 9): (REF.4, REF.9, REF.10).
+
 ### 6.2.2 Tamanho e Crescimento de Mercado 
 
 O mercado relacionado ao GeoRisco Santo André está inserido no segmento de softwares de gestão de emergências, segurança pública e gerenciamento de crises, que apresenta forte expansão impulsionada pela digitalização dos serviços públicos, aumento da frequência de eventos climáticos extremos e necessidade de respostas mais rápidas e integradas.
@@ -2476,7 +2516,7 @@ O mercado global de **Emergency Management Software (software de gestão de emer
 
 Em uma visão mais ampla, o mercado global de **software para segurança pública**, que engloba plataformas de gestão de incidentes, monitoramento em tempo real e coordenação de emergências, movimentou cerca de US$ 11,48 bilhões em 2025 e possui previsão de atingir US$ 24,23 bilhões até 2034, com crescimento anual médio de 9,2%.
 
-Além disso, este mercado, diretamente relacionado à continuidade operacional e resposta a eventos críticos, foi avaliado em US$ 143,97 bilhões em 2025 e deverá alcançar US$ 310,12 bilhões em 2034, mantendo CAGR de 8,9%.
+Além disso, o mercado de softwares de gestão de emergências está diretamente relacionado à continuidade operacional e resposta a eventos críticos, foi avaliado em US$ 143,97 bilhões em 2025 e deverá alcançar US$ 310,12 bilhões em 2034, mantendo CAGR de 8,9%.
 
 Esses indicadores demonstram um **mercado em expansão consistente**, favorecido pelo aumento dos investimentos governamentais em resiliência urbana, proteção civil e gestão inteligente de riscos.
 
@@ -2512,6 +2552,7 @@ Dessa forma, concluiu-se que a aplicação está direcionada principalmente ao m
 Fontes (seção 9): (REF.14, REF.15, REF.16, REF.17, REF.18).
 
 ### 6.3.2. Perfil do Público-Alvo
+
 O público-alvo do GeoRisco é composto pelos profissionais da Defesa Civil de Santo André responsáveis pela coleta, gestão e análise de informações sobre moradores e áreas de risco do município.
 
 Os Agentes de Defesa Civil, que atuam em campo, são adultos com níveis de familiaridade com tecnologias digitais que variam de baixa a média. Sua rotina envolve visitas domiciliares, vistorias e coleta de dados em locais muitas vezes de difícil acesso e com limitações de informações. Seu comportamento é marcado pela necessidade de mobilidade, agilidade e adaptação a diferentes cenários. Entre suas principais necessidades estão o registro rápido e confiável das informações, a consulta e atualização de dados em campo. Suas principais dores incluem retrabalho, perda de informações, duplicidade de registros e dificuldades de localização de moradias.
@@ -2520,19 +2561,23 @@ Os Gestores Operacionais, por sua vez, atuam no planejamento e coordenação das
 
 Como expectativa comum, ambos os perfis buscam maior precisão, integridade e segurança dos dados, além de processos mais eficientes que apoiem respostas rápidas e assertivas em situações de risco.
 
+Fontes (seção 9): (REF.3, REF.4, REF.16, REF.17, REF.18, REF.19).
+
 ## 6.4. Posicionamento e Branding
 
-## 6.4.1 Proposta de Valor Única
+### 6.4.1 Proposta de Valor
 
-Oferecemos um sistema de gestão de famílias e moradias em área de risco para a prefeitura de Santo André, que precisa manusear de forma prática os dados dos cidadãos em vulnerabilidade, bem como visualizar esses dados de forma estratégica e sem a necessidade do uso de formulários em papel.
+O GeoRisco Santo André entrega valor ao permitir que a Defesa Civil registre, organize e consulte informações de famílias e moradias em áreas de risco de forma centralizada, georreferenciada e rastreável. A aplicação foi concebida para substituir formulários físicos, planilhas dispersas e registros fragmentados por uma base digital integrada, facilitando o trabalho dos agentes de campo e apoiando decisões operacionais da sede.
 
-## 6.4.2 Posicionamento e Branding
+Identificou-se que o principal ganho da solução está na transformação de dados territoriais e socioestruturais em informações acionáveis. Por meio do cadastro de moradores, responsáveis familiares, vulnerabilidades, pets, fotos e localização, torna-se possível visualizar onde estão as famílias expostas ao risco, quais grupos demandam prioridade e quais áreas exigem maior atenção em ações preventivas ou emergenciais.
 
-**Estratégia de Diferenciação**
+Dessa forma, a aplicação contribui para reduzir retrabalho, minimizar perda de informações, acelerar consultas e melhorar a alocação de recursos em situações críticas. Concluiu-se que o valor central do GeoRisco está em fortalecer a capacidade de resposta e planejamento da Defesa Civil, oferecendo uma ferramenta adequada à rotina pública municipal e orientada à proteção de populações vulneráveis.
+
+### 6.4.2 Posicionamento e Diferenciação
 
 A diferenciação do GeoRisco Santo André está em sua adaptação direta à rotina da Defesa Civil municipal, e não apenas na digitalização genérica de cadastros. Enquanto alternativas como planilhas, formulários isolados, sistemas nacionais ou ferramentas de mapa atendem partes do processo, o GeoRisco integra, em uma única aplicação, cadastro de moradias, famílias, moradores, pets, fotos, localização, histórico de ocupação, consulta e visualização territorial.
 
-Essa integração posiciona a solução como uma ferramenta operacional de gestão pública de risco, capaz de apoiar tanto o agente em campo quanto o gestor na sede. O diferencial está na rastreabilidade dos dados, na padronização das informações sensíveis e na leitura geográfica das vulnerabilidades, permitindo priorizar atendimentos, planejar evacuações e reduzir perdas de informação entre etapas.
+Essa integração posiciona a solução como uma ferramenta operacional de gestão pública de risco, capaz de apoiar tanto o agente em campo quanto o gestor na sede. O diferencial está na integração entre cadastro socioestrutural, localização geográfica, composição familiar, vulnerabilidades, pets, fotos, histórico de ocupação e consulta territorial em uma única aplicação. Enquanto ferramentas genéricas atendem apenas partes do processo, o GeoRisco foi pensado a partir da rotina da Defesa Civil de Santo André, com linguagem institucional, interface objetiva e aderência à LGPD.
 
 Por ser desenvolvida com base no contexto de Santo André e nas necessidades reais da Defesa Civil, a aplicação também se diferencia pela linguagem institucional, pela interface objetiva e pelo alinhamento à LGPD. Em vez de competir por apelo comercial, o GeoRisco se destaca pela legitimidade pública, pela aderência ao serviço essencial prestado e pela capacidade de transformar dados territoriais em decisões rápidas, seguras e justificáveis.
 
@@ -2554,7 +2599,6 @@ O GeoRisco Santo André é uma aplicação web voltada à gestão de populaçõe
 
 O principal benefício da aplicação é centralizar dados antes dispersos em processos manuais, planilhas ou registros fragmentados, aumentando a agilidade, a confiabilidade e a rastreabilidade das informações. Seu diferencial está na adequação ao contexto real da Defesa Civil de Santo André, com foco em tomada de decisão rápida, priorização de grupos vulneráveis, apoio à evacuação e melhoria da gestão de abrigos. Assim, o GeoRisco fortalece a capacidade preventiva e operacional do município diante de eventos climáticos extremos.
 
-
 ### 6.6.2. Preço 
 
 O modelo de precificação proposto é B2G (Business to Government), voltado à contratação por órgãos públicos municipais, sem cobrança direta dos cidadãos ou dos agentes que utilizam a aplicação. A solução pode ser implantada por meio de contratação institucional, contemplando custos relacionados à hospedagem, manutenção, suporte técnico e treinamento dos usuários.
@@ -2563,13 +2607,11 @@ Esse modelo é adequado porque a Defesa Civil presta um serviço público essenc
 
 Por se tratar de uma solução destinada ao setor público, não são definidos valores comerciais específicos nesta etapa. A precificação depende de fatores como porte do município, número de usuários, requisitos técnicos, disponibilidade orçamentária e processos de contratação pública. Dessa forma, a proposta prioriza a definição de um modelo de contratação sustentável e compatível com a realidade da administração pública.
 
-
 ### 6.6.3. Praça
 
 A distribuição do GeoRisco ocorrerá por canais digitais institucionais, com acesso seguro por navegador em celulares, tablets e computadores. A aplicação poderá ser disponibilizada em domínio oficial da Prefeitura ou da Defesa Civil, com perfis de permissão adequados às funções de agentes de campo, gestores e administradores. Dessa forma, o sistema atende tanto ao uso operacional em campo quanto à análise estratégica em ambiente de sede.
 
 A entrega da aplicação pode ser feita por infraestrutura em nuvem ou em ambiente tecnológico definido pelo município, garantindo disponibilidade, armazenamento centralizado e padronização dos dados. Para expansão, os canais de distribuição incluem parcerias com prefeituras, Defesa Civil estadual, consórcios intermunicipais, secretarias de meio ambiente, assistência social e tecnologia. Documentação técnica, manuais digitais, treinamentos online e APIs de integração podem apoiar a implantação em novos contextos, permitindo que a solução seja replicada para outros municípios com necessidades semelhantes.
-
 
 ### 6.6.4. Promoção
 
@@ -2580,7 +2622,9 @@ A divulgação também poderá ocorrer por canais institucionais da Prefeitura, 
 ---
 
 # <a name="c7"></a>7. Registro de atualizações (sprint 5)
+
 Início na sprint 2 pois não é possível realizar atualizações na sprint que foi iniciado o projeto;
+
 ### Sprint 2
 Tivemos alterações nas Personas (ambas), User Stories (todas), RF, RNF e RN. Dado que o escopo do projeto estava confuso para a equipe, para melhor seguimento do projeto foi necessária essa reformulação na documentação.
 
@@ -2641,6 +2685,7 @@ Tivemos alterações nas Personas (ambas), User Stories (todas), RF, RNF e RN. D
 
 18. INSTITUTO DE PESQUISAS TECNOLÓGICAS (IPT). Mapeamento e gerenciamento de áreas de risco de deslizamento e solapamento de margem no município de Santo André-SP. São Paulo, 27 mar. 2023. Disponível em: <https://ipt.br/2023/03/27/mapeamento-e-gerenciamento-de-areas-de-risco-de-deslizamento-e-solapamento-de-margem-no-municipio-de-santo-andre-sp/>. Acesso em: 9 jun. 2026.
 
+19. INSTITUTO BRASILEIRO DE GEOGRAFIA E ESTATÍSTICA (IBGE). População em áreas de risco no Brasil. Rio de Janeiro: IBGE, 2018. Disponível em: https://www.ibge.gov.br/geociencias/informacoes-ambientais/estudos-ambientais/21538-populacao-em-areas-de-risco-no-brasil.html. Acesso em: 12 jun. 2026.
 
 # <a name="c10"></a>Anexos
 
