@@ -96,19 +96,34 @@ Campos aceitos para criacao:
 }
 ```
 
-Tambem e aceito `nome_social` no lugar de `nomeSocial`, `data_de_nascimento` no lugar de `dataDeNascimento` e `situacao_ocupacional` no lugar de `situacaoOcupacional`.
+Aliases aceitos:
+
+| Camel case | Snake case aceito |
+|---|---|
+| `nomeSocial` | `nome_social` |
+| `dataDeNascimento` | `data_de_nascimento` |
+| `situacaoOcupacional` | `situacao_ocupacional` |
 
 Campos obrigatorios na criacao:
 
-| Campo | Tipo |
-|---|---|
-| `nome` | string |
-| `dataDeNascimento` | data |
-| `parentesco` | string |
-| `situacaoOcupacional` | string |
-| `escolaridade` | string |
-| `cronico` | boolean |
-| `medicacao` | boolean |
+| Campo | Tipo | Valores aceitos |
+|---|---|---|
+| `nome` | string | texto livre |
+| `dataDeNascimento` | string (data ISO 8601) | qualquer data valida |
+| `parentesco` | string | `Responsável`, `Cônjuge`, `Filho(a)`, `Enteado(a)`, `Pai/Mãe`, `Outro` |
+| `situacaoOcupacional` | string | `Empregado`, `Desempregado`, `Autônomo`, `Informal`, `Aposentado/Pensionista`, `Estudante`, `Do Lar`, `Outro` |
+| `escolaridade` | string | `Analfabeto`, `Fundamental Incompleto`, `Fundamental Completo`, `Médio Incompleto`, `Médio Completo`, `Superior Incompleto`, `Superior Completo`, `Pós-graduação` |
+| `cronico` | boolean | `true`, `false` |
+| `medicacao` | boolean | `true`, `false` |
+
+Campos opcionais na criacao:
+
+| Campo | Tipo | Padrao | Valores aceitos |
+|---|---|---|---|
+| `nomeSocial` | string ou `null` | `null` | texto livre |
+| `status` | string | `"Ativo"` | `Ativo`, `Obito`, `Inativo` |
+
+> **Pendencia — Grupos Prioritarios (RF001):** O banco ja possui as tabelas `grupo_prioritario` e `pessoa_grupo_prioritario`, e o model TypeScript correspondente existe em `models/grupo-prioritario.model.ts`. Porem, nenhum endpoint, service ou repository manipula esses dados atualmente — campos como `grupos` ou `idGrupoPrioritario` passados no corpo serao silenciosamente ignorados. O suporte completo a grupos de vulnerabilidade (idoso, crianca, gestante/lactante, PCD, mobilidade reduzida) esta pendente de implementacao.
 
 ### `GET /api/pessoas`
 
@@ -224,7 +239,7 @@ Responsavel e tratado no backend como uma pessoa com campos adicionais.
 }
 ```
 
-Tambem sao aceitos aliases em snake_case para alguns campos:
+Aliases aceitos:
 
 | Camel case | Snake case aceito |
 |---|---|
@@ -236,14 +251,30 @@ Tambem sao aceitos aliases em snake_case para alguns campos:
 | `dataResidenciaEstado` | `data_residencia_estado` |
 | `dataResidenciaMoradia` | `data_residencia_moradia` |
 
-Campos obrigatorios na criacao de responsavel:
+Campos obrigatorios adicionais na criacao de responsavel (alem dos campos obrigatorios de pessoa):
 
-| Campo | Tipo |
-|---|---|
-| Campos obrigatorios de pessoa | conforme secao Pessoas |
-| `sexo` | string |
-| `raca` | string |
-| `estadoCivil` | string |
+| Campo | Tipo | Valores aceitos |
+|---|---|---|
+| `sexo` | string | `Masculino`, `Feminino`, `Outro`, `Não Declarado` |
+| `raca` | string | `Branca`, `Preta`, `Parda`, `Amarela`, `Indígena`, `Não Declarado` |
+| `estadoCivil` | string | `Solteiro`, `Casado`, `Divorciado`, `Viúvo`, `União Estável` |
+
+Campos opcionais adicionais de responsavel:
+
+| Campo | Tipo | Padrao | Observacao |
+|---|---|---|---|
+| `cpf` | string (11 digitos) ou `null` | `null` | deve ser unico no banco |
+| `nis` | string ou `null` | `null` | |
+| `renda` | number ou `null` | `null` | |
+| `veiculo` | boolean | `false` | |
+| `programaSocial` | boolean | `false` | |
+| `email` | string ou `null` | `null` | deve ser unico no banco |
+| `telefone` | string ou `null` | `null` | deve ser unico no banco |
+| `nomeDoPai` | string ou `null` | `null` | |
+| `nomeDaMae` | string ou `null` | `null` | |
+| `localDeNascimento` | string ou `null` | `null` | |
+| `dataResidenciaEstado` | string (data ISO 8601) ou `null` | `null` | |
+| `dataResidenciaMoradia` | string (data ISO 8601) ou `null` | `null` | |
 
 Na criacao, o backend força `parentesco` para `Responsável`.
 
@@ -328,10 +359,57 @@ Aliases aceitos:
 
 Campos obrigatorios na criacao:
 
-| Grupo | Campos |
-|---|---|
-| `localizacao` | `cidade`, `estado`, `latitude`, `longitude` |
-| `moradia` | `tipoConstrucao`, `usoImovel`, `situacaoDeOcupacao` |
+| Grupo | Campo | Tipo |
+|---|---|---|
+| `localizacao` | `cidade` | string |
+| `localizacao` | `estado` | string (2 letras, convertido para maiusculo) |
+| `localizacao` | `latitude` | number |
+| `localizacao` | `longitude` | number |
+| `moradia` | `tipoConstrucao` | string — ver valores aceitos abaixo |
+| `moradia` | `usoImovel` | string — ver valores aceitos abaixo |
+| `moradia` | `situacaoDeOcupacao` | string — ver valores aceitos abaixo |
+
+Campos opcionais do objeto `moradia`:
+
+| Campo | Tipo | Padrao | Valores aceitos |
+|---|---|---|---|
+| `dataRegistro` | string (data ISO 8601) ou `null` | `null` | qualquer data valida |
+| `status` | string | `"Ativa"` | `Ativa`, `Interditada`, `Em Risco`, `Demolida` |
+| `pavimentos` | number | `1` | inteiro positivo |
+| `descricao` | string ou `null` | `null` | texto livre |
+
+> **Nota — `Excluída` é reservado ao sistema:** O banco define `Excluída` no enum `status_moradia_enum`, mas ele **não deve ser enviado pelo cliente**. Quando `DELETE /api/moradias/:id` é chamado, o PostgreSQL define `status = 'Excluída'` automaticamente.
+>
+> **Implementação:** `moradia.model.ts` exporta dois arrays distintos: `STATUS_MORADIA_TODOS` (todos os valores do enum, usado apenas para tipagem de leitura) e `STATUS_MORADIA_CLIENTE` (apenas `Ativa`, `Interditada`, `Demolida` e `Em Risco`, usado na validação de entrada). A validação em `moradia.validation.ts` usa `STATUS_MORADIA_CLIENTE`, garantindo que o backend rejeite `"status": "Excluída"` via POST/PUT com `400 Bad Request`. O tipo `StatusMoradia` continua derivado de `STATUS_MORADIA_TODOS`, preservando a tipagem completa para leituras do banco.
+
+Campos opcionais do objeto `localizacao`:
+
+| Campo | Tipo | Padrao |
+|---|---|---|
+| `logradouro` | string ou `null` | `null` |
+| `numero` | string ou `null` | `null` |
+| `bairro` | string ou `null` | `null` |
+| `cep` | string ou `null` | `null` |
+| `referencia` | string ou `null` | `null` |
+| `complemento` | string ou `null` | `null` |
+
+Valores aceitos para `tipoConstrucao`:
+
+```txt
+Alvenaria, Madeira, Mista, Taipa, Lona/Improvisada, Outro
+```
+
+Valores aceitos para `usoImovel`:
+
+```txt
+Residencial, Comercial, Misto, Institucional, Abandonado
+```
+
+Valores aceitos para `situacaoDeOcupacao`:
+
+```txt
+Propria Quitada, Propria Financiada, Alugada, Cedida, Invasao, Outro
+```
 
 ### `GET /api/moradias`
 
@@ -371,6 +449,8 @@ Atualiza parcialmente moradia e/ou localizacao.
 
 O corpo pode conter apenas `moradia`, apenas `localizacao`, ou ambos.
 
+O campo `status` do objeto `moradia` aceita os valores `Ativa`, `Interditada`, `Em Risco` e `Demolida`, permitindo a marcacao manual da situacao operacional do imovel (RF015 — Marcacao Manual da Situacao da Moradia, RN08). O sistema registra apenas a marcacao informada, sem inferir risco automaticamente.
+
 **Resposta**: `200 OK`
 
 Retorna a moradia atualizada.
@@ -399,9 +479,11 @@ Obtem familia por ID.
 
 ### `POST /api/familias`
 
-Cria uma familia.
+Cria uma familia vazia.
 
-O backend atual ignora o corpo da requisicao.
+Familia e uma entidade de agrupamento puro: seu unico atributo proprio e o `id` gerado automaticamente. Todos os dados relevantes (responsavel, moradores, moradia) chegam por meio de vinculos criados em endpoints separados. Por isso, o corpo da requisicao e ignorado intencionalmente — qualquer campo enviado sera descartado sem erro.
+
+Para cadastrar um nucleo familiar completo em uma unica operacao transacional, use `POST /api/familias/nucleo`.
 
 **Resposta**: `201 Created`
 
@@ -481,6 +563,13 @@ Exemplo:
 
 **Resposta**: `201 Created`
 
+Campos raiz do payload (alem dos objetos `localizacao`, `moradia`, `responsavel`, `dependentes`, `pets` e `fotos`):
+
+| Campo | Obrigatorio | Tipo | Observacao |
+|---|---:|---|---|
+| `dataEntrada` | Nao | string (data ISO 8601) | Data de entrada da familia na moradia. Padrao: data atual do servidor. |
+| `statusMoradiaFamilia` | Nao | string | Status do vinculo familia-moradia. Texto livre sem enum validado. Valor convencional: `Atual`. Padrao: `null`. |
+
 ### `GET /api/familias/:id/pessoas`
 
 Lista pessoas vinculadas a familia.
@@ -503,6 +592,11 @@ Vincula pessoa a familia.
   "dataEntrada": "2026-06-10"
 }
 ```
+
+| Campo | Obrigatorio | Tipo | Observacao |
+|---|---:|---|---|
+| `idPessoa` | Sim | number | ID da pessoa a vincular |
+| `dataEntrada` | Nao | string (data ISO 8601) | Padrao: `null`. Se a pessoa tiver parentesco `Responsavel`, o servico valida que a familia nao possui outro responsavel ativo. |
 
 **Resposta**: `201 Created`
 
@@ -540,6 +634,12 @@ Vincula moradia a familia.
 }
 ```
 
+| Campo | Obrigatorio | Tipo | Observacao |
+|---|---:|---|---|
+| `idMoradia` | Sim | number | ID da moradia a vincular |
+| `dataEntrada` | Nao | string (data ISO 8601) | padrao: `null` |
+| `status` | Nao | string | Status do **vinculo** (nao da moradia). Texto livre sem enum validado; valor convencional: `Atual` para vinculo ativo, `Anterior` para historico. |
+
 **Resposta**: `201 Created`
 
 Retorna o vinculo criado.
@@ -571,27 +671,24 @@ Retorna o vinculo atualizado/removido. Este endpoint e excecao entre os deletes,
 
 Campos obrigatorios na criacao:
 
-| Campo | Tipo |
-|---|---|
-| `idFamilia` | number, exceto em `POST /api/familias/:id/pets` |
-| `tipo` | string |
-| `nome` | string |
-| `porte` | string |
-| `raca` | string |
-| `cor` | string |
-| `status` | string |
+| Campo | Tipo | Valores aceitos |
+|---|---|---|
+| `idFamilia` | number | inteiro positivo; nao necessario em `POST /api/familias/:id/pets` |
+| `tipo` | string | `cachorro`, `gato`, `reptil`, `ave`, `roedor`, `outros` |
+| `nome` | string | texto livre |
+| `porte` | string | texto livre — nao ha enum validado; valores convencionais: `Pequeno`, `Medio`, `Grande`, `Gigante` |
+| `raca` | string | texto livre |
+| `cor` | string | texto livre |
+| `status` | string | `Ativo`, `Inativo`, `Desaparecido`, `Falecido` |
 
-Tipos de pet aceitos pelo modelo:
+Campos opcionais na criacao:
 
-```txt
-cachorro, gato, reptil, ave, roedor, outros
-```
+| Campo | Tipo | Padrao | Contexto |
+|---|---|---|---|
+| `observacao` | string ou `null` | `null` | todos os endpoints de criacao |
+| `fotos` | array de `{ url: string }` | `[]` | **apenas `POST /api/familias/nucleo`** |
 
-Status aceitos:
-
-```txt
-Ativo, Inativo, Desaparecido, Falecido
-```
+> **Nota sobre `fotos` em pet:** O campo `fotos` dentro do objeto de pet e processado somente em `POST /api/familias/nucleo`, onde o service itera o array e persiste cada foto vinculada ao pet criado. Em `POST /api/pets` e `POST /api/familias/:id/pets`, o campo `fotos` e ignorado silenciosamente — o fluxo correto para associar fotos a um pet ja existente e usar `POST /api/pets/:id/fotos`.
 
 ### `GET /api/pets`
 
@@ -657,6 +754,10 @@ Retorna o pet criado.
 
 ## Fotos
 
+> **Restricao — RN07 (LGPD):** O sistema aceita fotos **apenas de moradias e pets**. O registro fotografico de pessoas e estritamente proibido. Os endpoints de upload existem somente sob `/api/moradias/:id/fotos/upload-url` e `/api/pets/:id/fotos/upload-url`.
+
+> **Limite de fotos por moradia (RF002 / RN07):** O WAD estabelece no maximo 2 fotos por moradia. O backend atual **nao valida esse limite** — e possivel cadastrar mais de 2 fotos via API sem erro. Essa restricao esta pendente de implementacao.
+
 ### Campos de foto
 
 Para criar ou atualizar registros de foto, o backend atual usa apenas o campo `url`.
@@ -677,7 +778,15 @@ Para criar ou atualizar registros de foto, o backend atual usa apenas o campo `u
 }
 ```
 
-Tambem sao aceitos `file_name` e `content_type`.
+| Campo | Obrigatorio | Tipo | Valores aceitos |
+|---|---:|---|---|
+| `fileName` | Sim | string | nome do arquivo (sem caminho) |
+| `contentType` | Sim | string | `image/jpeg`, `image/png`, `image/webp` |
+| `upsert` | Nao | boolean | `true` para sobrescrever arquivo existente no mesmo path; padrao `false` |
+
+Aliases aceitos: `file_name` no lugar de `fileName`, `content_type` no lugar de `contentType`.
+
+> **Tamanho maximo de arquivo:** O backend nao valida tamanho de arquivo no momento da geracao da URL de upload \u2014 a restricao de tamanho e aplicada diretamente pelo Supabase Storage no momento do upload. Nenhum erro de tamanho sera retornado pela API do backend.
 
 ### `GET /api/fotos`
 
@@ -930,19 +1039,23 @@ Nao retorna corpo.
 
 ## Endpoints planejados
 
-Os endpoints abaixo apareciam em versoes anteriores da documentacao, mas nao existem nas rotas atuais do backend:
+Os endpoints abaixo nao existem nas rotas atuais do backend. Os RFs associados figuram no WAD com status "Planejado" ou "Futuro", o que e consistente com a ausencia de implementacao.
 
-| Metodo | Endpoint |
-|---|---|
-| `POST` | `/api/cadastros-completos` |
-| `GET` | `/api/moradias/mapa` |
-| `GET` | `/api/moradias/:id_moradia/consulta-integrada` |
-| `GET` | `/api/moradias/exportar` |
-| `GET` | `/api/familias/:id_familia/cadastro-completo` |
-| `PUT` | `/api/familias/:id_familia/cadastro-completo` |
-| `PUT` | `/api/familias/:id_familia/responsavel` |
-| `GET` | `/api/indicadores/mapa-calor` |
-| `GET` | `/api/indicadores/recadastro` |
-| `PATCH` | `/api/moradias/:id_moradia/status` |
-| `POST` | `/api/familias/:id_familia/realocacoes` |
-| `PATCH` | `/api/cidadaos/:id_cidadao/arquivar` |
+| Metodo | Endpoint | RF associado | Status do RF |
+|---|---|---|---|
+| `POST` | `/api/cadastros-completos` | — | — |
+| `GET` | `/api/moradias/mapa` | RF004 — Visualizacao de Moradias em Mapa Georreferenciado | Planejado |
+| `GET` | `/api/moradias/:id_moradia/consulta-integrada` | — | — |
+| `GET` | `/api/moradias/exportar` | — | — |
+| `GET` | `/api/familias/:id_familia/cadastro-completo` | — | — |
+| `PUT` | `/api/familias/:id_familia/cadastro-completo` | — | — |
+| `PUT` | `/api/familias/:id_familia/responsavel` | — | — |
+| `GET` | `/api/indicadores/mapa-calor` | RF008 — Visualizacao de Mapa de Calor | Futuro |
+| `GET` | `/api/indicadores/recadastro` | RF011 — Alerta Automatico de Recadastro (12 meses) | Planejado |
+| `PATCH` | `/api/moradias/:id_moradia/status` | *(ver nota abaixo)* | — |
+| `POST` | `/api/familias/:id_familia/realocacoes` | — | — |
+| `PATCH` | `/api/cidadaos/:id_cidadao/arquivar` | — | — |
+
+> **Nota — RF015 e RF017:**
+> - **RF015 (Marcacao Manual da Situacao da Moradia):** nao requer endpoint proprio; e coberto pelo `PUT /api/moradias/:id` via o campo `status` do objeto `moradia`. O endpoint `PATCH /api/moradias/:id_moradia/status` listado acima era uma alternativa anterior que nunca chegou a ser implementada — o `PUT` atual e a forma correta de atualizar a situacao.
+> - **RF017 (Indicador de Cadastro Incompleto):** nao possui endpoint proprio pois o indicador e derivado automaticamente da ausencia de vinculo familia-moradia; e exposto indiretamente por `GET /api/familias/:id/moradias` (lista vazia = sem moradia) e `GET /api/moradias/:id/detalhes`. Seu status no WAD e "Planejado", o que e consistente com a ausencia de endpoint dedicado.
