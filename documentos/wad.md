@@ -1619,7 +1619,7 @@ O **Modelo Entidade-Relacionamento (MER)** é uma abordagem conceitual que repre
 
 <div align="center">
     <p>Figura 16: Modelo Entidade-Relacionamento</p>
-    <img src="outros/MER.jpg">
+    <img src="outros/MER.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
