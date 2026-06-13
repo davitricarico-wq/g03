@@ -9,12 +9,7 @@ const controller = new PessoaController(service);
 
 const router = Router();
 
-router.get('/pessoas/novo', controller.novoForm);
-router.get('/pessoas.json', controller.getAllJson);
-router.get('/pessoas', controller.getAll);
-router.post('/pessoas/', controller.criar);
-
-router.get('/api/pessoas', controller.getAllJson);
+router.get('/api/pessoas', controller.getAll);
 router.get('/api/pessoas/busca', controller.buscar);
 router.get('/api/pessoas/inativas', controller.getInativas);
 router.get('/api/pessoas/:id', controller.getById);

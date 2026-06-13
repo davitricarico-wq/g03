@@ -38,12 +38,18 @@ export function validateVincularMoradiaFamiliaPayload(data: VincularMoradiaFamil
 }
 
 export function validateNucleoFamiliarPayload(data: CreateNucleoFamiliarDto) {
-    if (!data.localizacao || !data.moradia || !data.responsavel) {
-        throw new HttpError(400, 'Localizacao, moradia e responsavel sao obrigatorios');
+    if (!data.responsavel) {
+        throw new HttpError(400, 'Responsavel e obrigatorio');
     }
 
-    validateLocalizacaoPayload(data.localizacao);
-    validateMoradiaPayload(data.moradia);
+    if (Boolean(data.localizacao) !== Boolean(data.moradia)) {
+        throw new HttpError(400, 'Localizacao e moradia devem ser informadas juntas');
+    }
+
+    if (data.localizacao && data.moradia) {
+        validateLocalizacaoPayload(data.localizacao);
+        validateMoradiaPayload(data.moradia);
+    }
     validateResponsavelPayload(data.responsavel);
 
     if (!isParentescoResponsavel(data.responsavel.parentesco)) {

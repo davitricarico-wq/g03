@@ -1,3 +1,5 @@
+
+
 import type { Request, Response } from 'express';
 import type { IPessoaService } from '../interfaces/services/pessoa.service.interface';
 import {
@@ -16,7 +18,6 @@ export class PessoaController {
         this.getById = this.getById.bind(this);
         this.getInativas = this.getInativas.bind(this);
         this.buscar = this.buscar.bind(this);
-        this.novoForm = this.novoForm.bind(this);
         this.criar = this.criar.bind(this);
         this.atualizar = this.atualizar.bind(this);
         this.remover = this.remover.bind(this);
@@ -30,19 +31,14 @@ export class PessoaController {
     async getAll(_req: Request, res: Response) {
         try {
             const pessoas = await this.service.getAll();
-            res.status(200).render('pessoa-lista', { pessoas });
+            res.status(200).json(pessoas);
         } catch (err) {
             return handleControllerError(res, err, 'Erro ao obter pessoas');
         }
     }
 
-    async getAllJson(_req: Request, res: Response) {
-        try {
-            const pessoas = await this.service.getAll();
-            res.status(200).json(pessoas);
-        } catch (err) {
-            return handleControllerError(res, err, 'Erro ao obter pessoas');
-        }
+    async getAllJson(req: Request, res: Response) {
+        return this.getAll(req, res);
     }
 
     async getById(req: Request, res: Response) {
@@ -76,10 +72,6 @@ export class PessoaController {
         } catch (err) {
             return handleControllerError(res, err, 'Erro ao buscar pessoas');
         }
-    }
-
-    async novoForm(_req: Request, res: Response) {
-        res.status(200).render('pessoa-novo');
     }
 
     async criar(req: Request, res: Response) {

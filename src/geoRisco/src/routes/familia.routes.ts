@@ -18,6 +18,7 @@ const controller = new FamiliaController(service);
 const router = Router();
 
 router.get('/api/familias', controller.getAll);
+router.get('/api/familias/busca', controller.buscar);
 router.get('/api/familias/:id', controller.getById);
 router.post('/api/familias', controller.criar);
 router.delete('/api/familias/:id', controller.remover);

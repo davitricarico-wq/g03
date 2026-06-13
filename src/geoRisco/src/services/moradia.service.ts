@@ -79,7 +79,7 @@ export class MoradiaService implements IMoradiaService {
             const moradia = await this.repo.create({ ...data.moradia, idLocalizacao: localizacao.id }, client);
             const created = await this.repo.getById(moradia.id, client);
             if (!created) {
-                throw new Error('Moradia criada, mas não encontrada na view de leitura');
+                throw new Error('Moradia criada, mas não encontrada na consulta de leitura');
             }
             await client.query('COMMIT');
             return created;

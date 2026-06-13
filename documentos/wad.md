@@ -488,26 +488,25 @@ Assim, fornece um código testável, escalável e de alta manutenibilidade, perm
 
 ```
 src/
-├── models/ – tipos e interfaces
-│   ├── validations/ – validação dos atributos / classes
-│   └── implementations/ – definição das classes
-├── views/ – telas (templates ejs)
-├── DTOs/ – Data Transfer Objects: entidades com somente as propriedades necessárias
-├── controllers/ – borda HTTP
-├── services/ – regras de negócio
-│   ├── interfaces – Contratos dos services
-│   ├── implementations – implementações dos services
-├── repositories/ – acesso ao banco de dados
-│   ├── interfaces/ – Contratos dos repositórios
-│   └── implementations/ – implementações dos repositórios
-├──mappers/ – transformadores de objetos: Model → DTO
-├──database/ – configurações do banco de dados e histórico de migrações
-│   └── migrations/ – versionamento do esquema do banco de dados
-(transversal, fora do fluxo)
-├──routes/ – rotas (endpoints) das requisições
-├──middlewares/ – guarda o middleware global do sistema
-├──errors/ – classes de tratamento de erros específicos e customizados do sistema
-└── helpers/ – utilitários puros
+├── app.ts – configuração do Express, middlewares nativos, views, estáticos e rotas
+├── server.ts – inicialização do servidor
+├── controllers/ – borda HTTP e tratamento das requisições
+├── routes/ – rotas/endpoints da aplicação
+├── services/ – regras de negócio e orquestração entre repositórios
+├── repositories/ – acesso ao banco de dados PostgreSQL
+├── interfaces/ – contratos das camadas
+│   ├── services/ – contratos dos services
+│   └── repositories/ – contratos dos repositories
+├── dtos/ – Data Transfer Objects e contratos de entrada/saída
+├── models/ – tipos e interfaces de domínio
+├── validations/ – validação dos payloads e regras de entrada
+├── db/ – conexão, abstrações e migrações do banco de dados
+│   └── migrations/ – versionamento do esquema do banco
+├── storage/ – integração com Supabase Storage
+├── views/ – telas/templates EJS
+├── public/ – arquivos estáticos
+├── errors/ – erros customizados da aplicação
+└── tests/ – testes automatizados
 
 ```
 
@@ -1698,15 +1697,13 @@ Oferecemos um sistema de gestão de famílias e moradias em área de risco para 
 
 ## 6.4.2 Posicionamento e Branding
 
-O público-alvo central do GeoRisco é a população residente nas áreas de risco de Santo André. O município tem 748.919 habitantes (Censo 2022, IBGE), e o Plano Municipal de Redução de Riscos (2025) identifica 28 áreas de risco, com 3.803 edificações em risco alto e muito alto (R3/R4), em bairros como Jardim Santo André, Sítio dos Vianas e Paranapiacaba.
+**b) Estratégia de Diferenciação**
 
-**Demográfico.** Famílias de baixa renda em encostas e margens de córregos — em Santo André, 30,5% da população tem rendimento per capita de até meio salário mínimo — com sobrerrepresentação de grupos prioritários para evacuação: idosos (60+), crianças de 0 a 12 anos, gestantes, lactantes e Pessoas com Deficiência (PCD). O município tem 50.177 moradores com algum tipo de deficiência, 6,7% da população (Paracenso/Prefeitura de Santo André, 2023). Mobilidade reduzida e doenças crônicas exigem priorização.
+A diferenciação do GeoRisco Santo André está em sua adaptação direta à rotina da Defesa Civil municipal, e não apenas na digitalização genérica de cadastros. Enquanto alternativas como planilhas, formulários isolados, sistemas nacionais ou ferramentas de mapa atendem partes do processo, o GeoRisco integra, em uma única aplicação, cadastro de moradias, famílias, moradores, pets, fotos, localização, histórico de ocupação, consulta e visualização territorial.
 
-**Psicográfico.** Forte vínculo afetivo e territorial com a moradia, pertencimento comunitário e desconfiança frente ao poder público; receio de perder bens, documentos e animais de estimação ao deixar a casa.
+Essa integração posiciona a solução como uma ferramenta operacional de gestão pública de risco, capaz de apoiar tanto o agente em campo quanto o gestor na sede. O diferencial está na rastreabilidade dos dados, na padronização das informações sensíveis e na leitura geográfica das vulnerabilidades, permitindo priorizar atendimentos, planejar evacuações e reduzir perdas de informação entre etapas.
 
-**Comportamental.** Resistência à evacuação preventiva mesmo sob alerta — equipes da Defesa Civil enfrentam a recusa de moradores em sair de áreas de alto risco, recorrendo, em casos extremos, à remoção compulsória.
-
-**Necessidades específicas.** Identificação imediata de prioridades de evacuação; triagem de saúde e prontuário conforme o SUAS; abrigo que acolha o núcleo familiar e seus animais; guarda de bens; e tratamento anonimizado dos dados, conforme a LGPD.
+Por ser desenvolvida com base no contexto de Santo André e nas necessidades reais da Defesa Civil, a aplicação também se diferencia pela linguagem institucional, pela interface objetiva e pelo alinhamento à LGPD. Em vez de competir por apelo comercial, o GeoRisco se destaca pela legitimidade pública, pela aderência ao serviço essencial prestado e pela capacidade de transformar dados territoriais em decisões rápidas, seguras e justificáveis.
 
 ## 6.5. Business Model Canvas
 

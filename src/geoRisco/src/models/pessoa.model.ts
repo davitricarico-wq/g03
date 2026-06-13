@@ -36,6 +36,7 @@ export interface Pessoa {
     id: number;
     nome: string;
     nomeSocial: string | null;
+    cpf: string | null;
     dataDeNascimento: Date;
     parentesco: Parentesco;
     situacaoOcupacional: SituacaoOcupacional;
@@ -47,7 +48,6 @@ export interface Pessoa {
 }
 
 export interface Responsavel extends Pessoa {
-    cpf: string | null;
     nis: string | null;
     renda: number | null;
     sexo: Sexo;

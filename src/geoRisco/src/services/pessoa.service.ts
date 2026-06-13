@@ -1,4 +1,3 @@
-import { pool } from '../db/connection.ts';
 import type {
     BuscarPessoaDto,
     CreatePessoaDto,
@@ -45,10 +44,6 @@ export class PessoaService implements IPessoaService {
             escopo: filters.escopo ?? 'ativas'
         };
 
-        if (!normalized.nome && !normalized.cpf && !normalized.email && !normalized.telefone) {
-            throw new HttpError(400, 'Informe ao menos um filtro de busca');
-        }
-
         return this.repo.search(normalized);
     }
 
@@ -64,6 +59,12 @@ export class PessoaService implements IPessoaService {
 
     async atualizar(id: number, data: UpdatePessoaDto): Promise<Pessoa> {
         validatePessoaPayload(data, true);
+        if (data.status !== undefined && data.status !== 'Ativo') {
+            const pessoaAtual = await this.repo.getById(id);
+            if (pessoaAtual?.parentesco === 'Responsável') {
+                throw new HttpError(409, 'Responsável familiar não pode ter status alterado por esta tela');
+            }
+        }
         const updated = await this.repo.update(id, data);
         if (!updated) {
             throw new HttpError(404, 'Pessoa não encontrada');
@@ -90,59 +91,29 @@ export class PessoaService implements IPessoaService {
 
     async cadastrarResponsavel(data: CreateResponsavelDto): Promise<Responsavel> {
         validateResponsavelPayload(data);
-        const client = await pool.connect();
-
-        try {
-            await client.query('BEGIN');
-            const pessoa = await this.repo.create(
-                {
-                    ...data,
-                    nome: data.nome.trim(),
-                    nomeSocial: data.nomeSocial ?? null,
-                    parentesco: data.parentesco ?? 'Responsável',
-                    status: data.status ?? 'Ativo'
-                },
-                client
-            );
-            const responsavel = await this.repo.createResponsavel(
-                {
-                    ...data,
-                    idPessoa: pessoa.id,
-                    veiculo: data.veiculo ?? false,
-                    programaSocial: data.programaSocial ?? false
-                },
-                client
-            );
-
-            await client.query('COMMIT');
-            return responsavel;
-        } catch (err) {
-            await client.query('ROLLBACK');
-            throw err;
-        } finally {
-            client.release();
-        }
+        const pessoa = await this.repo.create({
+            ...data,
+            nome: data.nome.trim(),
+            nomeSocial: data.nomeSocial ?? null,
+            parentesco: data.parentesco ?? 'Responsável',
+            status: data.status ?? 'Ativo'
+        });
+        return this.repo.createResponsavel({
+            ...data,
+            idPessoa: pessoa.id,
+            veiculo: data.veiculo ?? false,
+            programaSocial: data.programaSocial ?? false
+        });
     }
 
     async atualizarResponsavel(idPessoa: number, data: UpdateResponsavelDto): Promise<Responsavel> {
         validateResponsavelPayload(data, true);
-        const client = await pool.connect();
-
-        try {
-            await client.query('BEGIN');
-            await this.repo.update(idPessoa, data, client);
-            const responsavel = await this.repo.updateResponsavel(idPessoa, data, client);
-            if (!responsavel) {
-                throw new HttpError(404, 'Responsável não encontrado');
-            }
-            await client.query('COMMIT');
-            return responsavel;
-        } catch (err) {
-            await client.query('ROLLBACK');
-            throw err;
-        } finally {
-            client.release();
+        await this.repo.update(idPessoa, data);
+        const responsavel = await this.repo.updateResponsavel(idPessoa, data);
+        if (!responsavel) {
+            throw new HttpError(404, 'Responsável não encontrado');
         }
+        return responsavel;
     }
 
     async removerResponsavel(idPessoa: number): Promise<void> {

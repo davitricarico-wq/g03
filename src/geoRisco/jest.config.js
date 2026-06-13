@@ -1,7 +1,10 @@
 /** @type {import('jest').Config} */
 module.exports = {
+    preset: 'ts-jest',
     testEnvironment: 'node',
-    testMatch: ['**/dist/**/*.spec.js'],
-    collectCoverageFrom: ['dist/**/*.js', '!dist/**/*.spec.js'],
+    roots: ['<rootDir>/src'],
+    testMatch: ['**/*.spec.ts'],
+    testPathIgnorePatterns: ['/node_modules/', '/dist/'],
+    collectCoverageFrom: ['src/**/*.ts', '!src/**/*.spec.ts'],
     clearMocks: true
 };

@@ -1,5 +1,6 @@
 import { pool } from '../db/connection.ts';
 import type { Queryable } from '../db/queryable';
+import { getSupabaseDbClient, isDatabaseHostResolutionError } from '../db/supabase';
 import type { CreatePetDto, CreatePetSemFamiliaDto, UpdatePetDto } from '../dtos/pet.dto';
 import type { IPetRepository } from '../interfaces/repositories/pet.repository.interface';
 import type { Pet } from '../models/pet.model';
@@ -16,41 +17,99 @@ const petSelect = `
     observacao
 `;
 
+type PetApiRow = {
+    id: number;
+    id_familia: number;
+    tipo: Pet['tipo'];
+    nome: string;
+    porte: string;
+    raca: string;
+    cor: string;
+    status?: Pet['status'];
+    observacao: string | null;
+};
+
+function mapPetApiRow(row: PetApiRow): Pet {
+    return {
+        id: row.id,
+        idFamilia: row.id_familia,
+        tipo: row.tipo,
+        nome: row.nome,
+        porte: row.porte,
+        raca: row.raca,
+        cor: row.cor,
+        status: row.status ?? 'Ativo',
+        observacao: row.observacao
+    };
+}
+
 export class PetRepository implements IPetRepository {
     constructor(private db: Queryable = pool) {}
 
     async getAll(db: Queryable = this.db): Promise<Pet[]> {
-        const res = await db.query<Pet>(`
-            SELECT ${petSelect}
-            FROM pet
-            ORDER BY nome
-        `);
-        return res.rows;
+        try {
+            const res = await db.query<Pet>(`
+                SELECT ${petSelect}
+                FROM pet
+                ORDER BY nome
+            `);
+            return res.rows;
+        } catch (err) {
+            if (!isDatabaseHostResolutionError(err)) throw err;
+            const { data, error } = await getSupabaseDbClient()
+                .from('pet')
+                .select('id, id_familia, tipo, nome, porte, raca, cor, observacao')
+                .order('nome');
+            if (error) throw error;
+            return ((data ?? []) as PetApiRow[]).map(mapPetApiRow);
+        }
     }
 
     async getById(id: number, db: Queryable = this.db): Promise<Pet | null> {
-        const res = await db.query<Pet>(
-            `
-            SELECT ${petSelect}
-            FROM pet
-            WHERE id = $1
-            `,
-            [id]
-        );
-        return res.rows[0] ?? null;
+        try {
+            const res = await db.query<Pet>(
+                `
+                SELECT ${petSelect}
+                FROM pet
+                WHERE id = $1
+                `,
+                [id]
+            );
+            return res.rows[0] ?? null;
+        } catch (err) {
+            if (!isDatabaseHostResolutionError(err)) throw err;
+            const { data, error } = await getSupabaseDbClient()
+                .from('pet')
+                .select('id, id_familia, tipo, nome, porte, raca, cor, observacao')
+                .eq('id', id)
+                .maybeSingle();
+            if (error) throw error;
+            return data ? mapPetApiRow(data as PetApiRow) : null;
+        }
     }
 
     async getByFamilia(idFamilia: number, db: Queryable = this.db): Promise<Pet[]> {
-        const res = await db.query<Pet>(
-            `
-            SELECT ${petSelect}
-            FROM pet
-            WHERE id_familia = $1
-            ORDER BY nome
-            `,
-            [idFamilia]
-        );
-        return res.rows;
+        try {
+            const res = await db.query<Pet>(
+                `
+                SELECT ${petSelect}
+                FROM pet
+                WHERE id_familia = $1
+                ORDER BY nome
+                `,
+                [idFamilia]
+            );
+            return res.rows;
+        } catch (err) {
+            if (!isDatabaseHostResolutionError(err)) throw err;
+            const { data, error } = await getSupabaseDbClient()
+                .from('pet')
+                .select('id, id_familia, tipo, nome, porte, raca, cor, observacao')
+                .eq('id_familia', idFamilia)
+                .order('nome');
+            if (error) throw error;
+            return ((data ?? []) as PetApiRow[]).map(mapPetApiRow);
+        }
     }
 
     async create(data: CreatePetDto, db: Queryable = this.db): Promise<Pet> {

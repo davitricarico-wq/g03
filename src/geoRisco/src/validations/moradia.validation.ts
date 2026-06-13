@@ -41,7 +41,10 @@ export function validateMoradiaPayload(data: CreateMoradiaDto | UpdateMoradiaDto
             throw new HttpError(400, 'Tipo de construcao invalido');
         }
     }
-    if (data.status !== undefined && !isOneOf(data.status, STATUS_MORADIA)) {
+    // `null` significa "não informado" (normalizeMoradiaDto usa optionalString,
+    // que devolve null para campos ausentes). Nesse caso o service aplica o
+    // default 'Ativa'. Só validamos quando um status real é enviado.
+    if (data.status !== undefined && data.status !== null && !isOneOf(data.status, STATUS_MORADIA)) {
         throw new HttpError(400, 'Status de moradia invalido');
     }
     if (!partial || data.usoImovel !== undefined) {
