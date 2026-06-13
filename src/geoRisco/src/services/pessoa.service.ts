@@ -73,7 +73,10 @@ export class PessoaService implements IPessoaService {
     }
 
     async remover(id: number): Promise<void> {
-        await this.getById(id);
+        const pessoa = await this.getById(id);
+        if (pessoa.parentesco === 'Responsável') {
+            throw new HttpError(409, 'Tentativa de arquivar responsável sem substituição prévia');
+        }
         await this.repo.delete(id);
     }
 
