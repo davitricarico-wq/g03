@@ -1,4 +1,6 @@
 import type {
+    BuscarFamiliaDto,
+    FamiliaBuscaResultadoDto,
     FamiliaMoradiaHistoricoDto,
     CreateNucleoFamiliarDto,
     NucleoFamiliarCriado,
@@ -12,6 +14,7 @@ import type { Pessoa } from '../../models/pessoa.model';
 
 export interface IFamiliaService {
     getAll(): Promise<Familia[]>;
+    buscar(filtros: BuscarFamiliaDto): Promise<FamiliaBuscaResultadoDto[]>;
     getById(id: number): Promise<Familia>;
     cadastrar(): Promise<Familia>;
     remover(id: number): Promise<void>;

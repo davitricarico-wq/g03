@@ -24,13 +24,16 @@ function parseOptionalDate(value: unknown): Date | undefined {
 
 function normalizePetSemFamiliaDto(value: unknown): CreatePetSemFamiliaDto {
     const body = asBody(value);
+    const status = body.status === undefined || body.status === null || String(body.status).trim() === ''
+        ? 'Ativo'
+        : String(body.status).trim();
     return {
         tipo: String(body.tipo ?? '') as CreatePetSemFamiliaDto['tipo'],
         nome: String(body.nome ?? ''),
         porte: String(body.porte ?? ''),
         raca: String(body.raca ?? ''),
         cor: String(body.cor ?? ''),
-        status: String(body.status ?? '') as CreatePetSemFamiliaDto['status'],
+        status: status as CreatePetSemFamiliaDto['status'],
         observacao: body.observacao === undefined || body.observacao === null ? null : String(body.observacao),
         fotos: Array.isArray(body.fotos)
             ? body.fotos.map((foto) => normalizeFotoSemMoradiaDto(foto))
@@ -48,6 +51,7 @@ function normalizeFotoSemMoradiaDto(value: unknown): CreateFotoSemMoradiaDto {
 export class FamiliaController {
     constructor(private service: IFamiliaService) {
         this.getAll = this.getAll.bind(this);
+        this.buscar = this.buscar.bind(this);
         this.getById = this.getById.bind(this);
         this.criar = this.criar.bind(this);
         this.remover = this.remover.bind(this);
@@ -68,6 +72,18 @@ export class FamiliaController {
             res.status(200).json(familias);
         } catch (err) {
             return handleControllerError(res, err, 'Erro ao obter famílias');
+        }
+    }
+
+    async buscar(req: Request, res: Response) {
+        try {
+            const familias = await this.service.buscar({
+                termo: typeof req.query.termo === 'string' ? req.query.termo : undefined,
+                bairro: typeof req.query.bairro === 'string' ? req.query.bairro : undefined
+            });
+            res.status(200).json(familias);
+        } catch (err) {
+            return handleControllerError(res, err, 'Erro ao buscar famílias');
         }
     }
 
@@ -191,10 +207,12 @@ export class FamiliaController {
             const fotos = Array.isArray(body.fotos)
                 ? body.fotos.map((foto) => normalizeFotoSemMoradiaDto(foto))
                 : [];
+            const temLocalizacao = body.localizacao !== undefined && body.localizacao !== null;
+            const temMoradia = body.moradia !== undefined && body.moradia !== null;
 
             const nucleo = await this.service.cadastrarNucleoFamiliar({
-                localizacao: normalizeLocalizacaoDto(body.localizacao) as CreateLocalizacaoDto,
-                moradia: normalizeMoradiaDto(body.moradia) as CreateMoradiaDto,
+                localizacao: temLocalizacao ? normalizeLocalizacaoDto(body.localizacao) as CreateLocalizacaoDto : undefined,
+                moradia: temMoradia ? normalizeMoradiaDto(body.moradia) as CreateMoradiaDto : undefined,
                 responsavel: normalizeCreateResponsavelDto(body.responsavel),
                 dependentes,
                 pets,

@@ -1,6 +1,8 @@
 import { pool } from '../db/connection.ts';
 import type {
+    BuscarFamiliaDto,
     CreateNucleoFamiliarDto,
+    FamiliaBuscaResultadoDto,
     FamiliaMoradiaHistoricoDto,
     NucleoFamiliarCriado,
     PessoaFamiliaHistoricoDto,
@@ -43,6 +45,10 @@ export class FamiliaService implements IFamiliaService {
 
     async getAll(): Promise<Familia[]> {
         return this.familiaRepo.getAll();
+    }
+
+    async buscar(filtros: BuscarFamiliaDto): Promise<FamiliaBuscaResultadoDto[]> {
+        return this.familiaRepo.search(filtros);
     }
 
     async getById(id: number): Promise<Familia> {
@@ -127,6 +133,16 @@ export class FamiliaService implements IFamiliaService {
         if (!moradia) {
             throw new HttpError(404, 'Moradia não encontrada');
         }
+        const familiasAtivasNaMoradia = await this.familiaRepo.getFamiliasByMoradia(data.idMoradia);
+        if (familiasAtivasNaMoradia.length > 0) {
+            const jaVinculadaNestaFamilia = familiasAtivasNaMoradia.some((familia) => familia.id === idFamilia);
+            throw new HttpError(
+                409,
+                jaVinculadaNestaFamilia
+                    ? 'Família já está vinculada a esta moradia'
+                    : 'Moradia já possui família ativa'
+            );
+        }
         return this.familiaRepo.vincularMoradia(idFamilia, data.idMoradia, data.dataEntrada ?? null, data.status ?? null);
     }
 
@@ -147,24 +163,31 @@ export class FamiliaService implements IFamiliaService {
         try {
             await client.query('BEGIN');
 
-            const localizacao = await this.moradiaRepo.createLocalizacao(data.localizacao, client);
-            const moradia = await this.moradiaRepo.create(
-                {
-                    ...data.moradia,
-                    idLocalizacao: localizacao.id,
-                    status: data.moradia.status ?? 'Ativa',
-                    pavimentos: data.moradia.pavimentos ?? 1
-                },
-                client
-            );
             const familia = await this.familiaRepo.create(client);
-            await this.familiaRepo.vincularMoradia(
-                familia.id,
-                moradia.id,
-                dataEntrada,
-                data.statusMoradiaFamilia ?? null,
-                client
-            );
+            const localizacao = data.localizacao && data.moradia
+                ? await this.moradiaRepo.createLocalizacao(data.localizacao, client)
+                : null;
+            const moradia = localizacao && data.moradia
+                ? await this.moradiaRepo.create(
+                    {
+                        ...data.moradia,
+                        idLocalizacao: localizacao.id,
+                        status: data.moradia.status ?? 'Ativa',
+                        pavimentos: data.moradia.pavimentos ?? 1
+                    },
+                    client
+                )
+                : null;
+
+            if (moradia) {
+                await this.familiaRepo.vincularMoradia(
+                    familia.id,
+                    moradia.id,
+                    dataEntrada,
+                    data.statusMoradiaFamilia ?? null,
+                    client
+                );
+            }
 
             const responsavelPessoa = await this.pessoaRepo.create(
                 {
@@ -234,6 +257,9 @@ export class FamiliaService implements IFamiliaService {
             }
 
             for (const foto of data.fotos ?? []) {
+                if (!moradia) {
+                    throw new HttpError(400, 'Fotos da moradia exigem uma moradia cadastrada');
+                }
                 fotos.push(
                     await this.fotoRepo.createForMoradia(
                         moradia.id,

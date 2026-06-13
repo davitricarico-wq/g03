@@ -11,6 +11,10 @@ function optionalString(value: unknown): string | null {
     return text === '' ? null : text;
 }
 
+function optionalStringUpdate(value: unknown): string | undefined {
+    return optionalString(value) ?? undefined;
+}
+
 function normalizeCreatePetDto(bodyValue: unknown, idFamilia?: number): CreatePetDto {
     const body = asBody(bodyValue);
     return {
@@ -20,7 +24,7 @@ function normalizeCreatePetDto(bodyValue: unknown, idFamilia?: number): CreatePe
         porte: String(body.porte ?? ''),
         raca: String(body.raca ?? ''),
         cor: String(body.cor ?? ''),
-        status: String(body.status ?? '') as CreatePetDto['status'],
+        status: (optionalString(body.status) ?? 'Ativo') as CreatePetDto['status'],
         observacao: optionalString(body.observacao)
     };
 }
@@ -33,7 +37,7 @@ function normalizeUpdatePetDto(bodyValue: unknown): UpdatePetDto {
         porte: body.porte === undefined ? undefined : String(body.porte),
         raca: body.raca === undefined ? undefined : String(body.raca),
         cor: body.cor === undefined ? undefined : String(body.cor),
-        status: body.status === undefined ? undefined : (String(body.status) as CreatePetDto['status']),
+        status: body.status === undefined ? undefined : (optionalStringUpdate(body.status) as CreatePetDto['status'] | undefined),
         observacao: body.observacao === undefined ? undefined : optionalString(body.observacao)
     };
 }

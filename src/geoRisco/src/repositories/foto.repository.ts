@@ -1,5 +1,6 @@
 import { pool } from '../db/connection.ts';
 import type { Queryable } from '../db/queryable';
+import { getSupabaseDbClient, isDatabaseHostResolutionError } from '../db/supabase';
 import type { CreateFotoDto, CreateFotoSemMoradiaDto, CreateFotoSemPetDto, UpdateFotoDto } from '../dtos/foto.dto';
 import type { IFotoRepository } from '../interfaces/repositories/foto.repository.interface';
 import type { Foto } from '../models/foto.model';
@@ -11,54 +12,113 @@ const fotoSelect = `
     url
 `;
 
+type FotoApiRow = {
+    id: number;
+    id_moradia: number | null;
+    id_pet: number | null;
+    url: string;
+};
+
+function mapFotoApiRow(row: FotoApiRow): Foto {
+    return {
+        id: row.id,
+        idMoradia: row.id_moradia,
+        idPet: row.id_pet,
+        url: row.url
+    };
+}
+
 export class FotoRepository implements IFotoRepository {
     constructor(private db: Queryable = pool) {}
 
     async getAll(db: Queryable = this.db): Promise<Foto[]> {
-        const res = await db.query<Foto>(`
-            SELECT ${fotoSelect}
-            FROM foto
-            ORDER BY id
-        `);
-        return res.rows;
+        try {
+            const res = await db.query<Foto>(`
+                SELECT ${fotoSelect}
+                FROM foto
+                ORDER BY id
+            `);
+            return res.rows;
+        } catch (err) {
+            if (!isDatabaseHostResolutionError(err)) throw err;
+            const { data, error } = await getSupabaseDbClient()
+                .from('foto')
+                .select('id, id_moradia, id_pet, url')
+                .order('id');
+            if (error) throw error;
+            return ((data ?? []) as FotoApiRow[]).map(mapFotoApiRow);
+        }
     }
 
     async getById(id: number, db: Queryable = this.db): Promise<Foto | null> {
-        const res = await db.query<Foto>(
-            `
-            SELECT ${fotoSelect}
-            FROM foto
-            WHERE id = $1
-            `,
-            [id]
-        );
-        return res.rows[0] ?? null;
+        try {
+            const res = await db.query<Foto>(
+                `
+                SELECT ${fotoSelect}
+                FROM foto
+                WHERE id = $1
+                `,
+                [id]
+            );
+            return res.rows[0] ?? null;
+        } catch (err) {
+            if (!isDatabaseHostResolutionError(err)) throw err;
+            const { data, error } = await getSupabaseDbClient()
+                .from('foto')
+                .select('id, id_moradia, id_pet, url')
+                .eq('id', id)
+                .maybeSingle();
+            if (error) throw error;
+            return data ? mapFotoApiRow(data as FotoApiRow) : null;
+        }
     }
 
     async getByMoradia(idMoradia: number, db: Queryable = this.db): Promise<Foto[]> {
-        const res = await db.query<Foto>(
-            `
-            SELECT ${fotoSelect}
-            FROM foto
-            WHERE id_moradia = $1
-            ORDER BY id
-            `,
-            [idMoradia]
-        );
-        return res.rows;
+        try {
+            const res = await db.query<Foto>(
+                `
+                SELECT ${fotoSelect}
+                FROM foto
+                WHERE id_moradia = $1
+                ORDER BY id
+                `,
+                [idMoradia]
+            );
+            return res.rows;
+        } catch (err) {
+            if (!isDatabaseHostResolutionError(err)) throw err;
+            const { data, error } = await getSupabaseDbClient()
+                .from('foto')
+                .select('id, id_moradia, id_pet, url')
+                .eq('id_moradia', idMoradia)
+                .order('id');
+            if (error) throw error;
+            return ((data ?? []) as FotoApiRow[]).map(mapFotoApiRow);
+        }
     }
 
     async getByPet(idPet: number, db: Queryable = this.db): Promise<Foto[]> {
-        const res = await db.query<Foto>(
-            `
-            SELECT ${fotoSelect}
-            FROM foto
-            WHERE id_pet = $1
-            ORDER BY id
-            `,
-            [idPet]
-        );
-        return res.rows;
+        try {
+            const res = await db.query<Foto>(
+                `
+                SELECT ${fotoSelect}
+                FROM foto
+                WHERE id_pet = $1
+                ORDER BY id
+                `,
+                [idPet]
+            );
+            return res.rows;
+        } catch (err) {
+            if (!isDatabaseHostResolutionError(err)) throw err;
+            const { data, error } = await getSupabaseDbClient()
+                .from('foto')
+                .select('id, id_moradia, id_pet, url')
+                .eq('id_pet', idPet)
+                .order('id');
+            if (error) throw error;
+            return ((data ?? []) as FotoApiRow[]).map(mapFotoApiRow);
+        }
     }
 
     async create(data: CreateFotoDto, db: Queryable = this.db): Promise<Foto> {

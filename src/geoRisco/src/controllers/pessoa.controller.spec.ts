@@ -23,7 +23,6 @@ describe('PessoaController', () => {
         return {
             status: jest.fn().mockReturnThis(),
             json: jest.fn().mockReturnThis(),
-            render: jest.fn().mockReturnThis(),
             send: jest.fn().mockReturnThis()
         } as unknown as Response;
     };
@@ -39,6 +38,7 @@ describe('PessoaController', () => {
         id: 1,
         nome: 'Ana',
         nomeSocial: null,
+        cpf: null,
         parentesco: 'Responsável',
         medicacao: false,
         status: 'Ativo',
@@ -71,6 +71,7 @@ describe('PessoaController', () => {
         expect(service.cadastrar).toHaveBeenCalledWith({
             nome: 'Ana',
             nomeSocial: null,
+            cpf: null,
             parentesco: 'Responsável',
             medicacao: false,
             status: 'Ativo',
@@ -104,7 +105,7 @@ describe('PessoaController', () => {
         expect(res.json).toHaveBeenCalledWith({ error: 'Nome é obrigatório' });
     });
 
-    it('200 com lista de pessoas renderizada', async () => {
+    it('200 com lista de pessoas em JSON', async () => {
         const service = makeService();
         const pessoas: Pessoa[] = [
             pessoaAna,
@@ -112,6 +113,7 @@ describe('PessoaController', () => {
                 id: 2,
                 nome: 'Joao',
                 nomeSocial: 'Joao',
+                cpf: null,
                 parentesco: 'Cônjuge',
                 medicacao: true,
                 status: 'Ativo',
@@ -130,7 +132,7 @@ describe('PessoaController', () => {
 
         expect(service.getAll).toHaveBeenCalled();
         expect(res.status).toHaveBeenCalledWith(200);
-        expect(res.render).toHaveBeenCalledWith('pessoa-lista', { pessoas });
+        expect(res.json).toHaveBeenCalledWith(pessoas);
     });
 
     it('200 com lista de pessoas em JSON', async () => {

@@ -24,6 +24,11 @@ export function validatePessoaPayload(data: CreatePessoaDto | UpdatePessoaDto, p
             throw new HttpError(400, 'Nome e obrigatorio');
         }
     }
+    if (data.cpf !== undefined && data.cpf !== null) {
+        if (typeof data.cpf !== 'string' || !/^\d{11}$/.test(data.cpf)) {
+            throw new HttpError(400, 'CPF invalido');
+        }
+    }
     if (!partial || data.dataDeNascimento !== undefined) {
         if (!isValidDate(data.dataDeNascimento)) {
             throw new HttpError(400, 'Data de nascimento invalida');
