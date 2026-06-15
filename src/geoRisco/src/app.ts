@@ -1,3 +1,4 @@
+import cors from 'cors';
 import express from 'express';
 import familiaRoutes from './routes/familia.routes';
 import fotoRoutes from './routes/foto.routes';
@@ -8,6 +9,15 @@ import prioridadeRoutes from './routes/prioridade.routes';
 
 export const app = express();
 
+// Em produção o frontend (GitLab Pages) e o backend (Vercel) ficam em origens
+// diferentes; CORS_ORIGIN libera a origem do Pages. Sem a variável, reflete a
+// origem da requisição (cômodo para dev local).
+const corsOrigins = (process.env.CORS_ORIGIN ?? '')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+
+app.use(cors({ origin: corsOrigins.length > 0 ? corsOrigins : true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
