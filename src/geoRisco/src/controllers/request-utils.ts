@@ -25,8 +25,42 @@ export function handleControllerError(res: Response, err: unknown, fallbackMessa
     if (err instanceof HttpError) {
         return res.status(err.statusCode).json({ error: err.message });
     }
+    const databaseError = getDatabaseConnectionError(err);
+    if (databaseError) {
+        console.error(fallbackMessage, err);
+        return res.status(503).json({ error: databaseError });
+    }
     console.error(fallbackMessage, err);
     return res.status(500).json({ error: fallbackMessage });
+}
+
+function getDatabaseConnectionError(err: unknown): string | null {
+    if (!err || typeof err !== 'object') {
+        return null;
+    }
+
+    const code = 'code' in err ? String((err as { code?: unknown }).code) : '';
+    const hostname = 'hostname' in err ? String((err as { hostname?: unknown }).hostname) : '';
+
+    if (code === 'ENOTFOUND') {
+        return hostname
+            ? `Não foi possível resolver o host do banco (${hostname}). Verifique se o DATABASE_URL aponta para um projeto Supabase ativo ou para o banco local.`
+            : 'Não foi possível resolver o host do banco. Verifique o DATABASE_URL.';
+    }
+
+    if (['ECONNREFUSED', 'ETIMEDOUT', 'EHOSTUNREACH', 'ENETUNREACH'].includes(code)) {
+        return 'Não foi possível conectar ao banco de dados. Verifique se o DATABASE_URL está correto e se o banco está acessível.';
+    }
+
+    if (code === '28P01') {
+        return 'Falha de autenticação no banco de dados. Verifique usuário e senha do DATABASE_URL.';
+    }
+
+    if (code === '3D000') {
+        return 'Banco de dados informado no DATABASE_URL não existe.';
+    }
+
+    return null;
 }
 
 export function parseId(value: unknown): number {
@@ -59,6 +93,22 @@ function optionalString(value: unknown): string | null {
     }
     const text = String(value).trim();
     return text === '' ? null : text;
+}
+
+function optionalStringField(body: Body, ...keys: string[]): string | undefined {
+    const value = get(body, ...keys);
+    if (value === undefined || value === null) {
+        return undefined;
+    }
+    return optionalString(value) ?? undefined;
+}
+
+function optionalCpf(value: unknown): string | null {
+    const text = optionalString(value);
+    if (text === null) {
+        return null;
+    }
+    return text.replace(/\D/g, '');
 }
 
 function requiredString(value: unknown, field: string): string {
@@ -133,6 +183,7 @@ export function normalizeCreatePessoaDto(bodyValue: unknown, defaultParentesco?:
     return {
         nome: requiredString(get(body, 'nome'), 'Nome'),
         nomeSocial: optionalString(get(body, 'nomeSocial', 'nome_social')),
+        cpf: optionalCpf(get(body, 'cpf')),
         dataDeNascimento: requiredDate(get(body, 'dataDeNascimento', 'data_de_nascimento')),
         parentesco: (optionalString(get(body, 'parentesco')) ?? defaultParentesco) as Parentesco,
         situacaoOcupacional: requiredString(get(body, 'situacaoOcupacional', 'situacao_ocupacional'), 'Situação ocupacional') as SituacaoOcupacional,
@@ -148,13 +199,14 @@ export function normalizeUpdatePessoaDto(bodyValue: unknown): UpdatePessoaDto {
     return {
         nome: optionalString(get(body, 'nome')) ?? undefined,
         nomeSocial: get(body, 'nomeSocial', 'nome_social') === undefined ? undefined : optionalString(get(body, 'nomeSocial', 'nome_social')),
+        cpf: get(body, 'cpf') === undefined ? undefined : optionalCpf(get(body, 'cpf')),
         dataDeNascimento: get(body, 'dataDeNascimento', 'data_de_nascimento') === undefined ? undefined : requiredDate(get(body, 'dataDeNascimento', 'data_de_nascimento')),
-        parentesco: optionalString(get(body, 'parentesco')) as Parentesco | undefined,
-        situacaoOcupacional: optionalString(get(body, 'situacaoOcupacional', 'situacao_ocupacional')) as SituacaoOcupacional | undefined,
-        escolaridade: optionalString(get(body, 'escolaridade')) as Escolaridade | undefined,
+        parentesco: optionalStringField(body, 'parentesco') as Parentesco | undefined,
+        situacaoOcupacional: optionalStringField(body, 'situacaoOcupacional', 'situacao_ocupacional') as SituacaoOcupacional | undefined,
+        escolaridade: optionalStringField(body, 'escolaridade') as Escolaridade | undefined,
         cronico: optionalBoolean(get(body, 'cronico')),
         medicacao: optionalBoolean(get(body, 'medicacao')),
-        status: optionalString(get(body, 'status')) as StatusPessoa | undefined
+        status: optionalStringField(body, 'status') as StatusPessoa | undefined
     };
 }
 
@@ -163,7 +215,6 @@ export function normalizeCreateResponsavelDto(bodyValue: unknown): CreateRespons
     return {
         ...normalizeCreatePessoaDto(body, 'Responsável'),
         parentesco: 'Responsável',
-        cpf: optionalString(get(body, 'cpf')),
         nis: optionalString(get(body, 'nis')),
         renda: optionalNumber(get(body, 'renda')) ?? null,
         sexo: requiredString(get(body, 'sexo'), 'Sexo') as Sexo,
@@ -185,7 +236,6 @@ export function normalizeUpdateResponsavelDto(bodyValue: unknown): UpdateRespons
     const body = asBody(bodyValue);
     return {
         ...normalizeUpdatePessoaDto(body),
-        cpf: get(body, 'cpf') === undefined ? undefined : optionalString(get(body, 'cpf')),
         nis: get(body, 'nis') === undefined ? undefined : optionalString(get(body, 'nis')),
         renda: get(body, 'renda') === undefined ? undefined : optionalNumber(get(body, 'renda')) ?? null,
         sexo: optionalString(get(body, 'sexo')) as Sexo | undefined,
@@ -226,7 +276,9 @@ export function normalizeMoradiaDto(bodyValue: unknown, partial = false): Create
             ? undefined
             : requiredString(get(body, 'tipoConstrucao', 'tipo_construcao'), 'Tipo de construção')) as TipoConstrucao | undefined,
         dataRegistro: get(body, 'dataRegistro', 'data_registro') === undefined ? undefined : optionalDate(get(body, 'dataRegistro', 'data_registro')),
-        status: optionalString(get(body, 'status')) as StatusMoradia | undefined,
+        status: partial
+            ? optionalStringField(body, 'status') as StatusMoradia | undefined
+            : (optionalString(get(body, 'status')) ?? undefined) as StatusMoradia | undefined,
         usoImovel: (partial && get(body, 'usoImovel', 'uso_imovel') === undefined
             ? undefined
             : requiredString(get(body, 'usoImovel', 'uso_imovel'), 'Uso do imóvel')) as UsoImovel | undefined,

@@ -1714,7 +1714,7 @@ O **Modelo Entidade-Relacionamento (MER)** é uma abordagem conceitual que repre
 
 <div align="center">
     <p>Figura 16: Modelo Entidade-Relacionamento</p>
-    <img src="outros/MER.jpg">
+    <img src="outros/MER.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
@@ -1722,29 +1722,28 @@ O modelo de dados foi estruturado seguindo as melhores práticas de normalizaç�
 
 #### 1. Herança e Especialização (Pessoa e Responsável)
 Para evitar redundância de dados e focar no Responsável da Família, adotamos o padrão de herança (representado pelo triângulo na notação Chen).
-* **`Pessoa` (Superclasse):** Centraliza os atributos universais (Nome Social, Data de Nascimento, Escolaridade, Situação Ocupacional, Medicação, Status).
-* **`Responsável` (Subclasse):** Herda atributos de Pessoa e agrega dados específicos de gestão familiar: CPF, NIS, Renda, Programas Sociais, dados de contato (Telefone, Email) e informações de residência.
+* **`Pessoa` (Superclasse):** Centraliza os atributos universais (Nome Social, Data de Nascimento, Escolaridade, Situação Ocupacional, Medicação, Status, CPF).
+* **`Responsável` (Subclasse):** Herda atributos de Pessoa e agrega dados específicos de gestão familiar: NIS, Renda, Programas Sociais, dados de contato (Telefone, Email) e informações de residência.
 
 #### 2. Agrupamento Lógico por `Família`
-Em vez de vincular dezenas de indivíduos diretamente a uma moradia de forma solta, criamos a entidade agrupadeira **`Família`**.
-* Toda `Pessoa` está vinculada a uma `Família` (relacionamento *Pertence*) com cardinalidade (0, n).
-* A `Família` possui obrigatoriamente um `Responsável` com cardinalidade (1, n).
-* **Vantagem Técnica:** Essa decisão facilita o trânsito de dados. Se uma enchente desalojar 6 pessoas de uma casa, o sistema precisa atualizar apenas o registro da entidade `Família` na tabela `ocupa`, e todos os membros herdam a mudança automaticamente.
+Em vez de vincular dezenas de indivíduos diretamente a uma moradia de forma solta, criamos a entidade agrupadora **`Família`**.
+* Toda `Pessoa` está vinculada a uma `Família` (relacionamento *Pertence*) com cardinalidade (1, n).
+* **Vantagem Técnica:** Essa decisão facilita o trânsito de dados. Se uma enchente desalojar 6 pessoas de uma casa, o sistema precisa atualizar apenas o registro da entidade `Família` na tabela associativa `familia_moradia` (presente no DER), e todos os membros herdam a mudança automaticamente.
 
 #### 3. Rastreabilidade e Histórico (Relacionamento N:N "ocupa")
 O maior desafio resolvido neste modelo foi a preservação do histórico de ocupação sem duplicar dados físicos. A estrutura da **`Moradia`** (localização geográfica, CEP, características construtivas) é imutável. O que muda é quem mora lá.
-* Criamos o relacionamento **Muitos-para-Muitos (N:N)** chamado **`ocupa`** entre `Família` e `Moradia`, com cardinalidade (0, n) em ambas as extremidades.
-* Este relacionamento gera uma tabela associativa contendo atributos temporais: **`DataEntrada`** e **`DataSaida`**, permitindo rastrear períodos de ocupação.
+* Criamos o relacionamento **Muitos-para-Muitos (N:N)** chamado **`ocupa`** entre `Família` e `Moradia`, com cardinalidade (1, n) em ambas as extremidades.
+* Este relacionamento gera uma tabela associativa contendo atributos temporais: **`Status`**, **`DataEntrada`** e **`DataSaida`**, permitindo rastrear períodos de ocupação.
 * **Como funciona:** Quando uma família se muda ou é evacuada, preenchemos a `DataSaida` do vínculo atual e criamos um novo vínculo com a nova moradia. Assim, temos a linha do tempo exata de por quais imóveis a família passou e quais famílias já ocuparam determinadas moradias de risco, sem perder nenhum dado histórico.
 
 #### 4. Exclusão Lógica (Soft Delete) e Estados Operacionais
 Em conformidade com a LGPD e regras de auditoria pública, **nenhum dado é deletado fisicamente (DROP/DELETE)**.
-* Inserimos o atributo **`Status`** nas entidades vitais (`Pessoa` e `Moradia`).
+* Inserimos o atributo **`Status`** nas entidades vitais (`Pessoa`, `Família` e `Moradia`).
 * Se um morador sai do município, o status da `Pessoa` fica inativo. Se uma moradia é desapropriada ou demolida, o status é atualizado para o estado correspondente. O histórico permanece intacto para auditoria.
 
 #### 5. Entidades Satélites Flexíveis
-* **`Foto`:** Ligada em uma relação (0, n) com `Moradia`, permitindo criar uma galeria de fotos para identificação e documentação visual da moradia.
-* **`Pet`:** Relacionada a `Pessoa` (0, n), registrando animais de estimação dependentes para logística humanitária em evacuações.
+* **`Foto`:** Ligada em uma relação (0, n) com `Moradia` ou `Pet`, permitindo criar galerias de fotos para identificação e documentação visual.
+* **`Pet`:** Relacionada a `Família` (0, n), registrando animais de estimação dependentes para logística humanitária em evacuações.
 * **`GrupoPrioritario`:** Relacionada a `Pessoa` (0, n), permitindo associar cidadãos a listas de vulnerabilidade (ex: Acamados, Deficientes Visuais), agilizando a logística de resgates em emergências.
 
 #### 6. Localização Geográfica e Referência Endereçal
@@ -1771,11 +1770,11 @@ Abaixo é apresentado o esquema visual do banco de dados, ilustrando as tabelas 
 
 **Pessoa**
 Entidade base (superclasse) que guarda os dados demográficos e de saúde básicos de qualquer morador ou cidadão assistido.
-* **Campos:** `id` (PK), `nome`, `nome_social`, `data_de_nascimento`, `parentesco`, `situacao_ocupacional`, `escolaridade`, `cronico`, `medicacao`, `status`, `deleted_at`.
+* **Campos:** `id` (PK), `cpf`, `nome`, `nome_social`, `data_de_nascimento`, `parentesco`, `situacao_ocupacional`, `escolaridade`, `cronico`, `medicacao`, `status`, `deleted_at`.
 
 **Responsável**
 Subclasse de `Pessoa` (Herança 1:1), responsável por isolar e armazenar os dados burocráticos, financeiros e de contacto (dados sensíveis) do chefe de família.
-* **Campos:** `id_pessoa` (PK, FK para `pessoa`), `cpf`, `nis`, `renda`, `sexo`, `raca`, `estado_civil`, `veiculo`, `programa_social`, `email`, `telefone`, `nome_do_pai`, `nome_da_mae`, `local_de_nascimento`, `data_residencia_estado`, `data_residencia_moradia`.
+* **Campos:** `id_pessoa` (PK, FK para `pessoa`), `nis`, `renda`, `sexo`, `raca`, `estado_civil`, `veiculo`, `programa_social`, `email`, `telefone`, `nome_do_pai`, `nome_da_mae`, `local_de_nascimento`, `data_residencia_estado`, `data_residencia_moradia`.
 
 **Família**
 Atua como a entidade agregadora central do sistema (*hub*), permitindo agrupar os cidadãos e os respetivos animais de estimação independentemente da moradia física, o que facilita sobremaneira as transições e relocalizações em casos de desalojamento.
@@ -1799,13 +1798,13 @@ Cataloga as condições de vulnerabilidade ou necessidades especiais (físicas o
 
 **Foto**
 Registos visuais para atestar a condição estrutural e a avaliação de risco no terreno.
-* **Campos:** `id` (PK), `id_moradia` (FK para `moradia`), `url`.
+* **Campos:** `id` (PK), `id_pet` (FK para `pet`), `id_moradia` (FK para `moradia`), `url`.
 
 ---
 
 #### 2. Entidades Associativas e de Histórico (Relacionamentos N:N)
 
-Para garantir a preservação do histórico de ocupações (auditoria pós-desastre e acompanhamento ao longo dos anos), foram modeladas tabelas associativas cuja chave primária composta incorpora sempre uma dimensão temporal (`data_entrada`).
+Para garantir a preservação do histórico de ocupações (auditoria pós-desastre e acompanhamento ao longo dos anos), foram modeladas tabelas associativas temporais cuja chave primária composta incorpora `data_entrada` - campo obrigatório. Já `data_saida` é opcional e não compõe a chave primária, mas também ajuda na organização dos dados das moradias em relação ao histórico de ocupação.
 
 **Pessoa_Família**
 Vincula os indivíduos aos núcleos familiares e regista o seu período de permanência.
@@ -1836,7 +1835,7 @@ Por forma a padronizar as entradas de dados e evitar inconsistências nos formul
 
 * **Integridade Referencial:** Todas as *Foreign Keys* estão acompanhadas da ação `ON DELETE CASCADE`. Deste modo, assegura-se que a base de dados não manterá registos órfãos quando entidades de nível superior (ex: localização ou moradia real) forem limpas.
 * **Exclusão Lógica (*Soft Delete*):** A eliminação física de Famílias, Moradias e Pessoas não ocorre. Qualquer interrogação de `DELETE` ao nível da aplicação é intercetada de modo transparente pelo PostgreSQL (através de `RULES`), passando apenas a atualizar as colunas de estado e preenchendo o campo `deleted_at`.
-* **Unicidade Restrita (`UNIQUE`):** Implementada para impossibilitar redundâncias em documentos de alta criticidade na entidade `responsavel` (`cpf`, `email`, `telefone`) e para garantir o relacionamento um-para-um (1:1) rigoroso do campo `id_localizacao` alocado a cada `moradia`.
+* **Unicidade Restrita (`UNIQUE`):** Implementada para impossibilitar redundâncias em documentos e contatos de alta criticidade (`pessoa.cpf`, `responsavel.email`, `responsavel.telefone`) e para garantir o relacionamento um-para-um (1:1) rigoroso do campo `id_localizacao` alocado a cada `moradia`.
 
 ### 3.6.3. Modelo Físico
 
@@ -2007,7 +2006,7 @@ O levantamento atual foi conferido contra os arquivos de rotas e controllers do 
 
 | Status | Uso na API atual |
 |--------|------------------|
-| `200 OK` | Consulta, atualização ou operação com retorno JSON bem-sucedida |
+| `200 OK` | Consulta, atualização ou operação com retorno JSON ou HTML bem-sucedida |
 | `201 Created` | Criação de recurso ou geração de URL assinada de upload |
 | `204 No Content` | Remoção concluída sem corpo de resposta |
 | `400 Bad Request` | ID inválido, payload inválido, campo obrigatório ausente ou validação de entrada falhou |
@@ -2037,7 +2036,9 @@ O levantamento atual foi conferido contra os arquivos de rotas e controllers do 
 | PUT | `/api/responsaveis/{id}` | Atualiza parcialmente um responsável | `200` | RF012, RF014, RF019 |
 | DELETE | `/api/responsaveis/{id}` | Remove responsável | `204` | RF010 |
 
-Os endpoints de pessoa aceitam os campos principais `nome`, `dataDeNascimento`, `parentesco`, `situacaoOcupacional`, `escolaridade`, `cronico`, `medicacao` e `status`, incluindo aliases em `snake_case` para alguns atributos. Responsáveis são tratados como pessoas com dados complementares, como `cpf`, `nis`, `renda`, `sexo`, `raca`, `estadoCivil`, `email`, `telefone`, vínculos familiares e datas de residência.
+Os endpoints de pessoa aceitam os campos `nome`, `nomeSocial`, `dataDeNascimento`, `parentesco`, `situacaoOcupacional`, `escolaridade`, `cronico`, `medicacao` e `status`, com aliases em `snake_case` para `nomeSocial`, `dataDeNascimento` e `situacaoOcupacional`. Responsáveis são tratados como pessoas com dados complementares: além dos campos de pessoa, aceitam `cpf`, `nis`, `renda`, `sexo`, `raca`, `estadoCivil`, `veiculo`, `programaSocial`, `email`, `telefone`, `nomeDoPai`, `nomeDaMae`, `localDeNascimento`, `dataResidenciaEstado` e `dataResidenciaMoradia`. Na criação, o backend força `parentesco` para `Responsável`.
+
+> **Pendência — Grupos Prioritários (RF001):** O banco já possui as tabelas `grupo_prioritario` e `pessoa_grupo_prioritario`, e o model TypeScript correspondente existe em `models/grupo-prioritario.model.ts`. Porém, nenhum endpoint, service ou repository manipula esses dados atualmente — campos como `grupos` ou `idGrupoPrioritario` enviados no corpo serão silenciosamente ignorados. O suporte completo a grupos de vulnerabilidade (idoso, criança, gestante/lactante, PCD, mobilidade reduzida) está pendente de implementação.
 
 #### Moradias
 
@@ -2051,7 +2052,9 @@ Os endpoints de pessoa aceitam os campos principais `nome`, `dataDeNascimento`, 
 | PUT | `/api/moradias/{id}` | Atualiza parcialmente moradia e/ou localização | `200` | RF012, RF015, RF019 |
 | DELETE | `/api/moradias/{id}` | Remove moradia por soft delete | `204` | RF009 |
 
-A criação de moradia espera um corpo com os grupos `localizacao` e `moradia`. Em `localizacao`, os campos mínimos são `cidade`, `estado`, `latitude` e `longitude`. Em `moradia`, os campos mínimos são `tipoConstrucao`, `usoImovel` e `situacaoDeOcupacao`, também com aliases em `snake_case` para integração com clientes que adotem esse padrão.
+A criação de moradia espera um corpo com os grupos `localizacao` e `moradia`. Em `localizacao`, os campos mínimos são `cidade`, `estado`, `latitude` e `longitude`. Em `moradia`, os campos mínimos são `tipoConstrucao`, `usoImovel` e `situacaoDeOcupacao`, com aliases em `snake_case` disponíveis para integração com clientes que adotem esse padrão.
+
+O campo `status` do objeto `moradia` aceita os valores `Ativa`, `Interditada`, `Em Risco` e `Demolida`. O valor `Excluída` é reservado ao sistema: o banco o aplica automaticamente via `DELETE /api/moradias/{id}` e o backend rejeita com `400` qualquer requisição POST ou PUT que o envie explicitamente.
 
 #### Famílias
 
@@ -2059,7 +2062,7 @@ A criação de moradia espera um corpo com os grupos `localizacao` e `moradia`. 
 |--------|----------|-----------|---------------------|----------------|
 | GET | `/api/familias` | Lista famílias | `200` | RF014 |
 | GET | `/api/familias/{id}` | Retorna família por ID | `200` | RF014 |
-| POST | `/api/familias` | Cria uma família | `201` | RF001, RF014, RF017 |
+| POST | `/api/familias` | Cria uma família vazia | `201` | RF001, RF014, RF017 |
 | DELETE | `/api/familias/{id}` | Remove família por soft delete | `204` | RF014 |
 | POST | `/api/familias/nucleo` | Cadastra núcleo familiar completo, incluindo localização, moradia, responsável, dependentes, pets e fotos | `201` | RF013 |
 | GET | `/api/familias/{id}/pessoas` | Lista pessoas vinculadas à família | `200` | RF014 |
@@ -2071,7 +2074,9 @@ A criação de moradia espera um corpo com os grupos `localizacao` e `moradia`. 
 | POST | `/api/familias/{id}/moradias` | Vincula moradia à família | `201` | RF014, RF017 |
 | DELETE | `/api/familias/{id}/moradias/{moradiaId}` | Remove vínculo ativo entre moradia e família | `200` | RF014 |
 
-Os endpoints de vínculo preservam o histórico de composição familiar e ocupação da moradia por meio de datas de entrada e saída. O endpoint `/api/familias/nucleo` consolida o fluxo principal de cadastro, permitindo registrar em uma única operação o núcleo familiar completo usado pelo processo operacional da Defesa Civil.
+Família é uma entidade de agrupamento puro: seu único atributo próprio é o `id` gerado automaticamente. Qualquer campo enviado no corpo de `POST /api/familias` é descartado sem erro. Para cadastrar um núcleo familiar completo em uma única operação transacional, utiliza-se `POST /api/familias/nucleo`.
+
+Os endpoints de vínculo preservam o histórico de composição familiar e ocupação da moradia por meio de datas de entrada e saída. Os endpoints `DELETE /api/familias/{id}/pessoas/{pessoaId}` e `DELETE /api/familias/{id}/moradias/{moradiaId}` são exceção entre os deletes: ambos retornam `200` com corpo JSON contendo o vínculo atualizado, em vez de `204 No Content`.
 
 #### Pets
 
@@ -2085,7 +2090,9 @@ Os endpoints de vínculo preservam o histórico de composição familiar e ocupa
 | GET | `/api/familias/{id}/pets` | Lista pets de uma família | `200` | RF007, RF014 |
 | POST | `/api/familias/{id}/pets` | Cria pet vinculado à família informada na URL | `201` | RF007, RF014 |
 
-Os pets aceitam campos como `tipo`, `nome`, `porte`, `raca`, `cor`, `status` e `observacao`. Os tipos previstos no modelo são `cachorro`, `gato`, `reptil`, `ave`, `roedor` e `outros`; os status aceitos são `Ativo`, `Inativo`, `Desaparecido` e `Falecido`.
+Os pets aceitam campos como `tipo`, `nome`, `porte`, `raca`, `cor`, `status` e `observacao`. Os tipos previstos no modelo são `cachorro`, `gato`, `reptil`, `ave`, `roedor` e `outros`; os status aceitos são `Ativo`, `Inativo`, `Desaparecido` e `Falecido`. O campo `porte` é texto livre sem enum validado — os valores convencionais são `Pequeno`, `Médio`, `Grande` e `Gigante`.
+
+O campo `fotos` dentro do objeto de pet é processado somente em `POST /api/familias/nucleo`, onde o service itera o array e persiste cada foto vinculada ao pet criado. Em `POST /api/pets` e `POST /api/familias/{id}/pets`, o campo `fotos` é ignorado silenciosamente — o fluxo correto para associar fotos a um pet já existente é `POST /api/pets/{id}/fotos`.
 
 #### Fotos
 
@@ -2105,7 +2112,11 @@ Os pets aceitam campos como `tipo`, `nome`, `porte`, `raca`, `cor`, `status` e `
 | POST | `/api/pets/{id}/fotos` | Cria registro de foto vinculado ao pet | `201` | RF007, RF018 |
 | DELETE | `/api/pets/{id}/fotos/{fotoId}` | Remove foto vinculada ao pet | `204` | RF018 |
 
-A API separa o arquivo físico da foto de seu metadado. Primeiro, o cliente solicita uma URL assinada de upload com `fileName`, `contentType` e, opcionalmente, `upsert`. Depois do envio ao storage, registra no backend apenas a `url` ou caminho do arquivo, associando o metadado à moradia ou ao pet correspondente.
+A API separa o arquivo físico da foto de seu metadado. Primeiro, o cliente solicita uma URL assinada de upload com `fileName`, `contentType` e, opcionalmente, `upsert`. Depois do envio ao storage, registra no backend apenas a `url` ou caminho do arquivo, associando o metadado à moradia ou ao pet correspondente. O endpoint `GET /api/fotos/{id}/signed-url` aceita o query param opcional `expiresIn` (entre 60 e 3600 segundos; padrão: 300) para controlar o tempo de validade da URL assinada de leitura.
+
+> **Restrição LGPD (RN07):** O sistema aceita fotos **apenas de moradias e pets**. O registro fotográfico de pessoas é estritamente proibido. Os endpoints de upload existem somente sob `/api/moradias/{id}/fotos/upload-url` e `/api/pets/{id}/fotos/upload-url`.
+
+> **Pendência — limite de fotos por moradia (RF002/RN07):** O WAD estabelece no máximo 2 fotos por moradia. O backend atual **não valida esse limite** — é possível cadastrar mais de 2 fotos via API sem erro. Essa restrição está pendente de implementação.
 
 ### Rotas HTML auxiliares fora do prefixo `/api`
 
@@ -2119,7 +2130,26 @@ A API separa o arquivo físico da foto de seu metadado. Primeiro, o cliente soli
 
 ### Endpoints planejados e fora do contrato atual
 
-Alguns endpoints apareceram em versões anteriores da documentação, mas ainda não existem nas rotas atuais do backend. Eles devem ser tratados como planejados, e não como contrato implementado. Entre eles estão `/api/cadastros-completos`, `/api/moradias/mapa`, `/api/moradias/{id_moradia}/consulta-integrada`, `/api/moradias/exportar`, `/api/familias/{id_familia}/cadastro-completo`, `/api/familias/{id_familia}/responsavel`, `/api/indicadores/mapa-calor`, `/api/indicadores/recadastro`, `/api/moradias/{id_moradia}/status`, `/api/familias/{id_familia}/realocacoes` e `/api/cidadaos/{id_cidadao}/arquivar`.
+Alguns endpoints apareceram em versões anteriores da documentação, mas ainda não existem nas rotas atuais do backend. Eles devem ser tratados como planejados, e não como contrato implementado.
+
+| Método | Endpoint | RF associado | Status do RF |
+|--------|----------|--------------|--------------|
+| `POST` | `/api/cadastros-completos` | — | — |
+| `GET` | `/api/moradias/mapa` | RF004 — Visualização de Moradias em Mapa Georreferenciado | Planejado |
+| `GET` | `/api/moradias/{id_moradia}/consulta-integrada` | — | — |
+| `GET` | `/api/moradias/exportar` | — | — |
+| `GET` | `/api/familias/{id_familia}/cadastro-completo` | — | — |
+| `PUT` | `/api/familias/{id_familia}/cadastro-completo` | — | — |
+| `PUT` | `/api/familias/{id_familia}/responsavel` | — | — |
+| `GET` | `/api/indicadores/mapa-calor` | RF008 — Visualização de Mapa de Calor | Futuro |
+| `GET` | `/api/indicadores/recadastro` | RF011 — Alerta Automático de Recadastro (12 meses) | Planejado |
+| `PATCH` | `/api/moradias/{id_moradia}/status` | RF015 | — |
+| `POST` | `/api/familias/{id_familia}/realocacoes` | — | — |
+| `PATCH` | `/api/cidadaos/{id_cidadao}/arquivar` | — | — |
+
+> **Nota — RF015 e RF017:**
+> - **RF015 (Marcação Manual da Situação da Moradia):** não requer endpoint próprio; é coberto pelo `PUT /api/moradias/{id}` via o campo `status` do objeto `moradia`. O endpoint `PATCH /api/moradias/{id_moradia}/status` listado acima era uma alternativa anterior que nunca chegou a ser implementada — o `PUT` atual é a forma correta de atualizar a situação.
+> - **RF017 (Indicador de Cadastro Incompleto):** não possui endpoint próprio pois o indicador é derivado automaticamente da ausência de vínculo família-moradia; é exposto indiretamente por `GET /api/familias/{id}/moradias` (lista vazia = sem moradia) e `GET /api/moradias/{id}/detalhes`. Seu status no WAD é "Planejado", o que é consistente com a ausência de endpoint dedicado.
 
 ## 3.8. Autenticação, Autorização e Resiliência (sprint 5)
 
@@ -2330,11 +2360,135 @@ Dentre as dificuldades, encontramos problemas diversos considerando o prazo de e
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
-
-
 ## 4.2. Segunda versão da aplicação web (sprint 4)
 
-*Descreva e ilustre aqui o desenvolvimento da segunda versão do sistema web, com foco no que foi consolidado entre a primeira versão funcional e o sistema operacional integrado. Utilize prints de tela para ilustrar. Indique obrigatoriamente: (a) o que foi implementado, (b) o que não foi concluído, (c) dificuldades técnicas enfrentadas e próximos passos.*
+### 4.2.1 O que foi implementado
+
+Esta sprint foi dedicada à consolidação e refatoração da API, corrigindo inconsistências de contrato, alinhando nomes de campos ao padrão camelCase e entregando funcionalidades que estavam planejadas mas incompletas na sprint anterior.
+
+#### Refatoração do Contrato da API (Renomeação de Campos)
+
+Todos os campos foram padronizados em camelCase, mantendo aliases snake_case para compatibilidade. As principais mudanças foram:
+
+**Pessoas:**
+| Campo antigo | Campo novo | Tipo alterado? |
+|---|---|---|
+| `id_cidadao` | `id` | — |
+| `nome_completo` | `nome` | — |
+| `data_nascimento` | `dataDeNascimento` | — |
+| `doencas_cronicas` | `cronico` | ✅ string → boolean |
+| `medicamentos` | `medicacao` | ✅ string → boolean |
+| `grau_parentesco_responsavel` | `parentesco` | — |
+| `status_cadastro` | `status` | ✅ boolean → string (`"Ativo"`) |
+
+**Responsáveis:**
+- `celular` → `telefone`
+- `programas_sociais` → `programaSocial`
+- `local_nascimento` → `localDeNascimento`
+- Novos campos: `nomeDoPai`, `nomeDaMae`, `dataResidenciaEstado`, `dataResidenciaMoradia`
+- O `id_responsavel` foi eliminado — responsável agora compartilha o `id` da pessoa
+
+**Moradias:**
+- `condicao_ocupacao` → `situacaoDeOcupacao`
+- `tipo_uso_imovel` → `usoImovel`
+- `observacoes` → `descricao`
+- `data_cadastro` → `dataRegistro`
+- Campo `telefone` **removido** do modelo de moradia
+- Campo `pavimentos` **adicionado**
+
+**Pets:**
+- `tipo_pet` → `tipo` (agora enum: `cachorro`, `gato`, `reptil`, `ave`, `roedor`, `outros`)
+- `porte_pet` → `porte`
+- `observacoes` → `observacao`
+- `id_familia` → `idFamilia`
+- Novos campos obrigatórios: `raca` e `status` (`Ativo`, `Inativo`, `Desaparecido`, `Falecido`)
+
+**Fotos:**
+- Campo `tipo_foto` **removido** — backend usa apenas `url`
+- Upload: `nome_arquivo` → `fileName`; novos campos `contentType` e `upsert`
+- Resposta de upload reformulada: `{ bucket, path, signedUrl, token, expiresIn }`
+
+#### Reformulação do `POST /api/moradias`
+
+O endpoint de criação de moradia passou a exigir dois sub-objetos obrigatórios no corpo da requisição:
+
+```json
+{
+  "localizacao": { "cidade", "estado", "latitude", "longitude", ... },
+  "moradia": { "tipoConstrucao", "usoImovel", "situacaoDeOcupacao", ... }
+}
+```
+
+Antes, os campos eram enviados de forma plana sem separação de contexto.
+
+#### Cadastro Completo via `POST /api/familias/nucleo` (RF001)
+
+O endpoint `/api/familias/nucleo` foi completamente reformulado. Na versão anterior, servia apenas para agrupar IDs de pessoas já existentes em uma família. Agora, é o endpoint de **cadastro completo transacional**, criando em uma única operação:
+- Localização + Moradia
+- Família e vínculo família-moradia
+- Responsável (pessoa + dados extras)
+- Dependentes (array)
+- Pets com fotos
+
+Isso substitui o endpoint `/api/cadastros-completos` que estava listado como planejado na sprint anterior.
+
+#### Padronização dos Endpoints DELETE (Soft Delete)
+
+Todos os DELETEs de recursos principais passaram de `200 OK` com corpo JSON para `204 No Content` sem corpo, implementando soft delete via `deleted_at`:
+
+| Endpoint | Sprint 3 | Sprint 4 |
+|---|---|---|
+| `DELETE /api/pessoas/:id` | `200` + JSON | `204` sem corpo |
+| `DELETE /api/responsaveis/:id` | `200` + JSON | `204` sem corpo |
+| `DELETE /api/moradias/:id` | `200` + JSON | `204` sem corpo |
+| `DELETE /api/familias/:id` | `200` + JSON | `204` sem corpo |
+| `DELETE /api/pets/:id` | `200` + JSON | `204` sem corpo |
+| `DELETE /api/fotos/:id` | `200` + JSON | `204` sem corpo |
+
+Exceção mantida: `DELETE /api/familias/:id/pessoas/:pessoaId` e `DELETE /api/familias/:id/moradias/:moradiaId` continuam retornando `200` com o vínculo atualizado.
+
+#### Expansão da Busca de Pessoas
+
+O endpoint `GET /api/pessoas/busca` passou de um parâmetro genérico `q` para filtros específicos: `nome`, `cpf`, `email`, `telefone` e `escopo` (`ativas`, `inativas`, `todas`).
+
+#### Autenticação (Estado Atual)
+
+O middleware de autenticação **ainda não foi implementado**. Os status `401` e `403`, previstos na documentação inicial, não fazem parte do contrato atual. Os endpoints estão abertos sem controle de acesso.
+
+---
+
+### 4.2.2 O que não foi concluído
+
+- **Mapa Georreferenciado (RF004):** `GET /api/moradias/mapa` ainda não implementado
+- **Mapa de Calor (RF008):** `GET /api/indicadores/mapa-calor` planejado, não entregue
+- **Alerta de Recadastro (RF011):** Job agendado de fichas desatualizadas não implementado
+- **Consulta Integrada (RF005):** `GET /api/moradias/:id/consulta-integrada` ausente
+- **Exportação de Relatórios (RF006):** `GET /api/moradias/exportar` em CSV/PDF não implementado
+- **Grupos Prioritários:** As tabelas `grupo_prioritario` e `pessoa_grupo_prioritario` existem no banco mas o código as ignora — nenhuma rota, repositório ou service implementado para essa funcionalidade
+- **CPF de Pessoa:** O CPF ainda está restrito à tabela `responsavel`, impossibilitando o registro de CPF para cidadãos não-responsáveis
+- **Validação de vínculo família-moradia:** O sistema permite vincular uma família ativa a uma moradia interditada ou inativa sem retornar erro (US14 não implementada)
+
+---
+
+### 4.2.3 Dificuldades técnicas encontradas
+
+**Inconsistência status vs. deleted_at em Moradias:** Identificou-se um bug de estado zumbi: o endpoint `PUT /api/moradias/:id` aceita `{ "status": "Excluída" }` e retorna `200 OK`, mas grava apenas o campo `status` sem atualizar `deleted_at`. Como as views de listagem (`vw_moradia_ativa`) filtram por `deleted_at IS NULL` e não pelo campo `status`, a moradia aparece nas listagens como ativa com status mentiroso de "Excluída". A rule de soft delete do banco (`soft_delete_moradia`) corrige ambos os campos ao mesmo tempo, mas só é acionada via `DELETE`, não via `PUT`. A correção planejada é restringir os valores aceitos pela API a `STATUS_MORADIA_CLIENTE = ['Ativa', 'Interditada', 'Demolida', 'Em Risco']`, impedindo que "Excluída" seja enviado via `PUT`.
+
+**Divergência entre model TypeScript e banco de dados:** O model `grupo-prioritario.model.ts` declara o campo `dataPrevistaParto: Date | null`, mas a tabela `grupo_prioritario` no banco não possui essa coluna. Isso precisa ser resolvido antes de ativar a funcionalidade de grupos prioritários — seja adicionando a coluna via migration, seja removendo o campo do model.
+
+**Eliminação do `id_responsavel`:** A unificação do responsável como uma extensão de pessoa exigiu revisão de todas as queries e repositórios que antes referenciavam `id_responsavel` como chave separada. Todos os endpoints de responsável passaram a usar o `id` da pessoa.
+
+---
+
+### 4.2.4 Próximos passos (Sprint 5)
+
+1. **Corrigir bug de estado zumbi em moradia:** Implementar `STATUS_MORADIA_CLIENTE` na validação do `PUT /api/moradias/:id`
+2. **Migrar CPF para a tabela `pessoa`:** Remover coluna `cpf` de `responsavel`, adicionar em `pessoa` com constraint `UNIQUE`; atualizar model, DTO, repository e busca
+3. **Implementar Grupos Prioritários:** Criar repositório, service e rotas para `grupo_prioritario`; adicionar campo `gruposPrioritarios: number[]` nos payloads de criação/atualização de pessoa
+4. **Validação US14:** Impedir vínculo de família ativa com moradia interditada ou inativa no `FamiliaService.vincularMoradia`
+5. **Autenticação:** Implementar middleware de autenticação JWT nas rotas da API
+6. **Mapa e Indicadores:** Endpoints `/api/moradias/mapa` e `/api/indicadores/mapa-calor`
+
 
 ## 4.3. Versão final da aplicação web (sprint 5)
 
@@ -2348,13 +2502,13 @@ Dentre as dificuldades, encontramos problemas diversos considerando o prazo de e
 
 #### 5.1.1.1 Separação por camada
 
-A estratégia de testes automatizados do projeto deve seguir a separação por camadas da arquitetura da aplicação, definindo abordagens diferentes para Service, Controller e Repository, conforme a responsabilidade de cada camada.
+A estratégia de testes automatizados do projeto segue a separação por camadas da arquitetura da aplicação, definindo abordagens diferentes para Service, Controller e Repository, conforme a responsabilidade de cada camada. Essa separação evita que um único tipo de teste tente validar todo o sistema ao mesmo tempo e torna mais claro o que cada evidência comprova.
 
-Na camada de Service, os testes devem ser tratados como testes unitários white-box, pois essa camada concentra regras de negócio, validações, tratamentos de exceção e decisões internas da aplicação. Por isso, os testes devem exercitar os principais fluxos internos do serviço, incluindo cenários de sucesso, dados inválidos, entidades inexistentes, conflitos de regra de negócio e falhas esperadas. As dependências externas da camada, como repositórios ou outros serviços, devem ser substituídas por mocks, permitindo verificar tanto o resultado retornado quanto as interações esperadas com essas dependências.
+Na camada de Service, os testes são tratados como testes unitários white-box, pois essa camada concentra regras de negócio, validações, tratamentos de exceção, transações e decisões internas da aplicação. Por isso, a suíte exercita os principais fluxos internos dos serviços, incluindo cenários de sucesso, dados inválidos, entidades inexistentes, conflitos de regra de negócio e falhas esperadas. As dependências externas da camada, como repositories, conexão com banco, storage e outros services, são substituídas por mocks, permitindo verificar tanto o resultado retornado quanto as interações esperadas com essas dependências. Para este artefato, a camada Service deve apresentar no mínimo 80% de cobertura no relatório gerado pelo Jest.
 
-Na camada de Controller, a abordagem recomendada é o teste de integração black-box por meio do Supertest. Nesse caso, o foco não deve estar na implementação interna dos controllers, mas sim no comportamento observável da API. Os testes devem exercitar os endpoints HTTP da aplicação, validando códigos de status, corpo da resposta, mensagens retornadas e tratamento adequado de entradas válidas, inválidas e cenários de erro. Dessa forma, os controllers são avaliados a partir do contrato externo da aplicação, simulando de maneira mais fiel o uso real da API.
+Na camada de Controller, a abordagem adotada é o teste black-box do contrato HTTP por meio do Supertest, com o uso do test runner Jest. Nesse caso, o foco não está na implementação interna dos controllers, mas no comportamento observável da API: código de status, corpo da resposta, mensagens de erro e tratamento de entradas válidas ou inválidas. Para manter o teste determinístico e isolado, os services são mockados. Assim, a suíte valida rotas e controllers sem depender de banco de dados, repositories ou integrações externas.
 
-Na camada de Repository, os testes são opcionais e devem ser aplicados apenas quando houver lógica não trivial de consulta ou persistência. Isso inclui situações como montagem dinâmica de filtros, joins, consultas com múltiplas condições, soft delete, regras dependentes do banco de dados, views ou relacionamentos relevantes entre entidades. Quando necessários, esses testes devem utilizar um banco controlado ou ambiente isolado, evitando dependência de dados externos ou residuais.
+Na camada de Repository, os testes são opcionais e devem ser aplicados apenas quando houver lógica não trivial de consulta ou persistência. Isso inclui situações como montagem dinâmica de filtros, joins, consultas com múltiplas condições, soft delete, regras dependentes do banco de dados, views ou relacionamentos relevantes entre entidades. Quando necessários, esses testes devem utilizar banco controlado ou ambiente isolado, com transações e ROLLBACK, evitando dependência de dados externos ou residuais. Como a lógica prioritária deste artefato está concentrada em Service e Controller, a suíte atual prioriza essas duas camadas.
 
 #### 5.1.1.2 Padrão AAA e Determinismo
 
@@ -2372,15 +2526,15 @@ Dessa forma, a adoção do padrão AAA combinada ao determinismo contribui para 
 
 ### 5.1.2 Testes unitários de service
 
-Os testes unitários da camada Service verificam, de forma isolada, as regras de negócio que ficam entre os controllers e os repositories. Essa camada concentra decisões importantes do sistema, como validação de dados obrigatórios, aplicação de regras de recadastro, controle de arquivamento lógico, restrições de geolocalização/fotos e avaliação de risco crítico.
+Os testes unitários da camada Service verificam, de forma isolada, as regras de negócio que ficam entre os controllers e os repositories. Essa camada concentra decisões importantes do sistema, como validação de dados obrigatórios, vínculo entre família, pessoa e moradia, controle de arquivamento lógico, restrições para responsáveis, operações transacionais, validação de fotos e integração controlada com storage.
 
-Esses testes são feitos para garantir que as regras documentadas no WAD continuem funcionando mesmo quando a API, o banco de dados ou a interface mudarem. Para isso, os repositories, transações e serviços externos são substituídos por mocks, permitindo validar apenas o comportamento do Service. Essa abordagem torna os testes mais rápidos, determinísticos e adequados para evidenciar cobertura de regra de negócio sem depender de infraestrutura externa.
+Esses testes são feitos para garantir que as regras documentadas no WAD continuem funcionando mesmo quando a API, o banco de dados ou a interface mudarem. Para isso, repositories, transações e serviços externos são substituídos por mocks, permitindo validar apenas o comportamento do Service. Essa abordagem torna os testes mais rápidos, determinísticos e adequados para evidenciar cobertura de regra de negócio sem depender de infraestrutura externa.
 
-O conjunto também serve como evidência de rastreabilidade entre casos de teste e regras de negócio. Os casos prioritários foram nomeados explicitamente no formato `CTxx -> RNxx`, permitindo demonstrar quais regras foram cobertas, qual caminho feliz foi validado e qual caminho de falha foi exercitado.
+O conjunto também serve como evidência de rastreabilidade entre casos de teste e regras de negócio. A suíte está centralizada em `src/geoRisco/src/tests`, separando os arquivos de teste dos arquivos que implementam a lógica do backend. Os casos prioritários são documentados no formato `CTxx -> RNxx`, indicando a regra associada, o arquivo em que a validação ocorre, o caminho feliz e o caminho de falha exercitado.
 
 ## Escopo e execução
 
-Os testes unitários da camada Service ficam em `src/geoRisco/src/services/*.spec.ts`.
+Os testes unitários da camada Service ficam em `src/geoRisco/src/tests/*.service.test.ts`.
 
 Comando de evidência:
 
@@ -2393,9 +2547,9 @@ Caso o comando acima não funcione por restrições do powershell, rode:
 npm.cmd test -- --coverage
 ```
 
-O Jest gera o relatório de cobertura da camada Service em `coverage/services`.
+O Jest gera o relatório de cobertura a partir da configuração `src/geoRisco/jest.config.js`, e a camada Service é avaliada no agrupamento `src/services` do relatório.
 
-A evidência visual da execução do comando `npm test -- --coverage` é apresentada abaixo:
+A evidência visual da execução do comando `npm test -- --coverage`, ou `npm.cmd test -- --coverage` é apresentada abaixo:
 
 ![Evidência da cobertura dos testes unitários de Service](outros/porcentagemTesteService.png)
 
@@ -2424,43 +2578,43 @@ npm test -- --coverage
 
 | Caso | RN | Arquivo | Objetivo |
 |---|---|---|---|
-| CT01 | RN01 | `pessoa.service.spec.ts` | Validar cadastro de pessoa com dados obrigatórios e falha quando o nome está ausente. |
-| CT02 | RN02 | `moradia.service.spec.ts` | Validar alerta de recadastro quando a última atualização tem 365 dias ou mais. |
-| CT03 | RN03 | `familia.service.spec.ts` | Validar arquivamento lógico delegado ao repositório e falha para vínculos inexistentes. |
-| CT04 | RN04 | `moradia.service.spec.ts` e `foto.service.spec.ts` | Validar geolocalização obrigatória e registro de foto com exatamente um dono permitido. |
-| CT05 | RN05 | `moradia.service.spec.ts` | Validar flag de risco crítico quando há histórico de ocorrência e morador vulnerável. |
+| CT01 | RN02 | `familia.service.test.ts` | Validar que uma família ativa não recebe outro responsável ativo diferente. |
+| CT02 | RN01 | `familia.service.test.ts` | Validar que pessoa com parentesco de responsável precisa existir também como responsável. |
+| CT03 | RN06 | `familia.service.test.ts` e `pessoa.service.test.ts` | Validar arquivamento lógico e bloqueios para remoções que violem integridade familiar. |
+| CT04 | RN05 | `moradia.service.test.ts` | Validar cadastro transacional de moradia com localização controlada. |
+| CT05 | RN05 | `moradia.service.test.ts` | Validar montagem da consulta detalhada de moradia com família, pessoas, pets e fotos. |
 
 ## Explicação dos 5 prioritários
 
-**CT01 -> RN01**
-- AAA: arrange cria repositório mockado e payload válido; act chama `PessoaService.cadastrar`; assert verifica retorno e chamada do repositório com nome normalizado, `nomeSocial` nulo e `status` padrão.
-- Determinismo: usa data fixa e mocks, sem banco ou rede.
-- RN coberta: RN01 exige dados essenciais para cadastro de pessoa.
-- Caminho de falha: payload sem nome rejeita com `HttpError 400` e não chama o repositório.
+**CT01 -> RN02**
+- AAA: arrange cria família existente, pessoa com parentesco de responsável e responsável ativo diferente; act chama `FamiliaService.vincularPessoa`; assert verifica rejeição com conflito.
+- Determinismo: usa repositories mockados e dados fixos.
+- RN coberta: RN02 exige responsável único por família ativa.
+- Caminho de falha: tentativa de vincular outro responsável retorna `HttpError 409`.
 
-**CT02 -> RN02**
-- AAA: arrange define data de referência fixa; act chama `MoradiaService.deveAlertarRecadastro`; assert compara `true` para 365 dias e `false` para 364 dias.
-- Determinismo: a data de referência é injetada no teste.
-- RN coberta: RN02 exige alerta para fichas sem atualização há 365 dias.
-- Caminho de falha: data inválida rejeita com `HttpError 400`.
+**CT02 -> RN01**
+- AAA: arrange cria família existente e pessoa marcada como responsável, mas sem registro correspondente na tabela de responsáveis; act chama `FamiliaService.vincularPessoa`; assert verifica erro controlado.
+- Determinismo: usa mocks de família e pessoa, sem banco real.
+- RN coberta: RN01 exige que a família ativa possua responsável válido e completo.
+- Caminho de falha: responsável incompleto retorna `HttpError 400`.
 
-**CT03 -> RN03**
-- AAA: arrange cria família existente e repositório mockado; act chama `FamiliaService.remover`; assert verifica delegação para `delete`, que no banco é soft delete.
+**CT03 -> RN06**
+- AAA: arrange cria entidade existente e repository mockado; act chama métodos de remoção dos services; assert verifica delegação para `delete` ou rejeição quando a remoção quebra uma regra de integridade.
 - Determinismo: usa apenas mocks de repositório.
-- RN coberta: RN03 preserva histórico por arquivamento lógico.
-- Caminho de falha: vínculo pessoa-família ou família-moradia inexistente retorna `HttpError 404`.
+- RN coberta: RN06 preserva histórico por arquivamento lógico e evita exclusão física.
+- Caminho de falha: remoção inválida retorna `HttpError 404` ou conflito de integridade quando aplicável.
 
-**CT04 -> RN04**
-- AAA: arrange prepara moradia com latitude/longitude e transação mockada; act chama `MoradiaService.cadastrar`; assert verifica commit e persistência com localização. O teste de foto prepara uma moradia existente, chama `FotoService.cadastrarNaMoradia` e confere exatamente um dono.
+**CT04 -> RN05**
+- AAA: arrange prepara payload de moradia com localização e client transacional mockado; act chama `MoradiaService.cadastrar`; assert verifica criação da localização, criação da moradia e conclusão da transação.
 - Determinismo: coordenadas, payloads e transação são fixos e mockados.
-- RN coberta: RN04 exige geolocalização no cadastro de moradia e restringe fotos ao imóvel/pet.
-- Caminho de falha: latitude inválida impede transação; foto sem dono ou com dois donos retorna `HttpError 400`.
+- RN coberta: RN05 exige captura e confirmação de geolocalização da moradia.
+- Caminho de falha: se a moradia criada não puder ser recuperada na confirmação, o service executa ROLLBACK e retorna erro controlado.
 
 **CT05 -> RN05**
-- AAA: arrange cria entrada com histórico de ocorrência e moradores; act chama `MoradiaService.avaliarRiscoCritico`; assert verifica flag `true` para mobilidade reduzida/acamado.
-- Determinismo: entrada em memória, sem banco ou clock.
-- RN coberta: RN05 exige flag de risco crítico quando histórico de ocorrência e vulnerabilidade coexistem.
-- Caminho de falha: sem histórico ou sem vulnerabilidade a flag permanece `false`.
+- AAA: arrange prepara moradia existente, famílias vinculadas, pessoas, pets e fotos mockadas; act chama `MoradiaService.getDetalhes`; assert verifica a árvore consolidada retornada.
+- Determinismo: todos os dados são fixtures em memória, sem banco, rede ou relógio real.
+- RN coberta: RN05 sustenta a consulta georreferenciada e detalhada da moradia para uso operacional.
+- Caminho de falha: quando dependências auxiliares não são configuradas, o service retorna erro controlado em vez de produzir resposta incompleta.
 
 ### 5.1.3 Testes de Integração de Endpoints
 
@@ -2526,7 +2680,7 @@ Os testes de integração devem ser implementados exercitando a aplicação Expr
 Como os testes de integração dependem da API montada, recomenda-se criar uma suíte separada, por exemplo:
 
 ```txt
-src/geoRisco/src/tests/endpoints.integration.spec.ts
+src/geoRisco/src/tests/endpoints.integration.test.ts
 
 ```
 
@@ -2539,6 +2693,103 @@ npm install --save-dev supertest @types/supertest
 #### 5.1.3.3 Resultado Esperado
 
 A execução da suíte de testes de integração deve demonstrar que todos os endpoints principais da API possuem cobertura para os cenários de sucesso, validação, conflito de negócio e recurso inexistente, garantindo rastreabilidade entre RFs, RNs, endpoints e casos de teste. Dessa forma, os contratos HTTP documentados permanecem alinhados ao comportamento real da aplicação, reduzindo riscos de regressão e aumentando a confiabilidade da solução.
+
+
+### 5.1.4 Evidências de Execução
+
+As evidências abaixo foram obtidas a partir da execução da suíte automatizada da WebAPI com Jest, TypeScript e Supertest. Os testes estão versionados no repositório na pasta `src/geoRisco/src/tests`, seguindo a nomenclatura `*.service.test.ts` para testes unitários de Service e `api.controller.test.ts` para os testes de integração dos endpoints.
+
+#### 5.1.4.1 Execução da suíte automatizada
+
+Comando executado:
+
+```bash
+npm test -- --no-cache
+```
+
+Resultado observado:
+
+```txt
+Test Suites: 7 passed, 7 total
+Tests:       65 passed, 65 total
+Snapshots:   0 total
+```
+
+Arquivos de teste executados:
+
+| Arquivo | Camada | Tipo |
+|---|---|---|
+| `src/geoRisco/src/tests/pessoa.service.test.ts` | Service | Unitário white-box |
+| `src/geoRisco/src/tests/familia.service.test.ts` | Service | Unitário white-box |
+| `src/geoRisco/src/tests/moradia.service.test.ts` | Service | Unitário white-box |
+| `src/geoRisco/src/tests/pet.service.test.ts` | Service | Unitário white-box |
+| `src/geoRisco/src/tests/foto.service.test.ts` | Service | Unitário white-box |
+| `src/geoRisco/src/tests/foto-storage.service.test.ts` | Service | Unitário white-box |
+| `src/geoRisco/src/tests/api.controller.test.ts` | Controller/Endpoint | Integração black-box via Supertest |
+
+#### 5.1.4.2 Relatório de cobertura
+
+Comando executado:
+
+```bash
+npm test -- --coverage
+```
+
+Resultado observado:
+
+```txt
+Test Suites: 7 passed, 7 total
+Tests:       65 passed, 65 total
+Snapshots:   0 total
+```
+
+Resumo de cobertura por camada:
+
+| Camada | % Statements | % Branch | % Functions | % Lines |
+|---|---:|---:|---:|---:|
+| Controllers | 87.81 | 64.01 | 96.70 | 87.81 |
+| Services | 93.16 | 82.65 | 95.23 | 93.16 |
+| Validations | 61.30 | 67.07 | 74.07 | 61.67 |
+| Models | 92.85 | 100.00 | 100.00 | 92.85 |
+| Projeto completo | 55.57 | 48.52 | 66.01 | 57.78 |
+
+Cobertura individual dos Services:
+
+| Arquivo | % Statements | % Branch | % Functions | % Lines |
+|---|---:|---:|---:|---:|
+| `familia.service.ts` | 96.62 | 79.31 | 100.00 | 96.62 |
+| `foto-storage.service.ts` | 93.93 | 82.35 | 100.00 | 93.93 |
+| `foto.service.ts` | 88.46 | 80.00 | 92.30 | 88.46 |
+| `moradia.service.ts` | 100.00 | 90.00 | 100.00 | 100.00 |
+| `pessoa.service.ts` | 81.35 | 80.55 | 84.61 | 81.35 |
+| `pet.service.ts` | 100.00 | 100.00 | 100.00 | 100.00 |
+
+Assim, a camada Service atende ao critério mínimo de 80% de cobertura, tanto no agregado da camada quanto nos arquivos individuais de Service.
+
+#### 5.1.4.3 Mapeamento CT -> RN -> RF
+
+| Caso | RN | RF relacionado | Evidência automatizada |
+|---|---|---|---|
+| CT01 | RN01 | RF001 | `pessoa.service.test.ts` valida cadastro de pessoa com dados obrigatórios e falha controlada para payload sem nome. |
+| CT02 | RN06 | RF009 | `moradia.service.test.ts` valida arquivamento de moradia e falha `404` ao tentar arquivar moradia inexistente. |
+| CT03 | RN03 | RF014 / RF017 | `familia.service.test.ts` valida remoção/arquivamento lógico e falhas em vínculos inexistentes. |
+| CT04 | RN04 | RF002 / RF018 | `moradia.service.test.ts` e `foto.service.test.ts` validam geolocalização obrigatória e vínculo válido de fotos. |
+| CT05 | RN11 | RF005 | `moradia.service.test.ts` valida busca/detalhamento da moradia por ID com dados consolidados de família, pessoas, pets e fotos. |
+
+#### 5.1.4.4 Evidência dos testes de endpoints
+
+A suíte `api.controller.test.ts` executa requisições HTTP com Supertest contra uma aplicação Express montada em ambiente controlado, usando controllers reais e services mockados. A suíte cobre os principais contratos HTTP implementados para:
+
+| Grupo de endpoints | Exemplos cobertos | Cenários verificados |
+|---|---|---|
+| Pessoas e responsáveis | `/api/pessoas`, `/api/pessoas/:id`, `/api/pessoas/busca`, `/api/responsaveis` | Sucesso, validação `400`, conflito/regra de negócio e `404` |
+| Famílias e vínculos | `/api/familias`, `/api/familias/nucleo`, `/api/familias/:id/pessoas`, `/api/familias/:id/moradias` | Sucesso, validação `400`, conflito `409` e `404` |
+| Moradias | `/api/moradias`, `/api/moradias/:id`, `/api/moradias/:id/detalhes` | Sucesso, validação `400`, erro controlado e `404` |
+| Pets | `/api/pets`, `/api/pets/:id`, `/api/familias/:id/pets` | Sucesso, validação `400`, conflito/regra de negócio e `404` |
+| Fotos e storage | `/api/fotos`, `/api/moradias/:id/fotos`, `/api/pets/:id/fotos`, `/upload-url`, `/signed-url` | Sucesso, validação `400`, falha externa controlada `502` e `404` |
+
+Os endpoints planejados que ainda não existem no backend atual, como `/api/mapa/moradias` e `/api/mapa/calor`, permanecem registrados na matriz como cobertura futura.
+
 
 ## 5.2. Testes de usabilidade (sprint 5)
 
@@ -2650,10 +2901,77 @@ Essa integração posiciona a solução como uma ferramenta operacional de gest�
 Por ser desenvolvida com base no contexto de Santo André e nas necessidades reais da Defesa Civil, a aplicação também se diferencia pela linguagem institucional, pela interface objetiva e pelo alinhamento à LGPD. Em vez de competir por apelo comercial, o GeoRisco se destaca pela legitimidade pública, pela aderência ao serviço essencial prestado e pela capacidade de transformar dados territoriais em decisões rápidas, seguras e justificáveis.
 
 ## 6.5. Business Model Canvas
+A seção de Posicionamento tem como objetivo definir a identidade estratégica do projeto GeoRisco e demonstrar como ele se insere e gera impacto nas operações da instituição parceira. A inclusão do Business Model Canvas (BMC) nesta seção é fundamental, pois ele atua como a ferramenta tática que mapeia, consolida e tangibiliza esse posicionamento de forma estruturada.
 
-*Preencha os nove blocos do Business Model Canvas de forma coerente com as análises realizadas nas seções anteriores: Segmentos de clientes; Proposta de valor; Canais; Relacionamento com clientes; Fontes de receita;*
+No contexto do projeto GeoRisco, o BMC não foca na geração de lucro comercial, mas sim na maximização do impacto social e da eficiência operacional pública. Ele materializa o posicionamento da solução ao detalhar de forma clara e visual como a aplicação web cria e entrega valor para a Defesa Civil do município de Santo André.
 
-*Recursos principais; Atividades principais; Parcerias principais; e estrutura de custos (somente se couber nesse momento da análise com o parceiro).*
+Link do arquivo: https://miro.com/app/board/uXjVHLRyshY=/?share_link_id=86927684222
+
+<table width="100%" border="1" cellspacing="0" cellpadding="10" style="border-collapse: collapse; text-align: left; vertical-align: top; font-family: sans-serif;">
+  <!-- Linha Superior do Canvas -->
+  <tr>
+    <td rowspan="2" colspan="2" width="20%">
+      <strong>🔗 Parcerias Chave</strong><br><br>
+      • SIGA<br>
+      • IPT (Instituto de Pesquisas Tecnológicas)<br>
+      • Órgãos de ajuda humanitária e doações<br>
+      • Donos dos abrigos
+    </td>
+    <td colspan="2" width="20%">
+      <strong>⚡ Atividades Chave</strong><br><br>
+      • Gerenciamento de dados de pessoas e moradias<br>
+      • Controle de moradores e assistidos<br>
+      • Sincronização automática de dados
+    </td>
+    <td rowspan="2" colspan="2" width="20%">
+      <strong>💎 Proposta de Valor</strong><br><br>
+      • Rastreabilidade atualizada de áreas de maior risco ou vulneráveis<br>
+      • Apoio à tomada de decisões estratégicas em situações de emergência<br>
+      • Relatórios automáticos e quantificados<br>
+      • UI simples<br>
+      • Valor social
+    </td>
+    <td colspan="2" width="20%">
+      <strong>❤️ Relacionamento</strong><br><br>
+      • Contato contínuo até a entrega do projeto<br>
+      • Validações constantes por meio de reuniões<br>
+      • Reuniões de validação ao fim de cada Sprint
+    </td>
+    <td rowspan="2" colspan="2" width="20%">
+      <strong>👥 Segmentos de Clientes</strong><br><br>
+      • Agente Operacional<br>
+      • Gerenciador do Sistema e dos Dados
+    </td>
+  </tr>
+  <!-- Linha Intermediária (Recursos e Canais) -->
+  <tr>
+    <td colspan="2">
+      <strong>🛠️ Recursos Chave</strong><br><br>
+      • Base de dados georreferenciada íntegra<br>
+      • Servidores em nuvem para armazenamento dos dados<br>
+      • Equipe DEV, Negócios e Especialistas da Defesa Civil<br>
+      • Repositório com código-fonte no GitLab
+    </td>
+    <td colspan="2">
+      <strong>🚚 Canais</strong><br><br>
+      • WebApp responsivo<br>
+      • Projeto deployado no Git Pages<br>
+      • Documentação completa no arquivo wad.md no repositório
+    </td>
+  </tr>
+  <!-- Linha Inferior (Financeiro dividido perfeitamente ao meio) -->
+  <tr>
+    <td colspan="5" width="50%">
+      <strong>💰 Estrutura de Custos</strong><br><br>
+      • Servidor de deploy do sistema<br>
+      • Servidor de base de dados com suporte georreferenciado
+    </td>
+    <td colspan="5" width="50%">
+      <strong>💳 Fontes de Receita</strong><br><br>
+      • Valor social (projeto sem fins lucrativos, voltado à Defesa Civil)
+    </td>
+  </tr>
+</table>
 
 ## 6.6. Estratégia de Marketing
 

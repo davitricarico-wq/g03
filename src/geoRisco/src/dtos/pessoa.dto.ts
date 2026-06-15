@@ -12,6 +12,7 @@ import type {
 export interface CreatePessoaDto {
     nome: string;
     nomeSocial?: string | null;
+    cpf?: string | null;
     dataDeNascimento: Date;
     parentesco: Parentesco;
     situacaoOcupacional: SituacaoOcupacional;
@@ -24,7 +25,6 @@ export interface CreatePessoaDto {
 export type UpdatePessoaDto = Partial<CreatePessoaDto>;
 
 export interface CreateResponsavelDto extends CreatePessoaDto {
-    cpf?: string | null;
     nis?: string | null;
     renda?: number | null;
     sexo: Sexo;
@@ -52,7 +52,6 @@ export interface BuscarPessoaDto {
 }
 
 export interface PessoaBuscaResultadoDto extends Pessoa {
-    cpf: string | null;
     email: string | null;
     telefone: string | null;
     responsavel: boolean;

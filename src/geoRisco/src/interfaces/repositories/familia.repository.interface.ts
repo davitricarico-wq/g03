@@ -1,5 +1,7 @@
 import type { Queryable } from '../../db/queryable';
 import type {
+    BuscarFamiliaDto,
+    FamiliaBuscaResultadoDto,
     FamiliaMoradiaHistoricoDto,
     MoradiaFamiliaHistoricoDto,
     PessoaFamiliaHistoricoDto
@@ -11,6 +13,7 @@ import type { Pet } from '../../models/pet.model';
 
 export interface IFamiliaRepository {
     getAll(db?: Queryable): Promise<Familia[]>;
+    search(filtros: BuscarFamiliaDto, db?: Queryable): Promise<FamiliaBuscaResultadoDto[]>;
     getById(id: number, db?: Queryable): Promise<Familia | null>;
     create(db?: Queryable): Promise<Familia>;
     delete(id: number, db?: Queryable): Promise<void>;

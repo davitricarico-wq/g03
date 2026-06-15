@@ -1,6 +1,8 @@
 import { pool } from '../db/connection.ts';
 import type {
+    BuscarFamiliaDto,
     CreateNucleoFamiliarDto,
+    FamiliaBuscaResultadoDto,
     FamiliaMoradiaHistoricoDto,
     NucleoFamiliarCriado,
     PessoaFamiliaHistoricoDto,
@@ -14,7 +16,7 @@ import type { IMoradiaRepository } from '../interfaces/repositories/moradia.repo
 import type { IPessoaRepository } from '../interfaces/repositories/pessoa.repository.interface';
 import type { IPetRepository } from '../interfaces/repositories/pet.repository.interface';
 import type { IFamiliaService } from '../interfaces/services/familia.service.interface';
-import type { Familia, FamiliaMoradia, PessoaFamilia } from '../models/familia.model';
+import type { Familia, FamiliaMoradia, PessoaFamilia, PessoaFamiliaRemovida } from '../models/familia.model';
 import type { Pessoa } from '../models/pessoa.model';
 import type { Moradia } from '../models/moradia.model';
 import type { Pet } from '../models/pet.model';
@@ -43,6 +45,10 @@ export class FamiliaService implements IFamiliaService {
 
     async getAll(): Promise<Familia[]> {
         return this.familiaRepo.getAll();
+    }
+
+    async buscar(filtros: BuscarFamiliaDto): Promise<FamiliaBuscaResultadoDto[]> {
+        return this.familiaRepo.search(filtros);
     }
 
     async getById(id: number): Promise<Familia> {
@@ -104,11 +110,18 @@ export class FamiliaService implements IFamiliaService {
         return this.familiaRepo.vincularPessoa(idFamilia, data.idPessoa, data.dataEntrada ?? null);
     }
 
-    async removerPessoa(idFamilia: number, idPessoa: number): Promise<PessoaFamilia> {
+    async removerPessoa(idFamilia: number, idPessoa: number): Promise<PessoaFamiliaRemovida> {
         await this.getById(idFamilia);
+        const pessoa = await this.pessoaRepo.getById(idPessoa);
         const vinculo = await this.familiaRepo.removerPessoa(idFamilia, idPessoa);
         if (!vinculo) {
             throw new HttpError(404, 'Vínculo pessoa-família ativo não encontrado');
+        }
+        if (pessoa && isParentescoResponsavel(pessoa.parentesco)) {
+            return {
+                ...vinculo,
+                aviso: 'A pessoa removida era responsável da família. Um novo responsável deve ser registrado.'
+            };
         }
         return vinculo;
     }
@@ -119,6 +132,16 @@ export class FamiliaService implements IFamiliaService {
         const moradia = await this.moradiaRepo.getById(data.idMoradia);
         if (!moradia) {
             throw new HttpError(404, 'Moradia não encontrada');
+        }
+        const familiasAtivasNaMoradia = await this.familiaRepo.getFamiliasByMoradia(data.idMoradia);
+        if (familiasAtivasNaMoradia.length > 0) {
+            const jaVinculadaNestaFamilia = familiasAtivasNaMoradia.some((familia) => familia.id === idFamilia);
+            throw new HttpError(
+                409,
+                jaVinculadaNestaFamilia
+                    ? 'Família já está vinculada a esta moradia'
+                    : 'Moradia já possui família ativa'
+            );
         }
         return this.familiaRepo.vincularMoradia(idFamilia, data.idMoradia, data.dataEntrada ?? null, data.status ?? null);
     }
@@ -140,24 +163,31 @@ export class FamiliaService implements IFamiliaService {
         try {
             await client.query('BEGIN');
 
-            const localizacao = await this.moradiaRepo.createLocalizacao(data.localizacao, client);
-            const moradia = await this.moradiaRepo.create(
-                {
-                    ...data.moradia,
-                    idLocalizacao: localizacao.id,
-                    status: data.moradia.status ?? 'Ativa',
-                    pavimentos: data.moradia.pavimentos ?? 1
-                },
-                client
-            );
             const familia = await this.familiaRepo.create(client);
-            await this.familiaRepo.vincularMoradia(
-                familia.id,
-                moradia.id,
-                dataEntrada,
-                data.statusMoradiaFamilia ?? null,
-                client
-            );
+            const localizacao = data.localizacao && data.moradia
+                ? await this.moradiaRepo.createLocalizacao(data.localizacao, client)
+                : null;
+            const moradia = localizacao && data.moradia
+                ? await this.moradiaRepo.create(
+                    {
+                        ...data.moradia,
+                        idLocalizacao: localizacao.id,
+                        status: data.moradia.status ?? 'Ativa',
+                        pavimentos: data.moradia.pavimentos ?? 1
+                    },
+                    client
+                )
+                : null;
+
+            if (moradia) {
+                await this.familiaRepo.vincularMoradia(
+                    familia.id,
+                    moradia.id,
+                    dataEntrada,
+                    data.statusMoradiaFamilia ?? null,
+                    client
+                );
+            }
 
             const responsavelPessoa = await this.pessoaRepo.create(
                 {
@@ -227,6 +257,9 @@ export class FamiliaService implements IFamiliaService {
             }
 
             for (const foto of data.fotos ?? []) {
+                if (!moradia) {
+                    throw new HttpError(400, 'Fotos da moradia exigem uma moradia cadastrada');
+                }
                 fotos.push(
                     await this.fotoRepo.createForMoradia(
                         moradia.id,

@@ -10,6 +10,10 @@ export interface PessoaFamilia {
     dataSaida: Date | null;
 }
 
+export interface PessoaFamiliaRemovida extends PessoaFamilia {
+    aviso?: string;
+}
+
 export interface FamiliaMoradia {
     idFamilia: number;
     idMoradia: number;

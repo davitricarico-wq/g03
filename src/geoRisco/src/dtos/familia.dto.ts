@@ -24,8 +24,8 @@ export interface VincularMoradiaFamiliaDto {
 }
 
 export interface CreateNucleoFamiliarDto {
-    localizacao: CreateLocalizacaoDto;
-    moradia: CreateMoradiaDto;
+    localizacao?: CreateLocalizacaoDto;
+    moradia?: CreateMoradiaDto;
     responsavel: CreateResponsavelDto;
     dependentes?: CreatePessoaDto[];
     pets?: CreatePetSemFamiliaDto[];
@@ -35,13 +35,38 @@ export interface CreateNucleoFamiliarDto {
 }
 
 export interface NucleoFamiliarCriado {
-    localizacao: Localizacao;
-    moradia: Moradia;
+    localizacao: Localizacao | null;
+    moradia: Moradia | null;
     familia: Familia;
     responsavel: Responsavel;
     dependentes: Pessoa[];
     pets: Pet[];
     fotos: Foto[];
+}
+
+export interface BuscarFamiliaDto {
+    termo?: string;
+    bairro?: string;
+}
+
+export interface FamiliaBuscaResultadoDto {
+    id: number;
+    responsavel: {
+        id: number;
+        nome: string;
+        cpf: string | null;
+    } | null;
+    bairro: string | null;
+    totalPessoas: number;
+    totalPets: number;
+    prioridadeTipos: string[];
+    prioridadeCondicoes: string[];
+    grupos: {
+        idoso: boolean;
+        crianca: boolean;
+        gestante: boolean;
+        doencaCronica: boolean;
+    };
 }
 
 export interface PessoaFamiliaHistoricoDto {
