@@ -1,7 +1,6 @@
 import { FamiliaService } from '../services/familia.service';
 import { pool } from '../db/connection.ts';
 import { HttpError } from '../errors/http-error';
-import * as validations from '../validations/familia.validation';
 
 // Mocking de dependências globais do arquivo
 jest.mock('../db/connection.ts', () => ({
@@ -44,6 +43,7 @@ describe('FamiliaService - Suíte Completa', () => {
             getHistoricoPessoas: jest.fn(),
             getMoradias: jest.fn(),
             getHistoricoMoradias: jest.fn(),
+            getFamiliasByMoradia: jest.fn(),
             vincularPessoa: jest.fn(),
             getResponsavelAtivo: jest.fn(),
             removerPessoa: jest.fn(),
@@ -149,6 +149,7 @@ describe('FamiliaService - Suíte Completa', () => {
         it('Deve vincular moradia com sucesso', async () => {
             familiaRepoMock.getById.mockResolvedValue({ id: 1 });
             moradiaRepoMock.getById.mockResolvedValue({ id: 2 });
+            familiaRepoMock.getFamiliasByMoradia.mockResolvedValue([]);
             familiaRepoMock.vincularMoradia.mockResolvedValue({ id: 100 });
 
             const res = await service.vincularMoradia(1, { idMoradia: 2, dataEntrada: undefined, status: 'Atual' });
@@ -224,7 +225,7 @@ describe('FamiliaService - Suíte Completa', () => {
             const res = await service.cadastrarNucleoFamiliar(payload);
 
             expect(res.familia.id).toBe(300);
-            expect(res.moradia.id).toBe(200);
+            expect(res.moradia!.id).toBe(200);
             expect(res.responsavel.id).toBe(500);
             expect(res.dependentes).toHaveLength(1);
             expect(res.pets).toHaveLength(1);

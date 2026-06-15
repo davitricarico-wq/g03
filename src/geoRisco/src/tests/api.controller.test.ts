@@ -271,7 +271,8 @@ describe('Controller endpoints - black-box via Supertest', () => {
                 removerPessoa: jest.fn(),
                 vincularMoradia: jest.fn(),
                 removerMoradia: jest.fn(),
-                cadastrarNucleoFamiliar: jest.fn()
+                cadastrarNucleoFamiliar: jest.fn(),
+                buscar: jest.fn()
             };
             app = makeFamiliaRouter(service);
         });

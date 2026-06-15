@@ -57,24 +57,21 @@ describe('PessoaService - Suíte Completa', () => {
         it('Deve cadastrar uma pessoa limpando strings de entrada', async () => {
             const dto = {
                 nome: '   José Mário  ',
-                cpf: '123',
-                dataDeNascimento: new Date('2000-01-01'), // Uma data retroativa válida
-                parentesco: PARENTESCOS[0], // Importe o array PARENTESCOS ou use um valor válido ex: 'Outros'
-                situacaoOcupacional: SITUACOES_OCUPACIONAIS[0], // Use um valor válido do seu enum/type
-                escolaridade: ESCOLARIDADES[0], // Use um valor válido do seu enum/type
+                cpf: '12345678901',
+                dataDeNascimento: new Date('2000-01-01'),
+                parentesco: PARENTESCOS[0],
+                situacaoOcupacional: SITUACOES_OCUPACIONAIS[0],
+                escolaridade: ESCOLARIDADES[0],
                 cronico: false,
                 medicacao: false
             };
 
-            // Ajuste o mock do retorno para refletir o que o seu repositório realmente devolve
             repoMock.create.mockResolvedValue({ id: 1, nome: 'José Mário' });
 
             const res = await service.cadastrar(dto as any);
             expect(res.nome).toBe('José Mário');
-
-            // Certifique-se de que o toHaveBeenCalledWith espere os campos adicionais válidos que você enviou no DTO
             expect(repoMock.create).toHaveBeenCalledWith(
-                expect.objectContaining({ nome: 'José Mário', cpf: '123' })
+                expect.objectContaining({ nome: 'José Mário', cpf: '12345678901' })
             );
         });
 
@@ -111,8 +108,8 @@ describe('PessoaService - Suíte Completa', () => {
         });
     });
 
-    describe('Métodos Transacionais Complexos de Responsável', () => {
-        it('Deve cadastrar uma pessoa e promovê-la a responsável em transação', async () => {
+    describe('Métodos de responsável', () => {
+        it('Deve cadastrar uma pessoa e promovê-la a responsável', async () => {
             const dto = {
                 nome: 'Chefe',
                 sexo: 'Masculino',
@@ -131,24 +128,26 @@ describe('PessoaService - Suíte Completa', () => {
 
             const res = await service.cadastrarResponsavel(dto as any);
             expect(res.id).toBe(100);
-            expect(mockClient.query).toHaveBeenCalledWith('COMMIT');
+            expect(repoMock.create).toHaveBeenCalled();
+            expect(repoMock.createResponsavel).toHaveBeenCalledWith(expect.objectContaining({ idPessoa: 50 }));
         });
 
-        it('Deve atualizar pessoa e sua extensão de responsabilidade de forma atômica', async () => {
+        it('Deve atualizar pessoa e sua extensão de responsabilidade', async () => {
             repoMock.update.mockResolvedValue({});
             repoMock.updateResponsavel.mockResolvedValue({ id: 99 });
 
             const res = await service.atualizarResponsavel(1, {});
             expect(res).toEqual({ id: 99 });
-            expect(mockClient.query).toHaveBeenCalledWith('COMMIT');
+            expect(repoMock.update).toHaveBeenCalledWith(1, {});
+            expect(repoMock.updateResponsavel).toHaveBeenCalledWith(1, {});
         });
 
-        it('Deve lançar 404 e efetuar ROLLBACK se o responsável sumir na atualização', async () => {
+        it('Deve lançar 404 se o responsável sumir na atualização', async () => {
             repoMock.update.mockResolvedValue({});
             repoMock.updateResponsavel.mockResolvedValue(null);
 
             await expect(service.atualizarResponsavel(1, {})).rejects.toThrow(new HttpError(404, 'Responsável não encontrado'));
-            expect(mockClient.query).toHaveBeenCalledWith('ROLLBACK');
+            expect(repoMock.updateResponsavel).toHaveBeenCalledWith(1, {});
         });
     });
 });

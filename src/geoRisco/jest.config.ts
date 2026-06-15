@@ -1,15 +1,22 @@
 import type { Config } from 'jest';
 
-const config: Config = {
+export default {
+    preset: 'ts-jest',
     testEnvironment: 'node',
-    testMatch: ['**/*.spec.ts'],
+    roots: ['<rootDir>/src'],
+    testMatch: ['**/*.test.ts', '**/*.spec.ts'],
+    testPathIgnorePatterns: ['/node_modules/', '/dist/'],
+    setupFiles: ['<rootDir>/src/tests/jest.setup.ts'],
+    transform: {
+        '^.+\\.tsx?$': ['ts-jest', {
+            tsconfig: {
+                rewriteRelativeImportExtensions: false,
+            },
+        }],
+    },
     moduleNameMapper: {
-        // Procura por qualquer import de arquivo local que termine com '.ts' 
-        // e remove a extensão para que o Jest encontre o arquivo físico
         '^(\\.\\.?\\/.+)\\.ts$': '$1',
     },
-    collectCoverageFrom: ['src/**/*.ts', '!src/**/*.spec.ts'],
+    collectCoverageFrom: ['src/**/*.ts', '!src/**/*.test.ts', '!src/**/*.spec.ts'],
     clearMocks: true
-};
-
-export default config;
+} satisfies Config;
