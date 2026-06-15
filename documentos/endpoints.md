@@ -15,7 +15,7 @@ Este documento descreve os endpoints HTTP implementados no backend atual do proj
 ### Base URL da API
 
 ```txt
-http://localhost:1234/api
+http://localhost:3000/api
 ```
 
 ### Headers para JSON
@@ -766,7 +766,7 @@ Gera URL assinada de upload para foto de moradia.
   "path": "private/fotos/moradias/1/fachada.jpg",
   "signedUrl": "https://...",
   "token": "...",
-  "expiresIn": 3600
+  "expiresIn": 7200
 }
 ```
 
@@ -818,7 +818,7 @@ Gera URL assinada de upload para foto de pet.
   "path": "private/fotos/pets/1/rex.jpg",
   "signedUrl": "https://...",
   "token": "...",
-  "expiresIn": 3600
+  "expiresIn": 7200
 }
 ```
 
