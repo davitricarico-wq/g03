@@ -1,8 +1,6 @@
 # Inteli - Instituto de Tecnologia e Liderança 
 
-<p align="center">
-<img src="assets/inteli.png">
-</p>
+![Inteli - Instituto de Tecnologia e Liderança](assets/inteli.png)
 
 # Observação: 
 
@@ -169,7 +167,22 @@ Para rodar os testes:
 npm test
 ```
 
-Para habilitar o teste de persistência com banco, defina `RUN_DB_TESTS=true` e mantenha `DATABASE_URL` configurada antes de executar `npm test`.
+Para rodar os testes de integração com banco real (Supabase):
+
+```bash
+cd src/geoRisco
+# Exporte as variáveis do seu projeto Supabase
+export DATABASE_URL="postgresql://<user>:<pass>@<host>:<port>/<db>"
+export SUPABASE_URL="https://<your-project>.supabase.co"
+export SUPABASE_SERVICE_ROLE_KEY="<service-role-key>"
+export RUN_DB_TESTS=true
+
+npm ci
+npm run migrate    # opcional se o schema já estiver aplicado
+npm run test:integration
+```
+
+> Os testes de integração usam transações e fazem `ROLLBACK` ao final, mas exigem um banco real com o schema aplicado.
 
 > Em algumas instalações do Windows, `npm` pode ser bloqueado pela política de execução do PowerShell. Nesse caso, use `npm.cmd install`, `npm.cmd run dev` e `npm.cmd test`.
 
@@ -295,4 +308,3 @@ git push origin feature/minha-melhoria
 ## Licença
 
 Este projeto declara licença **ISC** no `src/geoRisco/package.json`.
-
