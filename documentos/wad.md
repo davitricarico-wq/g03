@@ -479,40 +479,85 @@ As Validações de Campo (VC) definem as restrições de preenchimento obrigató
 
 ## 3.1.6. Matriz RF → RN → Endpoint (sprints 3 a 5)
  
-Matriz de cobertura que demonstra quais RN (Regras de Negócio) e endpoints implementam cada RF (Requisito Funcional). Os endpoints listados abaixo estão implementados no backend e formalizados nos arquivos `documentos/webapi-docs.html` e `documentos/outros/endpoints.md`.
+Matriz de cobertura que demonstra quais RN (Regras de Negócio) e endpoints implementam cada RF (Requisito Funcional). A matriz reflete a numeração atual de requisitos (RF001–RF019, seção 3.1.2) e de regras de negócio (RN01–RN12, seção 3.1.3), e os endpoints estão alinhados com a implementação real do backend (`src/geoRisco/src/routes/`) e com a relação detalhada da seção 3.7, também formalizada em `documentos/webapi-docs.html` e `documentos/endpoints.md`. Cada linha associa um endpoint a um RF; endpoints que atendem a mais de um RF aparecem em mais de uma linha.
  
 | RF | RN associadas | Endpoint | Método |
 |----|---------------|----------|--------|
-| RF001 | RN01, RN02 | `/api/pessoas` | POST |
-| RF001 | RN01, RN02 | `/api/responsaveis` | POST |
-| RF001 | RN01, RN02 | `/api/familias` | POST |
-| RF001 | RN01, RN02 | `/api/familias/nucleo` | POST |
-| RF001 | RN01, RN02 | `/api/familias/{id_familia}/pessoas` | POST |
-| RF002 | RN01, RN04 | `/api/moradias` | POST |
-| RF002 | RN01, RN04 | `/api/familias/{id_familia}/moradias` | POST |
-| RF002 | RN04 | `/api/moradias/{id_moradia}/fotos` | POST |
-| RF002 | RN04 | `/api/moradias/{id_moradia}/fotos/upload-url` | POST |
-| RF002 | RN04 | `/api/moradias/{id_moradia}/fotos` | GET |
-| RF003 | RN01, RN04 | `/api/moradias` | POST |
-| RF004 | N/A | `/api/moradias` | GET |
-| RF005 | RN01, RN05 | `/api/moradias/{id_moradia}` | GET |
-| RF005 | RN01, RN05 | `/api/moradias/{id_moradia}/detalhes` | GET |
-| RF006 | RN02 | `/api/moradias` | GET |
-| RF006 | RN02 | `/api/pessoas/busca` | GET |
-| RF007 | N/A | `/api/familias/{id_familia}/pets` | GET |
-| RF007 | N/A | `/api/familias/{id_familia}/pets` | POST |
-| RF007 | N/A | `/api/pets/{id_pet}` | PUT |
-| RF007 | N/A | `/api/pets/{id_pet}` | GET |
-| RF007 | N/A | `/api/pets/{id_pet}/fotos` | GET |
-| RF007 | N/A | `/api/pets/{id_pet}/fotos/upload-url` | POST |
-| RF007 | N/A | `/api/pets/{id_pet}/fotos` | POST |
-| RF009 | RN03 | `/api/moradias/{id_moradia}` | DELETE |
-| RF009 | RN03 | `/api/familias/{id_familia}/moradias/{id_moradia}` | DELETE |
-| RF010 | RN03 | `/api/pessoas/{id_pessoa}` | DELETE |
-| RF010 | RN03 | `/api/pessoas/inativas` | GET |
-| RF012 | RN01, RN02, RN04 | `/api/pessoas/{id_pessoa}` | PUT |
-| RF012 | RN01, RN02, RN04 | `/api/responsaveis/{id_responsavel}` | PUT |
-| RF012 | RN01, RN02, RN04 | `/api/moradias/{id_moradia}` | PUT |
+| RF001 | RN01, RN02, RN03, RN04 | `/api/pessoas` | POST |
+| RF001 | RN01, RN02, RN03, RN04 | `/api/pessoas` | GET |
+| RF001 | RN01, RN02, RN03, RN04 | `/api/pessoas/{id}` | GET |
+| RF001 | RN01, RN02, RN03, RN04 | `/api/responsaveis` | POST |
+| RF001 | RN01, RN02, RN03, RN04 | `/api/responsaveis` | GET |
+| RF001 | RN01, RN02, RN03, RN04 | `/api/responsaveis/{id}` | GET |
+| RF001 | RN01, RN02, RN03, RN04 | `/api/familias` | POST |
+| RF002 | RN05, RN07, RN08 | `/api/moradias` | POST |
+| RF002 | RN05, RN07, RN08 | `/api/moradias/{id}/fotos` | POST |
+| RF002 | RN05, RN07, RN08 | `/api/moradias/{id}/fotos` | GET |
+| RF003 | RN05 | `/api/moradias` | POST |
+| RF004 | RN08, RN11 | `/api/moradias` | GET |
+| RF005 | RN08, RN10, RN11 | `/api/moradias/{id}` | GET |
+| RF005 | RN08, RN10, RN11 | `/api/moradias/{id}/detalhes` | GET |
+| RF006 | RN11 | `/api/moradias` | GET |
+| RF007 | RN12 | `/api/pets` | GET |
+| RF007 | RN12 | `/api/pets/{id}` | GET |
+| RF007 | RN12 | `/api/pets` | POST |
+| RF007 | RN12 | `/api/pets/{id}` | PUT |
+| RF007 | RN12 | `/api/pets/{id}` | DELETE |
+| RF007 | RN12 | `/api/familias/{id}/pets` | GET |
+| RF007 | RN12 | `/api/familias/{id}/pets` | POST |
+| RF007 | RN12 | `/api/pets/{id}/fotos` | GET |
+| RF007 | RN12 | `/api/pets/{id}/fotos` | POST |
+| RF009 | RN06 | `/api/moradias/{id}` | DELETE |
+| RF010 | RN06 | `/api/pessoas/inativas` | GET |
+| RF010 | RN06 | `/api/pessoas/{id}` | DELETE |
+| RF010 | RN06 | `/api/responsaveis/{id}` | DELETE |
+| RF012 | RN09, RN10 | `/api/pessoas/{id}` | PUT |
+| RF012 | RN09, RN10 | `/api/responsaveis/{id}` | PUT |
+| RF012 | RN09, RN10 | `/api/moradias/{id}` | PUT |
+| RF013 | — | `/api/familias/nucleo` | POST |
+| RF014 | RN01, RN06 | `/api/familias` | GET |
+| RF014 | RN01, RN06 | `/api/familias/{id}` | GET |
+| RF014 | RN01, RN06 | `/api/familias` | POST |
+| RF014 | RN01, RN06 | `/api/familias/{id}` | DELETE |
+| RF014 | RN01, RN06 | `/api/familias/{id}/pessoas` | GET |
+| RF014 | RN01, RN06 | `/api/familias/{id}/pessoas/historico` | GET |
+| RF014 | RN01, RN06 | `/api/familias/{id}/pessoas` | POST |
+| RF014 | RN01, RN06 | `/api/familias/{id}/pessoas/{pessoaId}` | DELETE |
+| RF014 | RN01, RN06 | `/api/familias/{id}/moradias` | GET |
+| RF014 | RN01, RN06 | `/api/familias/{id}/moradias/historico` | GET |
+| RF014 | RN01, RN06 | `/api/familias/{id}/moradias` | POST |
+| RF014 | RN01, RN06 | `/api/familias/{id}/moradias/{moradiaId}` | DELETE |
+| RF014 | RN01, RN06 | `/api/familias/{id}/pets` | GET |
+| RF014 | RN01, RN06 | `/api/familias/{id}/pets` | POST |
+| RF014 | RN01, RN06 | `/api/moradias/{id}/familias/historico` | GET |
+| RF014 | RN01, RN06 | `/api/responsaveis` | GET |
+| RF014 | RN01, RN06 | `/api/responsaveis/{id}` | GET |
+| RF014 | RN01, RN06 | `/api/responsaveis` | POST |
+| RF014 | RN01, RN06 | `/api/responsaveis/{id}` | PUT |
+| RF015 | RN08 | `/api/moradias/{id}` | PUT |
+| RF016 | RN11 | `/api/pessoas` | GET |
+| RF016 | RN11 | `/api/pessoas/busca` | GET |
+| RF017 | RN01, RN03, RN10 | `/api/familias` | POST |
+| RF017 | RN01, RN03, RN10 | `/api/familias/{id}/moradias` | POST |
+| RF018 | RN07 | `/api/fotos` | GET |
+| RF018 | RN07 | `/api/fotos/{id}` | GET |
+| RF018 | RN07 | `/api/fotos/{id}/signed-url` | GET |
+| RF018 | RN07 | `/api/fotos/{id}` | PUT |
+| RF018 | RN07 | `/api/fotos/{id}` | DELETE |
+| RF018 | RN07 | `/api/moradias/{id}/fotos` | GET |
+| RF018 | RN07 | `/api/moradias/{id}/fotos/upload-url` | POST |
+| RF018 | RN07 | `/api/moradias/{id}/fotos` | POST |
+| RF018 | RN07 | `/api/moradias/{id}/fotos/{fotoId}` | DELETE |
+| RF018 | RN07 | `/api/pets/{id}/fotos` | GET |
+| RF018 | RN07 | `/api/pets/{id}/fotos/upload-url` | POST |
+| RF018 | RN07 | `/api/pets/{id}/fotos` | POST |
+| RF018 | RN07 | `/api/pets/{id}/fotos/{fotoId}` | DELETE |
+| RF019 | RN10 | `/api/pessoas/{id}` | PUT |
+| RF019 | RN10 | `/api/responsaveis/{id}` | PUT |
+| RF019 | RN10 | `/api/moradias/{id}` | PUT |
+| RF019 | RN10 | `/api/pets/{id}` | PUT |
+
+> **RFs sem endpoint nesta entrega:** RF008 (Visualização de Mapa de Calor — *Futuro*) e RF011 (Alerta Automático de Recadastro — *Planejado*) ainda não possuem endpoints no backend e serão incluídos quando implementados. O status de cada RF (Implementado, Parcial, Planejado, Futuro, A validar) consta na seção 3.1.2.
  
 ---
 
@@ -1941,7 +1986,7 @@ A consulta #4 só realiza a atualização quando o registro informado existe no 
 
 ## 3.7. WebAPI e endpoints (sprints 3 e 4)
 
-A WebAPI do GeoRisco foi implementada em Express e expõe endpoints HTTP sob o prefixo `/api`, com contratos JSON para cadastro, consulta, atualização, remoção lógica, vínculos familiares, registro de pets e gerenciamento de metadados de fotos. A documentação de referência dos contratos está consolidada em [`documentos/outros/endpoints.md`](outros/endpoints.md), enquanto a versão navegável da documentação está em [`documentos/webapi-docs.html`](webapi-docs.html).
+A WebAPI do GeoRisco foi implementada em Express e expõe endpoints HTTP sob o prefixo `/api`, com contratos JSON para cadastro, consulta, atualização, remoção lógica, vínculos familiares, registro de pets e gerenciamento de metadados de fotos. A documentação de referência dos contratos está consolidada em [`documentos/endpoints.md`](endpoints.md), enquanto a versão navegável da documentação está em [`documentos/webapi-docs.html`](webapi-docs.html).
 
 O levantamento atual foi conferido contra os arquivos de rotas e controllers do backend (`pessoa.routes.ts`, `moradia.routes.ts`, `familia.routes.ts`, `pet.routes.ts` e `foto.routes.ts`). No estado atual do projeto, existem **52 endpoints implementados no prefixo `/api`**, distribuídos entre Pessoas, Responsáveis, Moradias, Famílias, Pets e Fotos. Também existem rotas HTML auxiliares fora do prefixo `/api`, usadas para renderização de telas EJS e listagem JSON legada de pessoas.
 
@@ -1949,7 +1994,7 @@ O levantamento atual foi conferido contra os arquivos de rotas e controllers do 
 
 | Item | Padrão adotado |
 |------|----------------|
-| Base URL local | `http://localhost:1234/api` |
+| Base URL local | `http://localhost:3000/api` |
 | Formato principal | JSON |
 | Header esperado em requisições com corpo | `Content-Type: application/json` |
 | Formato de erro atual | `{ "error": "Mensagem do erro" }` |
