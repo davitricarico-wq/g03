@@ -50,7 +50,7 @@ O objetivo do MVP, conforme o TAPI e o WAD do projeto, é viabilizar o mapeament
 - Cadastro e manutenção de pets vinculados a famílias;
 - Registro de fotos vinculadas a moradias ou pets;
 - Geração de URLs assinadas de upload e acesso para fotos usando Supabase Storage;
-- Documentação de apoio em `documentos/wad.md` e `documentos/outros/endpoints.md`.
+- Documentação de apoio em `documentos/wad.md` e `documentos/endpoints.md`.
 
 ## Tecnologias Utilizadas
 
@@ -222,7 +222,7 @@ Exemplo de requisição:
 curl http://localhost:3000/api/pessoas
 ```
 
-A documentação detalhada de endpoints está em `documentos/outros/endpoints.md`.
+A documentação detalhada de endpoints está em `documentos/endpoints.md`.
 
 > Observação: o TAPI informa que autenticação de usuários não faz parte do escopo acadêmico inicial, e o código atual não possui middleware de login/autorização.
 
