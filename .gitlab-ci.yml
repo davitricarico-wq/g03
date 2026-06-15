@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 stages:
   - test
   - build
@@ -83,15 +82,3 @@ frontend:build:
     expire_in: 1 week
     paths:
       - src/frontend/dist/
-=======
-# The Docker image that will be used to build your app
-image: node:lts
-create-pages:
-  pages:
-    # The folder that contains the files to be exposed at the Page URL
-    publish: public
-  rules:
-    # This ensures that only pushes to the default branch will trigger
-    # a pages deploy
-    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
->>>>>>> 407c8ecbd0866ed02f268756e825bc2d661f90ed
