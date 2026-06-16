@@ -89,6 +89,7 @@ pages:
   stage: build
   rules:
     - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+    - if: '$CI_COMMIT_BRANCH == "feat/deploy"'   # deploy provisório antes do merge
   cache:
     key:
       files:
