@@ -2799,7 +2799,12 @@ Os endpoints planejados que ainda não existem no backend atual, como `/api/mapa
 
 ### 5.2.2. Relatório de testes SUS (System Usability Scale)
 
-*Posicione aqui o relatório dos testes SUS realizados.*
+Os testes de usabilidade utilizando a metodologia **SUS (System Usability Scale)** ainda não foram realizados nesta fase do projeto. A aplicação encontra-se em processo de desenvolvimento e refinamento de funcionalidades, motivo pelo qual a avaliação formal da experiência do usuário será conduzida em uma etapa posterior.
+
+O objetivo dos testes SUS será medir a percepção de usabilidade do sistema por meio de um questionário padronizado composto por 10 afirmações, respondidas em escala **Likert de 1 a 5**. A aplicação do instrumento permitirá avaliar aspectos como facilidade de uso, intuitividade da interface, curva de aprendizado e satisfação geral dos usuários.
+
+Os participantes previstos para a realização dos testes serão usuários representativos do público-alvo da solução, incluindo agentes de campo e gestores operacionais da Defesa Civil. Após a coleta das respostas, será calculada a pontuação SUS de cada participante e a média geral do sistema, possibilitando identificar pontos fortes e oportunidades de melhoria na interface. Os resultados obtidos, juntamente com a análise das métricas de usabilidade e as ações corretivas propostas, serão documentados nesta seção em futuras versões deste documento.
+
 
 # <a name="c6"></a>6. Estudo de Mercado e Plano de Marketing (sprint 4)
 
