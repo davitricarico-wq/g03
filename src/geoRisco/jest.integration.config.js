@@ -2,10 +2,10 @@
 module.exports = {
     preset: 'ts-jest',
     testEnvironment: 'node',
-    roots: ['<rootDir>/src'],
-    testMatch: ['**/*.test.ts', '**/*.spec.ts'],
-    testPathIgnorePatterns: ['/node_modules/', '/dist/', '/src/tests/integration/'],
-    setupFiles: ['<rootDir>/src/tests/jest.setup.ts'],
+    roots: ['<rootDir>/src/tests/integration'],
+    testMatch: ['**/*.integration.test.ts'],
+    testPathIgnorePatterns: ['/node_modules/', '/dist/'],
+    setupFilesAfterEnv: ['<rootDir>/src/tests/integration/jest.setup.ts'],
     transform: {
         '^.+\\.tsx?$': ['ts-jest', {
             tsconfig: {
@@ -16,6 +16,8 @@ module.exports = {
     moduleNameMapper: {
         '^(\\.\\.?\\/.+)\\.ts$': '$1',
     },
-    collectCoverageFrom: ['src/**/*.ts', '!src/**/*.test.ts', '!src/**/*.spec.ts'],
-    clearMocks: true
+    clearMocks: true,
+    testTimeout: 30000,
+    maxWorkers: 1,
 };
+
