@@ -1968,6 +1968,41 @@ A consulta somente retorna registros quando a moradia estiver em uma das condiç
 
 A consulta retorna resultados sempre que pelo menos uma das condições de busca textual for satisfeita.
 
+---
+
+| #3                                 | UPDATE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Expressão SQL**                  | `UPDATE moradia SET status = 'Ativa', ultima_atualizacao = CURRENT_DATE WHERE id_moradia = :id_moradia AND status IN ('Interditada', 'Área de Risco Evacuada');`                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| **Descrição da consulta**          | Reativa uma moradia específica quando ela estiver em um dos estados operacionais que permitem retorno ao funcionamento normal.                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| **Expansão lógica do operador IN** | `status IN ('Interditada', 'Área de Risco Evacuada')` ≡ `(status = 'Interditada' OR status = 'Área de Risco Evacuada')`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| **Proposições lógicas**            | $A$: O identificador informado corresponde à moradia (`id_moradia = :id_moradia`) <br> $B$: A moradia está interditada (`status = 'Interditada'`) <br> $C$: A moradia está em área de risco evacuada (`status = 'Área de Risco Evacuada'`)                                                                                                                                                                                                                                                                                                                                                               |
+| **Expressão lógica proposicional** | $A \land (B \lor C)$                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| **Conectivos utilizados**          | Conjunção ($\land$) e Disjunção ($\lor$)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| **Tabela Verdade**                 | <table><thead><tr><th>A</th><th>B</th><th>C</th><th>B∨C</th><th>A∧(B∨C)</th></tr></thead><tbody><tr><td>F</td><td>F</td><td>F</td><td>F</td><td>F</td></tr><tr><td>F</td><td>F</td><td>V</td><td>V</td><td>F</td></tr><tr><td>F</td><td>V</td><td>F</td><td>V</td><td>F</td></tr><tr><td>F</td><td>V</td><td>V</td><td>V</td><td>F</td></tr><tr><td>V</td><td>F</td><td>F</td><td>F</td><td>F</td></tr><tr><td>V</td><td>F</td><td>V</td><td>V</td><td>V</td></tr><tr><td>V</td><td>V</td><td>F</td><td>V</td><td>V</td></tr><tr><td>V</td><td>V</td><td>V</td><td>V</td><td>V</td></tr></tbody></table> |
+
+A atualização somente ocorre quando o identificador informado corresponde ao registro desejado e a moradia se encontra em pelo menos um dos estados previstos pela regra de negócio.
+
+---
+
+| #4                                 | UPDATE                                                                                                                                |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| **Expressão SQL**                  | `UPDATE cidadao SET status_cadastro = FALSE WHERE NOT (telefone IS NULL);`                                                            |
+| **Descrição da consulta**          | Atualiza registros de cidadãos que possuem telefone cadastrado, demonstrando a utilização explícita do operador de negação lógica.    |
+| **Proposições lógicas**            | $A$: O telefone é nulo (`telefone IS NULL`)                                                                                           |
+| **Expressão lógica proposicional** | $\neg A$                                                                                                                              |
+| **Conectivos utilizados**          | Negação ($\neg$)                                                                                                                      |
+| **Tabela Verdade**                 | <table><thead><tr><th>A</th><th>¬A</th></tr></thead><tbody><tr><td>V</td><td>F</td></tr><tr><td>F</td><td>V</td></tr></tbody></table> |
+
+A atualização somente é executada quando a proposição "telefone é nulo" for falsa, isto é, quando existir um telefone cadastrado para o cidadão.
+
+---
+
+### Considerações finais
+
+As consultas apresentadas exploram diferentes operadores e estruturas lógicas disponíveis em SQL, incluindo `AND`, `OR`, `NOT`, `LIKE` e `IN`. Em todos os casos, cada predicado foi representado por uma proposição simples independente, permitindo a construção correta das expressões proposicionais e a elaboração de tabelas verdade compatíveis com o comportamento real do SGBD.
+
+Essa abordagem evidencia a relação entre lógica matemática e bancos de dados, demonstrando como a lógica proposicional pode ser utilizada para compreender, validar e documentar regras de negócio implementadas em consultas SQL.
+
 
 ## 3.7. WebAPI e endpoints (sprints 3 e 4)
 
