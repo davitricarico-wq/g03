@@ -3018,8 +3018,17 @@ Tivemos alterações nas Personas (ambas), User Stories (todas), RF, RNF e RN. D
 
 1. 19/05/2026 - Davi Viana Tricarico - Seção 3.3 Wireframes: Ajuste na documentação e nos próprios wireframes de cadastro, com direito à adição de um menu de navegação entre as seções; alteração da barra de navegação entre telas (barra retrátil substituida por uma barra parcialmente opaca e estática); adição de uma opção que permite adicionar novos moradores e animais.
 
+2. *Sem data específica* - `início` - Eduardo Totti Thomé - Seção 2.3 User Stories: Início do alinhamento de escopo através da reformulação de US mais precisamente definidos; Seção 3.1 Requisitos Funcionais (RF's) e Regras de Negócio (RN's): Alinhamento de escopo através da reformulação de alguns RF's e RN's, exclusão de outros ou adição de novos. (obs: vale ressaltar que a equipe não teve uma boa estimativa do tempo desta tarefa. Por isso esta atualização está registrada com a tag: `início`)
+
 ### Sprint 4
 
+1. 17/06/2026 - Davi Viana Tricarico e Lucas Bianchezzi - Seção 3.5 Protótipo de Alta Fidelidade: Conversão de três telas de *.png exportado* para um *design figma*, dentro do próprio documento de edição figma; adição de navegabilidade entre as telas, aprensentando apenas os principais fluxos de telas. (Obs: as maiores alterações foram feitas apenas no documento figma. Na seção 3.5 não foi alterado nada, mas vale ressaltar que link do documento figma, lá presente, está atualizado).
+
+2. *Sem data específica* - `final` - Eduardo Totti Thomé - Seção 2.3 User Stories: Finalização do alinhamento de escopo, apresentando a reformulação das existentes e adição de novas US; Seção 3.1 Requisitos Funcionais (RF's) e Regras de Negócio (RN's): Finalização do alinhamento de escopo, apresentando ajuste ou exclusão de RF's e RN's existentes e adição de novos RF's e RN's. (obs: vale ressaltar que a equipe não teve uma boa estimativa do tempo desta tarefa. Por isso esta atualização está registrada com a tag: `final`)
+
+3. 12/06/2026 - Davi Viana Tricarico - Seção 3.6.1 e 3.6.2 Modelo Entidade-Relacionamento e Diagrama Entidade-Relacionamento (MER e DER): **O QUE FOI EXCLUIDO, ADICIONADO OU MODIFICADO**
+
+4. **DATA** - Davi Viana Tricarico - Seção ??? - Atualizações no diagrama de arquitetura
 
 ### Sprint 5
 
