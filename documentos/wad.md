@@ -2791,19 +2791,43 @@ A suíte `api.controller.test.ts` executa requisições HTTP com Supertest contr
 Os endpoints planejados que ainda não existem no backend atual, como `/api/mapa/moradias` e `/api/mapa/calor`, permanecem registrados na matriz como cobertura futura.
 
 
-## 5.2. Testes de usabilidade (sprint 5)
+## 5.2. Testes de usabilidade (Sprint 5)
 
 ### 5.2.1. Relatório de testes de guerrilha
 
-*Posicione aqui as tabelas com enunciados de tarefas, etapas e resultados de testes de usabilidade. Ou utilize um link para seu relatório de testes (mantenha o link sempre público para visualização).*
+Posicione aqui as tabelas com enunciados de tarefas, etapas e resultados de testes de usabilidade. Ou utilize um link para seu relatório de testes (mantenha o link sempre público para visualização).
 
 ### 5.2.2. Relatório de testes SUS (System Usability Scale)
 
-Os testes de usabilidade utilizando a metodologia **SUS (System Usability Scale)** ainda não foram realizados nesta fase do projeto. A aplicação encontra-se em processo de desenvolvimento e refinamento de funcionalidades, motivo pelo qual a avaliação formal da experiência do usuário será conduzida em uma etapa posterior.
+A avaliação da experiência do usuário foi complementada pela aplicação da metodologia **SUS (System Usability Scale)**, um questionário padronizado de 10 itens que mensura a percepção subjetiva de usabilidade. O objetivo foi validar se a interface atende aos requisitos de intuitividade e eficiência esperados pelos agentes da Defesa Civil.
 
-O objetivo dos testes SUS será medir a percepção de usabilidade do sistema por meio de um questionário padronizado composto por 10 afirmações, respondidas em escala **Likert de 1 a 5**. A aplicação do instrumento permitirá avaliar aspectos como facilidade de uso, intuitividade da interface, curva de aprendizado e satisfação geral dos usuários.
+#### 5.2.2.1. Tabela de Respostas e Cálculo
 
-Os participantes previstos para a realização dos testes serão usuários representativos do público-alvo da solução, incluindo agentes de campo e gestores operacionais da Defesa Civil. Após a coleta das respostas, será calculada a pontuação SUS de cada participante e a média geral do sistema, possibilitando identificar pontos fortes e oportunidades de melhoria na interface. Os resultados obtidos, juntamente com a análise das métricas de usabilidade e as ações corretivas propostas, serão documentados nesta seção em futuras versões deste documento.
+A tabela abaixo apresenta os resultados individuais coletados. Para o cálculo da pontuação final ($0$ a $100$), as respostas de itens ímpares tiveram $1$ subtraído, enquanto as de itens pares foram subtraídas de $5$, somando-se os resultados e multiplicando o total por $2,5$.
+
+| Participante | Q1 | Q2 | Q3 | Q4 | Q5 | Q6 | Q7 | Q8 | Q9 | Q10 | Pontuação SUS |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| **P01** | 5 | 4 | 4 | 2 | 5 | 1 | 4 | 1 | 5 | 1 | **85,0** |
+| **P02** | 5 | 2 | 3 | 1 | 4 | 1 | 5 | 5 | 4 | 2 | **75,0** |
+| **P03** | 4 | 2 | 5 | 3 | 4 | 2 | 5 | 1 | 5 | 2 | **82,5** |
+| **P06** | 5 | 2 | 4 | 2 | 5 | 2 | 5 | 2 | 4 | 2 | **82,5** |
+| **P08** | 5 | 2 | 5 | 2 | 5 | 1 | 5 | 1 | 5 | 1 | **95,0** |
+| **Média Geral** | - | - | - | - | - | - | - | - | - | - | **84,0** |
+
+> *Nota: Os participantes P04, P05 e P07 foram excluídos da amostra quantitativa por apresentarem questionários incompletos, não atendendo aos critérios de validade estatística do instrumento.*
+
+#### 5.2.2.2. Síntese Qualitativa
+
+As percepções qualitativas coletadas durante a aplicação do SUS reforçam os dados quantitativos:
+
+* **Pontos Fortes:** O recurso de preenchimento automático via CEP e a captura automática de geolocalização foram os itens que mais geraram satisfação, sendo citados como "facilitadores críticos" para a agilidade em campo.
+* **Oportunidades de Melhoria:** A principal crítica recai sobre a transparência do sistema em caso de erros (ex: validações de e-mail duplicado) e a visibilidade de campos obrigatórios em formulários complexos. Houve consenso sobre a necessidade de tornar o responsável legal mais evidente na busca por moradias.
+
+#### 5.2.2.3. Conclusão da Avaliação
+
+Com uma **média consolidada de 84,0 pontos**, a solução classifica-se no nível **Excelente** na escala de usabilidade (acima do benchmark de 80,3).
+
+O resultado indica uma alta taxa de aceitação e uma curva de aprendizado favorável para o público-alvo. O desvio observado em alguns participantes pontuais (como P02) está diretamente correlacionado a falhas técnicas pontuais na interface (erros de feedback), cuja correção elevará a confiabilidade do sistema para o padrão "superior" necessário em operações de risco da Defesa Civil.
 
 
 # <a name="c6"></a>6. Estudo de Mercado e Plano de Marketing (sprint 4)
