@@ -594,6 +594,25 @@ src/
 
 ```
 
+#### Mapeamento das camadas para os arquivos/classes reais
+
+Para reduzir a dependência de interpretação, a tabela abaixo associa cada camada arquitetural aos arquivos e classes reais do backend (`src/geoRisco/src/`). As quatro camadas centrais do estilo **Controller-Service-Repository(-Model)** estão destacadas; as demais são apoios transversais.
+
+| Camada | Responsabilidade | Arquivos / classes reais |
+|--------|------------------|--------------------------|
+| **Bootstrap** | Inicialização e configuração do Express | `server.ts`, `app.ts` |
+| **Routes** | Declaração das rotas/endpoints HTTP | `routes/pessoa.routes.ts`, `routes/moradia.routes.ts`, `routes/familia.routes.ts`, `routes/pet.routes.ts`, `routes/foto.routes.ts`, `routes/prioridade.routes.ts` |
+| **Controller** | Borda HTTP: recebe requisição, normaliza/valida payload, chama o service e devolve a resposta | `controllers/pessoa.controller.ts` (`PessoaController`), `controllers/moradia.controller.ts` (`MoradiaController`), `controllers/familia.controller.ts` (`FamiliaController`), `controllers/pet.controller.ts` (`PetController`), `controllers/foto.controller.ts` (`FotoController`), `controllers/foto-storage.controller.ts` (`FotoStorageController`), `controllers/request-utils.ts` |
+| **Service** | Regras de negócio, orquestração entre repositories e transações | `services/pessoa.service.ts` (`PessoaService`), `services/moradia.service.ts` (`MoradiaService`), `services/familia.service.ts` (`FamiliaService`), `services/pet.service.ts` (`PetService`), `services/foto.service.ts` (`FotoService`), `services/foto-storage.service.ts` (`FotoStorageService`) |
+| **Repository** | Acesso ao PostgreSQL/Supabase e mapeamento coluna↔objeto | `repositories/pessoa.repository.ts`, `repositories/moradia.repository.ts`, `repositories/familia.repository.ts`, `repositories/pet.repository.ts`, `repositories/foto.repository.ts`, `repositories/prioridade.repository.ts` |
+| **Model** | Tipos e entidades de domínio | `models/pessoa.model.ts`, `models/moradia.model.ts`, `models/familia.model.ts`, `models/pet.model.ts`, `models/foto.model.ts`, `models/localizacao.model.ts`, `models/grupo-prioritario.model.ts`, `models/prioridade.model.ts` |
+| Interfaces (contratos) | Contratos de service e repository (DIP/ISP) | `interfaces/services/*.service.interface.ts`, `interfaces/repositories/*.repository.interface.ts` (ex.: `IPessoaService`, `IFamiliaRepository`) |
+| DTOs | Contratos de entrada/saída | `dtos/pessoa.dto.ts`, `dtos/moradia.dto.ts`, `dtos/localizacao.dto.ts`, `dtos/familia.dto.ts`, `dtos/pet.dto.ts`, `dtos/foto.dto.ts`, `dtos/foto-storage.dto.ts` |
+| Validations | Validação de payload por domínio | `validations/pessoa.validation.ts`, `validations/moradia.validation.ts`, `validations/familia.validation.ts`, `validations/pet.validation.ts`, `validations/foto.validation.ts`, `validations/foto-storage.validation.ts` |
+| Errors | Erros padronizados | `errors/http-error.ts` (`HttpError`), `controllers/request-utils.ts` (`handleControllerError`) |
+| Storage | Integração com serviço externo de arquivos | `storage/supabase-storage.client.ts` |
+| DB | Conexão, abstrações e migrações | `db/connection.ts`, `db/queryable.ts`, `db/supabase.ts`, `db/migrate.ts`, `db/migrations/` |
+
 O diagrama de classe arquitetural detalha a organização interna da aplicação a partir das principais camadas do backend. Ele apresenta a inicialização da aplicação em `server.ts` e `app.ts`, a camada de rotas responsável por expor os endpoints HTTP, os controllers que recebem e tratam as requisições, os DTOs e validações que padronizam os dados de entrada e saída, os services que concentram as regras de negócio, os repositories que acessam o banco de dados e os models que representam as entidades de domínio.
 
 O fluxo principal do sistema segue a ordem: `server.ts` inicializa a aplicação, `app.ts` configura o Express e registra as rotas, as rotas encaminham as requisições para os controllers, os controllers normalizam e validam os dados antes de chamar os services, os services executam as regras de negócio e orquestram os repositories, e os repositories realizam as operações de persistência no PostgreSQL. Elementos como `Infrastructure`, `Validations`, `Errors`, `Storage`, `Views`, `Public` e `Tests` aparecem no diagrama como apoios transversais à aplicação.
@@ -613,14 +632,6 @@ Esta imagem apresenta a visão macro e completa da arquitetura do backend. Ela i
 </div>
 
 Este recorte foca na porta de entrada da aplicação. A camada de Bootstrap (geralmente arquivos como server.ts e app.ts) é responsável por configurar o servidor, aplicar os middlewares essenciais (como tratamento de JSON e CORS) e levantar o serviço. Em conjunto, a camada do Express (Rotas e Controllers) atua interceptando as requisições HTTP recebidas do cliente (frontend), extraindo os parâmetros e o corpo da requisição, e repassando o fluxo para as camadas internas de processamento, sem carregar lógica de negócio.
-
-<div align="center">
-    <p>Figura: Diagrama de Classe Arquitetural - Bootstrap e Express</p>
-    <img src="outros/diagramas_arquitetura/diagramaArquitetura-Btstrp&Expr.png">
-    <p>Feito pela própria equipe (2026)</p>
-</div>
-
-Este diagrama destaca a camada de Modelos (Models), que representa as entidades fundamentais do domínio da aplicação (como Pessoa, Moradia, Família, etc.). No contexto do projeto, os models atuam definindo os tipos, interfaces e a estrutura dos dados (contratos de dados) que circulam pelo sistema. Eles garantem que todas as outras camadas saibam exatamente qual é o formato correto dos objetos com os quais estão lidando, garantindo a consistência das informações.
 
 <div align="center">
     <p>Figura: Diagrama de Classe Arquitetural - Models</p>
@@ -657,6 +668,8 @@ O diagrama de casos de uso é uma ilustração visual que representa as funciona
 
 O diagrama mapeia dois atores e três perfis de uso distintos. O **Agente de Campo** representa o perfil **cadastrador**, sendo responsável por registrar e gerenciar dados em campo, interagindo com os casos de uso de cadastro (RF001 a RF004) e gerenciamento (RF006 a RF009). O **Gestor Operacional** acumula os perfis de **visualizador** e **administrador**: como visualizador, acompanha informações estratégicas por meio dos mapas de calor (RF013); como administrador, é o único ator com acesso à geração de relatórios (RF014) e à exportação de dados (RF015). No fluxo de cadastro, as relações `<<include>>` evidenciam a obrigatoriedade em cadeia, como por exemplo: cadastrar uma moradia (RF001) sempre exige cadastrar o chefe de família (RF002), que por sua vez inclui o cadastro dos membros (RF003). Já o `<<extend>>` aparece nos dois pontos condicionais do diagrama: o cadastro de membros pode, opcionalmente, registrar necessidades especiais (RF004), e a exportação de dados (RF015) estende a geração de relatórios (RF014), ocorrendo apenas quando necessário.
 
+> **Nota de rastreabilidade — numeração legada:** este diagrama e sua descrição foram produzidos na sprint 1, **antes** da consolidação da lista atual de requisitos (seção 3.1.2). Os IDs citados aqui seguem a numeração legada e **não** correspondem diretamente aos RFs atuais. A lista da seção 3.1.2 é a fonte oficial. Correspondência aproximada: cadastrar moradia (legado RF001) → **RF002**; cadastrar chefe de família e membros (legado RF002/RF003) → **RF001**; necessidades especiais (legado RF004) → indicadores de vulnerabilidade de **RF001/RN04**; mapas de calor (legado RF013) → **RF008**; geração de relatórios / exportação (legado RF014/RF015) → escopo de consulta/relatórios (**RF004, RF005, RF006**), com exportação fora do escopo desta entrega. O diagrama será regerado com a numeração atual em sprint futura.
+
 ### 3.2.3. Diagrama de Classes do Domínio (sprint 2)
 
 O Diagrama de Classes de Dominio representa visualmente as principais entidades do négocio, com seus atributos e relacionamentos entre elas. Não se preocupando com detalhes técnicos como métodos, chaves estrangeiras ou tecnologias específicas, focando somente em capturar o que existe no mundo real dentro do contexto do sistema.
@@ -676,7 +689,8 @@ Link do diagrama (realizado por meio do site draw.io): https://drive.google.com/
 Os diagramas de sequência UML desta seção documentam os fluxos de interação entre as camadas da arquitetura do sistema deste projeto, evidenciando como as requisições originadas na interface do usuário percorrem a cadeia **Frontend → Controller → Service → Repository → Banco de Dados** até a geração da resposta. Cada linha de vida vertical representa um participante ativo no processamento, com ativações indicando o período em que cada componente mantém controle da execução. Mensagens síncronas (chamadas diretas) são representadas por setas sólidas, enquanto retornos são indicados por setas tracejadas. Caminhos alternativos e de exceção são delimitados por blocos `alt`/`opt`, refletindo as ramificações de negócio documentadas nos fluxos de interação.
 
 Os doze fluxos documentados nesta seção cobrem o ciclo principal de uso do sistema, desde o cadastro em campo até as operações de consulta, filtros, mapa de calor, recadastro, arquivamento e validações transversais de integridade. A modelagem foi atualizada conforme o WAD atual, considerando a arquitetura de dados centrada em **família**, **moradia**, **histórico de ocupação**, **pessoa**, **responsável**, **pet**, **foto de moradia** e **grupo prioritário**.
-Os doze fluxos documentados nesta seção cobrem o ciclo principal de uso do sistema, desde o cadastro em campo até as operações de consulta, filtros, mapa de calor, recadastro, arquivamento e validações transversais de integridade. A modelagem foi atualizada conforme o WAD atual, considerando a arquitetura de dados centrada em **família**, **moradia**, **histórico de ocupação**, **pessoa**, **responsável**, **pet**, **foto de moradia** e **grupo prioritário**.
+
+> **Sobre o participante "Frontend":** nos diagramas, o participante _Frontend PWA Mobile_ (e o _Cache Local / IndexedDB_, quando aparece) representa o **cliente-alvo da arquitetura**, e não obrigatoriamente o estado atual da implementação. Na entrega atual, o consumo da WebAPI ocorre pelas views EJS servidas pelo próprio backend e por um cliente web em React (`src/frontend/`); o cache offline é uma capacidade planejada. O foco dos diagramas é a cadeia **Controller → Service → Repository → Banco**, que já está implementada.
 
 ---
 
@@ -1948,6 +1962,7 @@ No desenvolvimento da aplicação web para a Defesa Civil, a lógica proposicion
 --- | ---
 **Expressão SQL** | SELECT m.id_moradia, m.id_localizacao, m.tipo_construcao, m.condicao_ocupacao, m.tipo_uso_imovel, m.telefone, m.observacoes, m.data_cadastro, m.ultima_atualizacao, m.status, l.logradouro, l.bairro, c.nome_completo AS responsavel FROM moradia m JOIN localizacao l ON m.id_localizacao = l.id_localizacao JOIN historico_ocupacao ho ON m.id_moradia = ho.id_moradia JOIN familia f ON ho.id_familia = f.id_familia JOIN cidadao c ON f.id_familia = c.id_familia JOIN responsavel r ON c.id_cidadao = r.id_cidadao WHERE m.status IN ('Interditada', 'Área de Risco Evacuada') AND ho.data_saida IS NULL AND f.status_ativo = TRUE AND c.status_cadastro = TRUE;
 **Descrição da consulta** | Buscar moradias em condição de risco operacional com seus responsáveis familiares ativos.
+**Origem no código** | Consulta analítica derivada das mesmas tabelas e filtros usados em `repositories/moradia.repository.ts` → `getAll()` (filtro por `status` e leitura via `vw_moradia_ativa`), combinada ao histórico de `repositories/familia.repository.ts`. Alimenta os cenários de consulta/mapa (RF004, RF005).
 **Proposições lógicas** | $A$: A moradia está em condição de risco operacional (`m.status IN ('Interditada', 'Área de Risco Evacuada')`) <br> $B$: A família ocupa atualmente a moradia (`ho.data_saida IS NULL`) <br> $C$: A família e o responsável estão ativos (`f.status_ativo = TRUE AND c.status_cadastro = TRUE`)
 **Expressão lógica proposicional** | $(A \land B) \land C$
 **Tabela Verdade** | <table> <thead> <tr> <th>$A$</th> <th>$B$</th> <th>$C$</th> <th>$(A \land B)$</th> <th>$(A \land B) \land C$</th> </tr> </thead> <tbody> <tr> <td>F</td> <td>F</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>F</td> <td>V</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>V</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>V</td> <td>V</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>F</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>F</td> <td>V</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>V</td> <td>F</td> <td>V</td> <td>F</td> </tr> <tr> <td>V</td> <td>V</td> <td>V</td> <td>V</td> <td>V</td> </tr> </tbody> </table>
@@ -1958,6 +1973,7 @@ A consulta #1 só retorna resultado quando a moradia está em risco operacional,
 --- | ---
 **Expressão SQL** | SELECT l.bairro, COUNT(c.id_cidadao) AS total_cronicos FROM cidadao c JOIN familia f ON c.id_familia = f.id_familia JOIN historico_ocupacao ho ON f.id_familia = ho.id_familia JOIN moradia m ON ho.id_moradia = m.id_moradia JOIN localizacao l ON m.id_localizacao = l.id_localizacao WHERE c.doencas_cronicas IS NOT NULL AND c.status_cadastro = TRUE AND f.status_ativo = TRUE AND ho.data_saida IS NULL GROUP BY l.bairro;
 **Descrição da consulta** | Contar quantas pessoas com doenças crônicas registradas existem por bairro.
+**Origem no código** | Consulta analítica de relatório (cenário de RF006/RF008, ainda planejados) que reutiliza as tabelas e filtros de `repositories/pessoa.repository.ts` → `search()`/`getAll()` cruzadas com `repositories/moradia.repository.ts`. O agrupamento por bairro é específico desta visão e ainda não possui método dedicado no backend.
 **Proposições lógicas** | $A$: A pessoa possui doença crônica registrada (`c.doencas_cronicas IS NOT NULL`) <br> $B$: O cidadão e sua família estão ativos (`c.status_cadastro = TRUE AND f.status_ativo = TRUE`) <br> $C$: O vínculo de ocupação da moradia está ativo (`ho.data_saida IS NULL`)
 **Expressão lógica proposicional** | $(A \land B) \land C$
 **Tabela Verdade** | <table> <thead> <tr> <th>$A$</th> <th>$B$</th> <th>$C$</th> <th>$(A \land B)$</th> <th>$(A \land B) \land C$</th> </tr> </thead> <tbody> <tr> <td>F</td> <td>F</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>F</td> <td>V</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>V</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>V</td> <td>V</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>F</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>F</td> <td>V</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>V</td> <td>F</td> <td>V</td> <td>F</td> </tr> <tr> <td>V</td> <td>V</td> <td>V</td> <td>V</td> <td>V</td> </tr> </tbody> </table>
@@ -1968,7 +1984,8 @@ A consulta #2 só contabiliza o cidadão quando há doença crônica registrada,
 --- | ---
 **Expressão SQL** | SELECT c.nome_completo, gp.data_prevista, gp.nome AS grupo_prioritario FROM cidadao c JOIN cidadao_grupo_prioritario cgp ON c.id_cidadao = cgp.id_cidadao JOIN grupo_prioritario gp ON cgp.id_grupo_prioritario = gp.id_grupo_prioritario WHERE c.status_cadastro = TRUE AND gp.nome = 'Gestante';
 **Descrição da consulta** | Listar gestantes ativas cadastradas em grupos prioritários.
-**Proposições lógicas** | $A$: O cidadão está ativo (`c.status_cadastro = TRUE`) <br> $B$: O cidadão possui registro de gestante (`g.id_cidadao IS NOT NULL`) <br> $C$: O cidadão pertence ao grupo prioritário Gestante (`gp.nome = 'Gestante'`)
+**Origem no código** | Consulta prevista para a funcionalidade de grupos prioritários, cuja persistência reside em `repositories/prioridade.repository.ts` sobre as tabelas `grupo_prioritario` e `cidadao_grupo_prioritario`. **Atenção:** a manipulação desses dados (endpoint/service/repository de grupos de vulnerabilidade) está pendente de implementação — ver pendência registrada na seção 3.7 e em 4.2.2.
+**Proposições lógicas** | $A$: O cidadão está ativo (`c.status_cadastro = TRUE`) <br> $B$: O cidadão possui vínculo com grupo prioritário (`cgp.id_grupo_prioritario IS NOT NULL`) <br> $C$: O cidadão pertence ao grupo prioritário Gestante (`gp.nome = 'Gestante'`)
 **Expressão lógica proposicional** | $(A \land B) \land C$
 **Tabela Verdade** | <table> <thead> <tr> <th>$A$</th> <th>$B$</th> <th>$C$</th> <th>$(A \land B)$</th> <th>$(A \land B) \land C$</th> </tr> </thead> <tbody> <tr> <td>F</td> <td>F</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>F</td> <td>V</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>V</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>V</td> <td>V</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>F</td> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>F</td> <td>V</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>V</td> <td>F</td> <td>V</td> <td>F</td> </tr> <tr> <td>V</td> <td>V</td> <td>V</td> <td>V</td> <td>V</td> </tr> </tbody> </table>
 
@@ -1978,6 +1995,7 @@ A consulta #3 só retorna resultado quando o cidadão está ativo, possui regist
 --- | ---
 **Expressão SQL** | UPDATE moradia SET status = 'Ativa', ultima_atualizacao = CURRENT_DATE WHERE id_moradia = :id_moradia AND status IN ('Interditada', 'Área de Risco Evacuada');
 **Descrição da consulta** | Reativar uma moradia específica que estava em status não operacional reversível.
+**Origem no código** | Atualização de status implementada em `repositories/moradia.repository.ts` → `update()`, acionada pelo fluxo `PUT /api/moradias/{id}` (`MoradiaController.atualizar` → `MoradiaService.atualizar`), cobrindo RF012/RF015.
 **Proposições lógicas** | $A$: A moradia corresponde ao registro informado (`id_moradia = :id_moradia`) <br> $B$: A moradia está em status não operacional reversível (`status IN ('Interditada', 'Área de Risco Evacuada')`)
 **Expressão lógica proposicional** | $A \land B$
 **Tabela Verdade** | <table> <thead> <tr> <th>$A$</th> <th>$B$</th> <th>$A \land B$</th> </tr> </thead> <tbody> <tr> <td>F</td> <td>F</td> <td>F</td> </tr> <tr> <td>F</td> <td>V</td> <td>F</td> </tr> <tr> <td>V</td> <td>F</td> <td>F</td> </tr> <tr> <td>V</td> <td>V</td> <td>V</td> </tr> </tbody> </table>
@@ -2017,24 +2035,28 @@ O levantamento atual foi conferido contra os arquivos de rotas e controllers do 
 
 > Observação: `401 Unauthorized` e `403 Forbidden` não fazem parte do contrato implementado nos controllers atuais, pois a autenticação e o controle de acesso ainda não estão presentes no backend desta entrega.
 
+### Template uniforme de documentação dos endpoints
+
+Cada endpoint é documentado segundo um template uniforme com os campos: **endereço** e **método** (colunas Método/Endpoint), **headers** (ver _Padrões gerais da WebAPI_ — `Content-Type: application/json` em requisições com corpo), **parâmetros** de rota/query e **body** (descritos no texto após cada tabela de domínio), **resposta** de sucesso, **status codes possíveis** e **RF correspondente**. O significado de cada status está em _Status HTTP implementados_, e o vínculo RF + status codes de todos os endpoints está consolidado em [`documentos/endpoints.md`](endpoints.md) e [`documentos/webapi-docs.html`](webapi-docs.html).
+
 ### Endpoints implementados por domínio
 
 #### Pessoas e Responsáveis
 
-| Método | Endpoint | Descrição | Resposta de sucesso | RF relacionado |
-|--------|----------|-----------|---------------------|----------------|
-| GET | `/api/pessoas` | Lista todas as pessoas cadastradas | `200` | RF001, RF016 |
-| GET | `/api/pessoas/busca` | Busca pessoas por filtros como `nome`, `cpf`, `email`, `telefone` e `escopo` | `200` | RF016 |
-| GET | `/api/pessoas/inativas` | Lista pessoas inativas | `200` | RF010 |
-| GET | `/api/pessoas/{id}` | Retorna pessoa por ID | `200` | RF001 |
-| POST | `/api/pessoas` | Cadastra nova pessoa | `201` | RF001 |
-| PUT | `/api/pessoas/{id}` | Atualiza parcialmente uma pessoa | `200` | RF012, RF019 |
-| DELETE | `/api/pessoas/{id}` | Remove pessoa por soft delete | `204` | RF010 |
-| GET | `/api/responsaveis` | Lista todos os responsáveis | `200` | RF001, RF014 |
-| GET | `/api/responsaveis/{id}` | Retorna responsável pelo ID da pessoa | `200` | RF001, RF014 |
-| POST | `/api/responsaveis` | Cadastra pessoa responsável e seus dados adicionais | `201` | RF001, RF014 |
-| PUT | `/api/responsaveis/{id}` | Atualiza parcialmente um responsável | `200` | RF012, RF014, RF019 |
-| DELETE | `/api/responsaveis/{id}` | Remove responsável | `204` | RF010 |
+| Método | Endpoint | Descrição | Resposta de sucesso | Status codes | RF relacionado |
+|--------|----------|-----------|---------------------|--------------|----------------|
+| GET | `/api/pessoas` | Lista todas as pessoas cadastradas | `200` | 200, 500 | RF001, RF016 |
+| GET | `/api/pessoas/busca` | Busca pessoas por filtros como `nome`, `cpf`, `email`, `telefone` e `escopo` | `200` | 200, 400, 500 | RF016 |
+| GET | `/api/pessoas/inativas` | Lista pessoas inativas | `200` | 200, 500 | RF010 |
+| GET | `/api/pessoas/{id}` | Retorna pessoa por ID | `200` | 200, 400, 404, 500 | RF001 |
+| POST | `/api/pessoas` | Cadastra nova pessoa | `201` | 201, 400, 409, 500 | RF001 |
+| PUT | `/api/pessoas/{id}` | Atualiza parcialmente uma pessoa | `200` | 200, 400, 404, 500 | RF012, RF019 |
+| DELETE | `/api/pessoas/{id}` | Remove pessoa por soft delete | `204` | 204, 400, 404, 500 | RF010 |
+| GET | `/api/responsaveis` | Lista todos os responsáveis | `200` | 200, 500 | RF001, RF014 |
+| GET | `/api/responsaveis/{id}` | Retorna responsável pelo ID da pessoa | `200` | 200, 400, 404, 500 | RF001, RF014 |
+| POST | `/api/responsaveis` | Cadastra pessoa responsável e seus dados adicionais | `201` | 201, 400, 409, 500 | RF001, RF014 |
+| PUT | `/api/responsaveis/{id}` | Atualiza parcialmente um responsável | `200` | 200, 400, 404, 409, 500 | RF012, RF014, RF019 |
+| DELETE | `/api/responsaveis/{id}` | Remove responsável | `204` | 204, 400, 404, 409, 500 | RF010 |
 
 Os endpoints de pessoa aceitam os campos `nome`, `nomeSocial`, `dataDeNascimento`, `parentesco`, `situacaoOcupacional`, `escolaridade`, `cronico`, `medicacao` e `status`, com aliases em `snake_case` para `nomeSocial`, `dataDeNascimento` e `situacaoOcupacional`. Responsáveis são tratados como pessoas com dados complementares: além dos campos de pessoa, aceitam `cpf`, `nis`, `renda`, `sexo`, `raca`, `estadoCivil`, `veiculo`, `programaSocial`, `email`, `telefone`, `nomeDoPai`, `nomeDaMae`, `localDeNascimento`, `dataResidenciaEstado` e `dataResidenciaMoradia`. Na criação, o backend força `parentesco` para `Responsável`.
 
@@ -2042,15 +2064,15 @@ Os endpoints de pessoa aceitam os campos `nome`, `nomeSocial`, `dataDeNascimento
 
 #### Moradias
 
-| Método | Endpoint | Descrição | Resposta de sucesso | RF relacionado |
-|--------|----------|-----------|---------------------|----------------|
-| GET | `/api/moradias` | Lista moradias | `200` | RF004, RF006 |
-| GET | `/api/moradias/{id}` | Retorna moradia por ID | `200` | RF005 |
-| GET | `/api/moradias/{id}/detalhes` | Retorna detalhes da moradia, incluindo famílias, pessoas, pets e fotos associados | `200` | RF005 |
-| GET | `/api/moradias/{id}/familias/historico` | Lista o histórico de famílias vinculadas à moradia | `200` | RF014 |
-| POST | `/api/moradias` | Cria moradia com localização | `201` | RF002, RF003 |
-| PUT | `/api/moradias/{id}` | Atualiza parcialmente moradia e/ou localização | `200` | RF012, RF015, RF019 |
-| DELETE | `/api/moradias/{id}` | Remove moradia por soft delete | `204` | RF009 |
+| Método | Endpoint | Descrição | Resposta de sucesso | Status codes | RF relacionado |
+|--------|----------|-----------|---------------------|--------------|----------------|
+| GET | `/api/moradias` | Lista moradias | `200` | 200, 500 | RF004, RF006 |
+| GET | `/api/moradias/{id}` | Retorna moradia por ID | `200` | 200, 400, 404, 500 | RF005 |
+| GET | `/api/moradias/{id}/detalhes` | Retorna detalhes da moradia, incluindo famílias, pessoas, pets e fotos associados | `200` | 200, 400, 404, 500 | RF005 |
+| GET | `/api/moradias/{id}/familias/historico` | Lista o histórico de famílias vinculadas à moradia | `200` | 200, 400, 404, 500 | RF014 |
+| POST | `/api/moradias` | Cria moradia com localização | `201` | 201, 400, 500 | RF002, RF003 |
+| PUT | `/api/moradias/{id}` | Atualiza parcialmente moradia e/ou localização | `200` | 200, 400, 404, 500 | RF012, RF015, RF019 |
+| DELETE | `/api/moradias/{id}` | Remove moradia por soft delete | `204` | 204, 400, 404, 409, 500 | RF009 |
 
 A criação de moradia espera um corpo com os grupos `localizacao` e `moradia`. Em `localizacao`, os campos mínimos são `cidade`, `estado`, `latitude` e `longitude`. Em `moradia`, os campos mínimos são `tipoConstrucao`, `usoImovel` e `situacaoDeOcupacao`, com aliases em `snake_case` disponíveis para integração com clientes que adotem esse padrão.
 
@@ -2058,21 +2080,21 @@ O campo `status` do objeto `moradia` aceita os valores `Ativa`, `Interditada`, `
 
 #### Famílias
 
-| Método | Endpoint | Descrição | Resposta de sucesso | RF relacionado |
-|--------|----------|-----------|---------------------|----------------|
-| GET | `/api/familias` | Lista famílias | `200` | RF014 |
-| GET | `/api/familias/{id}` | Retorna família por ID | `200` | RF014 |
-| POST | `/api/familias` | Cria uma família vazia | `201` | RF001, RF014, RF017 |
-| DELETE | `/api/familias/{id}` | Remove família por soft delete | `204` | RF014 |
-| POST | `/api/familias/nucleo` | Cadastra núcleo familiar completo, incluindo localização, moradia, responsável, dependentes, pets e fotos | `201` | RF013 |
-| GET | `/api/familias/{id}/pessoas` | Lista pessoas vinculadas à família | `200` | RF014 |
-| GET | `/api/familias/{id}/pessoas/historico` | Lista histórico de pessoas vinculadas à família | `200` | RF014 |
-| POST | `/api/familias/{id}/pessoas` | Vincula pessoa à família | `201` | RF014 |
-| DELETE | `/api/familias/{id}/pessoas/{pessoaId}` | Remove vínculo ativo entre pessoa e família | `200` | RF014 |
-| GET | `/api/familias/{id}/moradias` | Lista moradias vinculadas à família | `200` | RF014 |
-| GET | `/api/familias/{id}/moradias/historico` | Lista histórico de moradias vinculadas à família | `200` | RF014 |
-| POST | `/api/familias/{id}/moradias` | Vincula moradia à família | `201` | RF014, RF017 |
-| DELETE | `/api/familias/{id}/moradias/{moradiaId}` | Remove vínculo ativo entre moradia e família | `200` | RF014 |
+| Método | Endpoint | Descrição | Resposta de sucesso | Status codes | RF relacionado |
+|--------|----------|-----------|---------------------|--------------|----------------|
+| GET | `/api/familias` | Lista famílias | `200` | 200, 500 | RF014 |
+| GET | `/api/familias/{id}` | Retorna família por ID | `200` | 200, 400, 404, 500 | RF014 |
+| POST | `/api/familias` | Cria uma família vazia | `201` | 201, 500 | RF001, RF014, RF017 |
+| DELETE | `/api/familias/{id}` | Remove família por soft delete | `204` | 204, 400, 404, 409, 500 | RF014 |
+| POST | `/api/familias/nucleo` | Cadastra núcleo familiar completo, incluindo localização, moradia, responsável, dependentes, pets e fotos | `201` | 201, 400, 409, 500 | RF013 |
+| GET | `/api/familias/{id}/pessoas` | Lista pessoas vinculadas à família | `200` | 200, 400, 404, 500 | RF014 |
+| GET | `/api/familias/{id}/pessoas/historico` | Lista histórico de pessoas vinculadas à família | `200` | 200, 400, 404, 500 | RF014 |
+| POST | `/api/familias/{id}/pessoas` | Vincula pessoa à família | `201` | 201, 400, 404, 409, 500 | RF014 |
+| DELETE | `/api/familias/{id}/pessoas/{pessoaId}` | Remove vínculo ativo entre pessoa e família | `200` | 200, 400, 404, 409, 500 | RF014 |
+| GET | `/api/familias/{id}/moradias` | Lista moradias vinculadas à família | `200` | 200, 400, 404, 500 | RF014 |
+| GET | `/api/familias/{id}/moradias/historico` | Lista histórico de moradias vinculadas à família | `200` | 200, 400, 404, 500 | RF014 |
+| POST | `/api/familias/{id}/moradias` | Vincula moradia à família | `201` | 201, 400, 404, 409, 500 | RF014, RF017 |
+| DELETE | `/api/familias/{id}/moradias/{moradiaId}` | Remove vínculo ativo entre moradia e família | `200` | 200, 400, 404, 409, 500 | RF014 |
 
 Família é uma entidade de agrupamento puro: seu único atributo próprio é o `id` gerado automaticamente. Qualquer campo enviado no corpo de `POST /api/familias` é descartado sem erro. Para cadastrar um núcleo familiar completo em uma única operação transacional, utiliza-se `POST /api/familias/nucleo`.
 
@@ -2080,15 +2102,15 @@ Os endpoints de vínculo preservam o histórico de composição familiar e ocupa
 
 #### Pets
 
-| Método | Endpoint | Descrição | Resposta de sucesso | RF relacionado |
-|--------|----------|-----------|---------------------|----------------|
-| GET | `/api/pets` | Lista todos os pets | `200` | RF007 |
-| GET | `/api/pets/{id}` | Retorna pet por ID | `200` | RF007 |
-| POST | `/api/pets` | Cria pet informando `idFamilia` no corpo | `201` | RF007 |
-| PUT | `/api/pets/{id}` | Atualiza parcialmente um pet | `200` | RF007, RF019 |
-| DELETE | `/api/pets/{id}` | Remove pet | `204` | RF007 |
-| GET | `/api/familias/{id}/pets` | Lista pets de uma família | `200` | RF007, RF014 |
-| POST | `/api/familias/{id}/pets` | Cria pet vinculado à família informada na URL | `201` | RF007, RF014 |
+| Método | Endpoint | Descrição | Resposta de sucesso | Status codes | RF relacionado |
+|--------|----------|-----------|---------------------|--------------|----------------|
+| GET | `/api/pets` | Lista todos os pets | `200` | 200, 500 | RF007 |
+| GET | `/api/pets/{id}` | Retorna pet por ID | `200` | 200, 400, 404, 500 | RF007 |
+| POST | `/api/pets` | Cria pet informando `idFamilia` no corpo | `201` | 201, 400, 404, 500 | RF007 |
+| PUT | `/api/pets/{id}` | Atualiza parcialmente um pet | `200` | 200, 400, 404, 500 | RF007, RF019 |
+| DELETE | `/api/pets/{id}` | Remove pet | `204` | 204, 400, 404, 500 | RF007 |
+| GET | `/api/familias/{id}/pets` | Lista pets de uma família | `200` | 200, 400, 404, 500 | RF007, RF014 |
+| POST | `/api/familias/{id}/pets` | Cria pet vinculado à família informada na URL | `201` | 201, 400, 404, 500 | RF007, RF014 |
 
 Os pets aceitam campos como `tipo`, `nome`, `porte`, `raca`, `cor`, `status` e `observacao`. Os tipos previstos no modelo são `cachorro`, `gato`, `reptil`, `ave`, `roedor` e `outros`; os status aceitos são `Ativo`, `Inativo`, `Desaparecido` e `Falecido`. O campo `porte` é texto livre sem enum validado — os valores convencionais são `Pequeno`, `Médio`, `Grande` e `Gigante`.
 
@@ -2096,21 +2118,21 @@ O campo `fotos` dentro do objeto de pet é processado somente em `POST /api/fami
 
 #### Fotos
 
-| Método | Endpoint | Descrição | Resposta de sucesso | RF relacionado |
-|--------|----------|-----------|---------------------|----------------|
-| GET | `/api/fotos` | Lista todas as fotos | `200` | RF018 |
-| GET | `/api/fotos/{id}` | Retorna foto por ID | `200` | RF018 |
-| GET | `/api/fotos/{id}/signed-url` | Gera URL assinada para acesso à foto | `200` | RF018 |
-| PUT | `/api/fotos/{id}` | Atualiza a URL da foto | `200` | RF018 |
-| DELETE | `/api/fotos/{id}` | Remove foto | `204` | RF018 |
-| GET | `/api/moradias/{id}/fotos` | Lista fotos de uma moradia | `200` | RF002, RF018 |
-| POST | `/api/moradias/{id}/fotos/upload-url` | Gera URL assinada de upload para foto de moradia | `201` | RF018 |
-| POST | `/api/moradias/{id}/fotos` | Cria registro de foto vinculado à moradia | `201` | RF002, RF018 |
-| DELETE | `/api/moradias/{id}/fotos/{fotoId}` | Remove foto vinculada à moradia | `204` | RF018 |
-| GET | `/api/pets/{id}/fotos` | Lista fotos de um pet | `200` | RF007, RF018 |
-| POST | `/api/pets/{id}/fotos/upload-url` | Gera URL assinada de upload para foto de pet | `201` | RF018 |
-| POST | `/api/pets/{id}/fotos` | Cria registro de foto vinculado ao pet | `201` | RF007, RF018 |
-| DELETE | `/api/pets/{id}/fotos/{fotoId}` | Remove foto vinculada ao pet | `204` | RF018 |
+| Método | Endpoint | Descrição | Resposta de sucesso | Status codes | RF relacionado |
+|--------|----------|-----------|---------------------|--------------|----------------|
+| GET | `/api/fotos` | Lista todas as fotos | `200` | 200, 500 | RF018 |
+| GET | `/api/fotos/{id}` | Retorna foto por ID | `200` | 200, 400, 404, 500 | RF018 |
+| GET | `/api/fotos/{id}/signed-url` | Gera URL assinada para acesso à foto | `200` | 200, 400, 404, 502, 500 | RF018 |
+| PUT | `/api/fotos/{id}` | Atualiza a URL da foto | `200` | 200, 400, 404, 500 | RF018 |
+| DELETE | `/api/fotos/{id}` | Remove foto | `204` | 204, 400, 404, 500 | RF018 |
+| GET | `/api/moradias/{id}/fotos` | Lista fotos de uma moradia | `200` | 200, 400, 404, 500 | RF002, RF018 |
+| POST | `/api/moradias/{id}/fotos/upload-url` | Gera URL assinada de upload para foto de moradia | `201` | 201, 400, 404, 502, 500 | RF018 |
+| POST | `/api/moradias/{id}/fotos` | Cria registro de foto vinculado à moradia | `201` | 201, 400, 404, 500 | RF002, RF018 |
+| DELETE | `/api/moradias/{id}/fotos/{fotoId}` | Remove foto vinculada à moradia | `204` | 204, 400, 404, 500 | RF018 |
+| GET | `/api/pets/{id}/fotos` | Lista fotos de um pet | `200` | 200, 400, 404, 500 | RF007, RF018 |
+| POST | `/api/pets/{id}/fotos/upload-url` | Gera URL assinada de upload para foto de pet | `201` | 201, 400, 404, 502, 500 | RF018 |
+| POST | `/api/pets/{id}/fotos` | Cria registro de foto vinculado ao pet | `201` | 201, 400, 404, 500 | RF007, RF018 |
+| DELETE | `/api/pets/{id}/fotos/{fotoId}` | Remove foto vinculada ao pet | `204` | 204, 400, 404, 500 | RF018 |
 
 A API separa o arquivo físico da foto de seu metadado. Primeiro, o cliente solicita uma URL assinada de upload com `fileName`, `contentType` e, opcionalmente, `upsert`. Depois do envio ao storage, registra no backend apenas a `url` ou caminho do arquivo, associando o metadado à moradia ou ao pet correspondente. O endpoint `GET /api/fotos/{id}/signed-url` aceita o query param opcional `expiresIn` (entre 60 e 3600 segundos; padrão: 300) para controlar o tempo de validade da URL assinada de leitura.
 
@@ -2174,6 +2196,14 @@ Alguns endpoints apareceram em versões anteriores da documentação, mas ainda 
 ## 3.9. Matriz de Rastreabilidade (RTM) (sprints 3 a 5)
 
 A Matriz de Rastreabilidade (RTM - Requirements Traceability Matrix) consolida, em uma única visão, os elos entre cada Persona, Requisito Funcional (RF), Regra de Negócio (RN), endpoint de API, tela da interface e caso de teste correspondente. O objetivo é garantir que nenhum requisito fique sem implementação, sem teste e sem evidência de validação, em que qualquer lacuna nessa cadeia representa um risco direto à integridade e à confiabilidade do sistema.
+
+> **Como ler a coluna "Evidência":** os itens descritos (prints, logs, payloads) são materializados pelos artefatos concretos abaixo, versionados no repositório. Cada caso de teste (CT) executável tem origem rastreável nestes arquivos:
+> - **Testes de service (unitários):** `src/geoRisco/src/services/*.service.spec.ts` — ex.: `pessoa.service.spec.ts`, `moradia.service.spec.ts`, `familia.service.spec.ts`, `pet.service.spec.ts`, `foto.service.spec.ts`, `foto-storage.service.spec.ts`.
+> - **Testes de integração de endpoints:** `src/geoRisco/src/tests/integration/*.integration.test.ts` (ex.: `app.integration.test.ts`, `nucleo.integration.test.ts`, `persistence.integration.test.ts`, `pet-foto.integration.test.ts`, `prioridade.integration.test.ts`) e `controllers/*.controller.spec.ts`.
+> - **Relatório de cobertura (resultado executado):** [`coverage/services/lcov-report/index.html`](../coverage/services/lcov-report/index.html), com os percentuais por arquivo de service.
+> - **Execução da suíte, cobertura e mapeamento CT → RN → RF:** seção 5.1.4 deste documento.
+>
+> CTs marcados como "planejado — não executável na entrega atual" (linhas 10 e 14) ainda não possuem evidência executada, pois os RFs correspondentes (RF008, RF011) não foram implementados.
 
 | # | Persona | US | RF | RN | Endpoint | Método | Tela | Casos de Teste | Evidência |
 |---|---------|----|----|-----|----------|--------|------|----------------|-----------|

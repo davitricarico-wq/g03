@@ -49,6 +49,67 @@ O handler centralizado retorna:
 
 > Observacao: o backend atual nao possui middleware de autenticacao/autorizacao nas rotas listadas. Por isso, `401` e `403` nao fazem parte do contrato implementado nestes controllers.
 
+### Template de documentacao (uniforme)
+
+Cada endpoint deste documento e descrito pelos mesmos campos: **endereco**, **metodo**, **headers** (ver tabela acima — `Content-Type: application/json` para corpos JSON), **parametros** de rota/query, **body**, **resposta** de sucesso, **status codes possiveis** e **RF correspondente**. A tabela abaixo consolida o vinculo de RF e os status codes possiveis de todos os endpoints implementados; os detalhes de parametros e body de cada um estao nas secoes por dominio.
+
+### Vinculo RF e status codes por endpoint
+
+| Metodo | Endpoint | RF correspondente | Status codes possiveis |
+|---|---|---|---|
+| GET | `/api/pessoas` | RF001, RF016 | 200, 500 |
+| GET | `/api/pessoas/busca` | RF016 | 200, 400, 500 |
+| GET | `/api/pessoas/inativas` | RF010 | 200, 500 |
+| GET | `/api/pessoas/:id` | RF001 | 200, 400, 404, 500 |
+| POST | `/api/pessoas` | RF001 | 201, 400, 409, 500 |
+| PUT | `/api/pessoas/:id` | RF012, RF019 | 200, 400, 404, 500 |
+| DELETE | `/api/pessoas/:id` | RF010 | 204, 400, 404, 500 |
+| GET | `/api/responsaveis` | RF001, RF014 | 200, 500 |
+| GET | `/api/responsaveis/:id` | RF001, RF014 | 200, 400, 404, 500 |
+| POST | `/api/responsaveis` | RF001, RF014 | 201, 400, 409, 500 |
+| PUT | `/api/responsaveis/:id` | RF012, RF014, RF019 | 200, 400, 404, 409, 500 |
+| DELETE | `/api/responsaveis/:id` | RF010 | 204, 400, 404, 409, 500 |
+| GET | `/api/moradias` | RF004, RF006 | 200, 500 |
+| GET | `/api/moradias/:id` | RF005 | 200, 400, 404, 500 |
+| GET | `/api/moradias/:id/detalhes` | RF005 | 200, 400, 404, 500 |
+| GET | `/api/moradias/:id/familias/historico` | RF014 | 200, 400, 404, 500 |
+| POST | `/api/moradias` | RF002, RF003 | 201, 400, 500 |
+| PUT | `/api/moradias/:id` | RF012, RF015, RF019 | 200, 400, 404, 500 |
+| DELETE | `/api/moradias/:id` | RF009 | 204, 400, 404, 409, 500 |
+| GET | `/api/familias` | RF014 | 200, 500 |
+| GET | `/api/familias/:id` | RF014 | 200, 400, 404, 500 |
+| POST | `/api/familias` | RF001, RF014, RF017 | 201, 500 |
+| DELETE | `/api/familias/:id` | RF014 | 204, 400, 404, 409, 500 |
+| POST | `/api/familias/nucleo` | RF013 | 201, 400, 409, 500 |
+| GET | `/api/familias/:id/pessoas` | RF014 | 200, 400, 404, 500 |
+| GET | `/api/familias/:id/pessoas/historico` | RF014 | 200, 400, 404, 500 |
+| POST | `/api/familias/:id/pessoas` | RF014 | 201, 400, 404, 409, 500 |
+| DELETE | `/api/familias/:id/pessoas/:pessoaId` | RF014 | 200, 400, 404, 409, 500 |
+| GET | `/api/familias/:id/moradias` | RF014 | 200, 400, 404, 500 |
+| GET | `/api/familias/:id/moradias/historico` | RF014 | 200, 400, 404, 500 |
+| POST | `/api/familias/:id/moradias` | RF014, RF017 | 201, 400, 404, 409, 500 |
+| DELETE | `/api/familias/:id/moradias/:moradiaId` | RF014 | 200, 400, 404, 409, 500 |
+| GET | `/api/pets` | RF007 | 200, 500 |
+| GET | `/api/pets/:id` | RF007 | 200, 400, 404, 500 |
+| POST | `/api/pets` | RF007 | 201, 400, 404, 500 |
+| PUT | `/api/pets/:id` | RF007, RF019 | 200, 400, 404, 500 |
+| DELETE | `/api/pets/:id` | RF007 | 204, 400, 404, 500 |
+| GET | `/api/familias/:id/pets` | RF007, RF014 | 200, 400, 404, 500 |
+| POST | `/api/familias/:id/pets` | RF007, RF014 | 201, 400, 404, 500 |
+| GET | `/api/fotos` | RF018 | 200, 500 |
+| GET | `/api/fotos/:id` | RF018 | 200, 400, 404, 500 |
+| GET | `/api/fotos/:id/signed-url` | RF018 | 200, 400, 404, 502, 500 |
+| PUT | `/api/fotos/:id` | RF018 | 200, 400, 404, 500 |
+| DELETE | `/api/fotos/:id` | RF018 | 204, 400, 404, 500 |
+| GET | `/api/moradias/:id/fotos` | RF002, RF018 | 200, 400, 404, 500 |
+| POST | `/api/moradias/:id/fotos/upload-url` | RF018 | 201, 400, 404, 502, 500 |
+| POST | `/api/moradias/:id/fotos` | RF002, RF018 | 201, 400, 404, 500 |
+| DELETE | `/api/moradias/:id/fotos/:fotoId` | RF018 | 204, 400, 404, 500 |
+| GET | `/api/pets/:id/fotos` | RF007, RF018 | 200, 400, 404, 500 |
+| POST | `/api/pets/:id/fotos/upload-url` | RF018 | 201, 400, 404, 502, 500 |
+| POST | `/api/pets/:id/fotos` | RF007, RF018 | 201, 400, 404, 500 |
+| DELETE | `/api/pets/:id/fotos/:fotoId` | RF018 | 204, 400, 404, 500 |
+
 ## Sumario
 
 ### Endpoints da API

@@ -349,6 +349,15 @@
         <p><strong>Escopo atual:</strong> as rotas listadas nao possuem middleware de autenticacao ou autorizacao. Por
           isso, <code>401</code> e <code>403</code> nao fazem parte do contrato implementado nesta versao.</p>
       </div>
+      <div class="callout">
+        <p><strong>Template de documentacao (uniforme):</strong> cada endpoint e descrito pelos campos
+          <strong>endereco</strong> e <strong>metodo</strong> (coluna Metodo/Endpoint), <strong>headers</strong>
+          (secao <em>Padroes Gerais</em> &mdash; <code>Content-Type: application/json</code> para corpos JSON),
+          <strong>parametros</strong> e <strong>body</strong> (blocos de payload/query por dominio),
+          <strong>resposta</strong> de sucesso (coluna Sucesso), <strong>status codes possiveis</strong>
+          (coluna Status codes) e <strong>RF correspondente</strong> (coluna RF). Os significados de cada status
+          estao na secao <em>Status HTTP</em>.</p>
+      </div>
       <div class="cards">
         <div class="card"><strong>7</strong>Pessoas</div>
         <div class="card"><strong>5</strong>Responsaveis</div>
@@ -451,6 +460,8 @@
             <th>Endpoint</th>
             <th>Finalidade</th>
             <th>Sucesso</th>
+            <th>Status codes</th>
+            <th>RF</th>
           </tr>
         </thead>
         <tbody>
@@ -459,43 +470,57 @@
             <td><code>/api/pessoas</code></td>
             <td>Lista todas as pessoas.</td>
             <td><span class="status s200">200</span></td>
+            <td>200 &middot; 500</td>
+            <td>RF001, RF016</td>
           </tr>
           <tr>
             <td><span class="method get">GET</span></td>
             <td><code>/api/pessoas/busca</code></td>
             <td>Busca por <code>nome</code>, <code>cpf</code>, <code>email</code>, <code>telefone</code> e
-              <code>escopo</code>.</td>
+              <code>escopo</code>. Pelo menos um filtro e obrigatorio.</td>
             <td><span class="status s200">200</span></td>
+            <td>200 &middot; 400 &middot; 500</td>
+            <td>RF016</td>
           </tr>
           <tr>
             <td><span class="method get">GET</span></td>
             <td><code>/api/pessoas/inativas</code></td>
             <td>Lista pessoas inativas.</td>
             <td><span class="status s200">200</span></td>
+            <td>200 &middot; 500</td>
+            <td>RF010</td>
           </tr>
           <tr>
             <td><span class="method get">GET</span></td>
             <td><code>/api/pessoas/:id</code></td>
             <td>Obtem pessoa por ID.</td>
             <td><span class="status s200">200</span></td>
+            <td>200 &middot; 400 &middot; 404 &middot; 500</td>
+            <td>RF001</td>
           </tr>
           <tr>
             <td><span class="method post">POST</span></td>
             <td><code>/api/pessoas</code></td>
             <td>Cria uma pessoa.</td>
             <td><span class="status s201">201</span></td>
+            <td>201 &middot; 400 &middot; 409 &middot; 500</td>
+            <td>RF001</td>
           </tr>
           <tr>
             <td><span class="method put">PUT</span></td>
             <td><code>/api/pessoas/:id</code></td>
             <td>Atualiza parcialmente uma pessoa.</td>
             <td><span class="status s200">200</span></td>
+            <td>200 &middot; 400 &middot; 404 &middot; 500</td>
+            <td>RF012, RF019</td>
           </tr>
           <tr>
             <td><span class="method delete">DELETE</span></td>
             <td><code>/api/pessoas/:id</code></td>
             <td>Remove pessoa via soft delete.</td>
             <td><span class="status s204">204</span></td>
+            <td>204 &middot; 400 &middot; 404 &middot; 500</td>
+            <td>RF010</td>
           </tr>
         </tbody>
       </table>
@@ -531,6 +556,8 @@
             <th>Endpoint</th>
             <th>Finalidade</th>
             <th>Sucesso</th>
+            <th>Status codes</th>
+            <th>RF</th>
           </tr>
         </thead>
         <tbody>
@@ -539,30 +566,40 @@
             <td><code>/api/responsaveis</code></td>
             <td>Lista todos os responsaveis.</td>
             <td><span class="status s200">200</span></td>
+            <td>200 &middot; 500</td>
+            <td>RF001, RF014</td>
           </tr>
           <tr>
             <td><span class="method get">GET</span></td>
             <td><code>/api/responsaveis/:id</code></td>
             <td>Obtem responsavel pelo ID da pessoa.</td>
             <td><span class="status s200">200</span></td>
+            <td>200 &middot; 400 &middot; 404 &middot; 500</td>
+            <td>RF001, RF014</td>
           </tr>
           <tr>
             <td><span class="method post">POST</span></td>
             <td><code>/api/responsaveis</code></td>
             <td>Cria pessoa responsavel e dados adicionais.</td>
             <td><span class="status s201">201</span></td>
+            <td>201 &middot; 400 &middot; 409 &middot; 500</td>
+            <td>RF001, RF014</td>
           </tr>
           <tr>
             <td><span class="method put">PUT</span></td>
             <td><code>/api/responsaveis/:id</code></td>
             <td>Atualiza parcialmente um responsavel.</td>
             <td><span class="status s200">200</span></td>
+            <td>200 &middot; 400 &middot; 404 &middot; 409 &middot; 500</td>
+            <td>RF012, RF014, RF019</td>
           </tr>
           <tr>
             <td><span class="method delete">DELETE</span></td>
             <td><code>/api/responsaveis/:id</code></td>
             <td>Remove responsavel.</td>
             <td><span class="status s204">204</span></td>
+            <td>204 &middot; 400 &middot; 404 &middot; 409 &middot; 500</td>
+            <td>RF010</td>
           </tr>
         </tbody>
       </table>
@@ -596,6 +633,8 @@
             <th>Endpoint</th>
             <th>Finalidade</th>
             <th>Sucesso</th>
+            <th>Status codes</th>
+            <th>RF</th>
           </tr>
         </thead>
         <tbody>
@@ -604,42 +643,56 @@
             <td><code>/api/moradias</code></td>
             <td>Lista moradias.</td>
             <td><span class="status s200">200</span></td>
+            <td>200 &middot; 500</td>
+            <td>RF004, RF006</td>
           </tr>
           <tr>
             <td><span class="method get">GET</span></td>
             <td><code>/api/moradias/:id</code></td>
             <td>Obtem moradia por ID.</td>
             <td><span class="status s200">200</span></td>
+            <td>200 &middot; 400 &middot; 404 &middot; 500</td>
+            <td>RF005</td>
           </tr>
           <tr>
             <td><span class="method get">GET</span></td>
             <td><code>/api/moradias/:id/detalhes</code></td>
             <td>Obtem familias, pessoas, pets e fotos associados.</td>
             <td><span class="status s200">200</span></td>
+            <td>200 &middot; 400 &middot; 404 &middot; 500</td>
+            <td>RF005</td>
           </tr>
           <tr>
             <td><span class="method get">GET</span></td>
             <td><code>/api/moradias/:id/familias/historico</code></td>
             <td>Lista historico de familias vinculadas a moradia.</td>
             <td><span class="status s200">200</span></td>
+            <td>200 &middot; 400 &middot; 404 &middot; 500</td>
+            <td>RF014</td>
           </tr>
           <tr>
             <td><span class="method post">POST</span></td>
             <td><code>/api/moradias</code></td>
             <td>Cria moradia com localizacao.</td>
             <td><span class="status s201">201</span></td>
+            <td>201 &middot; 400 &middot; 500</td>
+            <td>RF002, RF003</td>
           </tr>
           <tr>
             <td><span class="method put">PUT</span></td>
             <td><code>/api/moradias/:id</code></td>
             <td>Atualiza parcialmente moradia e/ou localizacao.</td>
             <td><span class="status s200">200</span></td>
+            <td>200 &middot; 400 &middot; 404 &middot; 500</td>
+            <td>RF012, RF015, RF019</td>
           </tr>
           <tr>
             <td><span class="method delete">DELETE</span></td>
             <td><code>/api/moradias/:id</code></td>
             <td>Remove moradia via soft delete.</td>
             <td><span class="status s204">204</span></td>
+            <td>204 &middot; 400 &middot; 404 &middot; 409 &middot; 500</td>
+            <td>RF009</td>
           </tr>
         </tbody>
       </table>
@@ -687,6 +740,8 @@
             <th>Endpoint</th>
             <th>Finalidade</th>
             <th>Sucesso</th>
+            <th>Status codes</th>
+            <th>RF</th>
           </tr>
         </thead>
         <tbody>
@@ -695,78 +750,104 @@
             <td><code>/api/familias</code></td>
             <td>Lista familias.</td>
             <td><span class="status s200">200</span></td>
+            <td>200 &middot; 500</td>
+            <td>RF014</td>
           </tr>
           <tr>
             <td><span class="method get">GET</span></td>
             <td><code>/api/familias/:id</code></td>
             <td>Obtem familia por ID.</td>
             <td><span class="status s200">200</span></td>
+            <td>200 &middot; 400 &middot; 404 &middot; 500</td>
+            <td>RF014</td>
           </tr>
           <tr>
             <td><span class="method post">POST</span></td>
             <td><code>/api/familias</code></td>
             <td>Cria familia vazia (corpo ignorado).</td>
             <td><span class="status s201">201</span></td>
+            <td>201 &middot; 500</td>
+            <td>RF001, RF014, RF017</td>
           </tr>
           <tr>
             <td><span class="method delete">DELETE</span></td>
             <td><code>/api/familias/:id</code></td>
             <td>Remove familia via soft delete.</td>
             <td><span class="status s204">204</span></td>
+            <td>204 &middot; 400 &middot; 404 &middot; 409 &middot; 500</td>
+            <td>RF014</td>
           </tr>
           <tr>
             <td><span class="method post">POST</span></td>
             <td><code>/api/familias/nucleo</code></td>
             <td>Cadastra nucleo familiar completo.</td>
             <td><span class="status s201">201</span></td>
+            <td>201 &middot; 400 &middot; 409 &middot; 500</td>
+            <td>RF013</td>
           </tr>
           <tr>
             <td><span class="method get">GET</span></td>
             <td><code>/api/familias/:id/pessoas</code></td>
             <td>Lista pessoas vinculadas a familia.</td>
             <td><span class="status s200">200</span></td>
+            <td>200 &middot; 400 &middot; 404 &middot; 500</td>
+            <td>RF014</td>
           </tr>
           <tr>
             <td><span class="method get">GET</span></td>
             <td><code>/api/familias/:id/pessoas/historico</code></td>
             <td>Lista historico de pessoas da familia.</td>
             <td><span class="status s200">200</span></td>
+            <td>200 &middot; 400 &middot; 404 &middot; 500</td>
+            <td>RF014</td>
           </tr>
           <tr>
             <td><span class="method post">POST</span></td>
             <td><code>/api/familias/:id/pessoas</code></td>
             <td>Vincula pessoa a familia.</td>
             <td><span class="status s201">201</span></td>
+            <td>201 &middot; 400 &middot; 404 &middot; 409 &middot; 500</td>
+            <td>RF014</td>
           </tr>
           <tr>
             <td><span class="method delete">DELETE</span></td>
             <td><code>/api/familias/:id/pessoas/:pessoaId</code></td>
             <td>Remove vinculo ativo entre pessoa e familia. Retorna corpo JSON.</td>
             <td><span class="status s200">200</span></td>
+            <td>200 &middot; 400 &middot; 404 &middot; 409 &middot; 500</td>
+            <td>RF014</td>
           </tr>
           <tr>
             <td><span class="method get">GET</span></td>
             <td><code>/api/familias/:id/moradias</code></td>
             <td>Lista moradias vinculadas a familia.</td>
             <td><span class="status s200">200</span></td>
+            <td>200 &middot; 400 &middot; 404 &middot; 500</td>
+            <td>RF014</td>
           </tr>
           <tr>
             <td><span class="method get">GET</span></td>
             <td><code>/api/familias/:id/moradias/historico</code></td>
             <td>Lista historico de moradias da familia.</td>
             <td><span class="status s200">200</span></td>
+            <td>200 &middot; 400 &middot; 404 &middot; 500</td>
+            <td>RF014</td>
           </tr>
           <tr>
             <td><span class="method post">POST</span></td>
             <td><code>/api/familias/:id/moradias</code></td>
             <td>Vincula moradia a familia.</td>
             <td><span class="status s201">201</span></td>
+            <td>201 &middot; 400 &middot; 404 &middot; 409 &middot; 500</td>
+            <td>RF014, RF017</td>
           </tr>
           <tr>
             <td><span class="method delete">DELETE</span></td>
             <td><code>/api/familias/:id/moradias/:moradiaId</code></td>
             <td>Remove vinculo ativo entre moradia e familia. Retorna corpo JSON.</td>
             <td><span class="status s200">200</span></td>
+            <td>200 &middot; 400 &middot; 404 &middot; 409 &middot; 500</td>
+            <td>RF014</td>
           </tr>
         </tbody>
       </table>
@@ -787,6 +868,8 @@
             <th>Endpoint</th>
             <th>Finalidade</th>
             <th>Sucesso</th>
+            <th>Status codes</th>
+            <th>RF</th>
           </tr>
         </thead>
         <tbody>
@@ -795,42 +878,56 @@
             <td><code>/api/pets</code></td>
             <td>Lista pets.</td>
             <td><span class="status s200">200</span></td>
+            <td>200 &middot; 500</td>
+            <td>RF007</td>
           </tr>
           <tr>
             <td><span class="method get">GET</span></td>
             <td><code>/api/pets/:id</code></td>
             <td>Obtem pet por ID.</td>
             <td><span class="status s200">200</span></td>
+            <td>200 &middot; 400 &middot; 404 &middot; 500</td>
+            <td>RF007</td>
           </tr>
           <tr>
             <td><span class="method post">POST</span></td>
             <td><code>/api/pets</code></td>
             <td>Cria pet informando <code>idFamilia</code> no corpo.</td>
             <td><span class="status s201">201</span></td>
+            <td>201 &middot; 400 &middot; 404 &middot; 500</td>
+            <td>RF007</td>
           </tr>
           <tr>
             <td><span class="method put">PUT</span></td>
             <td><code>/api/pets/:id</code></td>
             <td>Atualiza parcialmente pet.</td>
             <td><span class="status s200">200</span></td>
+            <td>200 &middot; 400 &middot; 404 &middot; 500</td>
+            <td>RF007, RF019</td>
           </tr>
           <tr>
             <td><span class="method delete">DELETE</span></td>
             <td><code>/api/pets/:id</code></td>
             <td>Remove pet.</td>
             <td><span class="status s204">204</span></td>
+            <td>204 &middot; 400 &middot; 404 &middot; 500</td>
+            <td>RF007</td>
           </tr>
           <tr>
             <td><span class="method get">GET</span></td>
             <td><code>/api/familias/:id/pets</code></td>
             <td>Lista pets de uma familia.</td>
             <td><span class="status s200">200</span></td>
+            <td>200 &middot; 400 &middot; 404 &middot; 500</td>
+            <td>RF007, RF014</td>
           </tr>
           <tr>
             <td><span class="method post">POST</span></td>
             <td><code>/api/familias/:id/pets</code></td>
             <td>Cria pet vinculado a familia da URL.</td>
             <td><span class="status s201">201</span></td>
+            <td>201 &middot; 400 &middot; 404 &middot; 500</td>
+            <td>RF007, RF014</td>
           </tr>
         </tbody>
       </table>
@@ -878,6 +975,8 @@
             <th>Endpoint</th>
             <th>Finalidade</th>
             <th>Sucesso</th>
+            <th>Status codes</th>
+            <th>RF</th>
           </tr>
         </thead>
         <tbody>
@@ -886,12 +985,16 @@
             <td><code>/api/fotos</code></td>
             <td>Lista fotos.</td>
             <td><span class="status s200">200</span></td>
+            <td>200 &middot; 500</td>
+            <td>RF018</td>
           </tr>
           <tr>
             <td><span class="method get">GET</span></td>
             <td><code>/api/fotos/:id</code></td>
             <td>Obtem foto por ID.</td>
             <td><span class="status s200">200</span></td>
+            <td>200 &middot; 400 &middot; 404 &middot; 500</td>
+            <td>RF018</td>
           </tr>
           <tr>
             <td><span class="method get">GET</span></td>
@@ -899,66 +1002,88 @@
             <td>Gera URL assinada para acessar a foto. Query param opcional: <code>expiresIn</code> (60&ndash;3600s,
               padrao 300).</td>
             <td><span class="status s200">200</span></td>
+            <td>200 &middot; 400 &middot; 404 &middot; 502 &middot; 500</td>
+            <td>RF018</td>
           </tr>
           <tr>
             <td><span class="method put">PUT</span></td>
             <td><code>/api/fotos/:id</code></td>
             <td>Atualiza a URL da foto.</td>
             <td><span class="status s200">200</span></td>
+            <td>200 &middot; 400 &middot; 404 &middot; 500</td>
+            <td>RF018</td>
           </tr>
           <tr>
             <td><span class="method delete">DELETE</span></td>
             <td><code>/api/fotos/:id</code></td>
             <td>Remove foto.</td>
             <td><span class="status s204">204</span></td>
+            <td>204 &middot; 400 &middot; 404 &middot; 500</td>
+            <td>RF018</td>
           </tr>
           <tr>
             <td><span class="method get">GET</span></td>
             <td><code>/api/moradias/:id/fotos</code></td>
             <td>Lista fotos de uma moradia.</td>
             <td><span class="status s200">200</span></td>
+            <td>200 &middot; 400 &middot; 404 &middot; 500</td>
+            <td>RF002, RF018</td>
           </tr>
           <tr>
             <td><span class="method post">POST</span></td>
             <td><code>/api/moradias/:id/fotos/upload-url</code></td>
             <td>Gera URL assinada de upload para moradia.</td>
             <td><span class="status s201">201</span></td>
+            <td>201 &middot; 400 &middot; 404 &middot; 502 &middot; 500</td>
+            <td>RF018</td>
           </tr>
           <tr>
             <td><span class="method post">POST</span></td>
             <td><code>/api/moradias/:id/fotos</code></td>
             <td>Cria registro de foto vinculado a moradia.</td>
             <td><span class="status s201">201</span></td>
+            <td>201 &middot; 400 &middot; 404 &middot; 500</td>
+            <td>RF002, RF018</td>
           </tr>
           <tr>
             <td><span class="method delete">DELETE</span></td>
             <td><code>/api/moradias/:id/fotos/:fotoId</code></td>
             <td>Remove foto vinculada a moradia.</td>
             <td><span class="status s204">204</span></td>
+            <td>204 &middot; 400 &middot; 404 &middot; 500</td>
+            <td>RF018</td>
           </tr>
           <tr>
             <td><span class="method get">GET</span></td>
             <td><code>/api/pets/:id/fotos</code></td>
             <td>Lista fotos de um pet.</td>
             <td><span class="status s200">200</span></td>
+            <td>200 &middot; 400 &middot; 404 &middot; 500</td>
+            <td>RF007, RF018</td>
           </tr>
           <tr>
             <td><span class="method post">POST</span></td>
             <td><code>/api/pets/:id/fotos/upload-url</code></td>
             <td>Gera URL assinada de upload para pet.</td>
             <td><span class="status s201">201</span></td>
+            <td>201 &middot; 400 &middot; 404 &middot; 502 &middot; 500</td>
+            <td>RF018</td>
           </tr>
           <tr>
             <td><span class="method post">POST</span></td>
             <td><code>/api/pets/:id/fotos</code></td>
             <td>Cria registro de foto vinculado ao pet.</td>
             <td><span class="status s201">201</span></td>
+            <td>201 &middot; 400 &middot; 404 &middot; 500</td>
+            <td>RF007, RF018</td>
           </tr>
           <tr>
             <td><span class="method delete">DELETE</span></td>
             <td><code>/api/pets/:id/fotos/:fotoId</code></td>
             <td>Remove foto vinculada ao pet.</td>
             <td><span class="status s204">204</span></td>
+            <td>204 &middot; 400 &middot; 404 &middot; 500</td>
+            <td>RF018</td>
           </tr>
         </tbody>
       </table>
