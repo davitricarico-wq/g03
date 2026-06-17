@@ -1,4 +1,4 @@
-<img src="assets/logointeli.png" alt="Logo Inteli" width="300">
+<img src="../assets/logointeli.png" alt="Logo Inteli" width="300">
 
 
 # WAD - Web Application Document - Módulo 2 - Inteli
@@ -66,7 +66,7 @@ Esta seção apresenta o escopo do projeto, contemplando as análises estratégi
 
 O modelo das 5 Forças de Porter foi utilizado para analisar o ambiente competitivo e estratégico no qual a instituição está inserida. A partir dessa abordagem, são avaliadas forças como rivalidade, poder de barganha, ameaça de novos entrantes e de substitutos, permitindo compreender fatores externos que podem impactar a atuação da Defesa Civil e orientar o desenvolvimento da solução proposta.
 
-<img src="outros/porter.png">
+<img src="imagens/porter.png" width="800">
 
 #### Rivalidade Entre Concorrentes
 
@@ -97,7 +97,7 @@ A análise SWOT foi realizada com o objetivo de compreender o cenário interno e
 
 <div align="center">
     <p>Figura 1: Análise Swot</p>
-    <img src="outros/swot.png" width="800">
+    <img src="imagens/swot.png" width="800">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
@@ -183,7 +183,7 @@ Dessa forma, o Canvas de Proposta de Valor traz de maneira sintetizada diferente
 
 <div align="center">
     <p>Figura 2: Value Proposition Canvas</p>
-    <img src="outros/value-proposition-canvas.png" width="800">
+    <img src="imagens/value-proposition-canvas.png" width="800">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
@@ -193,11 +193,11 @@ Dessa forma, o Canvas de Proposta de Valor traz de maneira sintetizada diferente
 
 <div align="center">
     <p>Figura 3: Matriz de Riscos</p>
-    <img src="outros/matriz-risco.jpg" width="800">
+    <img src="imagens/matriz-risco.jpg" width="800">
 </div>
 
 <div align="center">
-    <img src="outros/legenda-matriz-risco.jpg" width="800">
+    <img src="imagens/legenda-matriz-risco.jpg" width="800">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
@@ -236,14 +236,14 @@ As personas apresentadas abaixo caracterizam-se como proto-personas, construída
 
 <div align="center">
     <p>Figura 5: Persona 1</p>
-    <img src="../assets/persona1.png" width="520" height="520">
+    <img src="../assets/persona1.png" width="800">
     <p>Feito pela própria equipe (2026)</p> 
 </div>
 
 
 <div align="center">
     <p>Figura 6: Persona 2</p>
-    <img src="../assets/persona2.png" width="520" height="520"> 
+    <img src="../assets/persona2.png" width="800"> 
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
@@ -600,7 +600,7 @@ O fluxo principal do sistema segue a ordem: `server.ts` inicializa a aplicação
 
 <div align="center">
     <p>Figura: Diagrama de Classe Arquitetural - Ampliado</p>
-    <img src="outros/diagramas_arquitetura/diagramaArquitetura-Ampliado.png">
+    <img src="imagens/diagramas_arquitetura/diagramaArquitetura-Ampliado.png" width="800">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
@@ -608,7 +608,7 @@ Esta imagem apresenta a visão macro e completa da arquitetura do backend. Ela i
 
 <div align="center">
     <p>Figura: Diagrama de Classe Arquitetural - Bootstrap e Express</p>
-    <img src="outros/diagramas_arquitetura/diagramaArquitetura-Btstrp&Expr.png">
+    <img src="imagens/diagramas_arquitetura/diagramaArquitetura-Btstrp&Expr.png" width="800">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
@@ -616,7 +616,7 @@ Este recorte foca na porta de entrada da aplicação. A camada de Bootstrap (ger
 
 <div align="center">
     <p>Figura: Diagrama de Classe Arquitetural - Bootstrap e Express</p>
-    <img src="outros/diagramas_arquitetura/diagramaArquitetura-Btstrp&Expr.png">
+    <img src="imagens/diagramas_arquitetura/diagramaArquitetura-Btstrp&Expr.png" width="800">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
@@ -624,7 +624,7 @@ Este diagrama destaca a camada de Modelos (Models), que representa as entidades 
 
 <div align="center">
     <p>Figura: Diagrama de Classe Arquitetural - Models</p>
-    <img src="outros/diagramas_arquitetura/diagramaArquitetura-Models.png">
+    <img src="imagens/diagramas_arquitetura/diagramaArquitetura-Models.png" width="800">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
@@ -632,7 +632,7 @@ Este diagrama destaca a camada de Modelos (Models), que representa as entidades 
 
 <div align="center">
     <p>Figura: Diagrama de Classe Arquitetural - Validations</p>
-    <img src="outros/diagramas_arquitetura/diagramaArquitetura-Validations.png">
+    <img src="imagens/diagramas_arquitetura/diagramaArquitetura-Validations.png" width="800">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
@@ -640,7 +640,7 @@ A seção de Validations (Validações) e DTOs (Data Transfer Objects) é a barr
 
 <div align="center">
     <p>Figura: Diagrama de Classe Arquitetural - Repositories e Service</p>
-    <img src="outros/diagramas_arquitetura/diagramaArquitetura-Repo&Serv.png">
+    <img src="imagens/diagramas_arquitetura/diagramaArquitetura-Repo&Serv.png" width="800">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
@@ -653,7 +653,7 @@ Documento disponível do diagrama para navegação e aprofundamento do entendime
 O diagrama de casos de uso é uma ilustração visual que representa as funcionalidades de um sistema sob a perspectiva de seus usuários, mapeando quais atores interagem com quais casos de uso. Nele, é possível visualizar como os requisitos funcionais se relacionam por meio de dois tipos de relação: `<<include>>`, que indica uma etapa obrigatória dentro de um fluxo, assim, sempre que o caso de uso base for executado, o caso de uso incluído também será; e `<<extend>>`, que indica uma etapa condicional, presente no fluxo apenas em situações específicas, sem ser obrigatória.
 
 
-<img src="outros/diagrama_de_casos_de_uso.png">
+<img src="imagens/diagrama_de_casos_de_uso.png" width="800">
 
 O diagrama mapeia dois atores e três perfis de uso distintos. O **Agente de Campo** representa o perfil **cadastrador**, sendo responsável por registrar e gerenciar dados em campo, interagindo com os casos de uso de cadastro (RF001 a RF004) e gerenciamento (RF006 a RF009). O **Gestor Operacional** acumula os perfis de **visualizador** e **administrador**: como visualizador, acompanha informações estratégicas por meio dos mapas de calor (RF013); como administrador, é o único ator com acesso à geração de relatórios (RF014) e à exportação de dados (RF015). No fluxo de cadastro, as relações `<<include>>` evidenciam a obrigatoriedade em cadeia, como por exemplo: cadastrar uma moradia (RF001) sempre exige cadastrar o chefe de família (RF002), que por sua vez inclui o cadastro dos membros (RF003). Já o `<<extend>>` aparece nos dois pontos condicionais do diagrama: o cadastro de membros pode, opcionalmente, registrar necessidades especiais (RF004), e a exportação de dados (RF015) estende a geração de relatórios (RF014), ocorrendo apenas quando necessário.
 
@@ -666,7 +666,7 @@ Link do diagrama (realizado por meio do site draw.io): https://drive.google.com/
 
 <div align="center">
     <p>Figura 7: Diagrama de Classes de Domínio</p>
-    <img src="outros/diagrama-classes-dominio.drawio.png" width="800">
+    <img src="imagens/diagrama-classes-dominio.drawio.png" width="800">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
@@ -1367,7 +1367,7 @@ Vale ressaltar que todas as informações presentes nos wireframes são apenas p
 
 <div align="center">
     <p>Figura 7: Wireframe Tela Inicial</p>
-    <img src="outros/paginaInicial.png">
+    <img src="imagens/paginaInicial.png" width="800">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
@@ -1393,7 +1393,7 @@ Para concluir o cadastro, um botão "Concluir Cadastro" deve ser exibido assim q
 
 <div align="center">
     <p>Figura 9: Wireframe Tela Cadastro - Moradias</p>
-    <img src="outros/cadastro1.png">
+    <img src="imagens/cadastro1.png" width="800">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
@@ -1409,7 +1409,7 @@ Neste wireframe, por conter uma tela bastante preenchida com informações perti
 
 <div align="center">
     <p>Figura 10: Wireframe Tela Cadastro - Responsável</p>
-    <img src="outros/cadastro2.png">
+    <img src="imagens/cadastro2.png" width="800">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
@@ -1423,7 +1423,7 @@ Neste wireframe, por conter uma tela bastante preenchida com informações perti
 
 <div align="center">
     <p>Figura 11: Wireframe Tela Cadastro - Moradores</p>
-    <img src="outros/cadastro3.png">
+    <img src="imagens/cadastro3.png" width="800">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
@@ -1437,7 +1437,7 @@ Além disso, vale ressaltar que na imagem está representado apenas o preenchime
 
 <div align="center">
     <p>Figura 12: Wireframe Tela Cadastro - Pets</p>
-    <img src="outros/cadastro4.png">
+    <img src="imagens/cadastro4.png" width="800">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
@@ -1451,7 +1451,7 @@ Para o cadastro de Pets, será possível incluir algumas informações essenciai
 
 <div align="center">
     <p>Figura 13: Wireframe Tela Mapa</p>
-    <img src="outros/mapa.png">
+    <img src="imagens/mapa.png" width="800">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
@@ -1461,7 +1461,7 @@ Esta seção permite a interação com um mapa georreferenciado e refinar a exib
 
 <div align="center">
     <p>Figura 14: Wireframe Tela Busca - </p>
-    <img src="outros/consulta1.png">
+    <img src="imagens/consulta1.png" width="800">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
@@ -1471,7 +1471,7 @@ Os dados encontrados são apresentados na área de "Resultados" em formato de li
 
 <div align="center">
     <p>Figura 15: Wireframe Tela Resultado da Busca</p>
-    <img src="outros/consulta2.png">
+    <img src="imagens/consulta2.png" width="800">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
@@ -1484,7 +1484,7 @@ Esta seção apresenta o guia de estilos utilizado no desenvolvimento da aplica�
 
 <div align="center">
     <p>Figura 16: Guia de estilos</p>
-    <img src="outros/guia_de_estilos.png">
+    <img src="imagens/guia_de_estilos.png" width="800">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
@@ -1494,13 +1494,13 @@ A a paleta de cores pensada para a prototipação foi inspirada na logo oficial 
 
 <div align="center">
     <p>Figura 17: Logo da Defesa Civil de Santo André</p>
-    <img src="outros/logoSantoAndre.png" width="200">
+    <img src="imagens/logoSantoAndre.png" width="200">
     <p>Defesa Civil de Santo André</p>
 </div>
 
 <div align="center">
     <p>Figura 18: Logo do CREDEC-SA</p>
-    <img src="outros/logoCREDEC.png" width="200">
+    <img src="imagens/logoCREDEC.png" width="200">
     <p>CREDEC-SA</p>
 </div>
 
@@ -1578,7 +1578,7 @@ Na parte inferior, uma barra de navegação fixa exibe os três atalhos principa
 
 <div align="center">
     <p>Figura 18: Mockup da Tela Inicial </p>
-    <img src="outros/inicial v2.png" width="400">
+    <img src="imagens/inicial v2.png" width="800">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
@@ -1599,7 +1599,7 @@ A barra de navegação inferior mantém o padrão da aplicação com os atalhos
 
  <div align="center">
     <p>Figura 19: Mockup Tela de Mapa </p>
-    <img src="outros/mapa v2.png" width="400">
+    <img src="imagens/mapa v2.png" width="800">
     <p>Feito pela própria equipe (2026)</p>
 </div> 
 
@@ -1625,7 +1625,7 @@ e **Busca**.
 
  <div align="center">
     <p>Figura 20: Mockup Tela de Busca </p>
-    <img src="outros/busca v2.png" width="400">
+    <img src="imagens/busca v2.png" width="800">
     <p>Feito pela própria equipe (2026)</p>
 </div> 
 
@@ -1639,7 +1639,7 @@ Além disso, os protótipos apresentam funcionalidades em comum, sendo elas: a b
 
 <div align="center">
     <p>Figura 19: Mockup da Seção 1 de Cadastro </p>
-    <img src="outros/formularioMoradia.png" width="400">
+    <img src="imagens/formularioMoradia.png" width="800">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
@@ -1655,7 +1655,7 @@ Este protótipo já apresenta exemplos de informações a serem adicionadas nos 
 
 <div align="center">
     <p>Figura 20: Mockup da Seção 2 de Cadastro </p>
-    <img src="outros/formularioResponsavel.png" width="400">
+    <img src="imagens/formularioResponsavel.png" width="800">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
@@ -1669,7 +1669,7 @@ Este protótipo já apresenta exemplos de informações a serem adicionadas nos 
 
 <div align="center">
     <p>Figura 21: Mockup da Seção 3 de Cadastro </p>
-    <img src="outros/formularioMoradores.png" width="400">
+    <img src="imagens/formularioMoradores.png" width="800">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
@@ -1685,7 +1685,7 @@ Este protótipo já apresenta exemplos de informações a serem adicionadas nos 
 
 <div align="center">
     <p>Figura 22: Mockup da Seção 4 de Cadastro </p>
-    <img src="outros/formularioPets.png" width="400">
+    <img src="imagens/formularioPets.png" width="800">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
@@ -1714,7 +1714,7 @@ O **Modelo Entidade-Relacionamento (MER)** é uma abordagem conceitual que repre
 
 <div align="center">
     <p>Figura 16: Modelo Entidade-Relacionamento</p>
-    <img src="outros/MER.png">
+    <img src="imagens/MER.png" width="800">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
@@ -1761,7 +1761,7 @@ Abaixo é apresentado o esquema visual do banco de dados, ilustrando as tabelas 
 
 <div align="center">
     <p>Figura 17: Diagrama Entidade-Relacionamento Lógico</p>
-    <img src="outros/DER.png">
+    <img src="imagens/DER.png" width="800">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 ---
@@ -2157,19 +2157,19 @@ Alguns endpoints apareceram em versões anteriores da documentação, mas ainda 
 
 ### 3.8.1. Autenticação
 
-*Descreva o fluxo de autenticação implementado: persistência de senha com hash bcrypt/argon2 (parâmetros de custo explícitos e justificados), validação de credenciais e criação de sessão. Senhas em texto plano no banco não são aceitas.*
+Não se aplica — autenticação está fora do escopo desta entrega, conforme definido na nota de abertura da seção 3.8.
 
 ### 3.8.2. Controle de sessão
 
-*Descreva o controle de sessão baseado em `session id` persistido em tabela própria, com expiração. Se optar por JWT, justifique a escolha explicando os trade-offs (stateless, não revogável, payload exposto).*
+Não se aplica — controle de sessão está fora do escopo desta entrega.
 
 ### 3.8.3. Autorização
 
-*Descreva as regras de autorização por rota e por operação, baseadas no perfil do usuário autenticado. A verificação deve ocorrer no backend — o frontend nunca é fonte de verdade para autorização.*
+Não se aplica — autorização por perfil está fora do escopo desta entrega.
 
 ### 3.8.4. Estratégias de Resiliência
 
-*Descreva as estratégias aplicadas no tratamento de falhas de rede: timeout, retry com backoff exponencial, circuit breaker e idempotência em operações críticas (`PUT`, `DELETE`, operações de pagamento etc.).*
+Não se aplica — resiliência avançada de rede está fora do escopo desta entrega.
 
 ## 3.9. Matriz de Rastreabilidade (RTM) (sprints 3 a 5)
 
@@ -2356,7 +2356,7 @@ Dentre as dificuldades, encontramos problemas diversos considerando o prazo de e
 <!-- <p>Arquitetura de pastas e classes</p> -->
 <div align="center">
     <p>Arquitetura de pastas e classes</p>
-    <img src="outros/arquitetura-pastas.png" height="800">
+    <img src="imagens/arquitetura-pastas.png" width="800">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
@@ -2492,7 +2492,6 @@ O middleware de autenticação **ainda não foi implementado**. Os status `401` 
 
 ## 4.3. Versão final da aplicação web (sprint 5)
 
-*Descreva e ilustre aqui o desenvolvimento da versão final do sistema web, com foco em refatorações, correções finais e na camada de autenticação/autorização entregue. Utilize prints de tela para ilustrar. Indique obrigatoriamente: (a) o que foi refinado ou adicionado desde a sprint 4, (b) pendências remanescentes, (c) dificuldades técnicas enfrentadas.*
 
 # <a name="c5"></a>5. Testes
 
@@ -2551,7 +2550,7 @@ O Jest gera o relatório de cobertura a partir da configuração `src/geoRisco/j
 
 A evidência visual da execução do comando `npm test -- --coverage`, ou `npm.cmd test -- --coverage` é apresentada abaixo:
 
-![Evidência da cobertura dos testes unitários de Service](outros/porcentagemTesteService.png)
+<img src="imagens/porcentagemTesteService.png" width="800" alt="Evidência da cobertura dos testes unitários de Service">
 
 ## Dependências necessárias
 
@@ -2795,11 +2794,9 @@ Os endpoints planejados que ainda não existem no backend atual, como `/api/mapa
 
 ### 5.2.1. Relatório de testes de guerrilha
 
-*Posicione aqui as tabelas com enunciados de tarefas, etapas e resultados de testes de usabilidade. Ou utilize um link para seu relatório de testes (mantenha o link sempre público para visualização).*
 
 ### 5.2.2. Relatório de testes SUS (System Usability Scale)
 
-*Posicione aqui o relatório dos testes SUS realizados.*
 
 # <a name="c6"></a>6. Estudo de Mercado e Plano de Marketing (sprint 4)
 
@@ -3026,53 +3023,44 @@ Tivemos alterações nas Personas (ambas), User Stories (todas), RF, RNF e RN. D
 
 # <a name="c8"></a>8. Conclusões e trabalhos futuros (sprint 5)
 
-*Escreva de que formas a solução da aplicação web atingiu os objetivos descritos na seção 2 deste documento. Indique pontos fortes e pontos a melhorar de maneira geral.*
-
-*Relacione os pontos de melhorias evidenciados nos testes com planos de ações para serem implementadas. O grupo não precisa implementá-las, pode deixar registrado aqui o plano para ações futuras*
-
-*Relacione também quaisquer outras ideias que o grupo tenha para melhorias futuras*
 
 # <a name="c8"></a>9. Referências (sprints 1 a 5)
 
 1. PORTER, Michael E. *Estratégia Competitiva: Técnicas para Análise de Indústrias e da Concorrência*. 2. ed. Rio de Janeiro: Campus, 2004.
 
-2. JOHNSON, G.; SCHOLES, K.; WHITTINGTON, R. *Exploring Corporate Strategy*. Harlow: Pearson Education, 2008.
+2. JOHNSON, G.; SCHOLES, K.; WHITTINGTON, R. *Exploring Corporate Strategy*. 8. ed. Harlow: Pearson Education, 2008.
 
-3. PREFEITURA DE SANTO ANDRÉ. Departamento de Proteção e Defesa Civil: Ações e Programas. Disponível em: <https://portais.santoandre.sp.gov.br/defesacivil/>. Acesso em: 27 abr. 2026.
+3. PREFEITURA DE SANTO ANDRÉ. *Departamento de Proteção e Defesa Civil: Ações e Programas*. Santo André, [s.d.]. Disponível em: <https://portais.santoandre.sp.gov.br/defesacivil/>. Acesso em: 27 abr. 2026.
 
 4. BRASIL. Lei nº 12.608, de 10 de abril de 2012. Institui a Política Nacional de Proteção e Defesa Civil (PNPDEC). *Diário Oficial da União*, Brasília, DF, 11 abr. 2012.
 
-5. PEDROSO, Luiz Guilherme Lourenço Becker. [Título do trabalho]. 2017. Trabalho de Conclusão de Curso (Graduação) – Universidade de São Paulo, São Paulo, 2017. Disponível em: https://bdta.abcd.usp.br/directbitstream/05356078-01cb-4989-856d-4cf4dcb8b4cc/LuizGuilhermeLourencoBeckerPedroso%20TCCPRO17.pdf
-. Acesso em: 30 abr. 2026.
+5. PEDROSO, Luiz Guilherme Lourenço Becker. *[INSERIR TÍTULO DO TRABALHO]*. 2017. Trabalho de Conclusão de Curso (Graduação) – Universidade de São Paulo, São Paulo, 2017. Disponível em: <https://bdta.abcd.usp.br/directbitstream/05356078-01cb-4989-856d-4cf4dcb8b4cc/LuizGuilhermeLourencoBeckerPedroso%20TCCPRO17.pdf>. Acesso em: 30 abr. 2026.
 
-6. FORTUNE BUSINESS INSIGHTS. Crisis Management Software Market Size, Share & Industry Analysis. Pune, 2026. Disponível em: https://www.fortunebusinessinsights.com/pt/crisis-management-software-market-110370. Acesso em: 2 jun. 2026.
+6. FORTUNE BUSINESS INSIGHTS. *Crisis Management Software Market Size, Share & Industry Analysis*. Pune, 2026. Disponível em: <https://www.fortunebusinessinsights.com/pt/crisis-management-software-market-110370>. Acesso em: 2 jun. 2026.
 
-7. GLOBAL GROWTH INSIGHTS. Emergency Management Software Market Report. 2026. Disponível em: https://www.globalgrowthinsights.com/market-reports/emergency-management-software-market-105680. Acesso em: 2 jun. 2026.
+7. GLOBAL GROWTH INSIGHTS. *Emergency Management Software Market Report*. [S.l.], 2026. Disponível em: <https://www.globalgrowthinsights.com/market-reports/emergency-management-software-market-105680>. Acesso em: 2 jun. 2026.
 
-8. VERIFIED MARKET REPORTS. Public Safety Software Market Size, Share, Trends and Forecast. 2026. Disponível em: https://www.verifiedmarketreports.com/product/public-safety-software-market/. Acesso em: 2 jun. 2026.
+8. VERIFIED MARKET REPORTS. *Public Safety Software Market Size, Share, Trends and Forecast*. [S.l.], 2026. Disponível em: <https://www.verifiedmarketreports.com/product/public-safety-software-market/>. Acesso em: 2 jun. 2026.
 
-9. ABSTARTUPS; SEBRAE. GovTech Brasil 2023: mapeamento do ecossistema de tecnologia para o setor público. São Paulo: Abstartups, 2023. Disponível em: https://abstartups.com.br/govtech-brasil. Acesso em: 09 jun. 2026.
+9. ABSTARTUPS; SEBRAE. *GovTech Brasil 2023: mapeamento do ecossistema de tecnologia para o setor público*. São Paulo: Abstartups, 2023. Disponível em: <https://abstartups.com.br/govtech-brasil>. Acesso em: 9 jun. 2026.
 
-10. BRASIL. Lei nº 14.133, de 1º de abril de 2021. Lei de Licitações e Contratos Administrativos. Diário Oficial da União, Brasília, DF, 1 abr. 2021. Disponível em: https://www.planalto.gov.br/ccivil_03/_ato2019-2022/2021/lei/l14133.htm. Acesso em: 09 jun. 2026.
+10. BRASIL. Lei nº 14.133, de 1º de abril de 2021. Lei de Licitações e Contratos Administrativos. *Diário Oficial da União*, Brasília, DF, 1 abr. 2021. Disponível em: <https://www.planalto.gov.br/ccivil_03/_ato2019-2022/2021/lei/l14133.htm>. Acesso em: 9 jun. 2026.
 
-11. CENTRO NACIONAL DE MONITORAMENTO E ALERTAS DE DESASTRES NATURAIS (CEMADEN). CEMADEN expande rede de monitoramento e passa a monitorar 1.295 municípios. Brasília: CEMADEN, 2024. Disponível em: https://www.gov.br/cemaden/pt-br/assuntos/noticias-cemaden/cemaden-expande-rede-de-monitoramento-e-passa-a-monitorar-1-295-municipios. Acesso em: 09 jun. 2026.
+11. CENTRO NACIONAL DE MONITORAMENTO E ALERTAS DE DESASTRES NATURAIS (CEMADEN). *CEMADEN expande rede de monitoramento e passa a monitorar 1.295 municípios*. Brasília: CEMADEN, 2024. Disponível em: <https://www.gov.br/cemaden/pt-br/assuntos/noticias-cemaden/cemaden-expande-rede-de-monitoramento-e-passa-a-monitorar-1-295-municipios>. Acesso em: 9 jun. 2026.
 
-12. GOOGLE. Google Maps Platform documentation. Mountain View: Google LLC, 2024. Disponível em: https://developers.google.com/maps/documentation. Acesso em: 09 jun. 2026.
+12. GOOGLE. *Google Maps Platform Documentation*. Mountain View: Google LLC, 2024. Disponível em: <https://developers.google.com/maps/documentation>. Acesso em: 9 jun. 2026.
 
-13. OPENSTREETMAP FOUNDATION. OpenStreetMap. 2024. Disponível em: https://www.openstreetmap.org. Acesso em: 09 jun. 2026.
+13. OPENSTREETMAP FOUNDATION. *OpenStreetMap*. [S.l.], 2024. Disponível em: <https://www.openstreetmap.org>. Acesso em: 9 jun. 2026.
 
-14. CENTRO NACIONAL DE MONITORAMENTO E ALERTAS DE DESASTRES NATURAIS (CEMADEN). Cemaden expande rede de monitoramento e passa a monitorar 1.295 municípios. São José dos Campos, 2026. Disponível em: <https://www.gov.br/cemaden/pt-br/assuntos/noticias-cemaden/cemaden-expande-rede-de-monitoramento-e-passa-a-monitorar-1-295-municipios>. Acesso em: 9 jun. 2026.
+14. BRASIL. Secretaria de Comunicação Social da Presidência da República (SECOM). *Mais 162 cidades brasileiras são incluídas na rede de alertas do Cemaden*. Brasília, 2026. Disponível em: <https://www.gov.br/secom/pt-br/acompanhe-a-secom/noticias/2026/05/mais-162-cidades-brasileiras-sao-incluidas-na-rede-de-alertas-do-cemaden/>. Acesso em: 9 jun. 2026.
 
-15. BRASIL. Secretaria de Comunicação Social da Presidência da República (SECOM). Mais 162 cidades brasileiras são incluídas na rede de alertas do Cemaden. Brasília, 2026. Disponível em: <https://www.gov.br/secom/pt-br/acompanhe-a-secom/noticias/2026/05/mais-162-cidades-brasileiras-sao-incluidas-na-rede-de-alertas-do-cemaden/>. Acesso em: 9 jun. 2026.
+15. BRASIL. Casa Civil. *Cadastro de municípios suscetíveis a eventos de enxurradas e inundações: Nota Técnica 2*. Brasília, [s.d.]. Disponível em: <https://www.gov.br/casacivil/pt-br/assuntos/cadastro-de-municipios-suscetiveis-a-eventos-de-enxurradas-e-inundacoes/Nota_Tecnica_2.pdf>. Acesso em: 9 jun. 2026.
 
-16. BRASIL. Casa Civil. Cadastro de municípios suscetíveis a eventos de enxurradas e inundações: Nota Técnica 2. Brasília, [s.d.]. Disponível em: <https://www.gov.br/casacivil/pt-br/assuntos/cadastro-de-municipios-suscetiveis-a-eventos-de-enxurradas-e-inundacoes/Nota_Tecnica_2.pdf>. Acesso em: 9 jun. 2026.
+16. INSTITUTO BRASILEIRO DE GEOGRAFIA E ESTATÍSTICA (IBGE). *Estudo inédito mostra moradores sujeitos a enchentes e deslizamentos*. Rio de Janeiro, 2018. Disponível em: <https://agenciadenoticias.ibge.gov.br/agencia-noticias/2012-agencia-de-noticias/noticias/21566-estudo-inedito-mostra-moradores-sujeitos-a-enchentes-e-deslizamentos>. Acesso em: 9 jun. 2026.
 
-17. INSTITUTO BRASILEIRO DE GEOGRAFIA E ESTATÍSTICA (IBGE). Estudo inédito mostra moradores sujeitos a enchentes e deslizamentos. Rio de Janeiro, 2018. Disponível em: <https://agenciadenoticias.ibge.gov.br/agencia-noticias/2012-agencia-de-noticias/noticias/21566-estudo-inedito-mostra-moradores-sujeitos-a-enchentes-e-deslizamentos>. Acesso em: 9 jun. 2026.
+17. INSTITUTO DE PESQUISAS TECNOLÓGICAS (IPT). *Mapeamento e gerenciamento de áreas de risco de deslizamento e solapamento de margem no município de Santo André-SP*. São Paulo, 27 mar. 2023. Disponível em: <https://ipt.br/2023/03/27/mapeamento-e-gerenciamento-de-areas-de-risco-de-deslizamento-e-solapamento-de-margem-no-municipio-de-santo-andre-sp/>. Acesso em: 9 jun. 2026.
 
-18. INSTITUTO DE PESQUISAS TECNOLÓGICAS (IPT). Mapeamento e gerenciamento de áreas de risco de deslizamento e solapamento de margem no município de Santo André-SP. São Paulo, 27 mar. 2023. Disponível em: <https://ipt.br/2023/03/27/mapeamento-e-gerenciamento-de-areas-de-risco-de-deslizamento-e-solapamento-de-margem-no-municipio-de-santo-andre-sp/>. Acesso em: 9 jun. 2026.
-
-19. INSTITUTO BRASILEIRO DE GEOGRAFIA E ESTATÍSTICA (IBGE). População em áreas de risco no Brasil. Rio de Janeiro: IBGE, 2018. Disponível em: https://www.ibge.gov.br/geociencias/informacoes-ambientais/estudos-ambientais/21538-populacao-em-areas-de-risco-no-brasil.html. Acesso em: 12 jun. 2026.
+18. INSTITUTO BRASILEIRO DE GEOGRAFIA E ESTATÍSTICA (IBGE). *População em áreas de risco no Brasil*. Rio de Janeiro: IBGE, 2018. Disponível em: <https://www.ibge.gov.br/geociencias/informacoes-ambientais/estudos-ambientais/21538-populacao-em-areas-de-risco-no-brasil.html>. Acesso em: 12 jun. 2026.
 
 # <a name="c10"></a>Anexos
 
-*Inclua aqui quaisquer complementos para seu projeto, como diagramas, imagens, tabelas etc. Organize em sub-tópicos utilizando headings menores (use ## ou ### para isso)*

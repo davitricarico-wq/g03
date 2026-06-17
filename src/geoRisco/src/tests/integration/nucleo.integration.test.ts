@@ -87,7 +87,7 @@ describe('Integração: cadastrarNucleoFamiliar (transacional)', () => {
 
         const familiaId = result.familia.id;
         const moradiaId = result.moradia!.id;
-        const responsavelId = result.responsavel.idPessoa ?? result.responsavel.id ?? result.responsavel.idPessoa;
+        const responsavelId = result.responsavel.id;
 
         // Checar persistência via repositórios
         const familiaDb = await familiaRepo.getById(familiaId);
