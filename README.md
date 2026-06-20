@@ -11,13 +11,13 @@
 ## Integrantes
 
 - [Ali Mustapha Abdallah](https://www.linkedin.com/in/ali-abdallah007/)
-- [Arthur Davi da Silva Rodrigues](INSERIR LINK)
-- [Davi Viana Tricarico](INSERIR LINK)
-- [Eduardo Totti Thomé](INSERIR LINK)
-- [Enzo Kojian Guilhen](INSERIR LINK)
+- [Arthur Davi da Silva Rodrigues](https://www.linkedin.com/in/arthur-davi-da-silva-rodrigues/)
+- [Davi Viana Tricarico](inserir link)
+- [Eduardo Totti Thomé](https://www.linkedin.com/in/eduardototti/)
+- [Enzo Kojian Guilhen](inserir link)
 - [Gabriel Andreott Salles Pereira](https://www.linkedin.com/in/gabriel-andreott-84037a330)
-- [Julio Quevedo da Silva](INSERIR LINK)
-- [Lucas Bianchezzi Oliveira](INSERIR LINK)
+- [Julio Quevedo da Silva](https://www.linkedin.com/in/julioquevdo/?locale=en)
+- [Lucas Bianchezzi Oliveira](https://www.linkedin.com/in/lucasb-oliveira/?locale=en)
 
 ## Professores
 
@@ -26,10 +26,10 @@
 
 ### Instrutores
 - [Crishna Irion](https://www.linkedin.com/in/crishna-irion-phd-7b5aa311)
-- [Bruna Mayer Costa](INSERIR LINK)
+- [Bruna Mayer Costa](https://www.linkedin.com/in/bruna-mayer/)
 - [Henrique Mohallem Paiva](https://br.linkedin.com/in/henrique-mohallem-paiva-6854b460)
-- [Fábio Cássio de Souza](INSERIR LINK)
-- [Claudio Fernando André](INSERIR LINK)
+- [Fábio Cássio de Souza](https://www.linkedin.com/in/fabiocassiosouza/)
+- [Claudio Fernando André](https://www.linkedin.com/in/profclaudioandre/)
 - [Andréa Zotovici](https://www.linkedin.com/in/zotovici/)
 
 ---
