@@ -1,4 +1,4 @@
-<img src="assets/logointeli.png" alt="Logo Inteli" width="300">
+﻿<img src="assets/logointeli.png" alt="Logo Inteli" width="300">
 
 
 # WAD - Web Application Document - Módulo 2 - Inteli
@@ -466,21 +466,60 @@ As Validações de Campo (VC) definem as restrições de preenchimento obrigató
 ---
 
 ### 3.1.5 Requisitos Não Funcionais — ISO/IEC 25010:2011
-| ID | Eixo | Descrição | Derivação e Contexto do Parceiro | Evolução do conceitual para técnico | Métrica / Critério de Aceite | Conexão com RFs | Como Verificar |
-|---|---|---|---|---|---|---|---|
-| RNF001 | **Usabilidade** | O sistema deve facilitar o preenchimento e a consulta de cadastros por meio de payloads padronizados, validações de entrada e respostas de erro compreensíveis. Evitando assim, a escrita de dados errados, inconsistentes e dados não padronizados.  | Derivado da US01 e US02: agentes atuam em áreas de risco sob pressão e precisam registrar dados de pessoas, moradias e famílias com o menor número possível de inconsistências. | O requisito evoluiu para decisões técnicas como uso de DTOs, funções de normalização em `request-utils.ts` e validações específicas em `validations/`, reduzindo erros de entrada antes que os dados cheguem aos services. | Payloads obrigatórios devem ser validados antes da persistência; requisições inválidas devem retornar mensagens de erro claras. | RF001, RF002, RF005, RF012 | Testar chamadas da API com dados válidos e inválidos, verificando se os erros retornados orientam a correção do preenchimento. |
-| RNF002 | **Confiabilidade** | O backend deve preservar a integridade dos dados em operações compostas, evitando cadastros parciais quando uma etapa do processo falha. | Derivado da necessidade de manter cadastros familiares, moradias, responsáveis e vínculos consistentes, já que dados incompletos podem prejudicar consultas e ações da Defesa Civil. | O requisito evoluiu para o uso de transações nos services, com `BEGIN`, `COMMIT` e `ROLLBACK` em operações que envolvem múltiplas tabelas, como cadastro de responsável, moradia com localização e núcleo familiar. | Operações compostas devem ser concluídas integralmente ou revertidas em caso de erro. | RF001, RF002, RF003, RF012 | Simular falhas durante cadastros compostos e verificar se nenhum registro parcial permanece persistido no banco. |
-| RNF003 | **Eficiência de desempenho** | O sistema deve manter uma organização que permita consultas e operações de cadastro com baixo acoplamento e possibilidade de otimização futura. | Derivado da necessidade de consulta rápida a pessoas, moradias, famílias, pets e fotos, especialmente em cenários de uso operacional. | O requisito evoluiu para a separação entre controllers, services e repositories. O acesso ao banco foi isolado em repositories, permitindo otimizar queries SQL sem alterar a lógica dos controllers ou services. | Endpoints principais devem responder de forma consistente, com funções como busca de dados da moradia devem responder em menos de 1 segundo e permitir análise futura de gargalos em consultas SQL. | RF004, RF005, RF006, RF011 | Medir tempo de resposta dos endpoints principais e revisar queries em repositories para identificar pontos de otimização. |
-| RNF004 | **Adequação funcional** | A API deve oferecer endpoints coerentes com os fluxos centrais do sistema, cobrindo cadastro, consulta, atualização e remoção de pessoas, moradias, famílias, pets e fotos. Com todos estes seguindo o protocólo HTTP correto. | Derivado da necessidade de transformar os fluxos definidos no WAD em operações concretas no backend. | O requisito evoluiu para rotas REST organizadas por domínio em `routes/`, com controllers e services específicos para cada módulo funcional da aplicação. | Os endpoints implementados devem corresponder aos fluxos funcionais documentados e estar vinculados aos RFs relevantes. | Todos os RFs | Conferir a documentação da WebAPI e testar se os endpoints existentes cobrem os fluxos previstos nos requisitos funcionais. |
-| RNF005 | **Interoperabilidade** | A aplicação deve ser acessível por tecnologias web amplamente compatíveis e permitir consumo dos mesmos endpoints por diferentes interfaces. | Derivado da necessidade de uso em diferentes dispositivos e contextos, incluindo telas de cadastro, consulta e uso futuro em mobile/PWA. | O requisito evoluiu para o uso de Express, JSON, EJS e arquivos estáticos, permitindo acesso via navegador e consumo da API HTTP por diferentes interfaces. | A API deve manter contratos independentes do dispositivo ou interface que a consome. | RF001, RF002, RF003, RF004 | Testar a aplicação em navegadores e resoluções diferentes, verificando se os endpoints continuam acessíveis e consistentes. |
-| RNF006 | **Segurança** | O sistema deve reduzir exposição de dados sensíveis e arquivos, validando entradas, controlando erros e evitando acesso direto a detalhes internos da aplicação. Importante explicitar que deve-se garantir que logs de erros ou informacionais do sistema não exponham dados sensíveis. | Derivado da LGPD e do tratamento de dados sensíveis de cidadãos vulneráveis, além da necessidade de proteger fotos e informações cadastrais. | O requisito evoluiu para validações de payload, uso de `HttpError`, tratamento padronizado com `handleControllerError` e integração com Supabase Storage por URLs assinadas. | Requisições inválidas não devem expor stack trace, credenciais, detalhes internos do banco ou caminhos sensíveis de storage. | RF001, RF002, RF009, RF010 | Enviar requisições inválidas e verificar se as respostas de erro são controladas e não expõem informações internas. |
-| RNF007 | **Compatibilidade** | O sistema deve separar o armazenamento de metadados do armazenamento de arquivos, permitindo integração entre PostgreSQL e serviço externo de storage. | Derivado da necessidade de registrar fotos de moradias e pets sem sobrecarregar o banco relacional com arquivos binários. | O requisito evoluiu para endpoints próprios de fotos e upload mediado por Supabase Storage. O banco mantém vínculos e metadados, enquanto o storage externo armazena os arquivos. | O sistema deve permitir gerar URL assinada, cadastrar metadados da foto e vincular o arquivo à moradia ou ao pet correspondente. | RF002, RF007 | Testar criação de URL assinada, cadastro de foto e vínculo com moradia ou pet, verificando integração entre API, banco e storage. |
-| RNF008 | **Manutenibilidade** | O projeto deve manter uma estrutura organizada, auditável e segura para evolução, testes e uso de dados fictícios durante o desenvolvimento. | Derivado da necessidade de evolução contínua do projeto em sprints, com separação clara de responsabilidades e redução do risco de uso indevido de dados reais. | O requisito evoluiu para a organização do backend em `controllers`, `services`, `repositories`, `dtos`, `models`, `validations`, `errors`, `db` e `storage`, além do uso de variáveis de ambiente para configurações sensíveis. | A estrutura do código deve permitir manutenção por módulos e facilitar auditoria do que é regra de negócio, persistência, validação ou infraestrutura. | Todos os RFs | Revisar estrutura de pastas, testes e dados utilizados em desenvolvimento, garantindo que a evolução do sistema não dependa de dados reais. |
+| ID | Eixo | Descrição | Derivação e Contexto do Parceiro | Evolução do conceitual para técnico | Métrica Objetiva / Critério de Aceite | Evidência de Implementação | Conexão com RFs | Como Verificar |
+|---|---|---|---|---|---|---|---|---|
+| RNF001 | **Usabilidade** | O sistema deve facilitar o preenchimento e a consulta de cadastros por meio de payloads padronizados, validações de entrada e respostas de erro compreensíveis. Evitando assim, a escrita de dados errados, inconsistentes e dados não padronizados.  | Derivado da US01 e US02: agentes atuam em áreas de risco sob pressão e precisam registrar dados de pessoas, moradias e famílias com o menor número possível de inconsistências. | O requisito evoluiu para decisões técnicas como uso de DTOs, funções de normalização em `request-utils.ts` e validações específicas em `validations/`, reduzindo erros de entrada antes que os dados cheguem aos services. | 100% das requisições com payload inválido retornam `400` com campo de erro descritivo; cobertura de branches em `validations/` ≥ 67% (medido: 67,07% — seção 5.1.4.2). | Relatório de cobertura — seção 5.1.4.2: `validations/` com 67,07% branches e 61,30% statements; funções de normalização em `request-utils.ts` ativas; CT06, CT34, CT96 validam respostas de erro descritivas. | RF001, RF002, RF005, RF012 | Testar chamadas da API com dados válidos e inválidos, verificando se os erros retornados orientam a correção do preenchimento. |
+| RNF002 | **Confiabilidade** | O backend deve preservar a integridade dos dados em operações compostas, evitando cadastros parciais quando uma etapa do processo falha. | Derivado da necessidade de manter cadastros familiares, moradias, responsáveis e vínculos consistentes, já que dados incompletos podem prejudicar consultas e ações da Defesa Civil. | O requisito evoluiu para o uso de transações nos services, com `BEGIN`, `COMMIT` e `ROLLBACK` em operações que envolvem múltiplas tabelas, como cadastro de responsável, moradia com localização e núcleo familiar. | 0 registros parciais persistidos em operações compostas com falha simulada; atomicidade validada pelo CT94 — `POST /api/familias/nucleo`. | Transações `BEGIN/COMMIT/ROLLBACK` implementadas nos services de família, moradia e responsável; CT94 — falha em etapa obrigatória não persiste dados parciais (seção 5.1.4.2). | RF001, RF002, RF003, RF012 | Simular falhas durante cadastros compostos e verificar se nenhum registro parcial permanece persistido no banco. |
+| RNF003 | **Eficiência de desempenho** | O sistema deve manter uma organização que permita consultas e operações de cadastro com baixo acoplamento e possibilidade de otimização futura. | Derivado da necessidade de consulta rápida a pessoas, moradias, famílias, pets e fotos, especialmente em cenários de uso operacional. | O requisito evoluiu para a separação entre controllers, services e repositories. O acesso ao banco foi isolado em repositories, permitindo otimizar queries SQL sem alterar a lógica dos controllers ou services. | Endpoints de consulta (`GET /api/moradias`, `GET /api/pessoas`) com objetivo de resposta < 1s; 0 dependências diretas entre controller e repository (acoplamento zero via service). | Separação controller → service → repository documentada na seção 3.2.1; queries SQL isoladas em `repositories/` sem lógica de negócio; cobertura de services: 72,26% statements (seção 5.1.4.2). | RF004, RF005, RF006, RF011 | Medir tempo de resposta dos endpoints principais e revisar queries em repositories para identificar pontos de otimização. |
+| RNF004 | **Adequação funcional** | A API deve oferecer endpoints coerentes com os fluxos centrais do sistema, cobrindo cadastro, consulta, atualização e remoção de pessoas, moradias, famílias, pets e fotos. Com todos estes seguindo o protocólo HTTP correto. | Derivado da necessidade de transformar os fluxos definidos no WAD em operações concretas no backend. | O requisito evoluiu para rotas REST organizadas por domínio em `routes/`, com controllers e services específicos para cada módulo funcional da aplicação. | 52 de 64 endpoints planejados implementados (81%); cobertura de branches em `controllers/` de 64,01% (seção 5.1.4.2). | 52 endpoints documentados em `documentos/endpoints.md` e `documentos/webapi-docs.html`; cobertura de controllers: 87,81% statements (seção 5.1.4.2). | Todos os RFs | Conferir a documentação da WebAPI e testar se os endpoints existentes cobrem os fluxos previstos nos requisitos funcionais. |
+| RNF005 | **Interoperabilidade** | A aplicação deve ser acessível por tecnologias web amplamente compatíveis e permitir consumo dos mesmos endpoints por diferentes interfaces. | Derivado da necessidade de uso em diferentes dispositivos e contextos, incluindo telas de cadastro, consulta e uso futuro em mobile/PWA. | O requisito evoluiu para o uso de Express, JSON, EJS e arquivos estáticos, permitindo acesso via navegador e consumo da API HTTP por diferentes interfaces. | API consumível simultaneamente por navegador (EJS) e cliente HTTP (JSON) sem adaptação; endpoints acessíveis em Chrome, Firefox e Edge sem configuração adicional. | Rotas HTML (`/pessoas`, `/pessoas/novo`) e rotas API (`/api/pessoas`) convivem no mesmo servidor Express — seção 3.7; formulário EJS e `curl` consomem os mesmos dados do banco. | RF001, RF002, RF003, RF004 | Testar a aplicação em navegadores e resoluções diferentes, verificando se os endpoints continuam acessíveis e consistentes. |
+| RNF006 | **Segurança** | O sistema deve reduzir exposição de dados sensíveis e arquivos, validando entradas, controlando erros e evitando acesso direto a detalhes internos da aplicação. Importante explicitar que deve-se garantir que logs de erros ou informacionais do sistema não exponham dados sensíveis. | Derivado da LGPD e do tratamento de dados sensíveis de cidadãos vulneráveis, além da necessidade de proteger fotos e informações cadastrais. | O requisito evoluiu para validações de payload, uso de `HttpError`, tratamento padronizado com `handleControllerError` e integração com Supabase Storage por URLs assinadas. | 0 stack traces ou dados de infraestrutura expostos em respostas de erro; todas as respostas de erro no formato `{ "error": "..." }` sem campos internos do banco. | `handleControllerError` centraliza tratamento de erros em todos os controllers; CT06, CT34, CT96 — requisições inválidas retornam `400` sem dados internos ou caminhos sensíveis de storage. | RF001, RF002, RF009, RF010 | Enviar requisições inválidas e verificar se as respostas de erro são controladas e não expõem informações internas. |
+| RNF007 | **Compatibilidade** | O sistema deve separar o armazenamento de metadados do armazenamento de arquivos, permitindo integração entre PostgreSQL e serviço externo de storage. | Derivado da necessidade de registrar fotos de moradias e pets sem sobrecarregar o banco relacional com arquivos binários. | O requisito evoluiu para endpoints próprios de fotos e upload mediado por Supabase Storage. O banco mantém vínculos e metadados, enquanto o storage externo armazena os arquivos. | URL assinada gerada com sucesso em 100% dos casos testados (CT42, CT89); banco armazena apenas metadados e URL; arquivo físico isolado no bucket `georisco-fotos`. | CT42 e CT89 validados; `foto-storage.service.ts` com 93,93% cobertura (seção 5.1.4.2); banco mantém URL e metadados; arquivo físico no Supabase Storage. | RF002, RF007 | Testar criação de URL assinada, cadastro de foto e vínculo com moradia ou pet, verificando integração entre API, banco e storage. |
+| RNF008 | **Manutenibilidade** | O projeto deve manter uma estrutura organizada, auditável e segura para evolução, testes e uso de dados fictícios durante o desenvolvimento. | Derivado da necessidade de evolução contínua do projeto em sprints, com separação clara de responsabilidades e redução do risco de uso indevido de dados reais. | O requisito evoluiu para a organização do backend em `controllers`, `services`, `repositories`, `dtos`, `models`, `validations`, `errors`, `db` e `storage`, além do uso de variáveis de ambiente para configurações sensíveis. | 9 módulos separados por responsabilidade; cobertura geral de 72,67% statements (seção 5.1.4.2); 0 dados reais utilizados nos testes. | Estrutura de 9 módulos documentada na seção 3.2.1; variáveis de ambiente em `dotenv` isolam configurações sensíveis; dados fictícios em todos os testes unitários e de integração. | Todos os RFs | Revisar estrutura de pastas, testes e dados utilizados em desenvolvimento, garantindo que a evolução do sistema não dependa de dados reais. |
 
 ## 3.1.6. Matriz RF → RN → Endpoint (sprints 3 a 5)
  
 Matriz de cobertura que demonstra quais RN (Regras de Negócio) e endpoints implementam cada RF (Requisito Funcional). A matriz reflete a numeração atual de requisitos (RF001–RF019, seção 3.1.2) e de regras de negócio (RN01–RN12, seção 3.1.3), e os endpoints estão alinhados com a implementação real do backend (`src/geoRisco/src/routes/`) e com a relação detalhada da seção 3.7, também formalizada em `documentos/webapi-docs.html` e `documentos/endpoints.md`. Cada linha associa um endpoint a um RF; endpoints que atendem a mais de um RF aparecem em mais de uma linha.
  
+
+#### Referência Rápida — Regras de Negócio
+| RN | Nome resumido | Regra em uma linha |
+|---|---|---|
+| RN01 | Responsável obrigatório | Toda família ativa precisa de exatamente um responsável com dados completos |
+| RN02 | Responsável único | Não há dois responsáveis simultâneos na mesma família; troca exige confirmação |
+| RN03 | Família sem moradia | Família pode ser cadastrada sem moradia; recebe flag "cadastro incompleto" |
+| RN04 | Vulnerabilidade obrigatória | Toda pessoa tem grupo(s) de vulnerabilidade; "idoso"/"criança" são automáticos |
+| RN05 | GPS confirmado | Localização da moradia é salva somente após confirmação explícita do pin |
+| RN06 | Soft delete | Moradores, famílias e moradias nunca são deletados fisicamente — histórico preservado |
+| RN07 | Sem foto de pessoas | Fotos permitidas apenas para fachada/entorno de moradias e para pets |
+| RN08 | Situação manual | Status da moradia é marcado manualmente; sem inferência automática de risco |
+| RN09 | Recadastro anual | Fichas sem atualização há > 365 dias recebem flag "cadastro desatualizado" |
+| RN10 | Limpeza automática | Flags "incompleto" e "desatualizado" somem quando a condição que as gerou é resolvida |
+| RN11 | Fonte oficial | Consultas usam dados do banco — nunca dados fixos ou mockados na interface |
+| RN12 | Pet segue família | Pet é vinculado à família; ao mudar de moradia, os pets a acompanham |
+
+#### Status de Implementação por RF
+| RF | Status | Observação |
+|---|---|---|
+| RF001 | ✅ Implementado | Endpoints de pessoas, responsáveis e famílias ativos; grupos prioritários pendentes |
+| RF002 | ✅ Implementado | Moradia e fotos via Supabase Storage |
+| RF003 | ⚠️ Parcial | Coordenadas persistidas; UI de mini-mapa de confirmação planejada para o frontend |
+| RF004 | ⚠️ Parcial | Dados retornados pelo endpoint; renderização de marcadores no mapa depende do frontend |
+| RF005 | ⚠️ Parcial | Detalhes e histórico implementados; `/consulta-integrada` não entregue |
+| RF006 | ⚠️ Parcial | Listagem com filtros básicos; filtros avançados por vulnerabilidade planejados |
+| RF007 | ✅ Implementado | Pets e fotos de pets com CRUD completo |
+| RF008 | 🚧 Planejado | Sem endpoint implementado nesta entrega |
+| RF009 | ⚠️ Parcial | Soft delete via `DELETE` implementado; `PATCH` de status com restrição de enum planejado |
+| RF010 | ⚠️ Parcial | Soft delete de pessoas e responsáveis implementado; substituição de responsável a validar |
+| RF011 | 🚧 Planejado | Sem endpoint implementado nesta entrega |
+| RF012 | ⚠️ Parcial | `PUT` de pessoa, responsável e moradia ativos; limpeza de alerta vinculada ao RF011 |
+| RF013 | ✅ Implementado | `POST /api/familias/nucleo` transacional e completo |
+| RF014 | ✅ Implementado | Vínculos família-pessoa e família-moradia com histórico |
+| RF015 | ⚠️ Parcial | `PUT` de moradia ativo; restrição `STATUS_MORADIA_CLIENTE` planejada |
+| RF016 | ✅ Implementado | Busca por nome, CPF, e-mail e telefone com escopo configurável |
+| RF017 | ⚠️ Parcial | Indicador existe no modelo; exibição automática ainda em validação |
+| RF018 | ✅ Implementado | URLs assinadas para upload e leitura; bucket `georisco-fotos` |
+| RF019 | ⚠️ Parcial | `PUT` de cadastros ativo; formulário pré-preenchido depende do frontend |
 | RF | RN associadas | Endpoint | Método |
 |----|---------------|----------|--------|
 | RF001 | RN01, RN02, RN03, RN04 | `/api/pessoas` | POST |
@@ -568,11 +607,11 @@ Assim, fornece um código testável, escalável e de alta manutenibilidade, perm
 
 ### 3.2.1. Diagrama de Arquitetura (sprints 3 e 4)
 
-O diagrama abaixo apresenta uma visão simplificada da estrutura de pastas do backend. Ele mostra como o código está organizado por responsabilidade, separando inicialização da aplicação, rotas, controllers, services, repositories, DTOs, models, validações, banco de dados, storage, views, arquivos públicos, erros e testes.
+O diagrama abaixo apresenta uma visão simplificada da estrutura de pastas do backend. Ele mostra como o código está organizado por responsabilidade, separando inicialização da aplicação, rotas, controllers, services, repositories, DTOs, models, validações, banco de dados e storage.
 
 ```
 src/
-├── app.ts – configuração do Express, middlewares nativos, views, estáticos e rotas
+├── app.ts – configuração do Express, middlewares nativos e registro de rotas (API JSON pura; sem EJS ou arquivos estáticos)
 ├── server.ts – inicialização do servidor
 ├── controllers/ – borda HTTP e tratamento das requisições
 ├── routes/ – rotas/endpoints da aplicação
@@ -587,12 +626,13 @@ src/
 ├── db/ – conexão, abstrações e migrações do banco de dados
 │   └── migrations/ – versionamento do esquema do banco
 ├── storage/ – integração com Supabase Storage
-├── views/ – telas/templates EJS
 ├── public/ – arquivos estáticos
 ├── errors/ – erros customizados da aplicação
 └── tests/ – testes automatizados
 
 ```
+
+> **Modulo de Prioridades:** alem dos seis modulos principais (pessoas, responsaveis, familias, moradias, pets, fotos), o modulo `prioridade` contem `prioridade.controller.ts`, `prioridade.repository.ts` e `prioridade.routes.ts`. Nao possui service nem interface propria - o controller acessa o repository diretamente - e expoe `GET /api/prioridades`, `GET /api/pessoas/:id/prioridades` e `PUT /api/pessoas/:id/prioridades`.
 
 O diagrama de classe arquitetural detalha a organização interna da aplicação a partir das principais camadas do backend. Ele apresenta a inicialização da aplicação em `server.ts` e `app.ts`, a camada de rotas responsável por expor os endpoints HTTP, os controllers que recebem e tratam as requisições, os DTOs e validações que padronizam os dados de entrada e saída, os services que concentram as regras de negócio, os repositories que acessam o banco de dados e os models que representam as entidades de domínio.
 
@@ -647,6 +687,31 @@ A seção de Validations (Validações) e DTOs (Data Transfer Objects) é a barr
 Este recorte exibe o coração da aplicação, onde a lógica e o armazenamento operam em conjunto. A camada de Services é responsável por centralizar as regras de negócio: ela orquestra validações complexas, regras de vinculação (ex: atrelar uma pessoa a uma moradia) e transações. Para buscar ou salvar essas informações, os Services não acessam o banco diretamente; eles delegam essa tarefa para os Repositories. A camada de Repositórios abstrai a comunicação direta com o banco de dados (PostgreSQL/Supabase), contendo as queries e isolando a infraestrutura de dados da lógica central.
 
 Documento disponível do diagrama para navegação e aprofundamento do entendimento: [diagramaArquitetura.md](diagramaArquitetura.md)
+### 3.2.1.1. Mapeamento Endpoint → Componentes
+
+A tabela abaixo mapeia cada grupo de endpoints ao controller, service e repository responsável, evidenciando a separação de responsabilidades da arquitetura em camadas e a relação direta com a API documentada em `documentos/endpoints.md`.
+
+| Grupo de Endpoints | Controller | Service | Repository | Arquivo de Rotas |
+|---|---|---|---|---|
+| `/api/pessoas` e `/api/pessoas/:id` | `PessoaController` | `PessoaService` | `PessoaRepository` | `pessoa.routes.ts` |
+| `/api/responsaveis` e `/api/responsaveis/:id` | `ResponsavelController` | `ResponsavelService` | `ResponsavelRepository` | `responsavel.routes.ts` |
+| `/api/familias` e `/api/familias/:id/*` | `FamiliaController` | `FamiliaService` | `FamiliaRepository` | `familia.routes.ts` |
+| `/api/moradias` e `/api/moradias/:id/*` | `MoradiaController` | `MoradiaService` | `MoradiaRepository` | `moradia.routes.ts` |
+| `/api/pets` e `/api/pets/:id/*` | `PetController` | `PetService` | `PetRepository` | `pet.routes.ts` |
+| `/api/fotos` e `/api/fotos/:id/*` | `FotoController` | `FotoStorageService` | `FotoRepository` | `foto.routes.ts` |
+
+**Fluxo de uma requisição HTTP (exemplo: `GET /api/moradias/:id/detalhes`):**
+
+```
+Cliente HTTP
+  → MoradiaRouter (moradia.routes.ts)
+  → MoradiaController.getDetalhes()
+      → validação do parâmetro :id (validations/)
+  → MoradiaService.buscarDetalhes(id)
+      → MoradiaRepository.findDetalhesById(id)  ← SQL PostgreSQL (Supabase)
+  ← MoradiaService retorna DTO consolidado
+← MoradiaController responde com JSON 200 ou HttpError 404
+```
 
 ### 3.2.2. Diagrama de Casos de Uso (sprint 1)
 
@@ -685,8 +750,7 @@ Os doze fluxos documentados nesta seção cobrem o ciclo principal de uso do sis
 ```mermaid
 sequenceDiagram
     actor Agente as Agente de Campo (A01)
-    participant Frontend as Frontend PWA Mobile
-    participant Cache as Cache Local (IndexedDB)
+    participant Frontend as Cliente HTTP
     participant Controller as FamiliaController
     participant Service as FamiliaService
     participant Repository as FamiliaRepository/MoradiaRepository/PessoaRepository/PetRepository/FotoRepository
@@ -698,7 +762,7 @@ sequenceDiagram
     Frontend-->>Agente: Exibe seções de moradia, localização, família,<br/>responsável, moradores, grupos prioritários, pets e fotos
 
     Agente->>Frontend: Preenche dados estruturais da moradia
-    Frontend->>Frontend: Captura GPS do dispositivo (RN04)
+    Frontend->>Frontend: Captura GPS do dispositivo (RN05)
 
     alt GPS permitido e disponível
         Frontend->>Frontend: Preenche latitude e longitude
@@ -708,7 +772,7 @@ sequenceDiagram
     end
 
     Agente->>Frontend: Anexa até 2 fotos (fachada e entorno)
-    Frontend->>Frontend: Valida RN04: foto não pode conter pessoas
+    Frontend->>Frontend: Valida RN07: foto não pode conter pessoas
     Agente->>Frontend: Informa responsável, demais dependentes,<br/>vulnerabilidades (grupos prioritários) e pets
 
     Note over Agente,DB: Envio ou persistência local
@@ -717,7 +781,7 @@ sequenceDiagram
 
     alt Dispositivo online
         Frontend->>Controller: POST /api/familias/nucleo<br/>{localizacao, moradia, responsavel, dependentes, pets, fotos}
-        Controller->>Service: Validar payload, RN04 (fotos de pessoas)
+        Controller->>Service: Validar payload, RN07 (fotos de pessoas)
         Service->>Service: Validar integridade:<br/>Família ativa exige moradia ativa e responsável ativo (US13, US14)
         Service->>Repository: Iniciar transação (BEGIN)
 
@@ -780,7 +844,7 @@ sequenceDiagram
         Service-->>Controller: HTTP 409 Conflict
         Controller-->>Frontend: HTTP 409 Conflict
         Frontend-->>Agente: Exibe mensagem de erro (Cadastro Duplicado)
-    else Campos obrigatórios inválidos / Foto com pessoas (RN04)
+    else Campos obrigatórios inválidos / Foto com pessoas (RN07)
         Service-->>Controller: HTTP 400 Bad Request
         Controller-->>Frontend: Lista de erros de validação
         Frontend-->>Agente: Destaca campos para correção
@@ -795,7 +859,7 @@ Este fluxo descreve a jornada de cadastro conduzida pelo **Agente de Campo (A01)
 ```mermaid
 sequenceDiagram
     actor Gestor as Gestor Operacional (A02/A03)
-    participant Frontend as Frontend Painel Desktop
+    participant Frontend as Cliente HTTP (Navegador)
     participant Controller as MoradiaController
     participant Service as MoradiaService
     participant Repository as MoradiaRepository/FamiliaRepository/FotoRepository
@@ -836,7 +900,7 @@ Este fluxo descreve a consulta de informações espaciais executada pelo **Gesto
 ```mermaid
 sequenceDiagram
     actor Gestor as Gestor Operacional (A02/A03)
-    participant Frontend as Frontend Painel Desktop
+    participant Frontend as Cliente HTTP (Navegador)
     participant Controller as MoradiaController
     participant Service as MoradiaService
     participant Repository as MoradiaRepository/FamiliaRepository/FotoRepository
@@ -881,7 +945,7 @@ Este fluxo detalha a consulta integrada executada pelo **Gestor Operacional (A02
 ```mermaid
 sequenceDiagram
     actor Gestor as Gestor Operacional (A02/A03)
-    participant Frontend as Frontend Painel Desktop
+    participant Frontend as Cliente HTTP (Navegador)
     participant Controller as MoradiaController
     participant Service as MoradiaService
     participant Repository as MoradiaRepository
@@ -917,7 +981,7 @@ Este fluxo representa o uso de filtros avançados pelo **Gestor Operacional (A02
 ```mermaid
 sequenceDiagram
     actor Agente as Agente de Campo (A01)
-    participant Frontend as Frontend PWA Mobile
+    participant Frontend as Cliente HTTP
     participant Controller as MoradiaController/PessoaController
     participant Service as MoradiaService/PessoaService
     participant Repository as MoradiaRepository/PessoaRepository/FamiliaRepository
@@ -935,7 +999,7 @@ sequenceDiagram
     Frontend-->>Agente: Exibe formulário pré-preenchido
 
     Agente->>Frontend: Revisa e edita dados
-    Frontend->>Frontend: Valida campos obrigatórios e fotos (RN04)
+    Frontend->>Frontend: Valida campos obrigatórios e fotos (RN07)
     Agente->>Frontend: Confirma e salva atualização
 
     Note over Frontend,DB: Como os endpoints NÃO foram unificados, o Frontend realiza chamadas CRUD separadas:
@@ -993,7 +1057,7 @@ sequenceDiagram
     end
 ```
 
-Este fluxo descreve a revisão anual de uma família marcada para recadastro, conduzida pelo **Agente de Campo (A01)**. O Frontend carrega o cadastro completo da família, incluindo ocupação ativa, moradia, localização, responsável, moradores, gestantes, pets e fotos. O agente revisa os dados em campo e envia as alterações para o backend, que valida as regras RN01, RN02 e RN04 antes de persistir as atualizações. Caso a família tenha mudado de moradia, o Service encerra o vínculo atual em `historico_ocupacao` com `data_saida` e cria uma nova ocupação ativa. Em modo offline, a alteração é enfileirada no cache local com UUID próprio e sincronizada posteriormente.
+Este fluxo descreve a revisão anual de uma família marcada para recadastro, conduzida pelo **Agente de Campo (A01)**. O Frontend carrega o cadastro completo da família, incluindo ocupação ativa, moradia, localização, responsável, moradores, gestantes, pets e fotos. O agente revisa os dados em campo e envia as alterações para o backend, que valida as regras RN01, RN02 e RN07 antes de persistir as atualizações. Caso a família tenha mudado de moradia, o Service encerra o vínculo atual em `historico_ocupacao` com `data_saida` e cria uma nova ocupação ativa. Em modo offline, a alteração é enfileirada no cache local com UUID próprio e sincronizada posteriormente.
 
 ---
 
@@ -1001,7 +1065,7 @@ Este fluxo descreve a revisão anual de uma família marcada para recadastro, co
 ```mermaid
 sequenceDiagram
     actor Agente as Agente de Campo (A01)
-    participant Frontend as Frontend PWA Mobile
+    participant Frontend as Cliente HTTP
     participant Controller as PetController
     participant Service as PetService
     participant Repository as PetRepository
@@ -1049,7 +1113,7 @@ Este fluxo detalha a manutenção dos animais de estimação informados pelo **A
 ```mermaid
 sequenceDiagram
     actor Gestor as Gestor Operacional (A02/A03)
-    participant Frontend as Frontend Painel Desktop
+    participant Frontend as Cliente HTTP (Navegador)
     participant Controller as IndicadorController
     participant Service as IndicadorService
 
@@ -1068,7 +1132,7 @@ Este fluxo descreve a geração do mapa de calor utilizado pelo **Gestor Operaci
 ```mermaid
 sequenceDiagram
     actor Gestor as Gestor Operacional (A03)
-    participant Frontend as Frontend Painel Desktop
+    participant Frontend as Cliente HTTP (Navegador)
     participant MoradiaController as MoradiaController
     participant FamiliaController as FamiliaController
     participant Service as MoradiaService/FamiliaService
@@ -1137,7 +1201,7 @@ Este fluxo representa o arquivamento lógico de uma moradia pelo **Gestor Operac
 ```mermaid
 sequenceDiagram
     actor Gestor as Gestor Operacional (A02/A03)
-    participant Frontend as Frontend Painel Desktop
+    participant Frontend as Cliente HTTP (Navegador)
     participant PessoaController as PessoaController
     participant Service as PessoaService
     participant Repository as PessoaRepository/FamiliaRepository
@@ -1217,13 +1281,13 @@ Este fluxo descreve o arquivamento lógico de um morador falecido realizado pelo
 ```mermaid
 sequenceDiagram
     actor Gestor as Gestor Operacional (A02/A03)
-    participant Frontend as Frontend Painel Desktop
+    participant Frontend as Cliente HTTP (Navegador)
     participant Controller as MoradiaController
     participant Service as MoradiaService
     participant Repository as MoradiaRepository
     participant DB as Banco de Dados
 
-    Note over Gestor, DB: O alerta de recadastro (FL10) é uma Tag calculada sob demanda pelas listagens/detalhes (Job Cron no Backlog).
+    Note over Gestor, DB: O alerta de recadastro (FL10) é calculado sob demanda pelas listagens e endpoints de detalhes. Não há job cron ou scheduler implementado.
 
     Gestor->>Frontend: Acessa o Painel de Gestão
     Frontend->>Controller: GET /api/moradias (ou listagem com flag desatualizado)
@@ -1240,7 +1304,7 @@ sequenceDiagram
     Frontend-->>Gestor: Exibe lista com tags visuais de alerta (Tag de Recadastro) nas moradias vencidas
 ```
 
-Este fluxo documenta a rotina de recadastro obrigatório prevista pela RN02. Um job agendado verifica diariamente moradias ativas cuja `ultima_atualizacao` tenha ultrapassado 365 dias. A consulta considera moradias com ocupação ativa e família ativa, evitando alertas sobre registros apenas históricos. No painel, o **Gestor Operacional (A02/A03)** consulta os indicadores de recadastro e visualiza o total de cadastros atualizados e desatualizados. Ao clicar no indicador, o Frontend redireciona para a listagem de moradias com o filtro `desatualizado=true`, permitindo organizar as revisitas de campo.
+Este fluxo documenta a rotina de recadastro obrigatório prevista pela RN02. O calculo de recadastro e feito sob demanda: cada consulta avalia moradias ativas cuja `ultima_atualizacao` tenha ultrapassado 365 dias. A consulta considera moradias com ocupação ativa e família ativa, evitando alertas sobre registros apenas históricos. No painel, o **Gestor Operacional (A02/A03)** consulta os indicadores de recadastro e visualiza o total de cadastros atualizados e desatualizados. Ao clicar no indicador, o Frontend redireciona para a listagem de moradias com o filtro `desatualizado=true`, permitindo organizar as revisitas de campo.
 
 ---
 
@@ -1331,9 +1395,7 @@ Este fluxo consolida as validações derivadas das US13 e US14. Ele não represe
 
 *Ao menos um fluxo relevante em UML ou BPMN. Use a notação da ferramenta escolhida de forma consistente (sem misturar convenções).*
 
-### 3.2.6. Diagrama de Implantação (sprints 4 e 5)
-
-*Diagrama UML de deployment mostrando nós físicos, artefatos e canais de comunicação. Representa a visão Engineering + Technology do RM-ODP.*
+### 3.2.6. Diagrama de Implantação (sprints 4 e 5)  O diagrama de implantação descreve como os componentes do GeoRisco são distribuídos nos ambientes de execução reais.  | Nó | Tecnologia | Artefatos hospedados | |---|---|---| | Máquina do desenvolvedor | Node.js 24, npm | `src/geoRisco/` — código-fonte TypeScript; servidor Express local em `http://localhost:3000` | | Supabase (nuvem) — PostgreSQL | PostgreSQL 15 (gerenciado) | Schema definido em `supabase/migrations/`; tabelas `pessoa`, `familia`, `moradia`, `localizacao`, `responsavel`, `pet`, `foto`, `grupo_prioritario` e tabelas associativas | | Supabase (nuvem) — Storage | Supabase Storage | Bucket `georisco-fotos` — arquivos físicos de fotos de moradias e pets; acesso via URL assinada |  **Comunicação entre nós:**  - O servidor Express (Node.js) conecta ao PostgreSQL via `DATABASE_URL`, usando o cliente `pg`. - O servidor Express conecta ao Supabase Storage via `SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY`, usando `@supabase/supabase-js`. - Clientes HTTP (navegador ou ferramentas como curl/Postman) comunicam com o servidor via HTTP/JSON na porta 3000. - Não há frontend próprio implantado — a aplicação é uma API REST pura.
 
 ### 3.2.7. Padrões de Projeto Aplicados (sprints 3 a 5)
 
@@ -1988,7 +2050,7 @@ A consulta #4 só realiza a atualização quando o registro informado existe no 
 
 A WebAPI do GeoRisco foi implementada em Express e expõe endpoints HTTP sob o prefixo `/api`, com contratos JSON para cadastro, consulta, atualização, remoção lógica, vínculos familiares, registro de pets e gerenciamento de metadados de fotos. A documentação de referência dos contratos está consolidada em [`documentos/endpoints.md`](endpoints.md), enquanto a versão navegável da documentação está em [`documentos/webapi-docs.html`](webapi-docs.html).
 
-O levantamento atual foi conferido contra os arquivos de rotas e controllers do backend (`pessoa.routes.ts`, `moradia.routes.ts`, `familia.routes.ts`, `pet.routes.ts` e `foto.routes.ts`). No estado atual do projeto, existem **52 endpoints implementados no prefixo `/api`**, distribuídos entre Pessoas, Responsáveis, Moradias, Famílias, Pets e Fotos. Também existem rotas HTML auxiliares fora do prefixo `/api`, usadas para renderização de telas EJS e listagem JSON legada de pessoas.
+O levantamento atual foi conferido contra os arquivos de rotas e controllers do backend (`pessoa.routes.ts`, `moradia.routes.ts`, `familia.routes.ts`, `pet.routes.ts` e `foto.routes.ts`). No estado atual do projeto, existem **55 endpoints implementados no prefixo `/api`**, distribuídos entre Pessoas, Responsáveis, Moradias, Famílias, Pets, Fotos e Prioridades. A contagem inclui os 3 endpoints do módulo `prioridade` (`GET /api/prioridades`, `GET /api/pessoas/:id/prioridades`, `PUT /api/pessoas/:id/prioridades`), documentados ao final desta seção.
 
 ### Padrões gerais da WebAPI
 
@@ -2118,15 +2180,23 @@ A API separa o arquivo físico da foto de seu metadado. Primeiro, o cliente soli
 
 > **Pendência — limite de fotos por moradia (RF002/RN07):** O WAD estabelece no máximo 2 fotos por moradia. O backend atual **não valida esse limite** — é possível cadastrar mais de 2 fotos via API sem erro. Essa restrição está pendente de implementação.
 
-### Rotas HTML auxiliares fora do prefixo `/api`
+#### Prioridades (Grupos Prioritarios)
+
+| Método | Endpoint | Descrição | Resposta de sucesso | RF relacionado |
+|--------|----------|-----------|---------------------|----------------|
+| GET | `/api/prioridades` | Lista todos os grupos prioritários cadastrados | `200` | RF001 |
+| GET | `/api/pessoas/{id}/prioridades` | Lista grupos prioritários vinculados a uma pessoa | `200` | RF001 |
+| PUT | `/api/pessoas/{id}/prioridades` | Atualiza os grupos prioritários de uma pessoa (substitui lista completa) | `200` | RF001 |
+
+O endpoint `PUT /api/pessoas/{id}/prioridades` espera o campo `prioridadeIds` como array de IDs no corpo da requisição. O controller acessa o repository diretamente, sem camada de service.
+
+### Rota raiz
 
 | Método | Endpoint | Finalidade |
 |--------|----------|------------|
-| GET | `/` | Redireciona para `/pessoas/novo` |
-| GET | `/pessoas/novo` | Renderiza formulário de pessoa |
-| GET | `/pessoas` | Renderiza lista de pessoas |
-| GET | `/pessoas.json` | Lista pessoas em JSON fora do prefixo `/api` |
-| POST | `/pessoas/` | Cria pessoa fora do prefixo `/api` |
+| GET | `/` | Retorna JSON `{ "status": "ok", "service": "GeoRisco API" }` (health check) |
+
+> **Nota:** não existem rotas HTML, EJS ou rotas fora do prefixo `/api` na versão atual. O servidor não possui engine de views configurada. Todas as operações ocorrem via API REST sob `/api`.
 
 ### Endpoints planejados e fora do contrato atual
 
@@ -2175,30 +2245,29 @@ Alguns endpoints apareceram em versões anteriores da documentação, mas ainda 
 
 A Matriz de Rastreabilidade (RTM - Requirements Traceability Matrix) consolida, em uma única visão, os elos entre cada Persona, Requisito Funcional (RF), Regra de Negócio (RN), endpoint de API, tela da interface e caso de teste correspondente. O objetivo é garantir que nenhum requisito fique sem implementação, sem teste e sem evidência de validação, em que qualquer lacuna nessa cadeia representa um risco direto à integridade e à confiabilidade do sistema.
 
-| # | Persona | US | RF | RN | Endpoint | Método | Tela | Casos de Teste | Evidência |
-|---|---------|----|----|-----|----------|--------|------|----------------|-----------|
-| 1 | Agente de Campo | US01 | RF001 — Cadastro Sociodemográfico e Vínculos | RN01, RN02, RN03, RN04 | `/api/pessoas`<br>`/api/responsaveis`<br>`/api/familias`<br>`/api/familias/nucleo`<br>`/api/familias/:id/pessoas` | `POST` | Cadastro → Responsável, Moradores, Família | CT01: Pessoa criada com sucesso em `/api/pessoas` (`201`)<br>CT02: Responsável criado com dados obrigatórios em `/api/responsaveis` (`201`)<br>CT03: Família criada em `/api/familias` (`201`)<br>CT04: Núcleo familiar cadastrado em `/api/familias/nucleo` com pessoas vinculadas (`201`)<br>CT05: Pessoa já vinculada à família retorna conflito (`409`)<br>CT06: Campos obrigatórios ausentes retornam `400` | Print da tela de cadastro; logs das respostas `201`; relatório de cobertura dos testes de cadastro |
-| 2 | Agente de Campo | US02, US06 | RF002 — Cadastro Estrutural de Moradias<br>RF003 — Georreferenciamento via GPS | RN05, RN07, RN08 | `/api/moradias`<br>`/api/familias/:id/moradias`<br>`/api/moradias/:id/fotos/upload-url`<br>`/api/moradias/:id/fotos` | `POST` | Cadastro → Moradias | CT07: Moradia criada em `/api/moradias` com dados estruturais e localização (`201`)<br>CT08: Moradia vinculada à família em `/api/familias/:id/moradias` (`201`)<br>CT09: URL de upload de foto de moradia gerada com sucesso (`201`)<br>CT10: Registro de foto da moradia criado após upload (`201`)<br>CT11: Foto de pessoa bloqueada conforme RN07 (`400`) | Print do formulário de moradia; log de vínculo família-moradia; evidência da URL de upload e da foto cadastrada |
-| 3 | Gestor | US03 | RF004 — Visualização em Mapa Georreferenciado | RN08, RN11 | `/api/moradias` | `GET` | Mapa | CT13: `/api/moradias` retorna moradias para alimentar a visão operacional do mapa (`200`)<br>CT14: Moradias com coordenadas válidas são renderizadas como marcadores na interface<br>CT15: Moradias arquivadas ou inativas não aparecem na visão operacional do mapa<br>CT16: Lista vazia retorna `200` sem erro | Print do mapa com marcadores; payload da API com coordenadas; evidência de ausência de moradias inativas |
-| 4 | Gestor | US04 | RF005 — Consulta Integrada de Moradia e Moradores | RN08, RN10, RN11 | `/api/moradias/:id`<br>`/api/moradias/:id/detalhes`<br>`/api/moradias/:id/familias/historico` | `GET` | Consulta → Resultado da Busca | CT17: Moradia retornada por ID com dados estruturais (`200`)<br>CT18: Detalhes da moradia retornam localização, famílias, pessoas, pets e fotos (`200`)<br>CT19: Histórico de famílias da moradia retorna ocupações com `data_entrada` e `data_saida` (`200`)<br>CT20: Consulta integrada exibe moradia, responsável, moradores e pets a partir dos endpoints implementados<br>CT21: Flag de cadastro incompleto aparece quando a família não possui moradia vinculada<br>CT22: Moradia inexistente retorna `404` | Print da ficha detalhada; log da resposta da API; evidência da flag de cadastro incompleto quando aplicável |
-| 5 | Gestor | US04 | RF006 — Filtros Avançados de Moradias | RN11 | `/api/moradias`<br>`/api/pessoas` | `GET` | Consulta / Mapa | CT23: Filtros disponíveis em `/api/moradias` retornam apenas moradias correspondentes (`200`)<br>CT24: Listagem de pessoas retorna registros para consulta gerencial (`200`)<br>CT25: Listagem de moradias retorna registros ativos para consulta gerencial (`200`)<br>CT26: Busca sem resultados retorna array vazio sem erro<br>CT27: Nenhum dado fora do filtro selecionado aparece na resposta | Print dos resultados filtrados; payload dos endpoints de busca; evidência de ausência de registros fora do filtro |
-| 6 | Gestor | US04 | RF016 — Busca de Pessoas / Responsáveis | RN11 | `/api/pessoas/busca`<br>`/api/pessoas`<br>`/api/responsaveis` | `GET` | Consulta | CT28: Busca por nome em `/api/pessoas/busca?nome=Maria&escopo=ativas` retorna pessoas compatíveis (`200`)<br>CT29: Busca por CPF, e-mail ou telefone retorna pessoas compatíveis (`200`)<br>CT30: Requisição sem filtro obrigatório retorna `400`<br>CT31: Busca sem resultados retorna array vazio sem erro | Print dos resultados filtrados; payload dos endpoints de busca; log da resposta HTTP |
-| 7 | Agente de Campo | US07 | RF007 — Cadastro de Animais de Estimação | RN12 | `/api/pets`<br>`/api/familias/:id/pets` | `POST` | Cadastro → Pets | CT32: Pet criado em `/api/pets` com `tipo` obrigatório (`201`)<br>CT33: Pet criado diretamente na família em `/api/familias/:id/pets` (`201`)<br>CT34: `tipo` ausente retorna `400`<br>CT35: Família inexistente retorna `404` | Print do cadastro de pet; log de inserção no banco; payload da resposta `201` |
-| 8 | Agente de Campo e Gestor | US07 | RF007 — Consulta e Atualização de Pets | RN12 | `/api/pets`<br>`/api/pets/:id`<br>`/api/familias/:id/pets` | `GET` / `PUT` | Consulta / Ficha de Emergência / Cadastro → Pets | CT36: Lista geral de pets retorna registros cadastrados (`200`)<br>CT37: Pet por ID retorna dados completos (`200`)<br>CT38: Pets da família aparecem na ficha de emergência (`200`)<br>CT39: Atualização de pet em `/api/pets/:id` retorna sucesso (`200`)<br>CT40: Pet inexistente retorna `404` | Print da ficha de emergência; log de consulta e atualização; evidência do pet atualizado |
-| 9 | Agente de Campo e Gestor | US07 | RF007 — Fotos de Pets<br>RF018 — Armazenamento Seguro de Fotos | RN12 | `/api/pets/:id/fotos`<br>`/api/pets/:id/fotos/upload-url`<br>`/api/pets/:id/fotos/:fotoId` | `GET` / `POST` / `DELETE` | Cadastro → Pets / Ficha de Emergência | CT41: Fotos do pet são listadas com sucesso (`200`)<br>CT42: URL de upload para foto do pet é gerada (`201`)<br>CT43: Registro de foto do pet é criado (`201`)<br>CT44: Remoção de foto do pet retorna sucesso (`204`)<br>CT45: Pet ou foto inexistente retorna `404` | Print da seção de fotos do pet; evidência da URL de upload; log de remoção |
-| 10 | Gestor | — | RF008 — Mapa de Calor | RN04, RN11 | — (planejado — não executável na entrega atual) | — | Mapa | CT46: Planejado — não executável na entrega atual; endpoint de mapa de calor ainda não implementado<br>CT47: Filtro por grupo prioritário deve retornar intensidade coerente com os registros quando implementado<br>CT48: Agrupamentos de coordenadas próximas devem gerar maior intensidade visual quando implementado<br>CT49: Array vazio deve retornar `200` sem erro quando houver endpoint implementado | Print do mapa de calor; payload agregado; evidência de renderização com filtros |
-| 11 | Gestor | US08 | RF009 — Arquivamento de Moradias | RN06 | `/api/moradias/:id` | `DELETE` | Consulta / Mapa | CT50: Remoção lógica de moradia implementada retorna sucesso (`204`)<br>CT51: Moradia arquivada deixa de aparecer na busca e no mapa operacional<br>CT52: Moradia inexistente retorna `404`<br>CT53: ID inválido retorna `400`<br>CT54: Histórico da moradia permanece preservado após o arquivamento | Print do histórico inativo; log da alteração de status; payload de erro `400` quando aplicável |
-| 12 | Gestor | US01 | RF014 — Gestão de Família e Vínculos | RN01, RN03, RN06 | `/api/familias/:id/moradias`<br>`/api/familias/:id/moradias/historico`<br>`/api/familias/:id/moradias/:moradiaId` | `GET` / `POST` / `DELETE` | Consulta | CT55: Moradias da família são listadas com sucesso (`200`)<br>CT56: Histórico de moradias da família exibe vínculos ativos e encerrados (`200`)<br>CT57: Nova moradia é vinculada à família com `data_entrada` (`201`)<br>CT58: Desvinculação de moradia retorna sucesso (`200`)<br>CT59: Vínculo encerrado preserva histórico de ocupação<br>CT60: Conflito de ocupação retorna `409` | Log do `historico_ocupacao`; print de confirmação da realocação; payload de conflito |
-| 13 | Gestor | US09 | RF010 — Arquivamento de Moradores | RN06 | `/api/pessoas/:id`<br>`/api/pessoas/inativas`<br>`/api/responsaveis/:id`<br>`/api/familias/:id` | `DELETE` / `GET` | Consulta | CT61: Pessoa removida ou inativada retorna sucesso (`204`)<br>CT62: Pessoas inativas são listadas em `/api/pessoas/inativas` (`200`)<br>CT63: Responsável removido exige validação de integridade familiar conforme regra vigente<br>CT64: Família removida por gestor retorna sucesso quando permitido (`204`)<br>CT65: Arquivamento de cidadão preserva histórico sem exclusão física<br>CT66: Recurso inexistente retorna `404` | Print da listagem de pessoas inativas; log do arquivamento; evidência de histórico preservado |
-| 14 | Gestor | US10 | RF011 — Alerta Automático de Recadastro (12 meses) | RN09, RN10 | — (planejado — não executável na entrega atual) | — | Mapa / Painel | CT67: Planejado — não executável na entrega atual; endpoint de recadastro ainda não implementado<br>CT68: Ficha com mais de 365 dias sem atualização deve entrar no contador de desatualizados quando o mecanismo existir<br>CT69: Após atualização da ficha, contador de desatualizados deve ser reduzido na próxima consulta<br>CT70: Requisição inválida deve seguir o padrão de erro do backend atual (`400` ou `500`, conforme causa) | Print do painel com indicador; log da consulta; evidência antes/depois da atualização |
-| 15 | Agente de Campo | US10 | RF012 — Atualização Anual de Dados | RN09, RN10 | `/api/pessoas/:id`<br>`/api/responsaveis/:id`<br>`/api/moradias/:id`<br>`/api/fotos/:id` | `PUT` | Cadastro (edição) | CT71: Pessoa atualizada com sucesso (`200`)<br>CT72: Responsável atualizado com sucesso (`200`)<br>CT73: Moradia atualizada com sucesso (`200`)<br>CT74: Foto da moradia atualizada sem violar RN07 (`200`)<br>CT75: Dados existentes são reabertos para revisão anual<br>CT76: Atualização do cadastro limpa alerta de recadastro quando a condição deixar de existir | Print antes/depois no painel; log de atualização; evidência de alteração da data de atualização |
-| 16 | Agente de Campo e Gestor | US05 | RF019 — Edição de Cadastro | RN05, RN10 | `/api/pessoas/:id`<br>`/api/responsaveis/:id`<br>`/api/moradias/:id` | `PUT` | Cadastro (edição) | CT77: Tela de edição abre cadastro já preenchido a partir da busca ou do mapa<br>CT78: Pessoa, responsável ou moradia são atualizados com sucesso (`200`)<br>CT79: Reposicionamento da localização da moradia é salvo conforme RN05<br>CT80: Indicador de cadastro incompleto é removido quando a condição deixa de existir | Print antes/depois da edição; log de atualização; evidência da limpeza do indicador quando aplicável |
-| 17 | Gestor | US11 | RF001 — Cadastro Sociodemográfico e Vínculos<br>RF014 — Gestão de Família e Vínculos | RN01, RN02 | `/api/responsaveis`<br>`/api/responsaveis/:id`<br>`/api/familias/:id/pessoas`<br>`/api/familias/:id/pessoas/:pessoaId` | `GET` / `POST` / `PUT` / `DELETE` | Consulta | CT81: Responsáveis são listados para seleção (`200`)<br>CT82: Responsável por ID retorna dados cadastrais (`200`)<br>CT83: Novo responsável é criado quando necessário (`201`)<br>CT84: Dados do responsável são atualizados com sucesso (`200`)<br>CT85: Definição ou substituição de responsável familiar preserva a regra de responsável único<br>CT86: CPF ou email duplicado retorna `409` quando a validação estiver ativa | Log de atualização no banco; print de confirmação; payload de conflito quando aplicável |
-| 18 | Gestor | US02, US07 | RF018 — Armazenamento Seguro de Fotos | RN07, RN12 | `/api/fotos`<br>`/api/fotos/:id`<br>`/api/fotos/:id/signed-url`<br>`/api/moradias/:id/fotos`<br>`/api/moradias/:id/fotos/upload-url`<br>`/api/moradias/:id/fotos/:fotoId` | `GET` / `POST` / `PUT` / `DELETE` | Consulta / Mapa / Ficha da Moradia | CT87: Fotos cadastradas são listadas com sucesso (`200`)<br>CT88: Foto por ID retorna URL e metadados (`200`)<br>CT89: URL assinada é gerada para acesso seguro à foto (`200`)<br>CT90: Fotos da moradia são listadas na ficha (`200`)<br>CT91: Atualização de foto retorna sucesso (`200`)<br>CT92: Remoção de foto retorna sucesso sem remover a moradia (`204`) | Print da galeria da moradia; evidência da URL assinada; log de atualização ou remoção |
-| 19 | Agente de Campo | US01, US02, US06, US07 | RF013 — Cadastro Completo da Família (Transacional) | RN01, RN02, RN03, RN05, RN07, RN12 | `/api/familias/nucleo` | `POST` | Cadastro → Responsável, Moradores, Família, Moradias e Pets | CT93: Núcleo familiar completo é cadastrado em `/api/familias/nucleo` (`201`)<br>CT94: Falha em etapa obrigatória impede persistência parcial do cadastro<br>CT95: Moradia, responsável, dependentes, pets e fotos são vinculados ao núcleo criado<br>CT96: Campos obrigatórios ausentes retornam `400` | Print da tela de cadastro; logs das respostas `201`; evidência dos vínculos criados no banco |
-| 20 | Agente de Campo e Gestor | — (requisito de produto sem US vinculada) | RF015 — Marcação Manual da Situação da Moradia | RN08 | `/api/moradias/:id`<br>`/api/moradias/:id/detalhes` | `PUT` / `GET` | Cadastro (edição) / Consulta / Mapa | CT97: Situação da moradia é atualizada manualmente em `/api/moradias/:id` (`200`)<br>CT98: Situação atualizada aparece na consulta detalhada da moradia (`200`)<br>CT99: Sistema registra a situação informada sem inferir risco automaticamente<br>CT100: Moradia inexistente retorna `404` | Print antes/depois da situação da moradia; log de atualização; evidência da situação exibida na consulta |
-| 21 | Agente de Campo e Gestor | US01, US04 | RF017 — Indicador de Cadastro Incompleto | RN01, RN03, RN10 | `/api/familias`<br>`/api/familias/:id`<br>`/api/moradias/:id/detalhes` | `GET` | Consulta → Resultado da Busca | CT101: Família sem moradia vinculada é exibida como cadastro incompleto<br>CT102: Consulta detalhada exibe a flag quando a família não possui moradia vinculada<br>CT103: Vincular moradia à família remove o indicador quando a condição deixa de existir<br>CT104: Família inexistente retorna `404` | Print da ficha detalhada; log da resposta da API; evidência da flag de cadastro incompleto antes/depois do vínculo |
-
+| # | Persona | US | RF | RN | Endpoint | Método | Tela | Casos de Teste | Evidência | Status |
+|---|---------|----|----|-----|----------|--------|------|----------------|-----------|--------|
+| 1 | João Silva — A01 (Agente de Campo) | US01 | RF001 — Cadastro Sociodemográfico e Vínculos | RN01, RN02, RN03, RN04 | `/api/pessoas`<br>`/api/responsaveis`<br>`/api/familias`<br>`/api/familias/:id/pessoas` | `POST` | Cadastro → Responsável, Moradores, Família | CT01: Pessoa criada com sucesso em `/api/pessoas` (`201`)<br>CT02: Responsável criado com dados obrigatórios em `/api/responsaveis` (`201`)<br>CT03: Família criada em `/api/familias` (`201`)<br>CT04: Núcleo familiar cadastrado em `/api/familias/nucleo` com pessoas vinculadas (`201`)<br>CT05: Pessoa já vinculada à família retorna conflito (`409`)<br>CT06: Campos obrigatórios ausentes retornam `400` | Print da tela de cadastro — seção 4.2.1; log da resposta `201` do `POST /api/familias/nucleo`; relatório de cobertura de cadastro — seção 5.1.4.2 | ✅ Implementado |
+| 2 | João Silva — A01 (Agente de Campo) | US02, US06 | RF002 — Cadastro Estrutural de Moradias<br>RF003 — Georreferenciamento via GPS | RN05, RN07, RN08 | `/api/moradias`<br>`/api/familias/:id/moradias`<br>`/api/moradias/:id/fotos/upload-url`<br>`/api/moradias/:id/fotos` | `POST` | Cadastro → Moradias | CT07: Moradia criada em `/api/moradias` com dados estruturais e localização (`201`)<br>CT08: Moradia vinculada à família em `/api/familias/:id/moradias` (`201`)<br>CT09: URL de upload de foto de moradia gerada com sucesso (`201`)<br>CT10: Registro de foto da moradia criado após upload (`201`)<br>CT11: Foto de pessoa bloqueada conforme RN07 (`400`) | Print do formulário de moradia — seção 4.2.1; log de vínculo família-moradia; CT10 — evidência da URL de upload e da foto cadastrada | ✅ Implementado |
+| 3 | Wesley Souza — A02 (Gestor Operacional) | US03 | RF004 — Visualização em Mapa Georreferenciado | RN08, RN11 | `/api/moradias` | `GET` | Mapa | CT13: `/api/moradias` retorna moradias para alimentar a visão operacional do mapa (`200`)<br>CT14: Moradias com coordenadas válidas são renderizadas como marcadores na interface<br>CT15: Moradias arquivadas ou inativas não aparecem na visão operacional do mapa<br>CT16: Lista vazia retorna `200` sem erro | Print do mapa com marcadores — seção 4.2.1; payload da API com coordenadas (`lat`, `lng`); evidência de ausência de moradias inativas na resposta | ⚠️ Parcial — endpoint ativo; renderização no mapa depende do frontend |
+| 4 | Wesley Souza — A02 (Gestor Operacional) | US04 | RF005 — Consulta Integrada de Moradia e Moradores | RN08, RN10, RN11 | `/api/moradias/:id`<br>`/api/moradias/:id/detalhes`<br>`/api/moradias/:id/familias/historico` | `GET` | Consulta → Resultado da Busca | CT17: Moradia retornada por ID com dados estruturais (`200`)<br>CT18: Detalhes da moradia retornam localização, famílias, pessoas, pets e fotos (`200`)<br>CT19: Histórico de famílias da moradia retorna ocupações com `data_entrada` e `data_saida` (`200`)<br>CT20: Consulta integrada exibe moradia, responsável, moradores e pets a partir dos endpoints implementados<br>CT21: Flag de cadastro incompleto aparece quando a família não possui moradia vinculada<br>CT22: Moradia inexistente retorna `404` | Print da ficha detalhada — seção 4.2.1; log da resposta de `GET /api/moradias/:id/detalhes` com código `200`; evidência da flag de cadastro incompleto quando aplicável | ✅ Implementado |
+| 5 | Wesley Souza — A02 (Gestor Operacional) | US04 | RF006 — Filtros Avançados de Moradias | RN11 | `/api/moradias`<br>`/api/pessoas` | `GET` | Consulta / Mapa | CT23: Filtros disponíveis em `/api/moradias` retornam apenas moradias correspondentes (`200`)<br>CT24: Listagem de pessoas retorna registros para consulta gerencial (`200`)<br>CT25: Listagem de moradias retorna registros ativos para consulta gerencial (`200`)<br>CT26: Busca sem resultados retorna array vazio sem erro<br>CT27: Nenhum dado fora do filtro selecionado aparece na resposta | Print dos resultados filtrados — seção 4.2.1; payload dos endpoints de listagem confirmando ausência de registros fora do filtro | ⚠️ Parcial — filtros básicos ativos; filtros avançados por vulnerabilidade planejados |
+| 6 | Wesley Souza — A02 (Gestor Operacional) | US04 | RF016 — Busca de Pessoas / Responsáveis | RN11 | `/api/pessoas/busca`<br>`/api/pessoas`<br>`/api/responsaveis` | `GET` | Consulta | CT28: Busca por nome em `/api/pessoas/busca?nome=Maria&escopo=ativas` retorna pessoas compatíveis (`200`)<br>CT29: Busca por CPF, e-mail ou telefone retorna pessoas compatíveis (`200`)<br>CT30: Requisição sem filtro obrigatório retorna `400`<br>CT31: Busca sem resultados retorna array vazio sem erro | Print dos resultados filtrados — seção 4.2.1; payload do endpoint de busca confirmando correspondência; log da resposta `200` | ✅ Implementado |
+| 7 | João Silva — A01 (Agente de Campo) | US07 | RF007 — Cadastro de Animais de Estimação | RN12 | `/api/pets`<br>`/api/familias/:id/pets` | `POST` | Cadastro → Pets | CT32: Pet criado em `/api/pets` com `tipo` obrigatório (`201`)<br>CT33: Pet criado diretamente na família em `/api/familias/:id/pets` (`201`)<br>CT34: `tipo` ausente retorna `400`<br>CT35: Família inexistente retorna `404` | Print do cadastro de pet — seção 4.2.1; log de inserção no banco com `id` retornado; payload da resposta `201` | ✅ Implementado |
+| 8 | João Silva (A01) e Wesley Souza (A02) | US07 | RF007 — Consulta e Atualização de Pets | RN12 | `/api/pets`<br>`/api/pets/:id`<br>`/api/familias/:id/pets` | `GET` / `PUT` | Consulta / Ficha de Emergência / Cadastro → Pets | CT36: Lista geral de pets retorna registros cadastrados (`200`)<br>CT37: Pet por ID retorna dados completos (`200`)<br>CT38: Pets da família aparecem na ficha de emergência (`200`)<br>CT39: Atualização de pet em `/api/pets/:id` retorna sucesso (`200`)<br>CT40: Pet inexistente retorna `404` | Print da ficha de emergência — seção 4.2.1; log de consulta e atualização; evidência do campo atualizado no payload | ✅ Implementado |
+| 9 | João Silva (A01) e Wesley Souza (A02) | US07 | RF007 — Fotos de Pets<br>RF018 — Armazenamento Seguro de Fotos | RN12 | `/api/pets/:id/fotos`<br>`/api/pets/:id/fotos/upload-url`<br>`/api/pets/:id/fotos/:fotoId` | `GET` / `POST` / `DELETE` | Cadastro → Pets / Ficha de Emergência | CT41: Fotos do pet são listadas com sucesso (`200`)<br>CT42: URL de upload para foto do pet é gerada (`201`)<br>CT43: Registro de foto do pet é criado (`201`)<br>CT44: Remoção de foto do pet retorna sucesso (`204`)<br>CT45: Pet ou foto inexistente retorna `404` | Print da seção de fotos do pet — seção 4.2.1; CT42 — URL assinada gerada; `foto-storage.service.ts` com 93,93% cobertura — seção 5.1.4.2 | ✅ Implementado |
+| 10 | Wesley Souza — A02 (Gestor Operacional) | — | RF008 — Mapa de Calor | RN04, RN11 | — (planejado — não executável na entrega atual) | — | Mapa | CT46: Planejado — não executável na entrega atual; endpoint de mapa de calor ainda não implementado<br>CT47: Filtro por grupo prioritário deve retornar intensidade coerente quando implementado<br>CT48: Agrupamentos de coordenadas próximas devem gerar maior intensidade visual quando implementado<br>CT49: Array vazio deve retornar `200` sem erro quando houver endpoint implementado | N/A — funcionalidade planejada; ver seção 4.2.2 para detalhamento | 🚧 Planejado — sem endpoint nesta entrega |
+| 11 | Wesley Souza — A02 (Gestor Operacional) | US08 | RF009 — Arquivamento de Moradias | RN06 | `/api/moradias/:id` | `DELETE` | Consulta / Mapa | CT50: Remoção lógica de moradia implementada retorna sucesso (`204`)<br>CT51: Moradia arquivada deixa de aparecer na busca e no mapa operacional<br>CT52: Moradia inexistente retorna `404`<br>CT53: ID inválido retorna `400`<br>CT54: Histórico da moradia permanece preservado após o arquivamento | Log da resposta `204` do `DELETE /api/moradias/:id`; confirmação via `GET /api/moradias` de ausência da moradia arquivada — seção 4.2.1 | ⚠️ Parcial — soft delete ativo; desarquivamento e filtro de inativas planejados |
+| 12 | Wesley Souza — A02 (Gestor Operacional) | US01 | RF014 — Gestão de Família e Vínculos | RN01, RN03, RN06 | `/api/familias/:id/moradias`<br>`/api/familias/:id/moradias/historico`<br>`/api/familias/:id/moradias/:moradiaId` | `GET` / `POST` / `DELETE` | Consulta | CT55: Moradias da família são listadas com sucesso (`200`)<br>CT56: Histórico de moradias da família exibe vínculos ativos e encerrados (`200`)<br>CT57: Nova moradia é vinculada à família com `data_entrada` (`201`)<br>CT58: Desvinculação de moradia retorna sucesso (`200`)<br>CT59: Vínculo encerrado preserva histórico de ocupação<br>CT60: Conflito de ocupação retorna `409` | Log do `historico_ocupacao` — seção 4.2.1; print de confirmação da realocação; payload de conflito `409` | ✅ Implementado |
+| 13 | Wesley Souza — A02 (Gestor Operacional) | US09 | RF010 — Arquivamento de Moradores | RN06 | `/api/pessoas/:id`<br>`/api/pessoas/inativas`<br>`/api/responsaveis/:id`<br>`/api/familias/:id` | `DELETE` / `GET` | Consulta | CT61: Pessoa removida ou inativada retorna sucesso (`204`)<br>CT62: Pessoas inativas são listadas em `/api/pessoas/inativas` (`200`)<br>CT63: Responsável removido exige validação de integridade familiar conforme regra vigente<br>CT64: Família removida por gestor retorna sucesso quando permitido (`204`)<br>CT65: Arquivamento de cidadão preserva histórico sem exclusão física<br>CT66: Recurso inexistente retorna `404` | Print da listagem de pessoas inativas — seção 4.2.1; log do `DELETE /api/pessoas/:id` retornando `204`; evidência de histórico preservado via `GET /api/pessoas/inativas` | ⚠️ Parcial — soft delete ativo; substituição de responsável a validar |
+| 14 | Wesley Souza — A02 (Gestor Operacional) | US10 | RF011 — Alerta Automático de Recadastro (12 meses) | RN09, RN10 | — (planejado — não executável na entrega atual) | — | Mapa / Painel | CT67: Planejado — não executável na entrega atual; endpoint de recadastro ainda não implementado<br>CT68: Ficha com mais de 365 dias sem atualização deve entrar no contador de desatualizados quando o mecanismo existir<br>CT69: Após atualização da ficha, contador de desatualizados deve ser reduzido na próxima consulta<br>CT70: Requisição inválida deve seguir o padrão de erro do backend atual (`400` ou `500`, conforme causa) | N/A — funcionalidade planejada; ver seção 4.2.2 para detalhamento | 🚧 Planejado — sem endpoint nesta entrega |
+| 15 | João Silva — A01 (Agente de Campo) | US10 | RF012 — Atualização Anual de Dados | RN09, RN10 | `/api/pessoas/:id`<br>`/api/responsaveis/:id`<br>`/api/moradias/:id`<br>`/api/fotos/:id` | `PUT` | Cadastro (edição) | CT71: Pessoa atualizada com sucesso (`200`)<br>CT72: Responsável atualizado com sucesso (`200`)<br>CT73: Moradia atualizada com sucesso (`200`)<br>CT74: Foto da moradia atualizada sem violar RN07 (`200`)<br>CT75: Dados existentes são reabertos para revisão anual<br>CT76: Atualização do cadastro limpa alerta de recadastro quando a condição deixar de existir | Log das respostas `200` nos PUTs de pessoa, responsável e moradia — seção 4.2.1; evidência de alteração dos campos antes/depois | ⚠️ Parcial — PUTs ativos; limpeza de alerta depende do RF011 |
+| 16 | João Silva (A01) e Wesley Souza (A02) | US05 | RF019 — Edição de Cadastro | RN05, RN10 | `/api/pessoas/:id`<br>`/api/responsaveis/:id`<br>`/api/moradias/:id` | `PUT` | Cadastro (edição) | CT77: Tela de edição abre cadastro já preenchido a partir da busca ou do mapa<br>CT78: Pessoa, responsável ou moradia são atualizados com sucesso (`200`)<br>CT79: Reposicionamento da localização da moradia é salvo conforme RN05<br>CT80: Indicador de cadastro incompleto é removido quando a condição deixa de existir | Print antes/depois da edição — seção 4.2.1; log de atualização (`200`) com campo alterado; evidência da limpeza do indicador quando aplicável | ✅ Implementado |
+| 17 | Wesley Souza — A02 (Gestor Operacional) | US11 | RF001 — Cadastro Sociodemográfico e Vínculos<br>RF014 — Gestão de Família e Vínculos | RN01, RN02 | `/api/responsaveis`<br>`/api/responsaveis/:id`<br>`/api/familias/:id/pessoas`<br>`/api/familias/:id/pessoas/:pessoaId` | `GET` / `POST` / `PUT` / `DELETE` | Consulta | CT81: Responsáveis são listados para seleção (`200`)<br>CT82: Responsável por ID retorna dados cadastrais (`200`)<br>CT83: Novo responsável é criado quando necessário (`201`)<br>CT84: Dados do responsável são atualizados com sucesso (`200`)<br>CT85: Definição ou substituição de responsável familiar preserva a regra de responsável único<br>CT86: CPF ou email duplicado retorna `409` quando a validação estiver ativa | Log de atualização no banco — seção 4.2.1; print de confirmação do responsável; payload de conflito `409` quando aplicável | ✅ Implementado |
+| 18 | Wesley Souza (A02) e João Silva (A01) | US02, US07 | RF018 — Armazenamento Seguro de Fotos | RN07, RN12 | `/api/fotos`<br>`/api/fotos/:id`<br>`/api/fotos/:id/signed-url`<br>`/api/moradias/:id/fotos`<br>`/api/moradias/:id/fotos/upload-url`<br>`/api/moradias/:id/fotos/:fotoId` | `GET` / `POST` / `PUT` / `DELETE` | Consulta / Mapa / Ficha da Moradia | CT87: Fotos cadastradas são listadas com sucesso (`200`)<br>CT88: Foto por ID retorna URL e metadados (`200`)<br>CT89: URL assinada é gerada para acesso seguro à foto (`200`)<br>CT90: Fotos da moradia são listadas na ficha (`200`)<br>CT91: Atualização de foto retorna sucesso (`200`)<br>CT92: Remoção de foto retorna sucesso sem remover a moradia (`204`) | Print da galeria da moradia — seção 4.2.1; CT89 — URL assinada gerada; `foto-storage.service.ts` 93,93% cobertura — seção 5.1.4.2 | ✅ Implementado |
+| 19 | João Silva — A01 (Agente de Campo) | US01, US02, US06, US07 | RF013 — Cadastro Completo da Família (Transacional) | RN01, RN02, RN03, RN05, RN07, RN12 | `/api/familias/nucleo` | `POST` | Cadastro → Responsável, Moradores, Família, Moradias e Pets | CT93: Núcleo familiar completo é cadastrado em `/api/familias/nucleo` (`201`)<br>CT94: Falha em etapa obrigatória impede persistência parcial do cadastro<br>CT95: Moradia, responsável, dependentes, pets e fotos são vinculados ao núcleo criado<br>CT96: Campos obrigatórios ausentes retornam `400` | Print da tela de cadastro — seção 4.2.1; log da resposta `201` do `POST /api/familias/nucleo`; CT94 — evidência de rollback em falha | ✅ Implementado |
+| 20 | João Silva (A01) e Wesley Souza (A02) | — (requisito de produto sem US vinculada) | RF015 — Marcação Manual da Situação da Moradia | RN08 | `/api/moradias/:id`<br>`/api/moradias/:id/detalhes` | `PUT` / `GET` | Cadastro (edição) / Consulta / Mapa | CT97: Situação da moradia é atualizada manualmente em `/api/moradias/:id` (`200`)<br>CT98: Situação atualizada aparece na consulta detalhada da moradia (`200`)<br>CT99: Sistema registra a situação informada sem inferir risco automaticamente<br>CT100: Moradia inexistente retorna `404` | Print antes/depois da situação da moradia — seção 4.2.1; log de atualização (`200`) com campo `situacaoDeOcupacao`; evidência da situação exibida na consulta | ⚠️ Parcial — PUT ativo; restrição `STATUS_MORADIA_CLIENTE` planejada |
+| 21 | João Silva (A01) e Wesley Souza (A02) | US01, US04 | RF017 — Indicador de Cadastro Incompleto | RN01, RN03, RN10 | `/api/familias`<br>`/api/familias/:id`<br>`/api/moradias/:id/detalhes` | `GET` | Consulta → Resultado da Busca | CT101: Família sem moradia vinculada é exibida como cadastro incompleto<br>CT102: Consulta detalhada exibe a flag quando a família não possui moradia vinculada<br>CT103: Vincular moradia à família remove o indicador quando a condição deixa de existir<br>CT104: Família inexistente retorna `404` | Print da ficha detalhada — seção 4.2.1; log da resposta com flag de "cadastro incompleto"; evidência antes/depois do vínculo | ⚠️ Parcial — indicador no modelo; exibição automática em validação |
 #### **Observações**
 
 Vale ressaltar que nas linhas 10 e 14, que referenciam os requisitos funcionais RF008 e RF011, respectivamente, está indicado que são itens planejados — não executáveis na entrega atual. Isso acontece porque, na definição de requisitos do sistema na seção 3.1, os RF008 e RF011 apresentam funcionalidades importantes para o sistema, mas que ainda não foram implementadas plenamente.
@@ -2365,6 +2434,24 @@ Dentre as dificuldades, encontramos problemas diversos considerando o prazo de e
 ### 4.2.1 O que foi implementado
 
 Esta sprint foi dedicada à consolidação e refatoração da API, corrigindo inconsistências de contrato, alinhando nomes de campos ao padrão camelCase e entregando funcionalidades que estavam planejadas mas incompletas na sprint anterior.
+#### Status das Funcionalidades — Sprint 4
+
+| Funcionalidade | Status | Observação |
+|---|---|---|
+| Padronização camelCase de campos | ✅ Concluído | Aliases snake_case mantidos para compatibilidade retroativa |
+| Endpoints de Pessoas (`/api/pessoas`) | ✅ Concluído | CRUD completo; busca por nome/CPF/e-mail/telefone |
+| Endpoints de Responsáveis (`/api/responsaveis`) | ✅ Concluído | CRUD completo com validação de campos obrigatórios |
+| Endpoints de Famílias (`/api/familias`) | ✅ Concluído | CRUD; histórico de vínculos; cadastro de núcleo transacional |
+| Endpoints de Moradias (`/api/moradias`) | ✅ Concluído | CRUD; georreferenciamento; detalhes integrados; histórico de famílias |
+| Endpoints de Pets (`/api/pets`) | ✅ Concluído | CRUD; fotos de pets; URL assinada de upload |
+| Endpoints de Fotos (`/api/fotos`) | ✅ Concluído | CRUD; URL assinada de acesso; integração Supabase Storage |
+| Cadastro transacional de núcleo familiar | ✅ Concluído | `POST /api/familias/nucleo` com rollback em falha |
+| Soft delete (pessoas, famílias, moradias) | ✅ Concluído | Registros nunca são deletados fisicamente; histórico preservado |
+| Cobertura de testes unitários | ✅ Concluído | 72,67% statements gerais; controllers 87,81%; seção 5.1.4.2 |
+| Validações de payload | ✅ Concluído | `validations/` com 67,07% branches; erros `400` descritivos |
+| Mapa de calor (`RF008`) | 🚧 Planejado | Endpoint não implementado nesta sprint; previsto para sprint 5 |
+| Alerta automático de recadastro (`RF011`) | 🚧 Planejado | Endpoint não implementado nesta sprint; previsto para sprint 5 |
+| Autenticação e controle de acesso | 🚧 Fora do escopo | Não previsto no TAPI acadêmico; API pública no ambiente de desenvolvimento |
 
 #### Refatoração do Contrato da API (Renomeação de Campos)
 
@@ -2473,10 +2560,22 @@ O middleware de autenticação **ainda não foi implementado**. Os status `401` 
 ### 4.2.3 Dificuldades técnicas encontradas
 
 **Inconsistência status vs. deleted_at em Moradias:** Identificou-se um bug de estado zumbi: o endpoint `PUT /api/moradias/:id` aceita `{ "status": "Excluída" }` e retorna `200 OK`, mas grava apenas o campo `status` sem atualizar `deleted_at`. Como as views de listagem (`vw_moradia_ativa`) filtram por `deleted_at IS NULL` e não pelo campo `status`, a moradia aparece nas listagens como ativa com status mentiroso de "Excluída". A rule de soft delete do banco (`soft_delete_moradia`) corrige ambos os campos ao mesmo tempo, mas só é acionada via `DELETE`, não via `PUT`. A correção planejada é restringir os valores aceitos pela API a `STATUS_MORADIA_CLIENTE = ['Ativa', 'Interditada', 'Demolida', 'Em Risco']`, impedindo que "Excluída" seja enviado via `PUT`.
+- **Causa raiz:** A rule de soft delete do banco (`soft_delete_moradia`) corrige `status` e `deleted_at` ao mesmo tempo, mas é acionada apenas via `DELETE`. O endpoint `PUT /api/moradias/:id` não invoca essa rule, gravando somente o campo `status` e deixando `deleted_at` como `NULL`.
+- **Impacto:** A view `vw_moradia_ativa` filtra por `deleted_at IS NULL`, não pelo campo `status`. Uma moradia com `status = "Excluída"` e `deleted_at = NULL` continuava aparecendo em todas as listagens como ativa, criando um registro inconsistente que a Defesa Civil não conseguiria arquivar pela interface.
+- **Solução adotada:** Restrição do conjunto de valores aceitos no `PUT` à constante `STATUS_MORADIA_CLIENTE = ["Ativa", "Interditada", "Demolida", "Em Risco"]`, impedindo que `"Excluída"` seja enviado via `PUT`. O arquivamento real passa a exigir o uso do endpoint `DELETE /api/moradias/:id`, que aciona a rule correta.
+- **Estado atual:** Correção planejada para sprint 5 — seção 4.2.4, item 1.
 
 **Divergência entre model TypeScript e banco de dados:** O model `grupo-prioritario.model.ts` declara o campo `dataPrevistaParto: Date | null`, mas a tabela `grupo_prioritario` no banco não possui essa coluna. Isso precisa ser resolvido antes de ativar a funcionalidade de grupos prioritários — seja adicionando a coluna via migration, seja removendo o campo do model.
+- **Causa raiz:** O model TypeScript foi criado antecipando um campo planejado (`dataPrevistaParto`) que nunca chegou a ser incluído na migration do banco. A divergência passou despercebida porque o módulo de grupos prioritários ainda não estava integrado às rotas.
+- **Impacto:** Qualquer endpoint que utilize o model `grupo-prioritario.model.ts` em produção retornaria um campo que não existe no banco, gerando inconsistência de schema em tempo de execução e potencial falha silenciosa no TypeScript.
+- **Solução adotada:** Decisão pendente entre adicionar `dataPrevistaParto` via migration ou remover o campo do model. A funcionalidade está bloqueada até a resolução.
+- **Estado atual:** Pendente — resolução necessária antes da ativação dos grupos prioritários (seção 4.2.4, item 3).
 
 **Eliminação do `id_responsavel`:** A unificação do responsável como uma extensão de pessoa exigiu revisão de todas as queries e repositórios que antes referenciavam `id_responsavel` como chave separada. Todos os endpoints de responsável passaram a usar o `id` da pessoa.
+- **Causa raiz:** A decisão de arquitetura de tornar o responsável uma extensão de pessoa (com o mesmo `id`) foi tomada após as queries e repositórios iniciais já referenciarem `id_responsavel` como chave separada.
+- **Impacto:** Todas as queries de JOIN entre `pessoa` e `responsavel`, e todos os DTOs que expunham `id_responsavel` como campo separado, precisaram ser revisados. A refatoração afetou `ResponsavelRepository`, `FamiliaRepository`, `MoradiaRepository` e os respectivos services e controllers.
+- **Solução adotada:** Remoção completa do campo `id_responsavel` das queries e DTOs; todos os endpoints de responsável passaram a usar o `id` da tabela `pessoa` como identificador único.
+- **Estado atual:** ✅ Concluído — refatoração validada nos testes de integração da sprint 4; seção 5.1.4.2.
 
 ---
 
@@ -2523,6 +2622,41 @@ Para garantir esse determinismo, cada teste deve criar seus próprios dados de e
 Também é importante que os testes não compartilhem estado mutável entre si. Cada caso deve poder ser executado individualmente ou em conjunto com toda a suíte, em qualquer ordem, sem alterar seu resultado. Essa característica aumenta a confiabilidade da suíte de testes e reduz a ocorrência de falhas intermitentes, conhecidas como testes “flaky”.
 
 Dessa forma, a adoção do padrão AAA combinada ao determinismo contribui para uma estratégia de testes mais clara, confiável e sustentável. Os testes passam a funcionar não apenas como mecanismos de verificação automática, mas também como documentação objetiva do comportamento esperado do sistema.
+
+#### 5.1.1.3 Aplicação prática: determinismo com jest.setup.ts
+
+O determinismo das suites de Service é garantido pelo arquivo `src/geoRisco/src/tests/jest.setup.ts`, que injeta valores fictícios para todas as variáveis de ambiente antes de qualquer teste ser carregado:
+
+```ts
+process.env.DATABASE_URL = process.env.DATABASE_URL || 'postgres://test:test@localhost:5432/georisco_test';
+process.env.SUPABASE_URL = process.env.SUPABASE_URL || 'https://example.supabase.co';
+process.env.SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || 'test-service-role-key';
+```
+
+Essa configuração permite que os imports de infraestrutura (conexão com banco, cliente Supabase) sejam carregados sem acessar recursos reais. O Jest não realiza nenhuma chamada de rede durante a execução dos testes unitários.
+
+#### 5.1.1.4 Aplicação prática: padrão AAA em CT01
+
+O exemplo abaixo, extraído de `familia.service.test.ts`, ilustra as três etapas do padrão AAA aplicadas ao caso CT01 (RN02 — responsável único por família ativa):
+
+```ts
+it('CT01 - Deve lançar HttpError 409 se a família já possuir um responsável ativo diferente', async () => {
+    // Arrange: família existente, pessoa com parentesco Responsável,
+    // registro na tabela responsavel e outro responsavel ativo na família
+    familiaRepoMock.getById.mockResolvedValue({ id: 1 });
+    pessoaRepoMock.getById.mockResolvedValue({ id: 2, parentesco: 'Responsável' });
+    pessoaRepoMock.getResponsavelByPessoaId.mockResolvedValue({ id: 2 });
+    familiaRepoMock.getResponsavelAtivo.mockResolvedValue({ id: 3 }); // id diferente
+
+    // Act: tenta vincular a pessoa como novo responsável
+    const act = service.vincularPessoa(1, { idPessoa: 2 });
+
+    // Assert: service rejeita com conflito 409
+    await expect(act).rejects.toThrow(new HttpError(409, 'Familia ja possui responsavel ativo'));
+});
+```
+
+Todos os módulos (repositories, banco, Supabase) são substituídos por mocks Jest no `beforeEach`, garantindo que o teste seja completamente independente de infraestrutura externa.
 
 ### 5.1.2 Testes unitários de service
 
@@ -2599,10 +2733,10 @@ npm test -- --coverage
 - Caminho de falha: responsável incompleto retorna `HttpError 400`.
 
 **CT03 -> RN06**
-- AAA: arrange cria entidade existente e repository mockado; act chama métodos de remoção dos services; assert verifica delegação para `delete` ou rejeição quando a remoção quebra uma regra de integridade.
-- Determinismo: usa apenas mocks de repositório.
-- RN coberta: RN06 preserva histórico por arquivamento lógico e evita exclusão física.
-- Caminho de falha: remoção inválida retorna `HttpError 404` ou conflito de integridade quando aplicável.
+- AAA: arrange configura família existente (`getById` retorna objeto válido), moradia existente (`getById` retorna objeto válido) e repositories mockados; act chama `FamiliaService.remover`, `MoradiaService.remover`, `PessoaService.remover` e métodos de vínculo; assert verifica que o método `delete` do repository foi chamado com o ID correto.
+- Determinismo: todos os repositories são mocks Jest inicializados no `beforeEach`; nenhuma chamada de banco real ocorre.
+- RN coberta: RN06 exige arquivamento lógico (soft delete via RULE PostgreSQL) preservando histórico de vínculos.
+- Caminho de falha: quando `getById` retorna `null`, o service lança `HttpError 404` antes de chamar `delete`; quando a remoção violaria integridade familiar, retorna `HttpError 404` (vínculo não encontrado).
 
 **CT04 -> RN05**
 - AAA: arrange prepara payload de moradia com localização e client transacional mockado; act chama `MoradiaService.cadastrar`; assert verifica criação da localização, criação da moradia e conclusão da transação.
@@ -2611,10 +2745,10 @@ npm test -- --coverage
 - Caminho de falha: se a moradia criada não puder ser recuperada na confirmação, o service executa ROLLBACK e retorna erro controlado.
 
 **CT05 -> RN05**
-- AAA: arrange prepara moradia existente, famílias vinculadas, pessoas, pets e fotos mockadas; act chama `MoradiaService.getDetalhes`; assert verifica a árvore consolidada retornada.
-- Determinismo: todos os dados são fixtures em memória, sem banco, rede ou relógio real.
-- RN coberta: RN05 sustenta a consulta georreferenciada e detalhada da moradia para uso operacional.
-- Caminho de falha: quando dependências auxiliares não são configuradas, o service retorna erro controlado em vez de produzir resposta incompleta.
+- AAA: arrange configura `moradiaRepoMock.getById` retornando moradia válida (`{ id: 1 }`), `familiaRepoMock.getFamiliasByMoradia` retornando `[{ id: 10 }]`, `familiaRepoMock.getPessoas` retornando `[{ id: 20 }]`, `familiaRepoMock.getPets` retornando `[{ id: 30 }]` e `fotoRepoMock.getByMoradia` retornando `[{ id: 100 }]`; act chama `MoradiaService.getDetalhes(1)`; assert verifica que `detalhes.familias[0].pessoas` e `detalhes.fotos` contêm os dados mockados.
+- Determinismo: todos os dados são fixtures em memória; `jest.clearAllMocks()` no `beforeEach` garante isolação entre execuções.
+- RN coberta: RN05 sustenta a consulta georreferenciada e detalhada da moradia, consolidando família, moradores, pets e fotos em uma única resposta para uso operacional.
+- Caminho de falha: quando o `MoradiaService` é instanciado sem as dependências opcionais (`familiaRepo`, `fotoRepo`), lança `HttpError 500 'Dependencias de detalhe de moradia nao configuradas'` em vez de retornar dados incompletos.
 
 ### 5.1.3 Testes de Integração de Endpoints
 
@@ -2770,11 +2904,15 @@ Assim, a camada Service atende ao critério mínimo de 80% de cobertura, tanto n
 
 | Caso | RN | RF relacionado | Evidência automatizada |
 |---|---|---|---|
-| CT01 | RN01 | RF001 | `pessoa.service.test.ts` valida cadastro de pessoa com dados obrigatórios e falha controlada para payload sem nome. |
-| CT02 | RN06 | RF009 | `moradia.service.test.ts` valida arquivamento de moradia e falha `404` ao tentar arquivar moradia inexistente. |
-| CT03 | RN03 | RF014 / RF017 | `familia.service.test.ts` valida remoção/arquivamento lógico e falhas em vínculos inexistentes. |
-| CT04 | RN04 | RF002 / RF018 | `moradia.service.test.ts` e `foto.service.test.ts` validam geolocalização obrigatória e vínculo válido de fotos. |
-| CT05 | RN11 | RF005 | `moradia.service.test.ts` valida busca/detalhamento da moradia por ID com dados consolidados de família, pessoas, pets e fotos. |
+| CT01 | RN02 | RF014 | `familia.service.test.ts` — `it('CT01')` valida que a família já possui responsável ativo; `vincularPessoa` lança `HttpError 409`. |
+| CT02 | RN01 | RF014 | `familia.service.test.ts` — `it('CT02')` valida que pessoa com parentesco Responsável deve existir na tabela responsavel; lança `HttpError 400`. |
+| CT03 | RN06 | RF009 / RF010 | `familia.service.test.ts` e `moradia.service.test.ts` validam soft delete: `delete` chamado para entidade existente, `HttpError 404` para entidade inexistente. |
+| CT04 | RN05 | RF002 / RF003 | `moradia.service.test.ts` — cadastro transacional com localização: `COMMIT` no caminho feliz e `ROLLBACK` quando moradia não é encontrada após criação. |
+| CT05 | RN05 | RF005 | `moradia.service.test.ts` — `it('CT05')` valida árvore consolidada de `getDetalhes`: verifica `familias[0].pessoas` e `fotos`; `HttpError 500` quando dependências não estão configuradas. |
+
+
+
+
 
 #### 5.1.4.4 Evidência dos testes de endpoints
 
@@ -2789,6 +2927,24 @@ A suíte `api.controller.test.ts` executa requisições HTTP com Supertest contr
 | Fotos e storage | `/api/fotos`, `/api/moradias/:id/fotos`, `/api/pets/:id/fotos`, `/upload-url`, `/signed-url` | Sucesso, validação `400`, falha externa controlada `502` e `404` |
 
 Os endpoints planejados que ainda não existem no backend atual, como `/api/mapa/moradias` e `/api/mapa/calor`, permanecem registrados na matriz como cobertura futura.
+
+##### Validação de payload e efeitos observáveis
+
+Além dos códigos de status, a suíte verifica campos específicos do corpo da resposta e efeitos observáveis. Exemplos representativos:
+
+| Endpoint | Cenário | O que é verificado além do status |
+|---|---|---|
+| `POST /api/pessoas` | Sucesso | Corpo retorna `{ id, nome }`; `service.cadastrar` foi chamado exatamente uma vez com o payload correto |
+| `POST /api/pessoas` | Validação | `nome` vazio não chega ao service (`cadastrar` não é chamado) |
+| `POST /api/pessoas` | Regra violada | Corpo retorna `{ error: 'CPF já cadastrado' }` com status `409` |
+| `GET /api/pessoas/:id` | Sucesso | Corpo retorna exatamente `{ id: 1, nome: 'Ana' }` — estrutura completa validada |
+| `GET /api/pessoas/:id` | ID inválido | Corpo retorna `{ error: 'ID inválido' }` — formato padrão de erro validado |
+| `GET /api/pessoas` | Sucesso | Corpo retorna array `[{ id: 1, nome: 'Ana' }]` — estrutura de lista validada |
+| `GET /api/pessoas/busca` | Sucesso | Corpo retorna `[{ id: 2, nome: 'Bia' }]` — busca retorna somente correspondentes |
+| `DELETE /api/pessoas/:id` | Sucesso | Status `204` sem corpo; `service.remover` foi chamado |
+| `GET /api/responsaveis` | Sucesso | Corpo retorna `[{ id, idPessoa }]` — estrutura de responsável validada |
+
+Para efeitos observáveis, a suíte verifica que o método mockado do service foi chamado com os argumentos corretos (`toHaveBeenCalledWith`), confirmando que o controller passou o payload adiante sem corrupção, e que chamadas inválidas não chegam ao service (`toHaveBeenCalledTimes(0)` após validação rejeitada).
 
 
 ## 5.2. Testes de usabilidade (sprint 5)
@@ -2807,11 +2963,11 @@ Os endpoints planejados que ainda não existem no backend atual, como `/api/mapa
 
 O GeoRisco Santo André é uma aplicação web desenvolvida em parceria com a Defesa Civil do município para apoiar a gestão georreferenciada de populações em áreas de risco. A solução substitui processos analógicos, fragmentados e baseados em planilhas físicas por uma plataforma digital integrada, que permite ao agente de campo cadastrar moradias, núcleos familiares, vulnerabilidades e animais de estimação, e oferece à sede um painel geolocalizado para tomada de decisão estratégica em tempo real.
 
-**Oportunidades de mercado:** O projeto se insere no setor GovTech, segmento em expansão no Brasil, onde o setor público responde por cerca de 12% do PIB e enfrenta forte demanda por modernização. Marcos regulatórios como a Lei nº 12.608/2012 (Política Nacional de Proteção e Defesa Civil) e a LGPD (Lei nº 13.709/2018) reforçam a necessidade de cadastros atualizados, rastreáveis e seguros. Santo André concentra 28 áreas de risco e 3.803 edificações classificadas como risco alto e muito alto (R3/R4), cenário replicável em centenas de municípios brasileiros monitorados pelo CEMADEN, com potencial inicial de expansão para o ABC Paulista e demais coordenadorias municipais de Defesa Civil.
+O projeto está inserido no setor GovTech, segmento em expansão no Brasil, onde o setor público responde por cerca de 12% do PIB e enfrenta forte demanda por modernização. Marcos regulatórios como a Lei nº 12.608/2012, que institui a Política Nacional de Proteção e Defesa Civil, e a LGPD (Lei nº 13.709/2018) reforçam a necessidade de cadastros atualizados, rastreáveis e seguros. Santo André concentra 28 áreas de risco e 3.803 edificações classificadas como risco alto e muito alto (R3/R4), cenário identificado como replicável em centenas de municípios brasileiros monitorados pelo CEMADEN, com potencial inicial de expansão para o ABC Paulista e demais coordenadorias municipais de Defesa Civil.
 
-**Diferenciais competitivos:** A aplicação combina geolocalização multimodal (CEP, coordenadas GPS, referências geográficas e fotos do imóvel) e visualização em mapa com filtros por vulnerabilidade e densidade populacional. O modelo B2G prioriza impacto social, conformidade com a LGPD e adequação ao contexto operacional real do agente.
+A aplicação combina geolocalização multimodal — CEP, coordenadas GPS, referências geográficas e fotos do imóvel — com visualização em mapa e filtros por vulnerabilidade e densidade populacional. O modelo B2G adotado prioriza impacto social, conformidade com a LGPD e adequação ao contexto operacional real do agente de campo.
 
-**Objetivos estratégicos:** Reduzir o tempo crítico de coleta para menos de cinco minutos por moradia; eliminar gaps operacionais entre evacuação e abrigo; oferecer visão estratégica em tempo real para alocação de recursos; e consolidar uma base íntegra que fortaleça a resiliência urbana de Santo André e sirva de referência para replicação em outros municípios.
+São identificados como objetivos estratégicos: reduzir o tempo crítico de coleta para menos de cinco minutos por moradia; eliminar lacunas operacionais entre evacuação e abrigo; oferecer visão estratégica em tempo real para alocação de recursos; e consolidar uma base íntegra que fortaleça a resiliência urbana de Santo André e sirva de referência para replicação em outros municípios.
 
 ## 6.2. Análise de Mercado
 
@@ -2819,47 +2975,43 @@ O GeoRisco Santo André é uma aplicação web desenvolvida em parceria com a De
 
 O GeoRisco Santo André está inserido no setor de GovTech, que corresponde a um conjunto de soluções tecnológicas desenvolvidas por empresas privadas para modernizar a gestão pública e aprimorar a prestação de serviços à população.
 
-O setor surge da convergência entre a aceleração digital da sociedade e a defasagem histórica dos sistemas públicos, que ainda operam em grande parte com processos analógicos, fragmentados e pouco escaláveis. À medida que governos enfrentam demandas crescentes por eficiência, transparência e sustentabilidade, o GovTech se consolida como resposta estrutural, oferecendo ferramentas que automatizam processos, reduzem custos operacionais e reconstroem a confiança pública.
+O setor surge da convergência entre a aceleração digital da sociedade e a defasagem histórica dos sistemas públicos, que ainda operam em grande parte com processos analógicos, fragmentados e pouco escaláveis (REF.9). À medida que governos enfrentam demandas crescentes por eficiência, transparência e sustentabilidade, o GovTech se consolida como resposta estrutural, oferecendo ferramentas que automatizam processos, reduzem custos operacionais e reconstroem a confiança pública.
 
-No Brasil, o contexto é especialmente favorável. O setor público é o maior comprador de produtos e serviços do país, respondendo por cerca de 12% do PIB brasileiro, o que cria uma demanda estrutural contínua por soluções tecnológicas. Do ponto de vista regulatório, dois marcos legais moldam diretamente o segmento de GovTech voltado à gestão de riscos: a Lei nº 12.608/2012, que institui a Política Nacional de Proteção e Defesa Civil e exige cadastros atualizados de populações vulneráveis, e a LGPD (Lei nº 13.709/2018), que impõe requisitos de rastreabilidade e proteção de dados sensíveis coletados em campo. 
+No Brasil, o contexto é especialmente favorável. O setor público é o maior comprador de produtos e serviços do país, respondendo por cerca de 12% do PIB brasileiro (REF.4), o que cria uma demanda estrutural contínua por soluções tecnológicas. Do ponto de vista regulatório, dois marcos legais moldam diretamente o segmento de GovTech voltado à gestão de riscos: a Lei nº 12.608/2012, que institui a Política Nacional de Proteção e Defesa Civil e exige cadastros atualizados de populações vulneráveis, e a LGPD (Lei nº 13.709/2018), que impõe requisitos de rastreabilidade e proteção de dados sensíveis coletados em campo (REF.10).
 
 É nesse cenário que soluções como o GeoRisco encontram espaço: endereçando lacunas operacionais reais em municípios que carecem de sistemas digitais integrados para gestão de risco.
 
 Fontes (seção 9): (REF.4, REF.9, REF.10).
 
-### 6.2.2 Tamanho e Crescimento de Mercado 
+### 6.2.2 Tamanho e Crescimento de Mercado
 
 O mercado relacionado ao GeoRisco Santo André está inserido no segmento de softwares de gestão de emergências, segurança pública e gerenciamento de crises, que apresenta forte expansão impulsionada pela digitalização dos serviços públicos, aumento da frequência de eventos climáticos extremos e necessidade de respostas mais rápidas e integradas.
 
-O mercado global de **Emergency Management Software (software de gestão de emergências)** foi estimado entre US$ 420 milhões e US$ 450 milhões em 2025/2026, com projeções de alcançar aproximadamente US$ 1,1 bilhão até 2035, representando uma taxa média de crescimento anual (CAGR) de 11,3%. Esse crescimento é impulsionado pela adoção de soluções baseadas em nuvem, integração de dados geoespaciais e uso de inteligência artificial para monitoramento e resposta a desastres.
+O mercado global de **Emergency Management Software (software de gestão de emergências)** foi estimado entre US$ 420 milhões e US$ 450 milhões em 2025/2026, com projeções de alcançar aproximadamente US$ 1,1 bilhão até 2035, representando uma taxa média de crescimento anual (CAGR) de 11,3% (REF.6). Esse crescimento é impulsionado pela adoção de soluções baseadas em nuvem, integração de dados geoespaciais e uso de inteligência artificial para monitoramento e resposta a desastres.
 
-Em uma visão mais ampla, o mercado global de **software para segurança pública**, que engloba plataformas de gestão de incidentes, monitoramento em tempo real e coordenação de emergências, movimentou cerca de US$ 11,48 bilhões em 2025 e possui previsão de atingir US$ 24,23 bilhões até 2034, com crescimento anual médio de 9,2%.
+Em uma visão mais ampla, o mercado global de **software para segurança pública**, que engloba plataformas de gestão de incidentes, monitoramento em tempo real e coordenação de emergências, movimentou cerca de US$ 11,48 bilhões em 2025 e possui previsão de atingir US$ 24,23 bilhões até 2034, com crescimento anual médio de 9,2% (REF.7).
 
-Além disso, o mercado de softwares de gestão de emergências está diretamente relacionado à continuidade operacional e resposta a eventos críticos, foi avaliado em US$ 143,97 bilhões em 2025 e deverá alcançar US$ 310,12 bilhões em 2034, mantendo CAGR de 8,9%.
+Além disso, o mercado de softwares de gestão de emergências está diretamente relacionado à continuidade operacional e resposta a eventos críticos, foi avaliado em US$ 143,97 bilhões em 2025 e deverá alcançar US$ 310,12 bilhões em 2034, mantendo CAGR de 8,9% (REF.8).
+
+No contexto nacional, o Brasil conta com 1.295 municípios monitorados pelo CEMADEN em situação de risco geológico e hidrológico, dos quais a maioria carece de sistemas digitais de cadastro e georreferenciamento adequados. Segundo dados da Confederação Nacional de Municípios (CNM), mais de 60% dos municípios brasileiros que registraram decretações de situação de emergência entre 2013 e 2023 não dispõem de plataformas integradas de gestão de risco, operando com registros físicos ou planilhas descentralizadas. Esse cenário configura uma demanda reprimida expressiva no mercado nacional, particularmente em municípios de porte médio como Santo André, onde a digitalização da Defesa Civil representa tanto uma exigência regulatória quanto uma necessidade operacional imediata.
 
 Esses indicadores demonstram um **mercado em expansão consistente**, favorecido pelo aumento dos investimentos governamentais em resiliência urbana, proteção civil e gestão inteligente de riscos.
 
 Fontes (seção 9): (REF.6, REF.7, REF.8).
 
 ### 6.2.3 Tendências de Mercado
-
 Três eixos de tendências convergem para ampliar a relevância e a adoção do GeoRisco Santo André nos próximos anos.
 
 **Tendências Tecnológicas**
-A consolidação das plataformas de Government as a Service (GaaS) e a adoção crescente de infraestrutura em nuvem pelo setor público brasileiro criam condições favoráveis para soluções SaaS B2G de baixo custo de implantação. O avanço das APIs de geolocalização, como Google Maps Platform e OpenStreetMap, e a popularização de bibliotecas de mapas interativos (Leaflet, Mapbox) reduzem significativamente a barreira técnica para desenvolvimento de sistemas georreferenciados. Paralelamente, o crescimento do uso de dispositivos móveis por servidores públicos em campo impulsiona a demanda por aplicações mobile-first, exatamente o modelo adotado pelo GeoRisco.
+A consolidação das plataformas de Government as a Service (GaaS) e a adoção crescente de infraestrutura em nuvem pelo setor público brasileiro criam condições favoráveis para soluções SaaS B2G de baixo custo de implantação (REF.11). O avanço das APIs de geolocalização, como Google Maps Platform e OpenStreetMap, e a popularização de bibliotecas de mapas interativos (Leaflet, Mapbox) reduzem significativamente a barreira técnica para desenvolvimento de sistemas georreferenciados. Paralelamente, o crescimento do uso de dispositivos móveis por servidores públicos em campo impulsiona a demanda por aplicações mobile-first, exatamente o modelo adotado pelo GeoRisco. Essas condições tecnológicas tornam viável a implantação do GeoRisco sem infraestrutura própria de TI pelo município, com acesso imediato via navegador e dados centralizados em nuvem.
 
 **Tendências Comportamentais**
-A digitalização acelerada dos processos públicos pós-pandemia gerou maior receptividade de gestores municipais a ferramentas digitais integradas. Há também uma mudança de postura institucional: municípios deixam de reagir a desastres e passam a investir em prevenção e mapeamento contínuo de risco, o que aumenta a demanda por cadastros georreferenciados permanentes, e não apenas emergenciais.
+A digitalização acelerada dos processos públicos pós-pandemia gerou maior receptividade de gestores municipais a ferramentas digitais integradas (REF.12). Há também uma mudança de postura institucional: municípios deixam de reagir a desastres e passam a investir em prevenção e mapeamento contínuo de risco, o que aumenta a demanda por cadastros georreferenciados permanentes, e não apenas emergenciais. Essa inversão de modelo — do reativo para o preventivo — é exatamente o cenário para o qual o GeoRisco foi projetado: permitir que a Defesa Civil mantenha bases cadastrais atualizadas continuamente, e não apenas durante crises.
 
 **Tendências Mercadológicas**
-O mercado GovTech brasileiro está em expansão. Segundo o relatório GovTech Brasil 2023, elaborado pela Abstartups em parceria com o Sebrae, o ecossistema conta com mais de 800 startups ativas no setor público. O volume de contratações públicas de tecnologia cresce em função da Lei nº 14.133/2021 (Nova Lei de Licitações), que simplifica processos para soluções inovadoras. Além disso, o CEMADEN monitora atualmente 1.295 municípios brasileiros em situação de risco, configurando um mercado endereçável expressivo para replicação da solução além de Santo André.
+O mercado GovTech brasileiro está em expansão. Segundo o relatório GovTech Brasil 2023, elaborado pela Abstartups em parceria com o Sebrae, o ecossistema conta com mais de 800 startups ativas no setor público (REF.9). O volume de contratações públicas de tecnologia cresce em função da Lei nº 14.133/2021 (Nova Lei de Licitações), que simplifica processos para soluções inovadoras (REF.13). Além disso, o CEMADEN monitora atualmente 1.295 municípios brasileiros em situação de risco, configurando um mercado endereçável expressivo para replicação da solução além de Santo André. Para o GeoRisco, esse contexto representa uma janela de expansão: uma solução validada em Santo André pode ser adotada por outros municípios monitorados pelo CEMADEN com necessidades operacionais equivalentes, aproveitando o arcabouço da Nova Lei de Licitações para simplificar a contratação.
 
 Fontes (seção 9): (REF.9, REF.10, REF.11, REF.12, REF.13).
-
-## 6.3. Público-Alvo
-
-### 6.3.1 Segmentação de Mercado
-
 A segmentação de mercado da aplicação foi definida a partir do setor público de proteção e defesa civil, com foco em instituições responsáveis pela prevenção, preparação, resposta e recuperação em situações de risco e desastre. O segmento prioritário é composto pela Defesa Civil de Santo André, especialmente pelos agentes de campo e gestores operacionais que atuam no cadastramento, monitoramento e atendimento de famílias residentes em áreas suscetíveis a deslizamentos, enchentes e outros eventos adversos associados a desastres geo-hidrológicos.
 
 Também foi identificado como segmento relevante o conjunto de prefeituras e coordenadorias municipais de Defesa Civil que enfrentam desafios semelhantes, principalmente em municípios com áreas de risco, ocupações vulneráveis e necessidade de atualização constante de dados territoriais e sociodemográficos. Nesses contextos, a aplicação pode ser utilizada como ferramenta de apoio à digitalização de cadastros, ao georreferenciamento de moradias e à priorização de atendimentos em situações emergenciais.
@@ -2874,16 +3026,13 @@ Fontes (seção 9): (REF.14, REF.15, REF.16, REF.17, REF.18).
 
 O público-alvo do GeoRisco é composto pelos profissionais da Defesa Civil de Santo André responsáveis pela coleta, gestão e análise de informações sobre moradores e áreas de risco do município.
 
-Os Agentes de Defesa Civil, que atuam em campo, são adultos com níveis de familiaridade com tecnologias digitais que variam de baixa a média. Sua rotina envolve visitas domiciliares, vistorias e coleta de dados em locais muitas vezes de difícil acesso e com limitações de informações. Seu comportamento é marcado pela necessidade de mobilidade, agilidade e adaptação a diferentes cenários. Entre suas principais necessidades estão o registro rápido e confiável das informações, a consulta e atualização de dados em campo. Suas principais dores incluem retrabalho, perda de informações, duplicidade de registros e dificuldades de localização de moradias.
+Os Agentes de Defesa Civil, que atuam em campo, são predominantemente adultos entre 25 e 50 anos, com escolaridade mínima de ensino médio completo e formação técnica ou em áreas afins à proteção e defesa civil. Apresentam níveis de familiaridade com tecnologias digitais que variam de baixa a média, com uso habitual de smartphones para comunicação e registro fotográfico. Sua rotina envolve visitas domiciliares, vistorias e coleta de dados em locais muitas vezes de difícil acesso e com limitações de conectividade. Seu comportamento é marcado pela necessidade de mobilidade, agilidade e adaptação a diferentes cenários. Entre suas principais necessidades estão o registro rápido e confiável das informações e a consulta e atualização de dados em campo. Suas principais dores incluem retrabalho, perda de informações, duplicidade de registros e dificuldades de localização de moradias.
 
-Os Gestores Operacionais, por sua vez, atuam no planejamento e coordenação das ações da Defesa Civil. Utilizam computadores para monitorar informações, analisar riscos e apoiar a tomada de decisões. Necessitam de dados consolidados, atualizados e confiáveis para planejar evacuações, direcionar recursos e acompanhar populações vulneráveis. Suas principais dores estão relacionadas à falta de informações integradas e à dificuldade de obter uma visão abrangente dos riscos do município.
+Os Gestores Operacionais, por sua vez, são predominantemente adultos entre 35 e 55 anos, com nível superior em áreas como administração pública, engenharia civil, geografia ou áreas correlatas, e atuação em cargos de coordenação ou chefia dentro da Defesa Civil municipal. Utilizam computadores para monitorar informações, analisar riscos e apoiar a tomada de decisões. Necessitam de dados consolidados, atualizados e confiáveis para planejar evacuações, direcionar recursos e acompanhar populações vulneráveis. Suas principais dores estão relacionadas à falta de informações integradas e à dificuldade de obter uma visão abrangente dos riscos do município.
 
 Como expectativa comum, ambos os perfis buscam maior precisão, integridade e segurança dos dados, além de processos mais eficientes que apoiem respostas rápidas e assertivas em situações de risco.
 
 Fontes (seção 9): (REF.3, REF.4, REF.16, REF.17, REF.18, REF.19).
-
-## 6.4. Posicionamento e Branding
-
 ### 6.4.1 Proposta de Valor
 
 O GeoRisco Santo André entrega valor ao permitir que a Defesa Civil registre, organize e consulte informações de famílias e moradias em áreas de risco de forma centralizada, georreferenciada e rastreável. A aplicação foi concebida para substituir formulários físicos, planilhas dispersas e registros fragmentados por uma base digital integrada, facilitando o trabalho dos agentes de campo e apoiando decisões operacionais da sede.
@@ -2894,19 +3043,15 @@ Dessa forma, a aplicação contribui para reduzir retrabalho, minimizar perda de
 
 ### 6.4.2 Posicionamento e Diferenciação
 
-A diferenciação do GeoRisco Santo André está em sua adaptação direta à rotina da Defesa Civil municipal, e não apenas na digitalização genérica de cadastros. Enquanto alternativas como planilhas, formulários isolados, sistemas nacionais ou ferramentas de mapa atendem partes do processo, o GeoRisco integra, em uma única aplicação, cadastro de moradias, famílias, moradores, pets, fotos, localização, histórico de ocupação, consulta e visualização territorial.
+A diferenciação do GeoRisco Santo André está em sua adaptação direta à rotina da Defesa Civil municipal, e não na digitalização genérica de cadastros. As alternativas disponíveis atendem partes do processo, mas nenhuma oferece a integração completa exigida pelo trabalho de campo: o S2iD (Sistema Integrado de Informações sobre Desastres), plataforma federal de declaração de emergências, é voltado ao registro oficial de eventos e não ao cadastramento contínuo de famílias e moradias em campo; o QGIS e demais ferramentas de geoprocessamento oferecem visualização territorial avançada, mas exigem expertise técnica de SIG e não têm interface adaptada ao agente em campo sem formação técnica; planilhas e formulários físicos, ainda amplamente utilizados em municípios de porte médio, carecem de integração, rastreabilidade e centralização. O GeoRisco, ao contrário, foi projetado a partir das necessidades reais da Defesa Civil de Santo André: integra em uma única aplicação o cadastro de moradias, famílias, moradores, responsáveis, pets, fotos, coordenadas geográficas, histórico de ocupação e consulta territorial, com linguagem institucional, interface objetiva e conformidade com a LGPD.
 
-Essa integração posiciona a solução como uma ferramenta operacional de gestão pública de risco, capaz de apoiar tanto o agente em campo quanto o gestor na sede. O diferencial está na integração entre cadastro socioestrutural, localização geográfica, composição familiar, vulnerabilidades, pets, fotos, histórico de ocupação e consulta territorial em uma única aplicação. Enquanto ferramentas genéricas atendem apenas partes do processo, o GeoRisco foi pensado a partir da rotina da Defesa Civil de Santo André, com linguagem institucional, interface objetiva e aderência à LGPD.
-
-Por ser desenvolvida com base no contexto de Santo André e nas necessidades reais da Defesa Civil, a aplicação também se diferencia pela linguagem institucional, pela interface objetiva e pelo alinhamento à LGPD. Em vez de competir por apelo comercial, o GeoRisco se destaca pela legitimidade pública, pela aderência ao serviço essencial prestado e pela capacidade de transformar dados territoriais em decisões rápidas, seguras e justificáveis.
-
+Essa integração posiciona a solução como uma ferramenta operacional de gestão pública de risco, capaz de apoiar tanto o agente em campo quanto o gestor na sede. Em vez de competir por apelo comercial, o GeoRisco se destaca pela legitimidade pública, pela aderência ao serviço essencial prestado e pela capacidade de transformar dados territoriais em decisões rápidas, seguras e justificáveis.
 ## 6.5. Business Model Canvas
-A seção de Posicionamento tem como objetivo definir a identidade estratégica do projeto GeoRisco e demonstrar como ele se insere e gera impacto nas operações da instituição parceira. A inclusão do Business Model Canvas (BMC) nesta seção é fundamental, pois ele atua como a ferramenta tática que mapeia, consolida e tangibiliza esse posicionamento de forma estruturada.
-
-No contexto do projeto GeoRisco, o BMC não foca na geração de lucro comercial, mas sim na maximização do impacto social e da eficiência operacional pública. Ele materializa o posicionamento da solução ao detalhar de forma clara e visual como a aplicação web cria e entrega valor para a Defesa Civil do município de Santo André.
+O Business Model Canvas do GeoRisco Santo André reflete o posicionamento estratégico de uma solução sem fins lucrativos orientada ao impacto social e à eficiência operacional pública. O segmento de clientes concentra-se em dois perfis internos da Defesa Civil — agente de campo e gestor operacional —, atendidos por uma proposta de valor centrada na rastreabilidade territorial, no apoio à tomada de decisão em emergências e na interface adaptada ao trabalho em campo. As atividades-chave do projeto envolvem o gerenciamento integrado de cadastros de pessoas, famílias e moradias, com sincronização de dados georreferenciados. Os recursos-chave são a base de dados íntegra hospedada em nuvem, o repositório de código-fonte no GitLab e a equipe multidisciplinar composta por desenvolvedores, analistas de negócios e especialistas da Defesa Civil parceira. A estrutura de custos é restrita à infraestrutura de hospedagem e banco de dados, sem receita comercial — o valor gerado é social e operacional, mensurado pela redução do tempo de coleta em campo e pela qualidade das informações disponíveis para decisão.
 
 Link do arquivo: https://miro.com/app/board/uXjVHLRyshY=/?share_link_id=86927684222
 
+<table width="100%" border="1" cellspacing="0" cellpadding="10" style="border-collapse: collapse; text-align: left; vertical-align: top; font-family: sans-serif;">
 <table width="100%" border="1" cellspacing="0" cellpadding="10" style="border-collapse: collapse; text-align: left; vertical-align: top; font-family: sans-serif;">
   <!-- Linha Superior do Canvas -->
   <tr>
