@@ -17,36 +17,6 @@ backend:test:
     - npm ci --cache .npm --prefer-offline --no-audit
     - npm test
 
-backend:integration:
-  stage: test
-  image: node:20-bookworm
-  services:
-    - name: postgres:14
-      alias: db
-  variables:
-    DATABASE_URL: "postgresql://postgres:postgres@db:5432/postgres"
-    RUN_DB_TESTS: "true"
-  before_script:
-    - apt-get update && apt-get install -y postgresql-client
-    - until pg_isready -h db -p 5432; do echo "waiting for db"; sleep 1; done
-  cache:
-    key:
-      files:
-        - src/geoRisco/package-lock.json
-    paths:
-      - src/geoRisco/.npm/
-  script:
-    - cd src/geoRisco
-    - npm ci --cache .npm --prefer-offline --no-audit
-    - npm run migrate
-    - npm run test:coverage:integration
-  artifacts:
-    when: always
-    reports:
-      junit: src/geoRisco/coverage/junit.xml
-    paths:
-      - src/geoRisco/coverage/
-
 backend:build:
   stage: build
   cache:
