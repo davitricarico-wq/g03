@@ -3026,11 +3026,19 @@ Tivemos alterações nas Personas (ambas), User Stories (todas), RF, RNF e RN. D
 
 2. *Sem data específica* - `final` - Eduardo Totti Thomé - Seção 2.3 User Stories: Finalização do alinhamento de escopo, apresentando a reformulação das existentes e adição de novas US; Seção 3.1 Requisitos Funcionais (RF's) e Regras de Negócio (RN's): Finalização do alinhamento de escopo, apresentando ajuste ou exclusão de RF's e RN's existentes e adição de novos RF's e RN's. (obs: vale ressaltar que a equipe não teve uma boa estimativa do tempo desta tarefa. Por isso esta atualização está registrada com a tag: `final`)
 
-3. 12/06/2026 - Davi Viana Tricarico - Seção 3.6.1 e 3.6.2 Modelo Entidade-Relacionamento e Diagrama Entidade-Relacionamento (MER e DER): **O QUE FOI EXCLUIDO, ADICIONADO OU MODIFICADO**
+3. 12/06/2026 - Davi Viana Tricarico - Seção 3.9 Matriz de Rastrabilidade RTM: Atualização da matriz de acordo com os novos endpoints, user stories, requisitos funcionais e regras de negócio.
 
-4. **DATA** - Davi Viana Tricarico - Seção ??? - Atualizações no diagrama de arquitetura
+4. 15/06/2026 - Davi Viana Tricarico - Seção 3.6.1 e 3.6.2 Modelo Entidade-Relacionamento e Diagrama Entidade-Relacionamento (MER e DER): Algumas alterações foram necessárias para o aprimoramento da modelagem do banco de dados, tanto nos diagramas, quanto nas documentações. Alterações feitas: CPF excluído de responsável e adicionado em pessoa; Exclusão do atributo DataPrevistaParto em GrupoPrioritário; Adição do atributo deleted_at  às entidades Pessoa, Família e Moradia; Adição do atributo Tipo à entidade Pet; Adição do atributo status à tabela associativa “ocupa” (familia_moradia); Documentação mais explicativa quanto às tabelas associativas.
+
+5. 15/06/2026 - Gabriel Andreott - Seção 3.2.1 - Atualizações no diagrama de arquitetura (visão simplificada): ajustes necessários na estrutura de pastas do projeto
+
+6. 16/06/2026 - Davi Viana Tricarico - Seção 3.2.1 - Atualizações no diagrama de arquitetura (diagrama de classes arquitetural): troca de plataforma/formato do diagrama (agora em arquivo .md usando linguagem mermaid) para facilitar os ajustes de fluxo e classes, de acordo com a refatoração do banco de dados, feita também na sprint 4.
 
 ### Sprint 5
+
+1. 25/06/2026 - Gabriel Andreott - Atualizações no README: Na sprint 4, foi feito uma primeira versão do que seria o documento final do readme.md. No entando, para estar completamente finalizado, é necessário ter o projeto 100% terminado. Por isso, nessa sprint 5, o readme teve alterações pontuais, como a adição dos links dos "linkedins" do grupo e professores, a exclusão de descrições ou partes desnecessárias e a adição de um vídeo com a aplicação funcionando ao final do projeto. 
+
+2. 26/06/2026 - Todo o Grupo - Alterações gerais e finais: após a última validação (12/06 - sprint 4) foi feito um levantamento de pequenas alterações generalizadas, tanto no front-end, quanto no back-end. Elas incluem, por exemplo, trocar o nome do campo "Logradouro" para "Logradouro(rua)" ou adicionar o atributo "renda" à entidade Pessoas e excluir de Responsável (passa a pertencer a todos os moradores cadastrados), e assim por diante.
 
 
 # <a name="c8"></a>8. Conclusões e trabalhos futuros (sprint 5)
