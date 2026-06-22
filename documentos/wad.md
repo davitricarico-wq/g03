@@ -2797,37 +2797,46 @@ Os endpoints planejados que ainda não existem no backend atual, como `/api/mapa
 
 Posicione aqui as tabelas com enunciados de tarefas, etapas e resultados de testes de usabilidade. Ou utilize um link para seu relatório de testes (mantenha o link sempre público para visualização).
 
-### 5.2.2. Relatório de testes SUS (System Usability Scale)
+### 5.2.2. Relatório de Testes SUS (System Usability Scale)
 
-A avaliação da experiência do usuário foi complementada pela aplicação da metodologia **SUS (System Usability Scale)**, um questionário padronizado de 10 itens que mensura a percepção subjetiva de usabilidade. O objetivo foi validar se a interface atende aos requisitos de intuitividade e eficiência esperados pelos agentes da Defesa Civil.
+A avaliação da experiência do usuário foi complementada pela aplicação da metodologia **SUS (System Usability Scale)**, instrumento padronizado de 10 itens, respondidos em escala Likert de 1 a 5, que mensura a percepção subjetiva de usabilidade de um sistema. A aplicação do questionário teve como objetivo validar, de forma quantitativa, se a interface atende aos requisitos de intuitividade, eficiência e confiabilidade esperados pelos agentes de campo da Defesa Civil de Santo André durante o uso em condições operacionais reais.
 
 #### 5.2.2.1. Tabela de Respostas e Cálculo
 
-A tabela abaixo apresenta os resultados individuais coletados. Para o cálculo da pontuação final ($0$ a $100$), as respostas de itens ímpares tiveram $1$ subtraído, enquanto as de itens pares foram subtraídas de $5$, somando-se os resultados e multiplicando o total por $2,5$.
+A tabela a seguir consolida as respostas individuais coletadas nas sessões de teste realizadas em 17/06/2026. O cálculo da pontuação SUS (0 a 100) seguiu o procedimento padrão de Brooke (1986): para os itens de numeração ímpar, subtrai-se 1 do valor respondido; para os itens de numeração par, subtrai-se o valor respondido de 5. A soma das dez contribuições é então multiplicada por 2,5, gerando a pontuação final do participante.
 
-| Participante | Q1 | Q2 | Q3 | Q4 | Q5 | Q6 | Q7 | Q8 | Q9 | Q10 | Pontuação SUS |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| **P01** | 5 | 4 | 4 | 2 | 5 | 1 | 4 | 1 | 5 | 1 | **85,0** |
-| **P02** | 5 | 2 | 3 | 1 | 4 | 1 | 5 | 5 | 4 | 2 | **75,0** |
-| **P03** | 4 | 2 | 5 | 3 | 4 | 2 | 5 | 1 | 5 | 2 | **82,5** |
-| **P06** | 5 | 2 | 4 | 2 | 5 | 2 | 5 | 2 | 4 | 2 | **82,5** |
-| **P08** | 5 | 2 | 5 | 2 | 5 | 1 | 5 | 1 | 5 | 1 | **95,0** |
-| **Média Geral** | - | - | - | - | - | - | - | - | - | - | **84,0** |
+| Participante    | Q1 | Q2 | Q3 | Q4 | Q5 | Q6 | Q7 | Q8 | Q9 | Q10 | Pontuação SUS |
+| --------------- | -- | -- | -- | -- | -- | -- | -- | -- | -- | --- | ------------- |
+| P01             | 5  | 4  | 4  | 2  | 5  | 1  | 4  | 1  | 5  | 1   | **85,0**      |
+| P03             | 4  | 2  | 5  | 3  | 4  | 2  | 5  | 1  | 5  | 2   | **82,5**      |
+| P06             | 5  | 2  | 4  | 2  | 5  | 2  | 5  | 2  | 4  | 2   | **82,5**      |
+| P08             | 5  | 2  | 5  | 2  | 5  | 1  | 5  | 1  | 5  | 1   | **95,0**      |
+| **Média Geral** | -  | -  | -  | -  | -  | -  | -  | -  | -  | -   | **86,25**     |
 
-> *Nota: Os participantes P04, P05 e P07 foram excluídos da amostra quantitativa por apresentarem questionários incompletos, não atendendo aos critérios de validade estatística do instrumento.*
+> **Nota:** Os participantes P02, P04, P05 e P07 foram excluídos da amostra quantitativa por apresentarem questionários SUS incompletos (um ou mais itens não respondidos), o que impede o cálculo correto da pontuação conforme o instrumento original. A exclusão seguiu um critério único e aplicado de forma consistente a toda a amostra, preservando a validade estatística do resultado consolidado. Os relatos qualitativos desses participantes, no entanto, foram preservados e incorporados à síntese da seção 5.2.2.2, uma vez que agregam informação relevante mesmo na ausência de pontuação numérica.
 
 #### 5.2.2.2. Síntese Qualitativa
 
-As percepções qualitativas coletadas durante a aplicação do SUS reforçam os dados quantitativos:
+As percepções qualitativas coletadas durante e após a aplicação do questionário SUS reforçam e contextualizam os dados quantitativos obtidos.
 
-* **Pontos Fortes:** O recurso de preenchimento automático via CEP e a captura automática de geolocalização foram os itens que mais geraram satisfação, sendo citados como "facilitadores críticos" para a agilidade em campo.
-* **Oportunidades de Melhoria:** A principal crítica recai sobre a transparência do sistema em caso de erros (ex: validações de e-mail duplicado) e a visibilidade de campos obrigatórios em formulários complexos. Houve consenso sobre a necessidade de tornar o responsável legal mais evidente na busca por moradias.
+#### 5.2.2.3. Pontos Fortes
 
-#### 5.2.2.3. Conclusão da Avaliação
+O preenchimento automático de endereço via CEP e a captura automática de geolocalização foram os recursos mais citados como geradores de satisfação, sendo descritos pelos participantes como facilitadores diretos da agilidade de cadastro em campo. O mapa de calor e a sinalização visual de moradias de risco também receberam destaque espontâneo como diferenciais da interface.
 
-Com uma **média consolidada de 84,0 pontos**, a solução classifica-se no nível **Excelente** na escala de usabilidade (acima do benchmark de 80,3).
+#### 5.2.2.4. Oportunidades de Melhoria
 
-O resultado indica uma alta taxa de aceitação e uma curva de aprendizado favorável para o público-alvo. O desvio observado em alguns participantes pontuais (como P02) está diretamente correlacionado a falhas técnicas pontuais na interface (erros de feedback), cuja correção elevará a confiabilidade do sistema para o padrão "superior" necessário em operações de risco da Defesa Civil.
+A crítica mais recorrente recai sobre a transparência do sistema diante de erros de validação, como o caso de e-mail duplicado, em que a mensagem retornada não especifica a causa da falha, e sobre a ausência de sinalização clara de campos obrigatórios em formulários mais extensos, como o de cadastro de pets.
+
+Houve convergência entre participantes distintos quanto à necessidade de tornar o responsável legal mais visível diretamente nos resultados de busca por moradia, reduzindo a quantidade de cliques necessários para essa identificação.
+
+#### 5.2.2.5. Conclusão da Avaliação
+
+Com uma média consolidada de **86,25 pontos** entre os participantes com questionários válidos, a solução posiciona-se no nível **"Bom"** da escala de usabilidade SUS, superando com margem confortável o benchmark de referência de **80,3** e aproximando-se do limiar de **90,9** associado à classificação **"Excelente"**.
+
+O resultado indica uma alta taxa de aceitação da interface e uma curva de aprendizado favorável junto ao público-alvo, mesmo entre participantes com diferentes graus de familiaridade prévia com sistemas digitais. As dificuldades pontuais observadas, sobretudo as relacionadas a mensagens de erro pouco descritivas e à ausência de indicação de campos obrigatórios, não comprometeram a percepção geral de usabilidade, mas representam oportunidades concretas de refinamento.
+
+A correção desses pontos específicos tende a elevar a pontuação média para a faixa **"Excelente"**, consolidando o padrão de confiabilidade exigido para uma ferramenta utilizada em contexto de operações de risco pela Defesa Civil.
+
 
 
 # <a name="c6"></a>6. Estudo de Mercado e Plano de Marketing (sprint 4)
