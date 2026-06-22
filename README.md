@@ -360,20 +360,16 @@ g03/
 
 ## Histórico de Lançamentos
 
-### 0.2.0 — 26/06/2026
-- Interface React completa com páginas de Cadastro, Busca, Mapa, Pessoas e Histórico
-- Frontend com proxy Vite integrado ao backend
-- Cadastro transacional de núcleo familiar (responsável, dependentes, moradia, pets e fotos)
-- Upload de fotos com URL assinada via Supabase Storage
-- Sistema de priorização de atendimento por grupos vulneráveis
-- Suite de testes unitários e de integração cobrindo serviços e repositórios
+### 0.1.0 - 30/04/2026
 
-### 0.1.0 — 12/06/2026
-- API REST inicial com endpoints para pessoas, famílias, moradias, pets e fotos
-- Arquitetura em camadas: controllers, services, repositories e models
-- Schema do banco com migrations versionadas no Supabase
-- Validações de payload e tratamento de erros HTTP
-- Primeiros testes unitários de serviços
+### 0.2.0 - 15/05/2026
+
+### 0.3.0 - 29/05/2026
+
+### 0.4.0 — 12/06/2026
+
+### 1.0.0 — 26/06/2026
+
 
 ---
 
