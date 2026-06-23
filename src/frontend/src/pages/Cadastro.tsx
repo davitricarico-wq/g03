@@ -172,6 +172,7 @@ export default function Cadastro() {
     const [erro, setErro] = useState<string | null>(null);
     const [invalidos, setInvalidos] = useState<Set<string>>(new Set());
     const [capturando, setCapturando] = useState(false);
+    const [gpsSolicitadoAutomaticamente, setGpsSolicitadoAutomaticamente] = useState(false);
 
     const [loc, setLoc] = useState({
         logradouro: '', numero: '', bairro: '', cidade: '', estado: '', cep: '',
@@ -257,6 +258,22 @@ export default function Cadastro() {
             setAba('moradores');
         }
     }, [aba, modoEdicaoPessoa]);
+
+    useEffect(() => {
+        if (
+            gpsSolicitadoAutomaticamente ||
+            modoEdicao ||
+            modoEdicaoPessoa ||
+            moradiaId ||
+            adicionarApenasFamilia ||
+            modoMoradia !== 'nova'
+        ) {
+            return;
+        }
+        setGpsSolicitadoAutomaticamente(true);
+        void pegarGPS();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [gpsSolicitadoAutomaticamente, modoEdicao, modoEdicaoPessoa, moradiaId, adicionarApenasFamilia, modoMoradia]);
 
     // posiciona o pino no mapa (clique/arraste) sem disparar recentralização
     const setCoord = (lat: number, lng: number) => {
@@ -581,7 +598,7 @@ export default function Cadastro() {
         if (!moradia.usoImovel) campos.push('usoImovel');
         const msg = campos.length
             ? campos.includes('latitude') || campos.includes('longitude')
-                ? 'Informe coordenadas válidas (use o botão GPS) e os dados da moradia.'
+                ? 'Aguarde a captura da localização ou marque a posição no mapa, e preencha os dados da moradia.'
                 : 'Preencha os campos obrigatórios da moradia.'
             : null;
         return { campos, msg };
@@ -1118,21 +1135,15 @@ export default function Cadastro() {
                     <TextField label="Complemento" value={loc.complemento} onChange={(v) => setLocField('complemento', v)} />
 
                     <p className="field-group-title">Coordenadas (mapa)</p>
-                    <div className="field">
+                    <div className={`field gps-auto-status ${invalido('latitude') || invalido('longitude') ? 'invalid' : ''}`}>
                         <label>Localização *</label>
-                        <div className="input-with-btn">
-                            <input
-                                className={invalido('latitude') || invalido('longitude') ? 'invalid' : undefined}
-                                placeholder="Latitude, Longitude"
-                                value={loc.latitude && loc.longitude ? `${loc.latitude}, ${loc.longitude}` : ''}
-                                readOnly
-                                style={invalido('latitude') || invalido('longitude') ? { borderColor: '#e53935', background: '#fff6f6' } : undefined}
-                            />
-                            <button type="button" className="gps-btn" disabled={capturando} onClick={pegarGPS}>
-                                {capturando ? 'Capturando…' : '◎ GPS'}
-                            </button>
-                        </div>
-                        {loc.latitude && loc.longitude && <span className="gps-status">✓ Coordenadas capturadas</span>}
+                        <span className="gps-status">
+                            {capturando
+                                ? 'Solicitando permissão e capturando localização...'
+                                : loc.latitude && loc.longitude
+                                    ? 'Coordenadas capturadas automaticamente'
+                                    : 'Permita o uso da localização para capturar as coordenadas automaticamente.'}
+                        </span>
                     </div>
 
                     <LocationPicker

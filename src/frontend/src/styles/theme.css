@@ -1206,6 +1206,18 @@ a {
     margin-top: 4px;
 }
 
+.gps-auto-status {
+    padding: 10px 12px;
+    border: 1px solid var(--borda);
+    border-radius: var(--radius-sm);
+    background: #f8fbff;
+}
+
+.gps-auto-status.invalid {
+    border-color: #e53935;
+    background: #fff6f6;
+}
+
 /* ===== Busca: filtros de vulnerabilidade ===== */
 .filtros-card {
     margin-bottom: 14px;
