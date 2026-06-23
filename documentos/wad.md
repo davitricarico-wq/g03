@@ -1,4 +1,4 @@
-<img src="assets/logointeli.png" alt="Logo Inteli" width="300">
+<img src="../assets/logointeli.png" alt="Logo Inteli" width="300">
 
 
 # WAD - Web Application Document - Módulo 2 - Inteli
@@ -96,7 +96,7 @@ Fontes (seção 9): (REF.1, REF.2, REF.3, REF.4, REF.5).
 A análise SWOT foi realizada com o objetivo de compreender o cenário interno e externo da instituição parceira, identificando suas forças, fraquezas, oportunidades e ameaças. Essa análise permite avaliar aspectos que impactam diretamente o desenvolvimento e a implementação da solução proposta, contribuindo para decisões mais estratégicas e alinhadas ao contexto da Defesa Civil.
 
 <div align="center">
-    <p>Figura 1: Análise Swot</p>
+    <p>Figura 1: Análise SWOT</p>
     <img src="outros/swot.png" width="800">
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -235,14 +235,14 @@ A oportunidade R10 foca na replicação para outros municípios do ABC para expa
 As personas apresentadas abaixo caracterizam-se como proto-personas, construídas a partir de inferências sobre o contexto institucional e os fluxos operacionais da Defesa Civil, visando representar os principais perfis de usuários e orientar o desenvolvimento da solução. 
 
 <div align="center">
-    <p>Figura 5: Persona 1</p>
+    <p>Figura 4: Persona 1</p>
     <img src="../assets/persona1.png" width="520" height="520">
     <p>Feito pela própria equipe (2026)</p> 
 </div>
 
 
 <div align="center">
-    <p>Figura 6: Persona 2</p>
+    <p>Figura 5: Persona 2</p>
     <img src="../assets/persona2.png" width="520" height="520"> 
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -255,7 +255,7 @@ Além disso, tem-se o gestor operacional da Defesa Civil, o Wesley, que atua no 
 
 ## 2.3. User Stories (sprints 1 a 5)
 
-Apresenta-se a seguir a lista de User Stories levantadas para o projeto GeoRisco Santo André. Dividimos os User Stories no baseados no seu nível de prioridade, logo quanto mais no topo estiver a User Stories, mais prioritária será. As 5 primeiras User Stories são prioritárias, e User Stories de prioridade mais baixa seguirão na sequência desta lista, com códigos como US06, US07, e assim por diante.
+Apresenta-se a seguir a lista de User Stories levantadas para o projeto GeoRisco Santo André. Dividimos as User Stories com base no seu nível de prioridade, logo quanto mais no topo estiver a User Story, mais prioritária será. As 5 primeiras User Stories são prioritárias, e User Stories de prioridade mais baixa seguirão na sequência desta lista, com códigos como US06, US07, e assim por diante.
 
 > **Responsável (definição):** morador designado como referência do núcleo familiar. É obrigatoriamente um dos cidadãos cadastrados, **único por família**, e concentra os dados de contato e burocráticos do núcleo (ex.: CPF, NIS, renda, programas sociais). Toda família ativa deve ter um responsável definido.
 
@@ -471,7 +471,7 @@ As Validações de Campo (VC) definem as restrições de preenchimento obrigató
 | RNF001 | **Usabilidade** | O sistema deve facilitar o preenchimento e a consulta de cadastros por meio de payloads padronizados, validações de entrada e respostas de erro compreensíveis. Evitando assim, a escrita de dados errados, inconsistentes e dados não padronizados.  | Derivado da US01 e US02: agentes atuam em áreas de risco sob pressão e precisam registrar dados de pessoas, moradias e famílias com o menor número possível de inconsistências. | O requisito evoluiu para decisões técnicas como uso de DTOs, funções de normalização em `request-utils.ts` e validações específicas em `validations/`, reduzindo erros de entrada antes que os dados cheguem aos services. | Payloads obrigatórios devem ser validados antes da persistência; requisições inválidas devem retornar mensagens de erro claras. | RF001, RF002, RF005, RF012 | Testar chamadas da API com dados válidos e inválidos, verificando se os erros retornados orientam a correção do preenchimento. |
 | RNF002 | **Confiabilidade** | O backend deve preservar a integridade dos dados em operações compostas, evitando cadastros parciais quando uma etapa do processo falha. | Derivado da necessidade de manter cadastros familiares, moradias, responsáveis e vínculos consistentes, já que dados incompletos podem prejudicar consultas e ações da Defesa Civil. | O requisito evoluiu para o uso de transações nos services, com `BEGIN`, `COMMIT` e `ROLLBACK` em operações que envolvem múltiplas tabelas, como cadastro de responsável, moradia com localização e núcleo familiar. | Operações compostas devem ser concluídas integralmente ou revertidas em caso de erro. | RF001, RF002, RF003, RF012 | Simular falhas durante cadastros compostos e verificar se nenhum registro parcial permanece persistido no banco. |
 | RNF003 | **Eficiência de desempenho** | O sistema deve manter uma organização que permita consultas e operações de cadastro com baixo acoplamento e possibilidade de otimização futura. | Derivado da necessidade de consulta rápida a pessoas, moradias, famílias, pets e fotos, especialmente em cenários de uso operacional. | O requisito evoluiu para a separação entre controllers, services e repositories. O acesso ao banco foi isolado em repositories, permitindo otimizar queries SQL sem alterar a lógica dos controllers ou services. | Endpoints principais devem responder de forma consistente, com funções como busca de dados da moradia devem responder em menos de 1 segundo e permitir análise futura de gargalos em consultas SQL. | RF004, RF005, RF006, RF011 | Medir tempo de resposta dos endpoints principais e revisar queries em repositories para identificar pontos de otimização. |
-| RNF004 | **Adequação funcional** | A API deve oferecer endpoints coerentes com os fluxos centrais do sistema, cobrindo cadastro, consulta, atualização e remoção de pessoas, moradias, famílias, pets e fotos. Com todos estes seguindo o protocólo HTTP correto. | Derivado da necessidade de transformar os fluxos definidos no WAD em operações concretas no backend. | O requisito evoluiu para rotas REST organizadas por domínio em `routes/`, com controllers e services específicos para cada módulo funcional da aplicação. | Os endpoints implementados devem corresponder aos fluxos funcionais documentados e estar vinculados aos RFs relevantes. | Todos os RFs | Conferir a documentação da WebAPI e testar se os endpoints existentes cobrem os fluxos previstos nos requisitos funcionais. |
+| RNF004 | **Adequação funcional** | A API deve oferecer endpoints coerentes com os fluxos centrais do sistema, cobrindo cadastro, consulta, atualização e remoção de pessoas, moradias, famílias, pets e fotos. Com todos estes seguindo o protocolo HTTP correto. | Derivado da necessidade de transformar os fluxos definidos no WAD em operações concretas no backend. | O requisito evoluiu para rotas REST organizadas por domínio em `routes/`, com controllers e services específicos para cada módulo funcional da aplicação. | Os endpoints implementados devem corresponder aos fluxos funcionais documentados e estar vinculados aos RFs relevantes. | Todos os RFs | Conferir a documentação da WebAPI e testar se os endpoints existentes cobrem os fluxos previstos nos requisitos funcionais. |
 | RNF005 | **Interoperabilidade** | A aplicação deve ser acessível por tecnologias web amplamente compatíveis e permitir consumo dos mesmos endpoints por diferentes interfaces. | Derivado da necessidade de uso em diferentes dispositivos e contextos, incluindo telas de cadastro, consulta e uso futuro em mobile/PWA. | O requisito evoluiu para o uso de Express, JSON, EJS e arquivos estáticos, permitindo acesso via navegador e consumo da API HTTP por diferentes interfaces. | A API deve manter contratos independentes do dispositivo ou interface que a consome. | RF001, RF002, RF003, RF004 | Testar a aplicação em navegadores e resoluções diferentes, verificando se os endpoints continuam acessíveis e consistentes. |
 | RNF006 | **Segurança** | O sistema deve reduzir exposição de dados sensíveis e arquivos, validando entradas, controlando erros e evitando acesso direto a detalhes internos da aplicação. Importante explicitar que deve-se garantir que logs de erros ou informacionais do sistema não exponham dados sensíveis. | Derivado da LGPD e do tratamento de dados sensíveis de cidadãos vulneráveis, além da necessidade de proteger fotos e informações cadastrais. | O requisito evoluiu para validações de payload, uso de `HttpError`, tratamento padronizado com `handleControllerError` e integração com Supabase Storage por URLs assinadas. | Requisições inválidas não devem expor stack trace, credenciais, detalhes internos do banco ou caminhos sensíveis de storage. | RF001, RF002, RF009, RF010 | Enviar requisições inválidas e verificar se as respostas de erro são controladas e não expõem informações internas. |
 | RNF007 | **Compatibilidade** | O sistema deve separar o armazenamento de metadados do armazenamento de arquivos, permitindo integração entre PostgreSQL e serviço externo de storage. | Derivado da necessidade de registrar fotos de moradias e pets sem sobrecarregar o banco relacional com arquivos binários. | O requisito evoluiu para endpoints próprios de fotos e upload mediado por Supabase Storage. O banco mantém vínculos e metadados, enquanto o storage externo armazena os arquivos. | O sistema deve permitir gerar URL assinada, cadastrar metadados da foto e vincular o arquivo à moradia ou ao pet correspondente. | RF002, RF007 | Testar criação de URL assinada, cadastro de foto e vínculo com moradia ou pet, verificando integração entre API, banco e storage. |
@@ -599,7 +599,7 @@ O diagrama de classe arquitetural detalha a organização interna da aplicação
 O fluxo principal do sistema segue a ordem: `server.ts` inicializa a aplicação, `app.ts` configura o Express e registra as rotas, as rotas encaminham as requisições para os controllers, os controllers normalizam e validam os dados antes de chamar os services, os services executam as regras de negócio e orquestram os repositories, e os repositories realizam as operações de persistência no PostgreSQL. Elementos como `Infrastructure`, `Validations`, `Errors`, `Storage`, `Views`, `Public` e `Tests` aparecem no diagrama como apoios transversais à aplicação.
 
 <div align="center">
-    <p>Figura: Diagrama de Classe Arquitetural - Ampliado</p>
+    <p>Figura 6: Diagrama de Classe Arquitetural - Ampliado</p>
     <img src="outros/diagramas_arquitetura/diagramaArquitetura-Ampliado.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -607,7 +607,7 @@ O fluxo principal do sistema segue a ordem: `server.ts` inicializa a aplicação
 Esta imagem apresenta a visão macro e completa da arquitetura do backend. Ela ilustra o fluxo de ponta a ponta, demonstrando como todas as camadas do sistema se interconectam. O fluxo começa na inicialização da aplicação, passa pela recepção das requisições HTTP, segue pela validação de dados, orquestração das regras de negócio e, finalmente, chega à persistência dos dados no banco. Essa visão é fundamental para entender a separação de responsabilidades (Separation of Concerns) e a modularidade da aplicação.
 
 <div align="center">
-    <p>Figura: Diagrama de Classe Arquitetural - Bootstrap e Express</p>
+    <p>Figura 7: Diagrama de Classe Arquitetural - Bootstrap e Express</p>
     <img src="outros/diagramas_arquitetura/diagramaArquitetura-Btstrp&Expr.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -615,7 +615,7 @@ Esta imagem apresenta a visão macro e completa da arquitetura do backend. Ela i
 Este recorte foca na porta de entrada da aplicação. A camada de Bootstrap (geralmente arquivos como server.ts e app.ts) é responsável por configurar o servidor, aplicar os middlewares essenciais (como tratamento de JSON e CORS) e levantar o serviço. Em conjunto, a camada do Express (Rotas e Controllers) atua interceptando as requisições HTTP recebidas do cliente (frontend), extraindo os parâmetros e o corpo da requisição, e repassando o fluxo para as camadas internas de processamento, sem carregar lógica de negócio.
 
 <div align="center">
-    <p>Figura: Diagrama de Classe Arquitetural - Bootstrap e Express</p>
+    <p>Figura 8: Diagrama de Classe Arquitetural - Bootstrap e Express</p>
     <img src="outros/diagramas_arquitetura/diagramaArquitetura-Btstrp&Expr.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -623,7 +623,7 @@ Este recorte foca na porta de entrada da aplicação. A camada de Bootstrap (ger
 Este diagrama destaca a camada de Modelos (Models), que representa as entidades fundamentais do domínio da aplicação (como Pessoa, Moradia, Família, etc.). No contexto do projeto, os models atuam definindo os tipos, interfaces e a estrutura dos dados (contratos de dados) que circulam pelo sistema. Eles garantem que todas as outras camadas saibam exatamente qual é o formato correto dos objetos com os quais estão lidando, garantindo a consistência das informações.
 
 <div align="center">
-    <p>Figura: Diagrama de Classe Arquitetural - Models</p>
+    <p>Figura 9: Diagrama de Classe Arquitetural - Models</p>
     <img src="outros/diagramas_arquitetura/diagramaArquitetura-Models.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -631,7 +631,7 @@ Este diagrama destaca a camada de Modelos (Models), que representa as entidades 
 Este diagrama destaca a camada de Modelos (Models), que representa as entidades fundamentais do domínio da aplicação (como Pessoa, Moradia, Família, etc.). No contexto do projeto, os models atuam definindo os tipos, interfaces e a estrutura dos dados (contratos de dados) que circulam pelo sistema. Eles garantem que todas as outras camadas saibam exatamente qual é o formato correto dos objetos com os quais estão lidando, garantindo a consistência das informações.
 
 <div align="center">
-    <p>Figura: Diagrama de Classe Arquitetural - Validations</p>
+    <p>Figura 10: Diagrama de Classe Arquitetural - Validations</p>
     <img src="outros/diagramas_arquitetura/diagramaArquitetura-Validations.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -639,7 +639,7 @@ Este diagrama destaca a camada de Modelos (Models), que representa as entidades 
 A seção de Validations (Validações) e DTOs (Data Transfer Objects) é a barreira de segurança e consistência dos dados. Antes que a requisição chegue ao núcleo da aplicação (os Services), esta camada verifica se as informações enviadas pelo usuário seguem as regras esperadas (por exemplo, se campos obrigatórios foram preenchidos, se o CPF tem o formato correto, etc.). Se os dados forem inválidos, a requisição é barrada aqui e um erro claro é retornado, poupando processamento e evitando inconsistências no banco de dados.
 
 <div align="center">
-    <p>Figura: Diagrama de Classe Arquitetural - Repositories e Service</p>
+    <p>Figura 11: Diagrama de Classe Arquitetural - Repositories e Service</p>
     <img src="outros/diagramas_arquitetura/diagramaArquitetura-Repo&Serv.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -659,13 +659,13 @@ O diagrama mapeia dois atores e três perfis de uso distintos. O **Agente de Cam
 
 ### 3.2.3. Diagrama de Classes do Domínio (sprint 2)
 
-O Diagrama de Classes de Dominio representa visualmente as principais entidades do négocio, com seus atributos e relacionamentos entre elas. Não se preocupando com detalhes técnicos como métodos, chaves estrangeiras ou tecnologias específicas, focando somente em capturar o que existe no mundo real dentro do contexto do sistema.
+O Diagrama de Classes de Domínio representa visualmente as principais entidades do negócio, com seus atributos e relacionamentos entre elas. Não se preocupando com detalhes técnicos como métodos, chaves estrangeiras ou tecnologias específicas, focando somente em capturar o que existe no mundo real dentro do contexto do sistema.
 
 Link do diagrama (realizado por meio do site draw.io): https://drive.google.com/file/d/1YfjTRYovyfGQ29EKa9RM1ScGjfUeJIIK/view?usp=sharing
 
 
 <div align="center">
-    <p>Figura 7: Diagrama de Classes de Domínio</p>
+    <p>Figura 12: Diagrama de Classes de Domínio</p>
     <img src="outros/diagrama-classes-dominio.drawio.png" width="800">
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -1357,7 +1357,7 @@ Durante o desenvolvimento do backend do GeoRisco, foram aplicados padrões arqui
 
 ## 3.3. Wireframes (sprint 2)
 
-Esta seção é destinada para apresentar os primeiros esboços do sistema: os wireframes. Além de ser a representação das telas de menor fidelidade com o resultado final, esses 
+Esta seção é destinada para apresentar os primeiros esboços do sistema: os wireframes. Além de ser a representação das telas de menor fidelidade com o resultado final, esses esboços orientam a estruturação inicial da interface antes do desenvolvimento.
 
 Um wireframe é um quadro (frame) com a estrutura do sistema desenhada em fios (wire) ou blocos de maneira bastante simples.
 
@@ -1366,14 +1366,14 @@ Vale ressaltar que todas as informações presentes nos wireframes são apenas p
 ### **1. Página Inicial**
 
 <div align="center">
-    <p>Figura 7: Wireframe Tela Inicial</p>
+    <p>Figura 13: Wireframe Tela Inicial</p>
     <img src="outros/paginaInicial.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
 Num primeiro momento, a ideia desse wireframe é a simplicidade e a intuitividade. O layout escolhido, com três grandes botões centralizados, e um cabeçalho, importante mas não principal, posicionado na parte de cima, tem como objetivo trazer poucas informações na tela, servindo apenas para uma recepção amigável e uma navegação intuitiva entre outras páginas.
 
-Além disso, na parte superior, exitem duas logos: Defesa civil de Santo André (círculo maior) e Prefeitura de Santo André (círculo menor). Junto dessas logos, respectivamente, tem um texgo generalizado (como "Olá Agente!") e um texto de cabeçalho simples. Por fim, a engrenagem no canto superior esquerdo significa uma possível aba de configurações.
+Além disso, na parte superior, existem duas logos: Defesa Civil de Santo André (círculo maior) e Prefeitura de Santo André (círculo menor). Junto dessas logos, respectivamente, há um texto generalizado (como "Olá Agente!") e um texto de cabeçalho simples. Por fim, a engrenagem no canto superior esquerdo significa uma possível aba de configurações.
 
 Por fim, mas não menos importante, o menu de navegação presente na parte inferior inteira da tela, contém ícones referentes aos três grandes botões. Isso foi implementado como um "rodapé" fixo para a aplicação, presente em todo o restante das telas, a fim de facilitar a navegação entre telas, deixando o usuário mais livre para transitar entre tarefas.
 
@@ -1392,7 +1392,7 @@ Para concluir o cadastro, um botão "Concluir Cadastro" deve ser exibido assim q
 ---
 
 <div align="center">
-    <p>Figura 9: Wireframe Tela Cadastro - Moradias</p>
+    <p>Figura 14: Wireframe Tela Cadastro - Moradias</p>
     <img src="outros/cadastro1.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -1408,7 +1408,7 @@ Neste wireframe, por conter uma tela bastante preenchida com informações perti
 ---
 
 <div align="center">
-    <p>Figura 10: Wireframe Tela Cadastro - Responsável</p>
+    <p>Figura 15: Wireframe Tela Cadastro - Responsável</p>
     <img src="outros/cadastro2.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -1422,7 +1422,7 @@ Neste wireframe, por conter uma tela bastante preenchida com informações perti
 ---
 
 <div align="center">
-    <p>Figura 11: Wireframe Tela Cadastro - Moradores</p>
+    <p>Figura 16: Wireframe Tela Cadastro - Moradores</p>
     <img src="outros/cadastro3.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -1436,7 +1436,7 @@ Além disso, vale ressaltar que na imagem está representado apenas o preenchime
 ---
 
 <div align="center">
-    <p>Figura 12: Wireframe Tela Cadastro - Pets</p>
+    <p>Figura 17: Wireframe Tela Cadastro - Pets</p>
     <img src="outros/cadastro4.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -1450,17 +1450,17 @@ Para o cadastro de Pets, será possível incluir algumas informações essenciai
 ### **3. Página de Mapa**
 
 <div align="center">
-    <p>Figura 13: Wireframe Tela Mapa</p>
+    <p>Figura 18: Wireframe Tela Mapa</p>
     <img src="outros/mapa.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
-Esta seção permite a interação com um mapa georreferenciado e refinar a exibição de dados utilizando um menu lateral de Filtros com diversas caixas de seleção. Além disso, uma peculiaridade dessa seção é a possibilidade de recolher esse painel de filtros para maximizar a área visual do mapa, bem como a barra retratil de navegação no inferior da tela, que permite ao usuário alternar agilmente entre os módulos de "Mapa", "Formulário" e "Consulta".
+Esta seção permite a interação com um mapa georreferenciado e refinar a exibição de dados utilizando um menu lateral de Filtros com diversas caixas de seleção. Além disso, uma peculiaridade dessa seção é a possibilidade de recolher esse painel de filtros para maximizar a área visual do mapa, bem como a barra retrátil de navegação na parte inferior da tela, que permite ao usuário alternar agilmente entre os módulos de "Mapa", "Formulário" e "Consulta".
 
 ### **4. Página de Busca**
 
 <div align="center">
-    <p>Figura 14: Wireframe Tela Busca - </p>
+    <p>Figura 19: Wireframe Tela Busca</p>
     <img src="outros/consulta1.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -1470,7 +1470,7 @@ Esta seção permite a localização rápida de registros no sistema através de
 Os dados encontrados são apresentados na área de "Resultados" em formato de lista contínua com cartões (cards). Cada cartão é estruturado para exibir uma imagem ou foto de referência à esquerda, acompanhada de linhas detalhadas de informações textuais à direita. Além disso, a tela preserva a barra retrátil de navegação na área inferior, garantindo que o usuário possa expandi-la para alternar agilmente entre os demais módulos do sistema.
 
 <div align="center">
-    <p>Figura 15: Wireframe Tela Resultado da Busca</p>
+    <p>Figura 20: Wireframe Tela Resultado da Busca</p>
     <img src="outros/consulta2.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -1483,23 +1483,23 @@ Esta seção apresenta o detalhamento de um registro específico, acessado após
 Esta seção apresenta o guia de estilos utilizado no desenvolvimento da aplicação web. Aqui estão definidos os padrões visuais e componentes de interface adotados, como cores, tipografia, botões, ícones e demais elementos gráficos. O objetivo é garantir consistência visual, padronização e melhor experiência de uso durante o desenvolvimento e evolução da solução.
 
 <div align="center">
-    <p>Figura 16: Guia de estilos</p>
+    <p>Figura 21: Guia de estilos</p>
     <img src="outros/guia_de_estilos.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
 ### 3.4.1 Cores
 
-A a paleta de cores pensada para a prototipação foi inspirada na logo oficial da própria Defesa Civil de Santo André e do CREDEC-SA (Centro de Resiliência às Emergências de Defesa Civil de Santo André). Logos: 
+A paleta de cores pensada para a prototipação foi inspirada na logo oficial da própria Defesa Civil de Santo André e do CREDEC-SA (Centro de Resiliência às Emergências de Defesa Civil de Santo André). Logos: 
 
 <div align="center">
-    <p>Figura 17: Logo da Defesa Civil de Santo André</p>
+    <p>Figura 22: Logo da Defesa Civil de Santo André</p>
     <img src="outros/logoSantoAndre.png" width="200">
     <p>Defesa Civil de Santo André</p>
 </div>
 
 <div align="center">
-    <p>Figura 18: Logo do CREDEC-SA</p>
+    <p>Figura 23: Logo do CREDEC-SA</p>
     <img src="outros/logoCREDEC.png" width="200">
     <p>CREDEC-SA</p>
 </div>
@@ -1577,7 +1577,7 @@ Na parte inferior, uma barra de navegação fixa exibe os três atalhos principa
 ---
 
 <div align="center">
-    <p>Figura 18: Mockup da Tela Inicial </p>
+    <p>Figura 24: Mockup da Tela Inicial </p>
     <img src="outros/inicial v2.png" width="400">
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -1598,7 +1598,7 @@ A barra de navegação inferior mantém o padrão da aplicação com os atalhos
 **Cadastro**, **Mapa** (ativo) e **Busca**.
 
  <div align="center">
-    <p>Figura 19: Mockup Tela de Mapa </p>
+    <p>Figura 25: Mockup Tela de Mapa </p>
     <img src="outros/mapa v2.png" width="400">
     <p>Feito pela própria equipe (2026)</p>
 </div> 
@@ -1624,7 +1624,7 @@ A barra de navegação inferior mantém o padrão com **Cadastro**, **Mapa** (at
 e **Busca**.
 
  <div align="center">
-    <p>Figura 20: Mockup Tela de Busca </p>
+    <p>Figura 26: Mockup Tela de Busca </p>
     <img src="outros/busca v2.png" width="400">
     <p>Feito pela própria equipe (2026)</p>
 </div> 
@@ -1638,7 +1638,7 @@ Além disso, os protótipos apresentam funcionalidades em comum, sendo elas: a b
 ---
 
 <div align="center">
-    <p>Figura 19: Mockup da Seção 1 de Cadastro </p>
+    <p>Figura 27: Mockup da Seção 1 de Cadastro </p>
     <img src="outros/formularioMoradia.png" width="400">
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -1654,7 +1654,7 @@ Este protótipo já apresenta exemplos de informações a serem adicionadas nos 
 ---
 
 <div align="center">
-    <p>Figura 20: Mockup da Seção 2 de Cadastro </p>
+    <p>Figura 28: Mockup da Seção 2 de Cadastro </p>
     <img src="outros/formularioResponsavel.png" width="400">
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -1668,7 +1668,7 @@ Este protótipo já apresenta exemplos de informações a serem adicionadas nos 
 ---
 
 <div align="center">
-    <p>Figura 21: Mockup da Seção 3 de Cadastro </p>
+    <p>Figura 29: Mockup da Seção 3 de Cadastro </p>
     <img src="outros/formularioMoradores.png" width="400">
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -1684,7 +1684,7 @@ Este protótipo já apresenta exemplos de informações a serem adicionadas nos 
 ---
 
 <div align="center">
-    <p>Figura 22: Mockup da Seção 4 de Cadastro </p>
+    <p>Figura 30: Mockup da Seção 4 de Cadastro </p>
     <img src="outros/formularioPets.png" width="400">
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -1713,7 +1713,7 @@ Este protótipo já apresenta exemplos de informações a serem adicionadas nos 
 O **Modelo Entidade-Relacionamento (MER)** é uma abordagem conceitual que representa a estrutura de dados de um sistema através da identificação de entidades (objetos do mundo real), seus atributos e os relacionamentos entre elas. Para este projeto, adotamos a **notação Chen**, que utiliza retângulos para entidades, losangos para relacionamentos, elipses para atributos e triângulos para especializações, oferecendo clareza visual e conformidade com padrões acadêmicos e profissionais.
 
 <div align="center">
-    <p>Figura 16: Modelo Entidade-Relacionamento</p>
+    <p>Figura 31: Modelo Entidade-Relacionamento</p>
     <img src="outros/MER.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -1753,14 +1753,14 @@ A entidade **`localizacao`** centraliza dados geográficos e endereçais:
 
 ### 3.6.2. Modelo Lógico
 
-O modelo lógico traduz o modelo conceptual para a estrutura de um banco de dados relacional, definindo as tabelas, as chaves primárias (PK), as chaves estrangeiras (FK) e a multiplicidade dos relacionamentos. Esta versão está rigorosamente alinhada com as decisões arquiteturais adotadas para a plataforma Supabase, com ênfase na rastreabilidade temporal, na conformidade com as leis de proteção de dados (deleção lógica) e na especialização das entidades.
+O modelo lógico traduz o modelo conceitual para a estrutura de um banco de dados relacional, definindo as tabelas, as chaves primárias (PK), as chaves estrangeiras (FK) e a multiplicidade dos relacionamentos. Esta versão está rigorosamente alinhada com as decisões arquiteturais adotadas para a plataforma Supabase, com ênfase na rastreabilidade temporal, na conformidade com as leis de proteção de dados (deleção lógica) e na especialização das entidades.
 
 #### Diagrama de Entidade-Relacionamento (DER)
 
 Abaixo é apresentado o esquema visual do banco de dados, ilustrando as tabelas físicas, os seus atributos e os relacionamentos implementados.
 
 <div align="center">
-    <p>Figura 17: Diagrama Entidade-Relacionamento Lógico</p>
+    <p>Figura 32: Diagrama Entidade-Relacionamento Lógico</p>
     <img src="outros/DER.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -1773,11 +1773,11 @@ Entidade base (superclasse) que guarda os dados demográficos e de saúde básic
 * **Campos:** `id` (PK), `cpf`, `nome`, `nome_social`, `data_de_nascimento`, `parentesco`, `situacao_ocupacional`, `escolaridade`, `cronico`, `medicacao`, `status`, `deleted_at`.
 
 **Responsável**
-Subclasse de `Pessoa` (Herança 1:1), responsável por isolar e armazenar os dados burocráticos, financeiros e de contacto (dados sensíveis) do chefe de família.
+Subclasse de `Pessoa` (Herança 1:1), responsável por isolar e armazenar os dados burocráticos, financeiros e de contato (dados sensíveis) do chefe de família.
 * **Campos:** `id_pessoa` (PK, FK para `pessoa`), `nis`, `renda`, `sexo`, `raca`, `estado_civil`, `veiculo`, `programa_social`, `email`, `telefone`, `nome_do_pai`, `nome_da_mae`, `local_de_nascimento`, `data_residencia_estado`, `data_residencia_moradia`.
 
 **Família**
-Atua como a entidade agregadora central do sistema (*hub*), permitindo agrupar os cidadãos e os respetivos animais de estimação independentemente da moradia física, o que facilita sobremaneira as transições e relocalizações em casos de desalojamento.
+Atua como a entidade agregadora central do sistema (*hub*), permitindo agrupar os cidadãos e os respectivos animais de estimação independentemente da moradia física, o que facilita sobremaneira as transições e relocalizações em casos de desalojamento.
 * **Campos:** `id` (PK), `status`, `deleted_at`.
 
 **Localização**
@@ -1834,7 +1834,7 @@ Por forma a padronizar as entradas de dados e evitar inconsistências nos formul
 #### 4. Regras e Restrições Estruturais
 
 * **Integridade Referencial:** Todas as *Foreign Keys* estão acompanhadas da ação `ON DELETE CASCADE`. Deste modo, assegura-se que a base de dados não manterá registos órfãos quando entidades de nível superior (ex: localização ou moradia real) forem limpas.
-* **Exclusão Lógica (*Soft Delete*):** A eliminação física de Famílias, Moradias e Pessoas não ocorre. Qualquer interrogação de `DELETE` ao nível da aplicação é intercetada de modo transparente pelo PostgreSQL (através de `RULES`), passando apenas a atualizar as colunas de estado e preenchendo o campo `deleted_at`.
+* **Exclusão Lógica (*Soft Delete*):** A eliminação física de Famílias, Moradias e Pessoas não ocorre. Qualquer comando `DELETE` emitido pela aplicação é interceptado de modo transparente pelo PostgreSQL (através de `RULES`), passando apenas a atualizar as colunas de estado e preenchendo o campo `deleted_at`.
 * **Unicidade Restrita (`UNIQUE`):** Implementada para impossibilitar redundâncias em documentos e contatos de alta criticidade (`pessoa.cpf`, `responsavel.email`, `responsavel.telefone`) e para garantir o relacionamento um-para-um (1:1) rigoroso do campo `id_localizacao` alocado a cada `moradia`.
 
 ### 3.6.3. Modelo Físico
@@ -2211,7 +2211,7 @@ Além disso, na linha 5 o requisito RF006 apresenta endpoints genéricos (`/api/
 # <a name="c4"></a>4. Desenvolvimento da Aplicação Web
 
 ## 4.1. Primeira versão da aplicação web (sprint 3)
-Na primeira versão do sistema web, foi aplicado a estrutura de pastas juntamente com o desenvolvimento das funcionalidades CRUD base do sistema referente a moradia, moradores, responsáveis e pets, havendo já um protótipo de alta fidelidade com guia e identidade visual. Ademais, o código foi desenvolvido utilizando a metodologia TDD (Test Driven Design), onde o desenvolvimento é orientado a testes, garantindo um código já testado e comprovado.
+Na primeira versão do sistema web, foi aplicado a estrutura de pastas juntamente com o desenvolvimento das funcionalidades CRUD base do sistema referente a moradia, moradores, responsáveis e pets, havendo já um protótipo de alta fidelidade com guia e identidade visual. Ademais, o código foi desenvolvido utilizando a metodologia TDD (Test Driven Development), onde o desenvolvimento é orientado a testes, garantindo um código já testado e comprovado.
 
 Assim, ainda não foi inserido métodos complexos e mais específicos, priorizando a entrega de um MVC visualizável e testável.
 
@@ -2791,15 +2791,53 @@ A suíte `api.controller.test.ts` executa requisições HTTP com Supertest contr
 Os endpoints planejados que ainda não existem no backend atual, como `/api/mapa/moradias` e `/api/mapa/calor`, permanecem registrados na matriz como cobertura futura.
 
 
-## 5.2. Testes de usabilidade (sprint 5)
+## 5.2. Testes de usabilidade (Sprint 5)
 
 ### 5.2.1. Relatório de testes de guerrilha
 
-*Posicione aqui as tabelas com enunciados de tarefas, etapas e resultados de testes de usabilidade. Ou utilize um link para seu relatório de testes (mantenha o link sempre público para visualização).*
+Posicione aqui as tabelas com enunciados de tarefas, etapas e resultados de testes de usabilidade. Ou utilize um link para seu relatório de testes (mantenha o link sempre público para visualização).
 
-### 5.2.2. Relatório de testes SUS (System Usability Scale)
+### 5.2.2. Relatório de Testes SUS (System Usability Scale)
 
-*Posicione aqui o relatório dos testes SUS realizados.*
+A avaliação da experiência do usuário foi complementada pela aplicação da metodologia **SUS (System Usability Scale)**, instrumento padronizado de 10 itens, respondidos em escala Likert de 1 a 5, que mensura a percepção subjetiva de usabilidade de um sistema. A aplicação do questionário teve como objetivo validar, de forma quantitativa, se a interface atende aos requisitos de intuitividade, eficiência e confiabilidade esperados pelos agentes de campo da Defesa Civil de Santo André durante o uso em condições operacionais reais.
+
+#### 5.2.2.1. Tabela de Respostas e Cálculo
+
+A tabela a seguir consolida as respostas individuais coletadas nas sessões de teste realizadas em 17/06/2026. O cálculo da pontuação SUS (0 a 100) seguiu o procedimento padrão de Brooke (1986): para os itens de numeração ímpar, subtrai-se 1 do valor respondido; para os itens de numeração par, subtrai-se o valor respondido de 5. A soma das dez contribuições é então multiplicada por 2,5, gerando a pontuação final do participante.
+
+| Participante    | Q1 | Q2 | Q3 | Q4 | Q5 | Q6 | Q7 | Q8 | Q9 | Q10 | Pontuação SUS |
+| --------------- | -- | -- | -- | -- | -- | -- | -- | -- | -- | --- | ------------- |
+| P01             | 5  | 4  | 4  | 2  | 5  | 1  | 4  | 1  | 5  | 1   | **85,0**      |
+| P03             | 4  | 2  | 5  | 3  | 4  | 2  | 5  | 1  | 5  | 2   | **82,5**      |
+| P06             | 5  | 2  | 4  | 2  | 5  | 2  | 5  | 2  | 4  | 2   | **82,5**      |
+| P08             | 5  | 2  | 5  | 2  | 5  | 1  | 5  | 1  | 5  | 1   | **95,0**      |
+| **Média Geral** | -  | -  | -  | -  | -  | -  | -  | -  | -  | -   | **86,25**     |
+
+> **Nota:** Os participantes P02, P04, P05 e P07 foram excluídos da amostra quantitativa por apresentarem questionários SUS incompletos (um ou mais itens não respondidos), o que impede o cálculo correto da pontuação conforme o instrumento original. A exclusão seguiu um critério único e aplicado de forma consistente a toda a amostra, preservando a validade estatística do resultado consolidado. Os relatos qualitativos desses participantes, no entanto, foram preservados e incorporados à síntese da seção 5.2.2.2, uma vez que agregam informação relevante mesmo na ausência de pontuação numérica.
+
+#### 5.2.2.2. Síntese Qualitativa
+
+As percepções qualitativas coletadas durante e após a aplicação do questionário SUS reforçam e contextualizam os dados quantitativos obtidos.
+
+#### 5.2.2.3. Pontos Fortes
+
+O preenchimento automático de endereço via CEP e a captura automática de geolocalização foram os recursos mais citados como geradores de satisfação, sendo descritos pelos participantes como facilitadores diretos da agilidade de cadastro em campo. O mapa de calor e a sinalização visual de moradias de risco também receberam destaque espontâneo como diferenciais da interface.
+
+#### 5.2.2.4. Oportunidades de Melhoria
+
+A crítica mais recorrente recai sobre a transparência do sistema diante de erros de validação, como o caso de e-mail duplicado, em que a mensagem retornada não especifica a causa da falha, e sobre a ausência de sinalização clara de campos obrigatórios em formulários mais extensos, como o de cadastro de pets.
+
+Houve convergência entre participantes distintos quanto à necessidade de tornar o responsável legal mais visível diretamente nos resultados de busca por moradia, reduzindo a quantidade de cliques necessários para essa identificação.
+
+#### 5.2.2.5. Conclusão da Avaliação
+
+Com uma média consolidada de **86,25 pontos** entre os participantes com questionários válidos, a solução posiciona-se no nível **"Bom"** da escala de usabilidade SUS, superando com margem confortável o benchmark de referência de **80,3** e aproximando-se do limiar de **90,9** associado à classificação **"Excelente"**.
+
+O resultado indica uma alta taxa de aceitação da interface e uma curva de aprendizado favorável junto ao público-alvo, mesmo entre participantes com diferentes graus de familiaridade prévia com sistemas digitais. As dificuldades pontuais observadas, sobretudo as relacionadas a mensagens de erro pouco descritivas e à ausência de indicação de campos obrigatórios, não comprometeram a percepção geral de usabilidade, mas representam oportunidades concretas de refinamento.
+
+A correção desses pontos específicos tende a elevar a pontuação média para a faixa **"Excelente"**, consolidando o padrão de confiabilidade exigido para uma ferramenta utilizada em contexto de operações de risco pela Defesa Civil.
+
+
 
 # <a name="c6"></a>6. Estudo de Mercado e Plano de Marketing (sprint 4)
 
@@ -3016,7 +3054,7 @@ Tivemos alterações nas Personas (ambas), User Stories (todas), RF, RNF e RN. D
 
 ### Sprint 3
 
-1. 19/05/2026 - Davi Viana Tricarico - Seção 3.3 Wireframes: Ajuste na documentação e nos próprios wireframes de cadastro, com direito à adição de um menu de navegação entre as seções; alteração da barra de navegação entre telas (barra retrátil substituida por uma barra parcialmente opaca e estática); adição de uma opção que permite adicionar novos moradores e animais.
+1. 19/05/2026 - Davi Viana Tricarico - Seção 3.3 Wireframes: Ajuste na documentação e nos próprios wireframes de cadastro, com direito à adição de um menu de navegação entre as seções; alteração da barra de navegação entre telas (barra retrátil substituída por uma barra parcialmente opaca e estática); adição de uma opção que permite adicionar novos moradores e animais.
 
 2. *Sem data específica* - `início` - Eduardo Totti Thomé - Seção 2.3 User Stories: Início do alinhamento de escopo através da reformulação de US mais precisamente definidos; Seção 3.1 Requisitos Funcionais (RF's) e Regras de Negócio (RN's): Alinhamento de escopo através da reformulação de alguns RF's e RN's, exclusão de outros ou adição de novos. (obs: vale ressaltar que a equipe não teve uma boa estimativa do tempo desta tarefa. Por isso esta atualização está registrada com a tag: `início`)
 
@@ -3049,7 +3087,7 @@ Tivemos alterações nas Personas (ambas), User Stories (todas), RF, RNF e RN. D
 
 *Relacione também quaisquer outras ideias que o grupo tenha para melhorias futuras*
 
-# <a name="c8"></a>9. Referências (sprints 1 a 5)
+# <a name="c9"></a>9. Referências (sprints 1 a 5)
 
 1. PORTER, Michael E. *Estratégia Competitiva: Técnicas para Análise de Indústrias e da Concorrência*. 2. ed. Rio de Janeiro: Campus, 2004.
 
