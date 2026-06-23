@@ -2791,15 +2791,53 @@ A suíte `api.controller.test.ts` executa requisições HTTP com Supertest contr
 Os endpoints planejados que ainda não existem no backend atual, como `/api/mapa/moradias` e `/api/mapa/calor`, permanecem registrados na matriz como cobertura futura.
 
 
-## 5.2. Testes de usabilidade (sprint 5)
+## 5.2. Testes de usabilidade (Sprint 5)
 
 ### 5.2.1. Relatório de testes de guerrilha
 
-*Posicione aqui as tabelas com enunciados de tarefas, etapas e resultados de testes de usabilidade. Ou utilize um link para seu relatório de testes (mantenha o link sempre público para visualização).*
+Posicione aqui as tabelas com enunciados de tarefas, etapas e resultados de testes de usabilidade. Ou utilize um link para seu relatório de testes (mantenha o link sempre público para visualização).
 
-### 5.2.2. Relatório de testes SUS (System Usability Scale)
+### 5.2.2. Relatório de Testes SUS (System Usability Scale)
 
-*Posicione aqui o relatório dos testes SUS realizados.*
+A avaliação da experiência do usuário foi complementada pela aplicação da metodologia **SUS (System Usability Scale)**, instrumento padronizado de 10 itens, respondidos em escala Likert de 1 a 5, que mensura a percepção subjetiva de usabilidade de um sistema. A aplicação do questionário teve como objetivo validar, de forma quantitativa, se a interface atende aos requisitos de intuitividade, eficiência e confiabilidade esperados pelos agentes de campo da Defesa Civil de Santo André durante o uso em condições operacionais reais.
+
+#### 5.2.2.1. Tabela de Respostas e Cálculo
+
+A tabela a seguir consolida as respostas individuais coletadas nas sessões de teste realizadas em 17/06/2026. O cálculo da pontuação SUS (0 a 100) seguiu o procedimento padrão de Brooke (1986): para os itens de numeração ímpar, subtrai-se 1 do valor respondido; para os itens de numeração par, subtrai-se o valor respondido de 5. A soma das dez contribuições é então multiplicada por 2,5, gerando a pontuação final do participante.
+
+| Participante    | Q1 | Q2 | Q3 | Q4 | Q5 | Q6 | Q7 | Q8 | Q9 | Q10 | Pontuação SUS |
+| --------------- | -- | -- | -- | -- | -- | -- | -- | -- | -- | --- | ------------- |
+| P01             | 5  | 4  | 4  | 2  | 5  | 1  | 4  | 1  | 5  | 1   | **85,0**      |
+| P03             | 4  | 2  | 5  | 3  | 4  | 2  | 5  | 1  | 5  | 2   | **82,5**      |
+| P06             | 5  | 2  | 4  | 2  | 5  | 2  | 5  | 2  | 4  | 2   | **82,5**      |
+| P08             | 5  | 2  | 5  | 2  | 5  | 1  | 5  | 1  | 5  | 1   | **95,0**      |
+| **Média Geral** | -  | -  | -  | -  | -  | -  | -  | -  | -  | -   | **86,25**     |
+
+> **Nota:** Os participantes P02, P04, P05 e P07 foram excluídos da amostra quantitativa por apresentarem questionários SUS incompletos (um ou mais itens não respondidos), o que impede o cálculo correto da pontuação conforme o instrumento original. A exclusão seguiu um critério único e aplicado de forma consistente a toda a amostra, preservando a validade estatística do resultado consolidado. Os relatos qualitativos desses participantes, no entanto, foram preservados e incorporados à síntese da seção 5.2.2.2, uma vez que agregam informação relevante mesmo na ausência de pontuação numérica.
+
+#### 5.2.2.2. Síntese Qualitativa
+
+As percepções qualitativas coletadas durante e após a aplicação do questionário SUS reforçam e contextualizam os dados quantitativos obtidos.
+
+#### 5.2.2.3. Pontos Fortes
+
+O preenchimento automático de endereço via CEP e a captura automática de geolocalização foram os recursos mais citados como geradores de satisfação, sendo descritos pelos participantes como facilitadores diretos da agilidade de cadastro em campo. O mapa de calor e a sinalização visual de moradias de risco também receberam destaque espontâneo como diferenciais da interface.
+
+#### 5.2.2.4. Oportunidades de Melhoria
+
+A crítica mais recorrente recai sobre a transparência do sistema diante de erros de validação, como o caso de e-mail duplicado, em que a mensagem retornada não especifica a causa da falha, e sobre a ausência de sinalização clara de campos obrigatórios em formulários mais extensos, como o de cadastro de pets.
+
+Houve convergência entre participantes distintos quanto à necessidade de tornar o responsável legal mais visível diretamente nos resultados de busca por moradia, reduzindo a quantidade de cliques necessários para essa identificação.
+
+#### 5.2.2.5. Conclusão da Avaliação
+
+Com uma média consolidada de **86,25 pontos** entre os participantes com questionários válidos, a solução posiciona-se no nível **"Bom"** da escala de usabilidade SUS, superando com margem confortável o benchmark de referência de **80,3** e aproximando-se do limiar de **90,9** associado à classificação **"Excelente"**.
+
+O resultado indica uma alta taxa de aceitação da interface e uma curva de aprendizado favorável junto ao público-alvo, mesmo entre participantes com diferentes graus de familiaridade prévia com sistemas digitais. As dificuldades pontuais observadas, sobretudo as relacionadas a mensagens de erro pouco descritivas e à ausência de indicação de campos obrigatórios, não comprometeram a percepção geral de usabilidade, mas representam oportunidades concretas de refinamento.
+
+A correção desses pontos específicos tende a elevar a pontuação média para a faixa **"Excelente"**, consolidando o padrão de confiabilidade exigido para uma ferramenta utilizada em contexto de operações de risco pela Defesa Civil.
+
+
 
 # <a name="c6"></a>6. Estudo de Mercado e Plano de Marketing (sprint 4)
 
