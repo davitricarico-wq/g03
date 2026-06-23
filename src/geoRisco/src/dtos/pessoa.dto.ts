@@ -20,25 +20,25 @@ export interface CreatePessoaDto {
     cronico: boolean;
     medicacao: boolean;
     status?: StatusPessoa;
+    nis?: string | null;
+    renda?: number | null;
+    sexo?: Sexo | null;
+    raca?: Raca | null;
+    estadoCivil?: EstadoCivil | null;
+    veiculo?: boolean;
+    programasSociais?: number;
+    email?: string | null;
+    telefone?: string | null;
+    nomeDaMae?: string | null;
+    dataResidenciaMoradia?: Date | null;
 }
 
 export type UpdatePessoaDto = Partial<CreatePessoaDto>;
 
 export interface CreateResponsavelDto extends CreatePessoaDto {
-    nis?: string | null;
-    renda?: number | null;
     sexo: Sexo;
     raca: Raca;
     estadoCivil: EstadoCivil;
-    veiculo?: boolean;
-    programaSocial?: boolean;
-    email?: string | null;
-    telefone?: string | null;
-    nomeDoPai?: string | null;
-    nomeDaMae?: string | null;
-    localDeNascimento?: string | null;
-    dataResidenciaEstado?: Date | null;
-    dataResidenciaMoradia?: Date | null;
 }
 
 export type UpdateResponsavelDto = Partial<CreateResponsavelDto>;

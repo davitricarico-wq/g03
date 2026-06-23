@@ -15,7 +15,7 @@ import type { Pessoa, Responsavel } from '../models/pessoa.model';
 type PessoaApiRow = {
     id: number;
     nome: string;
-    nome_social: string | null;
+    apelido: string | null;
     cpf: string | null;
     data_de_nascimento: Date | string;
     parentesco: Pessoa['parentesco'];
@@ -25,30 +25,23 @@ type PessoaApiRow = {
     medicacao: boolean;
     status: Pessoa['status'];
     deleted_at: Date | string | null;
-};
-
-type ResponsavelApiRow = {
-    id_pessoa: number;
     nis: string | null;
     renda: number | string | null;
-    sexo: Responsavel['sexo'];
-    raca: Responsavel['raca'];
-    estado_civil: Responsavel['estadoCivil'];
+    sexo: Responsavel['sexo'] | null;
+    raca: Responsavel['raca'] | null;
+    estado_civil: Responsavel['estadoCivil'] | null;
     veiculo: boolean;
-    programa_social: boolean;
+    programas_sociais: number;
     email: string | null;
     telefone: string | null;
-    nome_do_pai: string | null;
     nome_da_mae: string | null;
-    local_de_nascimento: string | null;
-    data_residencia_estado: Date | string | null;
     data_residencia_moradia: Date | string | null;
 };
 
 const pessoaSelect = `
     id,
     nome,
-    nome_social AS "nomeSocial",
+    apelido AS "nomeSocial",
     cpf,
     data_de_nascimento AS "dataDeNascimento",
     parentesco,
@@ -57,43 +50,31 @@ const pessoaSelect = `
     cronico,
     medicacao,
     status,
-    deleted_at AS "deletedAt"
+    deleted_at AS "deletedAt",
+    nis,
+    renda::float8 AS renda,
+    sexo,
+    raca,
+    estado_civil AS "estadoCivil",
+    veiculo,
+    programas_sociais AS "programasSociais",
+    email,
+    telefone,
+    nome_da_mae AS "nomeDaMae",
+    data_residencia_moradia AS "dataResidenciaMoradia"
 `;
 
 const responsavelSelect = `
-    p.id,
-    p.nome,
-    p.nome_social AS "nomeSocial",
-    p.cpf,
-    p.data_de_nascimento AS "dataDeNascimento",
-    p.parentesco,
-    p.situacao_ocupacional AS "situacaoOcupacional",
-    p.escolaridade,
-    p.cronico,
-    p.medicacao,
-    p.status,
-    p.deleted_at AS "deletedAt",
-    r.nis,
-    r.renda::float8 AS renda,
-    r.sexo,
-    r.raca,
-    r.estado_civil AS "estadoCivil",
-    r.veiculo,
-    r.programa_social AS "programaSocial",
-    r.email,
-    r.telefone,
-    r.nome_do_pai AS "nomeDoPai",
-    r.nome_da_mae AS "nomeDaMae",
-    r.local_de_nascimento AS "localDeNascimento",
-    r.data_residencia_estado AS "dataResidenciaEstado",
-    r.data_residencia_moradia AS "dataResidenciaMoradia"
+    ${pessoaSelect}
 `;
+
+const pessoaSupabaseSelect = 'id, nome, apelido, cpf, data_de_nascimento, parentesco, situacao_ocupacional, escolaridade, cronico, medicacao, status, deleted_at, nis, renda, sexo, raca, estado_civil, veiculo, programas_sociais, email, telefone, nome_da_mae, data_residencia_moradia';
 
 function mapPessoaApiRow(row: PessoaApiRow): Pessoa {
     return {
         id: row.id,
         nome: row.nome,
-        nomeSocial: row.nome_social,
+        nomeSocial: row.apelido,
         cpf: row.cpf,
         dataDeNascimento: row.data_de_nascimento as Date,
         parentesco: row.parentesco,
@@ -102,27 +83,39 @@ function mapPessoaApiRow(row: PessoaApiRow): Pessoa {
         cronico: row.cronico,
         medicacao: row.medicacao,
         status: row.status,
-        deletedAt: row.deleted_at as Date | null
+        deletedAt: row.deleted_at as Date | null,
+        nis: row.nis,
+        renda: row.renda === null ? null : Number(row.renda),
+        sexo: row.sexo,
+        raca: row.raca,
+        estadoCivil: row.estado_civil,
+        veiculo: row.veiculo,
+        programasSociais: row.programas_sociais,
+        email: row.email,
+        telefone: row.telefone,
+        nomeDaMae: row.nome_da_mae,
+        dataResidenciaMoradia: row.data_residencia_moradia as Date | null
     };
 }
 
-function mapResponsavelApiRow(pessoa: PessoaApiRow, responsavel: ResponsavelApiRow): Responsavel {
+function mapResponsavelApiRow(pessoa: PessoaApiRow): Responsavel | null {
+    if (!pessoa.sexo || !pessoa.raca || !pessoa.estado_civil) {
+        return null;
+    }
     return {
         ...mapPessoaApiRow(pessoa),
-        nis: responsavel.nis,
-        renda: responsavel.renda === null ? null : Number(responsavel.renda),
-        sexo: responsavel.sexo,
-        raca: responsavel.raca,
-        estadoCivil: responsavel.estado_civil,
-        veiculo: responsavel.veiculo,
-        programaSocial: responsavel.programa_social,
-        email: responsavel.email,
-        telefone: responsavel.telefone,
-        nomeDoPai: responsavel.nome_do_pai,
-        nomeDaMae: responsavel.nome_da_mae,
-        localDeNascimento: responsavel.local_de_nascimento,
-        dataResidenciaEstado: responsavel.data_residencia_estado as Date | null,
-        dataResidenciaMoradia: responsavel.data_residencia_moradia as Date | null
+        idPessoa: pessoa.id,
+        nis: pessoa.nis ?? null,
+        renda: pessoa.renda === null ? null : Number(pessoa.renda),
+        sexo: pessoa.sexo,
+        raca: pessoa.raca,
+        estadoCivil: pessoa.estado_civil,
+        veiculo: pessoa.veiculo,
+        programasSociais: pessoa.programas_sociais,
+        email: pessoa.email,
+        telefone: pessoa.telefone,
+        nomeDaMae: pessoa.nome_da_mae,
+        dataResidenciaMoradia: pessoa.data_residencia_moradia as Date | null
     };
 }
 
@@ -189,16 +182,16 @@ export class PessoaRepository implements IPessoaRepository {
         }
 
         if (filters.nome) {
-            add('(p.nome ILIKE $1 OR p.nome_social ILIKE $2)', `%${filters.nome}%`, `%${filters.nome}%`);
+            add('(p.nome ILIKE $1 OR p.apelido ILIKE $2)', `%${filters.nome}%`, `%${filters.nome}%`);
         }
         if (filters.cpf) {
             add("regexp_replace(COALESCE(p.cpf, ''), '\\D', '', 'g') = $1", filters.cpf.replace(/\D/g, ''));
         }
         if (filters.email) {
-            add('r.email ILIKE $1', `%${filters.email}%`);
+            add('p.email ILIKE $1', `%${filters.email}%`);
         }
         if (filters.telefone) {
-            add("regexp_replace(COALESCE(r.telefone, ''), '\\D', '', 'g') LIKE $1", `%${filters.telefone.replace(/\D/g, '')}%`);
+            add("regexp_replace(COALESCE(p.telefone, ''), '\\D', '', 'g') LIKE $1", `%${filters.telefone.replace(/\D/g, '')}%`);
         }
 
         const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
@@ -207,11 +200,8 @@ export class PessoaRepository implements IPessoaRepository {
                 `
                 SELECT
                     ${pessoaSelect},
-                    r.email,
-                    r.telefone,
-                    (r.id_pessoa IS NOT NULL AND p.parentesco::text IN ('Responsável', 'RESPONSAVEL')) AS responsavel
+                    (p.parentesco::text IN ('Responsável', 'RESPONSAVEL')) AS responsavel
                 FROM ${source}
-                LEFT JOIN responsavel r ON r.id_pessoa = p.id
                 ${where}
                 ORDER BY p.nome
                 LIMIT 50
@@ -231,7 +221,7 @@ export class PessoaRepository implements IPessoaRepository {
         const table = escopo === 'ativas' ? 'vw_pessoa_ativa' : 'pessoa';
         let query = getSupabaseDbClient()
             .from(table)
-            .select('id, nome, nome_social, cpf, data_de_nascimento, parentesco, situacao_ocupacional, escolaridade, cronico, medicacao, status, deleted_at')
+            .select(pessoaSupabaseSelect)
             .order('nome')
             .range(0, 9999);
 
@@ -250,8 +240,6 @@ export class PessoaRepository implements IPessoaRepository {
     private async searchViaSupabase(filters: BuscarPessoaDto): Promise<PessoaBuscaResultadoDto[]> {
         const escopo = filters.escopo ?? 'ativas';
         const pessoas = await this.getPessoasViaSupabase(escopo);
-        const pessoaIds = pessoas.map((pessoa) => pessoa.id);
-        const responsavelByPessoaId = await this.getResponsaveisByPessoaIdViaSupabase(pessoaIds);
         const nome = filters.nome?.toLocaleLowerCase('pt-BR');
         const cpf = normalizeDigits(filters.cpf);
         const email = filters.email?.toLocaleLowerCase('pt-BR');
@@ -259,12 +247,11 @@ export class PessoaRepository implements IPessoaRepository {
 
         return pessoas
             .map((pessoa) => {
-                const responsavel = responsavelByPessoaId.get(pessoa.id);
                 return {
                     ...pessoa,
-                    email: responsavel?.email ?? null,
-                    telefone: responsavel?.telefone ?? null,
-                    responsavel: Boolean(responsavel) && pessoa.parentesco === 'Responsável'
+                    email: pessoa.email ?? null,
+                    telefone: pessoa.telefone ?? null,
+                    responsavel: pessoa.parentesco === 'Responsável'
                 };
             })
             .filter((pessoa) => {
@@ -285,31 +272,13 @@ export class PessoaRepository implements IPessoaRepository {
             .slice(0, 50);
     }
 
-    private async getResponsaveisByPessoaIdViaSupabase(ids: number[]): Promise<Map<number, ResponsavelApiRow>> {
-        if (!ids.length) {
-            return new Map();
-        }
-
-        const { data, error } = await getSupabaseDbClient()
-            .from('responsavel')
-            .select('id_pessoa, nis, renda, sexo, raca, estado_civil, veiculo, programa_social, email, telefone, nome_do_pai, nome_da_mae, local_de_nascimento, data_residencia_estado, data_residencia_moradia')
-            .in('id_pessoa', ids)
-            .range(0, 9999);
-
-        if (error) {
-            throw error;
-        }
-
-        return new Map((data ?? []).map((responsavel) => [responsavel.id_pessoa, responsavel]));
-    }
-
     async create(data: CreatePessoaDto, db: Queryable = this.db): Promise<Pessoa> {
         try {
             const res = await db.query<Pessoa>(
                 `
                 INSERT INTO pessoa (
                     nome,
-                    nome_social,
+                    apelido,
                     cpf,
                     data_de_nascimento,
                     parentesco,
@@ -317,9 +286,20 @@ export class PessoaRepository implements IPessoaRepository {
                     escolaridade,
                     cronico,
                     medicacao,
-                    status
+                    status,
+                    nis,
+                    renda,
+                    sexo,
+                    raca,
+                    estado_civil,
+                    veiculo,
+                    programas_sociais,
+                    email,
+                    telefone,
+                    nome_da_mae,
+                    data_residencia_moradia
                 )
-                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21)
                 RETURNING ${pessoaSelect}
                 `,
                 [
@@ -332,7 +312,18 @@ export class PessoaRepository implements IPessoaRepository {
                     data.escolaridade,
                     data.cronico,
                     data.medicacao,
-                    data.status ?? 'Ativo'
+                    data.status ?? 'Ativo',
+                    data.nis ?? null,
+                    data.renda ?? null,
+                    data.sexo ?? null,
+                    data.raca ?? null,
+                    data.estadoCivil ?? null,
+                    data.veiculo ?? false,
+                    data.programasSociais ?? 0,
+                    data.email ?? null,
+                    data.telefone ?? null,
+                    data.nomeDaMae ?? null,
+                    data.dataResidenciaMoradia ?? null
                 ]
             );
             return res.rows[0];
@@ -342,7 +333,7 @@ export class PessoaRepository implements IPessoaRepository {
                 .from('pessoa')
                 .insert({
                     nome: data.nome,
-                    nome_social: data.nomeSocial ?? null,
+                    apelido: data.nomeSocial ?? null,
                     cpf: data.cpf ?? null,
                     data_de_nascimento: data.dataDeNascimento,
                     parentesco: data.parentesco,
@@ -350,9 +341,20 @@ export class PessoaRepository implements IPessoaRepository {
                     escolaridade: data.escolaridade,
                     cronico: data.cronico,
                     medicacao: data.medicacao,
-                    status: data.status ?? 'Ativo'
+                    status: data.status ?? 'Ativo',
+                    nis: data.nis ?? null,
+                    renda: data.renda ?? null,
+                    sexo: data.sexo ?? null,
+                    raca: data.raca ?? null,
+                    estado_civil: data.estadoCivil ?? null,
+                    veiculo: data.veiculo ?? false,
+                    programas_sociais: data.programasSociais ?? 0,
+                    email: data.email ?? null,
+                    telefone: data.telefone ?? null,
+                    nome_da_mae: data.nomeDaMae ?? null,
+                    data_residencia_moradia: data.dataResidenciaMoradia ?? null
                 })
-                .select('id, nome, nome_social, cpf, data_de_nascimento, parentesco, situacao_ocupacional, escolaridade, cronico, medicacao, status, deleted_at')
+                .select(pessoaSupabaseSelect)
                 .single();
             if (error) throw error;
             return mapPessoaApiRow(row as PessoaApiRow);
@@ -368,7 +370,7 @@ export class PessoaRepository implements IPessoaRepository {
         };
 
         if (data.nome !== undefined) add('nome', data.nome);
-        if (data.nomeSocial !== undefined) add('nome_social', data.nomeSocial);
+        if (data.nomeSocial !== undefined) add('apelido', data.nomeSocial);
         if (data.cpf !== undefined) add('cpf', data.cpf);
         if (data.dataDeNascimento !== undefined) add('data_de_nascimento', data.dataDeNascimento);
         if (data.parentesco !== undefined) add('parentesco', data.parentesco);
@@ -376,6 +378,17 @@ export class PessoaRepository implements IPessoaRepository {
         if (data.escolaridade !== undefined) add('escolaridade', data.escolaridade);
         if (data.cronico !== undefined) add('cronico', data.cronico);
         if (data.medicacao !== undefined) add('medicacao', data.medicacao);
+        if (data.nis !== undefined) add('nis', data.nis);
+        if (data.renda !== undefined) add('renda', data.renda);
+        if (data.sexo !== undefined) add('sexo', data.sexo);
+        if (data.raca !== undefined) add('raca', data.raca);
+        if (data.estadoCivil !== undefined) add('estado_civil', data.estadoCivil);
+        if (data.veiculo !== undefined) add('veiculo', data.veiculo);
+        if (data.programasSociais !== undefined) add('programas_sociais', data.programasSociais);
+        if (data.email !== undefined) add('email', data.email);
+        if (data.telefone !== undefined) add('telefone', data.telefone);
+        if (data.nomeDaMae !== undefined) add('nome_da_mae', data.nomeDaMae);
+        if (data.dataResidenciaMoradia !== undefined) add('data_residencia_moradia', data.dataResidenciaMoradia);
         if (data.status !== undefined) {
             add('status', data.status);
             add('deleted_at', data.status === 'Ativo' ? null : new Date());
@@ -401,7 +414,7 @@ export class PessoaRepository implements IPessoaRepository {
             if (!isDatabaseHostResolutionError(err)) throw err;
             const patch: Record<string, unknown> = {};
             if (data.nome !== undefined) patch.nome = data.nome;
-            if (data.nomeSocial !== undefined) patch.nome_social = data.nomeSocial;
+            if (data.nomeSocial !== undefined) patch.apelido = data.nomeSocial;
             if (data.cpf !== undefined) patch.cpf = data.cpf;
             if (data.dataDeNascimento !== undefined) patch.data_de_nascimento = data.dataDeNascimento;
             if (data.parentesco !== undefined) patch.parentesco = data.parentesco;
@@ -409,6 +422,17 @@ export class PessoaRepository implements IPessoaRepository {
             if (data.escolaridade !== undefined) patch.escolaridade = data.escolaridade;
             if (data.cronico !== undefined) patch.cronico = data.cronico;
             if (data.medicacao !== undefined) patch.medicacao = data.medicacao;
+            if (data.nis !== undefined) patch.nis = data.nis;
+            if (data.renda !== undefined) patch.renda = data.renda;
+            if (data.sexo !== undefined) patch.sexo = data.sexo;
+            if (data.raca !== undefined) patch.raca = data.raca;
+            if (data.estadoCivil !== undefined) patch.estado_civil = data.estadoCivil;
+            if (data.veiculo !== undefined) patch.veiculo = data.veiculo;
+            if (data.programasSociais !== undefined) patch.programas_sociais = data.programasSociais;
+            if (data.email !== undefined) patch.email = data.email;
+            if (data.telefone !== undefined) patch.telefone = data.telefone;
+            if (data.nomeDaMae !== undefined) patch.nome_da_mae = data.nomeDaMae;
+            if (data.dataResidenciaMoradia !== undefined) patch.data_residencia_moradia = data.dataResidenciaMoradia;
             if (data.status !== undefined) {
                 patch.status = data.status;
                 patch.deleted_at = data.status === 'Ativo' ? null : new Date();
@@ -417,7 +441,7 @@ export class PessoaRepository implements IPessoaRepository {
                 .from('pessoa')
                 .update(patch)
                 .eq('id', id)
-                .select('id, nome, nome_social, cpf, data_de_nascimento, parentesco, situacao_ocupacional, escolaridade, cronico, medicacao, status, deleted_at')
+                .select(pessoaSupabaseSelect)
                 .maybeSingle();
             if (error) throw error;
             return row ? mapPessoaApiRow(row as PessoaApiRow) : null;
@@ -430,13 +454,15 @@ export class PessoaRepository implements IPessoaRepository {
 
     async getAllResponsaveis(db: Queryable = this.db): Promise<Responsavel[]> {
         try {
-            const res = await db.query<Responsavel>(`
+            const res = await db.query<PessoaApiRow>(`
                 SELECT ${responsavelSelect}
                 FROM vw_pessoa_ativa p
-                INNER JOIN responsavel r ON r.id_pessoa = p.id
+                WHERE p.parentesco::text IN ('Responsável', 'RESPONSAVEL')
                 ORDER BY p.nome
             `);
-            return res.rows;
+            return res.rows
+                .map(mapResponsavelApiRow)
+                .filter((responsavel): responsavel is Responsavel => responsavel !== null);
         } catch (err) {
             if (!isDatabaseHostResolutionError(err)) {
                 throw err;
@@ -447,16 +473,16 @@ export class PessoaRepository implements IPessoaRepository {
 
     async getResponsavelByPessoaId(idPessoa: number, db: Queryable = this.db): Promise<Responsavel | null> {
         try {
-            const res = await db.query<Responsavel>(
+            const res = await db.query<PessoaApiRow>(
                 `
                 SELECT ${responsavelSelect}
                 FROM pessoa p
-                INNER JOIN responsavel r ON r.id_pessoa = p.id
                 WHERE p.id = $1
+                  AND p.parentesco::text IN ('Responsável', 'RESPONSAVEL')
                 `,
                 [idPessoa]
             );
-            return res.rows[0] ?? null;
+            return res.rows[0] ? mapResponsavelApiRow(res.rows[0]) : null;
         } catch (err) {
             if (!isDatabaseHostResolutionError(err)) {
                 throw err;
@@ -468,106 +494,49 @@ export class PessoaRepository implements IPessoaRepository {
 
     private async getAllResponsaveisViaSupabase(ids?: number[]): Promise<Responsavel[]> {
         const pessoas = await this.getPessoasViaSupabase('ativas');
-        const filteredPessoas = ids?.length ? pessoas.filter((pessoa) => ids.includes(pessoa.id)) : pessoas;
-        const pessoaById = new Map(filteredPessoas.map((pessoa) => [pessoa.id, pessoa]));
-        const responsavelByPessoaId = await this.getResponsaveisByPessoaIdViaSupabase([...pessoaById.keys()]);
-
-        return [...responsavelByPessoaId.entries()]
-            .map(([idPessoa, responsavel]) => {
-                const pessoa = pessoaById.get(idPessoa);
-                if (!pessoa) {
-                    return null;
-                }
-                return mapResponsavelApiRow(
-                    {
-                        id: pessoa.id,
-                        nome: pessoa.nome,
-                        nome_social: pessoa.nomeSocial,
-                        cpf: pessoa.cpf,
-                        data_de_nascimento: pessoa.dataDeNascimento,
-                        parentesco: pessoa.parentesco,
-                        situacao_ocupacional: pessoa.situacaoOcupacional,
-                        escolaridade: pessoa.escolaridade,
-                        cronico: pessoa.cronico,
-                        medicacao: pessoa.medicacao,
-                        status: pessoa.status,
-                        deleted_at: pessoa.deletedAt
-                    },
-                    responsavel
-                );
-            })
+        return pessoas
+            .filter((pessoa) => pessoa.parentesco === 'Responsável')
+            .filter((pessoa) => !ids?.length || ids.includes(pessoa.id))
+            .map((pessoa) => mapResponsavelApiRow({
+                id: pessoa.id,
+                nome: pessoa.nome,
+                apelido: pessoa.nomeSocial,
+                cpf: pessoa.cpf,
+                data_de_nascimento: pessoa.dataDeNascimento,
+                parentesco: pessoa.parentesco,
+                situacao_ocupacional: pessoa.situacaoOcupacional,
+                escolaridade: pessoa.escolaridade,
+                cronico: pessoa.cronico,
+                medicacao: pessoa.medicacao,
+                status: pessoa.status,
+                deleted_at: pessoa.deletedAt,
+                nis: pessoa.nis ?? null,
+                renda: pessoa.renda ?? null,
+                sexo: pessoa.sexo ?? null,
+                raca: pessoa.raca ?? null,
+                estado_civil: pessoa.estadoCivil ?? null,
+                veiculo: pessoa.veiculo ?? false,
+                programas_sociais: pessoa.programasSociais ?? 0,
+                email: pessoa.email ?? null,
+                telefone: pessoa.telefone ?? null,
+                nome_da_mae: pessoa.nomeDaMae ?? null,
+                data_residencia_moradia: pessoa.dataResidenciaMoradia ?? null
+            }))
             .filter((responsavel): responsavel is Responsavel => responsavel !== null)
             .sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
     }
 
     async createResponsavel(data: CreateResponsavelRepositoryRequest, db: Queryable = this.db): Promise<Responsavel> {
-        try {
-            await db.query(
-                `
-                INSERT INTO responsavel (
-                id_pessoa,
-                nis,
-                renda,
-                sexo,
-                raca,
-                estado_civil,
-                veiculo,
-                programa_social,
-                email,
-                telefone,
-                nome_do_pai,
-                nome_da_mae,
-                local_de_nascimento,
-                data_residencia_estado,
-                data_residencia_moradia
-                )
-                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
-                `,
-                [
-                    data.idPessoa,
-                    data.nis ?? null,
-                    data.renda ?? null,
-                    data.sexo,
-                    data.raca,
-                    data.estadoCivil,
-                    data.veiculo ?? false,
-                    data.programaSocial ?? false,
-                    data.email ?? null,
-                    data.telefone ?? null,
-                    data.nomeDoPai ?? null,
-                    data.nomeDaMae ?? null,
-                    data.localDeNascimento ?? null,
-                    data.dataResidenciaEstado ?? null,
-                    data.dataResidenciaMoradia ?? null
-                ]
-            );
-        } catch (err) {
-            if (!isDatabaseHostResolutionError(err)) throw err;
-            const { error } = await getSupabaseDbClient()
-                .from('responsavel')
-                .insert({
-                    id_pessoa: data.idPessoa,
-                    nis: data.nis ?? null,
-                    renda: data.renda ?? null,
-                    sexo: data.sexo,
-                    raca: data.raca,
-                    estado_civil: data.estadoCivil,
-                    veiculo: data.veiculo ?? false,
-                    programa_social: data.programaSocial ?? false,
-                    email: data.email ?? null,
-                    telefone: data.telefone ?? null,
-                    nome_do_pai: data.nomeDoPai ?? null,
-                    nome_da_mae: data.nomeDaMae ?? null,
-                    local_de_nascimento: data.localDeNascimento ?? null,
-                    data_residencia_estado: data.dataResidenciaEstado ?? null,
-                    data_residencia_moradia: data.dataResidenciaMoradia ?? null
-                });
-            if (error) throw error;
-        }
-
-        const created = await this.getResponsavelByPessoaId(data.idPessoa, db);
+        const created = await this.updateResponsavel(
+            data.idPessoa,
+            {
+                ...data,
+                programasSociais: data.programasSociais ?? (data.programaSocial ? 1 : 0)
+            },
+            db
+        );
         if (!created) {
-            throw new Error('Responsável criado, mas não encontrado na view de leitura');
+            throw new Error('Responsável atualizado, mas não encontrado na view de leitura');
         }
         return created;
     }
@@ -586,13 +555,10 @@ export class PessoaRepository implements IPessoaRepository {
         if (data.raca !== undefined) add('raca', data.raca);
         if (data.estadoCivil !== undefined) add('estado_civil', data.estadoCivil);
         if (data.veiculo !== undefined) add('veiculo', data.veiculo);
-        if (data.programaSocial !== undefined) add('programa_social', data.programaSocial);
+        if (data.programasSociais !== undefined) add('programas_sociais', data.programasSociais);
         if (data.email !== undefined) add('email', data.email);
         if (data.telefone !== undefined) add('telefone', data.telefone);
-        if (data.nomeDoPai !== undefined) add('nome_do_pai', data.nomeDoPai);
         if (data.nomeDaMae !== undefined) add('nome_da_mae', data.nomeDaMae);
-        if (data.localDeNascimento !== undefined) add('local_de_nascimento', data.localDeNascimento);
-        if (data.dataResidenciaEstado !== undefined) add('data_residencia_estado', data.dataResidenciaEstado);
         if (data.dataResidenciaMoradia !== undefined) add('data_residencia_moradia', data.dataResidenciaMoradia);
 
         if (fields.length) {
@@ -600,9 +566,9 @@ export class PessoaRepository implements IPessoaRepository {
             try {
                 await db.query(
                     `
-                    UPDATE responsavel
+                    UPDATE pessoa
                     SET ${fields.join(', ')}
-                    WHERE id_pessoa = $${values.length}
+                    WHERE id = $${values.length}
                     `,
                     values
                 );
@@ -615,18 +581,15 @@ export class PessoaRepository implements IPessoaRepository {
                 if (data.raca !== undefined) patch.raca = data.raca;
                 if (data.estadoCivil !== undefined) patch.estado_civil = data.estadoCivil;
                 if (data.veiculo !== undefined) patch.veiculo = data.veiculo;
-                if (data.programaSocial !== undefined) patch.programa_social = data.programaSocial;
+                if (data.programasSociais !== undefined) patch.programas_sociais = data.programasSociais;
                 if (data.email !== undefined) patch.email = data.email;
                 if (data.telefone !== undefined) patch.telefone = data.telefone;
-                if (data.nomeDoPai !== undefined) patch.nome_do_pai = data.nomeDoPai;
                 if (data.nomeDaMae !== undefined) patch.nome_da_mae = data.nomeDaMae;
-                if (data.localDeNascimento !== undefined) patch.local_de_nascimento = data.localDeNascimento;
-                if (data.dataResidenciaEstado !== undefined) patch.data_residencia_estado = data.dataResidenciaEstado;
                 if (data.dataResidenciaMoradia !== undefined) patch.data_residencia_moradia = data.dataResidenciaMoradia;
                 const { error } = await getSupabaseDbClient()
-                    .from('responsavel')
+                    .from('pessoa')
                     .update(patch)
-                    .eq('id_pessoa', idPessoa);
+                    .eq('id', idPessoa);
                 if (error) throw error;
             }
         }

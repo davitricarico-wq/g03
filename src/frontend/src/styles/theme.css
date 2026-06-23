@@ -15,7 +15,7 @@
     --shadow-lg: 0 10px 30px rgba(24, 44, 76, 0.18);
     --nav-height: 66px;
     --header-height: 60px;
-    --max-width: 480px;
+    --max-width: 100vw;
 }
 
 * {
@@ -61,6 +61,7 @@ a {
 }
 
 .app-shell {
+    width: 100%;
     max-width: var(--max-width);
     margin: 0 auto;
     min-height: 100%;
@@ -177,6 +178,41 @@ a {
     display: grid;
     place-items: center;
     line-height: 1;
+}
+
+.bottom-nav a.bottom-nav-home {
+    align-self: center;
+    color: var(--hover);
+    transform: translateY(-4px);
+    transition: transform 0.16s ease, color 0.16s ease;
+}
+
+.bottom-nav a.bottom-nav-home .icon {
+    width: 44px;
+    height: 44px;
+    margin-top: -16px;
+    border-radius: 999px;
+    background: var(--hover);
+    color: var(--branco);
+    border: 3px solid var(--branco);
+    box-shadow: 0 8px 18px rgba(18, 52, 88, 0.24);
+    transition: background 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
+}
+
+.bottom-nav a.bottom-nav-home span:last-child {
+    font-size: 0.68rem;
+    font-weight: 800;
+}
+
+.bottom-nav a.bottom-nav-home:hover .icon,
+.bottom-nav a.bottom-nav-home.active .icon {
+    background: var(--laranja);
+    box-shadow: 0 10px 22px rgba(242, 145, 0, 0.28);
+    transform: translateY(-1px);
+}
+
+.bottom-nav a.bottom-nav-home.active::before {
+    display: none;
 }
 
 /* ===== Cards ===== */
@@ -304,9 +340,17 @@ a {
 }
 
 .field label {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
     font-size: 0.82rem;
     font-weight: 500;
     color: var(--cinza-escuro);
+}
+
+.required-mark {
+    color: #e53935;
+    font-weight: 900;
 }
 
 .field input,
@@ -339,6 +383,13 @@ a {
 .field select:focus,
 .field textarea:focus {
     border-color: var(--azul);
+}
+
+.required-note {
+    margin: -4px 0 12px;
+    color: var(--cinza-escuro);
+    font-size: 0.8rem;
+    line-height: 1.35;
 }
 
 .field-row {
@@ -496,6 +547,7 @@ a {
 }
 
 .search-input {
+    min-width: 0;
     flex: 1;
     display: flex;
     align-items: center;
@@ -508,6 +560,7 @@ a {
 }
 
 .search-input input {
+    min-width: 0;
     flex: 1;
     border: none;
     outline: none;
@@ -568,10 +621,15 @@ a {
     gap: 14px;
 }
 
+.familia-card-top > :first-child {
+    min-width: 0;
+}
+
 .familia-card .nome {
     font-size: 1.15rem;
     font-weight: 700;
     color: var(--hover);
+    overflow-wrap: anywhere;
 }
 
 .familia-id-badge {
@@ -595,6 +653,7 @@ a {
     font-size: 0.82rem;
     color: var(--cinza);
     margin: 3px 0 9px;
+    overflow-wrap: anywhere;
 }
 
 .familia-meta {
@@ -776,6 +835,11 @@ a {
     margin: 16px auto 0;
 }
 
+.history-list-inline {
+    max-width: none;
+    margin: 8px 0 0;
+}
+
 .history-card {
     display: grid;
     grid-template-columns: 38px minmax(0, 1fr);
@@ -806,11 +870,14 @@ a {
     align-items: center;
     justify-content: space-between;
     gap: 12px;
+    flex-wrap: wrap;
     margin-bottom: 5px;
 }
 
 .history-card-head strong {
     color: var(--hover);
+    min-width: 0;
+    overflow-wrap: anywhere;
 }
 
 .history-card-head span {
@@ -831,6 +898,7 @@ a {
     margin: 3px 0;
     color: var(--cinza-escuro);
     font-size: 0.86rem;
+    overflow-wrap: anywhere;
 }
 
 .detail-grid {
@@ -1168,6 +1236,69 @@ a {
 .field.invalid textarea {
     border-color: #e53935;
     background: #fff6f6;
+    animation: shake-field 0.35s ease;
+}
+
+.field.invalid label {
+    color: #e53935;
+}
+
+.field.warning input,
+.field.warning select,
+.field.warning textarea {
+    border-color: #f59e0b;
+    background: #fffaf0;
+}
+
+.field.warning label {
+    color: #92400e;
+}
+
+.field.valid input,
+.field.valid select,
+.field.valid textarea {
+    border-color: #16a34a;
+    background: #f3fff7;
+}
+
+.field-error-msg,
+.field-feedback-msg {
+    display: block;
+    margin-top: 4px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    line-height: 1.3;
+    animation: fadeInDown 0.25s ease;
+}
+
+.field-error-msg,
+.field-feedback-msg.error {
+    color: #e53935;
+}
+
+.field-feedback-msg.warning {
+    color: #92400e;
+}
+
+.field-feedback-msg.success {
+    color: #166534;
+}
+
+.field-feedback-msg.info {
+    color: var(--azul);
+}
+
+@keyframes shake-field {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-4px); }
+    40% { transform: translateX(4px); }
+    60% { transform: translateX(-3px); }
+    80% { transform: translateX(2px); }
+}
+
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
 /* ===== Input com botão (GPS) ===== */
@@ -1389,6 +1520,24 @@ a {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.35);
 }
 
+.map-current-location-pin {
+    width: 26px;
+    height: 26px;
+    display: grid;
+    place-items: center;
+    border: 3px solid #fff;
+    border-radius: 50%;
+    background: #0ea5e9;
+    box-shadow: 0 0 0 6px rgba(14, 165, 233, 0.22), 0 2px 8px rgba(8, 47, 73, 0.35);
+}
+
+.map-current-location-pin span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #fff;
+}
+
 .leaflet-popup-content .popup-status {
     display: inline-block;
     padding: 2px 8px;
@@ -1602,6 +1751,10 @@ a {
 }
 
 @media (max-width: 640px) {
+    .family-housing-mode {
+        grid-template-columns: 1fr;
+    }
+
     .map-detail-panel {
         top: auto;
         right: 10px;
@@ -1779,6 +1932,73 @@ a {
     color: var(--cinza-escuro);
     line-height: 1.45;
     margin-bottom: 12px;
+}
+
+.family-housing-mode {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    margin: 8px 0 14px;
+}
+
+.mode-choice {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+    padding: 12px;
+    border: 1.5px solid #d7dee8;
+    border-radius: 8px;
+    background: var(--branco);
+    color: var(--texto);
+    text-align: left;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.mode-choice.active {
+    border-color: var(--azul);
+    background: #f2f8ff;
+    box-shadow: 0 0 0 3px rgba(39, 111, 191, 0.12);
+}
+
+.mode-choice.active.warning {
+    border-color: var(--laranja);
+    background: #fff8ef;
+    box-shadow: 0 0 0 3px rgba(242, 145, 0, 0.14);
+}
+
+.mode-choice-title {
+    font-size: 0.92rem;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.mode-choice-copy {
+    font-size: 0.76rem;
+    color: var(--cinza-escuro);
+    line-height: 1.3;
+}
+
+.inline-alert {
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin: 0 0 14px;
+    font-size: 0.84rem;
+    font-weight: 600;
+    line-height: 1.35;
+}
+
+.inline-alert.warning {
+    background: #fff8ef;
+    border: 1px solid #ffd89d;
+    color: #7a4a00;
+}
+
+.inline-alert.info {
+    background: #eef6ff;
+    border: 1px solid #bfdcff;
+    color: #17446f;
 }
 
 /* ----- Página Pessoas: segmented control + status ----- */
@@ -1992,7 +2212,7 @@ html.anim-off *::after {
 
 @media (min-width: 768px) {
     :root {
-        --max-width: 900px;
+        --max-width: 100vw;
     }
 
     .app-main {
@@ -2018,7 +2238,7 @@ html.anim-off *::after {
     }
 
     .home-cards {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
         gap: 12px;
     }
 
@@ -2131,7 +2351,7 @@ html.anim-off *::after {
     }
 
     .home-cards {
-        grid-template-columns: repeat(5, minmax(0, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
     }
 
     .home-card .label {

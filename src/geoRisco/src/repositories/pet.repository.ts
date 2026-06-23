@@ -21,7 +21,7 @@ type PetApiRow = {
     id: number;
     id_familia: number;
     tipo: Pet['tipo'];
-    nome: string;
+    nome: string | null;
     porte: string;
     raca: string;
     cor: string;

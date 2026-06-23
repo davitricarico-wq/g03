@@ -1,0 +1,2 @@
+ALTER TABLE public.pet
+    ALTER COLUMN nome DROP NOT NULL;
