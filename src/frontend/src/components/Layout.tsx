@@ -44,9 +44,6 @@ export default function Layout() {
                         >
                             <Icon name={animacoes ? 'sparkle' : 'x-circle'} size={18} />
                         </button>
-                        <button className="header-icon" aria-label="Início" onClick={() => navigate('/')}>
-                            <Icon name="home" size={19} />
-                        </button>
                     </div>
                 </header>
             )}

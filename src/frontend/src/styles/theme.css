@@ -189,7 +189,7 @@ a {
 
 .bottom-nav a.bottom-nav-home {
     align-self: center;
-    color: var(--hover);
+    color: var(--cinza);
     transform: translateY(-4px);
     transition: transform 0.16s ease, color 0.16s ease;
 }
@@ -199,9 +199,9 @@ a {
     height: 44px;
     margin-top: -16px;
     border-radius: 999px;
-    background: var(--hover);
-    color: var(--branco);
-    border: 3px solid var(--branco);
+    background: var(--branco);
+    color: var(--cinza);
+    border: 3px solid var(--cinza);
     box-shadow: 0 8px 18px rgba(18, 52, 88, 0.24);
     transition: background 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
 }
@@ -213,9 +213,13 @@ a {
 
 .bottom-nav a.bottom-nav-home:hover .icon,
 .bottom-nav a.bottom-nav-home.active .icon {
-    background: var(--laranja);
+    background: var(--hover);
     box-shadow: 0 10px 22px rgba(242, 145, 0, 0.28);
     transform: translateY(-1px);
+}
+
+.bottom-nav a.bottom-nav-home.active span:last-child{
+    color: var(--hover);
 }
 
 .bottom-nav a.bottom-nav-home.active::before {
