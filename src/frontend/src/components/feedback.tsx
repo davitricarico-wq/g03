@@ -8,24 +8,44 @@ interface ToastItem {
     id: number;
     kind: ToastKind;
     msg: string;
+    timeoutId: number;
 }
 
 let toastItems: ToastItem[] = [];
 let toastListeners: ((items: ToastItem[]) => void)[] = [];
 let toastSeq = 0;
+const TOAST_PRIORITY: Record<ToastKind, number> = { success: 1, info: 2, error: 3 };
 
 function emitToasts() {
     toastListeners.forEach((l) => l(toastItems));
 }
 
-function pushToast(msg: string, kind: ToastKind, ms: number) {
-    const id = ++toastSeq;
-    toastItems = [...toastItems, { id, kind, msg }];
+function removeToast(id: number) {
+    const toastAtual = toastItems.find((t) => t.id === id);
+    if (toastAtual) window.clearTimeout(toastAtual.timeoutId);
+    toastItems = toastItems.filter((t) => t.id !== id);
     emitToasts();
-    window.setTimeout(() => {
-        toastItems = toastItems.filter((t) => t.id !== id);
+}
+
+function pushToast(msg: string, kind: ToastKind, ms: number) {
+    const duplicado = toastItems.find((t) => t.kind === kind && t.msg === msg);
+    if (duplicado) {
+        window.clearTimeout(duplicado.timeoutId);
+        duplicado.timeoutId = window.setTimeout(() => removeToast(duplicado.id), ms);
         emitToasts();
-    }, ms);
+        return;
+    }
+
+    const toastAtual = toastItems[0];
+    if (toastAtual && TOAST_PRIORITY[toastAtual.kind] > TOAST_PRIORITY[kind]) {
+        return;
+    }
+
+    toastItems.forEach((t) => window.clearTimeout(t.timeoutId));
+    const id = ++toastSeq;
+    const timeoutId = window.setTimeout(() => removeToast(id), ms);
+    toastItems = [{ id, kind, msg, timeoutId }];
+    emitToasts();
 }
 
 export const toast = {

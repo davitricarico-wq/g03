@@ -16,6 +16,7 @@ import {
     detalharFamilia,
     detalharMoradia,
     enviarFoto,
+    listarPessoas,
     listarMoradias,
     listarPrioridades,
     listarPrioridadesPessoa,
@@ -132,9 +133,9 @@ const ABAS: { id: Aba; label: string }[] = [
     { id: 'visaoGeral', label: 'Visão Geral' }
 ];
 const TITULOS: Record<Aba, string> = {
-    moradia: 'Seção 1 - Moradia',
-    moradores: 'Seção 2 - Moradores',
-    pets: 'Seção 3 - Pets e animais',
+    moradia: 'Cadastro - Moradia',
+    moradores: 'Cadastro - Moradores',
+    pets: 'Cadastro - Pets e animais',
     visaoGeral: 'Visão Geral'
 };
 type ModoMoradia = 'nova' | 'existente';
@@ -200,6 +201,7 @@ export default function Cadastro() {
     const [buscaPessoa, setBuscaPessoa] = useState('');
     const [pessoasEncontradas, setPessoasEncontradas] = useState<PessoaBuscaResultado[]>([]);
     const [buscandoPessoa, setBuscandoPessoa] = useState(false);
+    const [mostrarBuscaPessoaExistente, setMostrarBuscaPessoaExistente] = useState(false);
 
     const temResponsavel = useMemo(() => moradores.some((m) => m.parentesco === RESPONSAVEL), [moradores]);
     const abasVisiveis = useMemo(
@@ -274,6 +276,15 @@ export default function Cadastro() {
     useEffect(() => {
         setPetsAbertos((prev) => sincronizarCardsAbertos(prev, pets.map((p) => p.key), false));
     }, [pets]);
+
+    useEffect(() => {
+        if (!mostrarBuscaPessoaExistente || modoEdicaoPessoa) return;
+        const timer = window.setTimeout(() => {
+            void pesquisarPessoaExistente(buscaPessoa);
+        }, 250);
+        return () => window.clearTimeout(timer);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [mostrarBuscaPessoaExistente, buscaPessoa, moradores, modoEdicaoPessoa]);
 
     useEffect(() => {
         if (
@@ -360,7 +371,7 @@ export default function Cadastro() {
             const next = new Set(prev);
             next.delete(chave);
             return next;
-	        });
+        });
 
     function moradorFromPessoa(pessoa: Pessoa, prioridadeIds: number[], responsavel?: Pessoa): MoradorForm {
         return {
@@ -497,25 +508,27 @@ export default function Cadastro() {
         }
     }
 
-    async function pesquisarPessoaExistente() {
-        const termo = buscaPessoa.trim();
-        if (!termo) {
-            setPessoasEncontradas([]);
-            return;
-        }
+    async function pesquisarPessoaExistente(termoBusca = buscaPessoa) {
+        const termo = termoBusca.trim();
         setBuscandoPessoa(true);
         try {
             const apenasDigitos = termo.replace(/\D/g, '');
             const ehCpf = apenasDigitos.length >= 3 && apenasDigitos.length / termo.length > 0.6;
-            const pessoas = await buscarPessoas({
-                escopo: 'todas',
-                nome: ehCpf ? undefined : termo,
-                cpf: ehCpf ? apenasDigitos : undefined
-            });
-            setPessoasEncontradas(pessoas.filter((p) => {
-                const responsavelAtivo = p.responsavel && p.status === 'Ativo';
-                return !responsavelAtivo && !moradores.some((m) => m.id === p.id);
-            }));
+            const pessoas = termo
+                ? await buscarPessoas({
+                    escopo: 'todas',
+                    nome: ehCpf ? undefined : termo,
+                    cpf: ehCpf ? apenasDigitos : undefined
+                })
+                : await listarPessoas();
+            setPessoasEncontradas(
+                pessoas
+                    .filter((p) => {
+                        const responsavelAtivo = p.responsavel && p.status === 'Ativo';
+                        return !responsavelAtivo && !moradores.some((m) => m.id === p.id);
+                    })
+                    .slice(0, termo ? 5 : 3)
+            );
         } catch (e) {
             toast.error(e instanceof Error ? e.message : 'Erro ao buscar pessoas.');
         } finally {
@@ -1201,6 +1214,12 @@ export default function Cadastro() {
             {aba === 'moradia' && (
                 <div className="card">
                     {!modoEdicaoPessoa && (
+                        <div className="optional-section-note required-section-note">
+                            <strong>Responsável obrigatório</strong>
+                            <span>Para concluir o cadastro de uma moradia, será necessário cadastrar ou vincular uma pessoa como responsável na seção Moradores.</span>
+                        </div>
+                    )}
+                    {!modoEdicaoPessoa && (
                         <CheckboxField
                             label="Adicionar apenas família"
                             checked={adicionarApenasFamilia}
@@ -1249,62 +1268,62 @@ export default function Cadastro() {
                     )}
                     {!adicionarApenasFamilia && (
                         <>
-                    <Row>
-                        <TextField label="CEP" value={loc.cep} onChange={(v) => setLocField('cep', maskCEP(v))} onBlur={lookupCep} inputMode="numeric" placeholder="00000-000" />
-                        <TextField label="Logradouro" value={loc.logradouro} onChange={(v) => setLocField('logradouro', v)} placeholder="Ex.: Rua das Flores" />
-                    </Row>
-                    <Row>
-                        <TextField placeholder='Ex.: Santo André' label="Cidade" value={loc.cidade} onChange={(v) => { setLocField('cidade', v); limparInvalido('cidade'); }} required error={invalido('cidade')} />
-                        <TextField label="Bairro" value={loc.bairro} onChange={(v) => setLocField('bairro', v)} placeholder="Ex.: Jardim Santo André" />
-                    </Row>
-                    <Row>
-                        <TextField label="Número" value={loc.numero} onChange={(v) => setLocField('numero', v)} placeholder="Ex.: 123" />
-                        <TextField label="Estado (UF)" value={loc.estado} onChange={(v) => { setLocField('estado', v); limparInvalido('estado'); }} maxLength={2} required error={invalido('estado')} placeholder="SP" />
-                    </Row>
-                    <TextField label="Complemento" value={loc.complemento} onChange={(v) => setLocField('complemento', v)} placeholder="Ex.: Casa 2, bloco B" />
+                            <Row>
+                                <TextField label="CEP" value={loc.cep} onChange={(v) => setLocField('cep', maskCEP(v))} onBlur={lookupCep} inputMode="numeric" placeholder="00000-000" />
+                                <TextField label="Logradouro" value={loc.logradouro} onChange={(v) => setLocField('logradouro', v)} placeholder="Ex.: Rua das Flores" />
+                            </Row>
+                            <Row>
+                                <TextField placeholder='Ex.: Santo André' label="Cidade" value={loc.cidade} onChange={(v) => { setLocField('cidade', v); limparInvalido('cidade'); }} required error={invalido('cidade')} />
+                                <TextField label="Bairro" value={loc.bairro} onChange={(v) => setLocField('bairro', v)} placeholder="Ex.: Jardim Santo André" />
+                            </Row>
+                            <Row>
+                                <TextField label="Número" value={loc.numero} onChange={(v) => setLocField('numero', v)} placeholder="Ex.: 123" />
+                                <TextField label="Estado (UF)" value={loc.estado} onChange={(v) => { setLocField('estado', v); limparInvalido('estado'); }} maxLength={2} required error={invalido('estado')} placeholder="SP" />
+                            </Row>
+                            <TextField label="Complemento" value={loc.complemento} onChange={(v) => setLocField('complemento', v)} placeholder="Ex.: Casa 2, bloco B" />
 
-                    <p className="field-group-title">Coordenadas (mapa)</p>
-                    <div className={`field gps-auto-status ${invalido('latitude') || invalido('longitude') ? 'invalid' : ''}`}>
-                        <label>Localização *</label>
-                        <span className="gps-status">
-                            {capturando
-                                ? 'Solicitando permissão e capturando localização...'
-                                : loc.latitude && loc.longitude
-                                    ? 'Coordenadas capturadas automaticamente'
-                                    : 'Permita o uso da localização para capturar as coordenadas automaticamente.'}
-                        </span>
-                    </div>
+                            <p className="field-group-title">Coordenadas (mapa)</p>
+                            <div className={`field gps-auto-status ${invalido('latitude') || invalido('longitude') ? 'invalid' : ''}`}>
+                                <label>Localização *</label>
+                                <span className="gps-status">
+                                    {capturando
+                                        ? 'Solicitando permissão e capturando localização...'
+                                        : loc.latitude && loc.longitude
+                                            ? 'Coordenadas capturadas automaticamente'
+                                            : 'Permita o uso da localização para capturar as coordenadas automaticamente.'}
+                                </span>
+                            </div>
 
-                    <LocationPicker
-                        latitude={loc.latitude}
-                        longitude={loc.longitude}
-                        focusSignal={gpsSignal}
-                        onChange={setCoord}
-                    />
+                            <LocationPicker
+                                latitude={loc.latitude}
+                                longitude={loc.longitude}
+                                focusSignal={gpsSignal}
+                                onChange={setCoord}
+                            />
 
-                    <p className="field-group-title">Construção</p>
-                    <Row>
-                        <SelectField label="Tipo" value={moradia.tipoConstrucao} onChange={(v) => { setMoradiaField('tipoConstrucao', v); limparInvalido('tipoConstrucao'); }} options={TIPOS_CONSTRUCAO} required error={invalido('tipoConstrucao')} />
-                        <TextField label="Tipo de pavimento" value={moradia.pavimentos} onChange={(v) => setMoradiaField('pavimentos', v)} inputMode="numeric" placeholder="Ex.: 1" />
-                    </Row>
-                    <Row>
-                        <SelectField label="Condição de ocupação" value={moradia.situacaoDeOcupacao} onChange={(v) => { setMoradiaField('situacaoDeOcupacao', v); limparInvalido('situacaoDeOcupacao'); }} options={SITUACOES_OCUPACAO_MORADIA} required error={invalido('situacaoDeOcupacao')} />
-                        <SelectField label="Uso do imóvel" value={moradia.usoImovel} onChange={(v) => { setMoradiaField('usoImovel', v); limparInvalido('usoImovel'); }} options={USOS_IMOVEL} required error={invalido('usoImovel')} />
-                    </Row>
-                    <SelectField label="Status da moradia" value={moradia.status} onChange={(v) => setMoradiaField('status', v)} options={STATUS_MORADIA} />
-                    <TextAreaField label="Referência geográfica" value={loc.referencia} onChange={(v) => setLocField('referencia', v)} placeholder="Ex.: Próximo à escola municipal" />
-                    <div className="field">
-                        <label>Fotos do imóvel (fachada e entorno)</label>
-                        <PhotoPicker
-                            fotos={fotosCasa}
-                            onAdd={(novas) => setFotosCasa((prev) => [...prev, ...novas])}
-                            onRemove={(key) => setFotosCasa((prev) => prev.filter((f) => f.key !== key))}
-                            label="Adicionar foto"
-                            max={2}
-                            showName
-                        />
-                    </div>
-                    <TextAreaField label="Descrição da moradia" value={moradia.descricao} onChange={(v) => setMoradiaField('descricao', v)} placeholder="Ex.: Casa de alvenaria com acesso por viela" />
+                            <p className="field-group-title">Construção</p>
+                            <Row>
+                                <SelectField label="Tipo" value={moradia.tipoConstrucao} onChange={(v) => { setMoradiaField('tipoConstrucao', v); limparInvalido('tipoConstrucao'); }} options={TIPOS_CONSTRUCAO} required error={invalido('tipoConstrucao')} />
+                                <TextField label="Tipo de pavimento" value={moradia.pavimentos} onChange={(v) => setMoradiaField('pavimentos', v)} inputMode="numeric" placeholder="Ex.: 1" />
+                            </Row>
+                            <Row>
+                                <SelectField label="Condição de ocupação" value={moradia.situacaoDeOcupacao} onChange={(v) => { setMoradiaField('situacaoDeOcupacao', v); limparInvalido('situacaoDeOcupacao'); }} options={SITUACOES_OCUPACAO_MORADIA} required error={invalido('situacaoDeOcupacao')} />
+                                <SelectField label="Uso do imóvel" value={moradia.usoImovel} onChange={(v) => { setMoradiaField('usoImovel', v); limparInvalido('usoImovel'); }} options={USOS_IMOVEL} required error={invalido('usoImovel')} />
+                            </Row>
+                            <SelectField label="Status da moradia" value={moradia.status} onChange={(v) => setMoradiaField('status', v)} options={STATUS_MORADIA} />
+                            <TextAreaField label="Referência geográfica" value={loc.referencia} onChange={(v) => setLocField('referencia', v)} placeholder="Ex.: Próximo à escola municipal" />
+                            <div className="field">
+                                <label>Fotos do imóvel (fachada e entorno)</label>
+                                <PhotoPicker
+                                    fotos={fotosCasa}
+                                    onAdd={(novas) => setFotosCasa((prev) => [...prev, ...novas])}
+                                    onRemove={(key) => setFotosCasa((prev) => prev.filter((f) => f.key !== key))}
+                                    label="Adicionar foto"
+                                    max={2}
+                                    showName
+                                />
+                            </div>
+                            <TextAreaField label="Descrição da moradia" value={moradia.descricao} onChange={(v) => setMoradiaField('descricao', v)} placeholder="Ex.: Casa de alvenaria com acesso por viela" />
                         </>
                     )}
 
@@ -1315,33 +1334,46 @@ export default function Cadastro() {
             {aba === 'moradores' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
                     {!modoEdicaoPessoa && (
-                        <div className="card">
-                            <p className="field-group-title" style={{ marginTop: 0 }}>Adicionar pessoa existente</p>
-                            <div className="input-with-btn">
-                                <input
-                                    value={buscaPessoa}
-                                    onChange={(e) => setBuscaPessoa(e.target.value)}
-                                    placeholder="Buscar por nome ou CPF"
-                                />
-                                <button type="button" className="btn btn-azul" disabled={buscandoPessoa} onClick={pesquisarPessoaExistente}>
-                                    {buscandoPessoa ? 'Buscando...' : 'Buscar'}
-                                </button>
-                            </div>
-                            {pessoasEncontradas.length > 0 && (
-                                <div className="detail-list" style={{ marginTop: 12 }}>
-                                    {pessoasEncontradas.map((pessoa) => (
-                                        <p key={pessoa.id} style={{ display: 'flex', justifyContent: 'space-between', gap: 10, alignItems: 'center' }}>
-                                            <span>
-                                                <strong>{pessoa.nome}</strong> · {pessoa.cpf ?? 'CPF n/d'} · {pessoa.parentesco ?? 'sem parentesco'}
-                                            </span>
-                                            <button type="button" className="btn-editar" onClick={() => void adicionarPessoaExistente(pessoa)}>
-                                                Adicionar
-                                            </button>
-                                        </p>
-                                    ))}
+                        <>
+                            <button
+                                type="button"
+                                className="btn-dashed"
+                                onClick={() => setMostrarBuscaPessoaExistente((atual) => !atual)}
+                            >
+                                {mostrarBuscaPessoaExistente ? '- Ocultar busca de pessoa existente' : '+ Adicionar pessoa existente'}
+                            </button>
+                            {mostrarBuscaPessoaExistente && (
+                                <div className="existing-person-card">
+                                    <p className="field-group-title" style={{ marginTop: 0, color: 'black' }}>Buscar pessoa existente</p>
+                                    <div className="field">
+                                        <label>Nome ou CPF</label>
+                                        <input
+                                            value={buscaPessoa}
+                                            onChange={(e) => setBuscaPessoa(e.target.value)}
+                                            placeholder="Digite nome ou CPF"
+                                        />
+                                    </div>
+                                    <div className="existing-person-list">
+                                        {buscandoPessoa && <p className="state-msg existing-person-state">Buscando pessoas...</p>}
+                                        {!buscandoPessoa && pessoasEncontradas.length === 0 && (
+                                            <p className="state-msg existing-person-state">Nenhuma pessoa disponível encontrada.</p>
+                                        )}
+                                        {!buscandoPessoa && pessoasEncontradas.map((pessoa) => (
+                                            <div key={pessoa.id} className="existing-person-item">
+                                                <span>
+                                                    <strong>{pessoa.nome}</strong>
+                                                    <small>{pessoa.cpf ?? 'CPF n/d'} · {pessoa.parentesco ?? 'sem parentesco'}</small>
+                                                </span>
+                                                <button type="button" className="btn-editar" onClick={() => void adicionarPessoaExistente(pessoa)}>
+                                                    Adicionar
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
                             )}
-                        </div>
+                            <button className="btn-dashed" onClick={adicionarMorador}>+ Adicionar Morador</button>
+                        </>
                     )}
                     {moradores.map((m, index) => {
                         const ehResponsavel = m.parentesco === RESPONSAVEL;
@@ -1368,89 +1400,86 @@ export default function Cadastro() {
 
                                 {cardAberto && (
                                     <div className="collapsible-card-body">
-                                <SelectField
-                                    label="Grau de parentesco c/ responsável"
-                                    value={m.parentesco}
-                                    onChange={(v) => { updateMorador(index, { parentesco: v }); limparInvalido(`${m.key}:parentesco`); }}
-                                    options={PARENTESCOS}
-                                    disabledOptions={outroResponsavel ? [RESPONSAVEL] : []}
-                                    required
-                                    error={invalido(`${m.key}:parentesco`)}
-                                />
-                                <Row>
-                                    <TextField label="Nome completo" value={m.nome} onChange={(v) => { updateMorador(index, { nome: v }); limparInvalido(`${m.key}:nome`); }} required error={invalido(`${m.key}:nome`)} placeholder="Ex.: Maria Silva Santos" />
-                                    <TextField label="Data de nascimento" value={m.dataDeNascimento} onChange={(v) => { updateMorador(index, { dataDeNascimento: v }); limparInvalido(`${m.key}:data`); }} type="date" required error={invalido(`${m.key}:data`)} placeholder="AAAA-MM-DD" />
-                                </Row>
-                                <Row>
-                                    <TextField label="Nome social" value={m.nomeSocial} onChange={(v) => updateMorador(index, { nomeSocial: v })} placeholder="Ex.: Maria Santos" />
-                                    <TextField label="CPF" value={m.cpf} onChange={(v) => updateMorador(index, { cpf: maskCPF(v) })} inputMode="numeric" maxLength={14} placeholder="000.000.000-00" />
-                                </Row>
-                                <SelectField label="Escolaridade" value={m.escolaridade} onChange={(v) => { updateMorador(index, { escolaridade: v }); limparInvalido(`${m.key}:escolaridade`); }} options={ESCOLARIDADES} required error={invalido(`${m.key}:escolaridade`)} />
-                                <SelectField label="Situação ocupacional" value={m.situacaoOcupacional} onChange={(v) => { updateMorador(index, { situacaoOcupacional: v }); limparInvalido(`${m.key}:ocupacao`); }} options={SITUACOES_OCUPACIONAIS} required error={invalido(`${m.key}:ocupacao`)} />
-	                                <Row>
-	                                    <CheckboxField label="Doença crônica" checked={m.cronico} onChange={(v) => updateMorador(index, { cronico: v })} />
-	                                    <CheckboxField label="Usa medicação" checked={m.medicacao} onChange={(v) => updateMorador(index, { medicacao: v })} />
-	                                </Row>
-	                                <div className="field">
-	                                    <label>Prioridades</label>
-                                        <div className="priority-checks">
-	                                        {prioridades.map((prioridade) => (
-	                                            <CheckboxField
-                                                    key={prioridade.id}
-                                                    label={prioridade.tipo ? `${prioridade.condicao} (${prioridade.tipo})` : prioridade.condicao}
-                                                    checked={m.prioridadeIds.includes(prioridade.id)}
-                                                    onChange={(checked) => updateMorador(index, {
-                                                        prioridadeIds: checked
-                                                            ? [...m.prioridadeIds, prioridade.id]
-                                                            : m.prioridadeIds.filter((id) => id !== prioridade.id)
-                                                    })}
-                                                />
-	                                        ))}
+                                        <SelectField
+                                            label="Grau de parentesco c/ responsável"
+                                            value={m.parentesco}
+                                            onChange={(v) => { updateMorador(index, { parentesco: v }); limparInvalido(`${m.key}:parentesco`); }}
+                                            options={PARENTESCOS}
+                                            disabledOptions={outroResponsavel ? [RESPONSAVEL] : []}
+                                            required
+                                            error={invalido(`${m.key}:parentesco`)}
+                                        />
+                                        <Row>
+                                            <TextField label="Nome completo" value={m.nome} onChange={(v) => { updateMorador(index, { nome: v }); limparInvalido(`${m.key}:nome`); }} required error={invalido(`${m.key}:nome`)} placeholder="Ex.: Maria Silva Santos" />
+                                            <TextField label="Data de nascimento" value={m.dataDeNascimento} onChange={(v) => { updateMorador(index, { dataDeNascimento: v }); limparInvalido(`${m.key}:data`); }} type="date" required error={invalido(`${m.key}:data`)} placeholder="AAAA-MM-DD" />
+                                        </Row>
+                                        <Row>
+                                            <TextField label="Nome social" value={m.nomeSocial} onChange={(v) => updateMorador(index, { nomeSocial: v })} placeholder="Ex.: Maria Santos" />
+                                            <TextField label="CPF" value={m.cpf} onChange={(v) => updateMorador(index, { cpf: maskCPF(v) })} inputMode="numeric" maxLength={14} placeholder="000.000.000-00" />
+                                        </Row>
+                                        <SelectField label="Escolaridade" value={m.escolaridade} onChange={(v) => { updateMorador(index, { escolaridade: v }); limparInvalido(`${m.key}:escolaridade`); }} options={ESCOLARIDADES} required error={invalido(`${m.key}:escolaridade`)} />
+                                        <SelectField label="Situação ocupacional" value={m.situacaoOcupacional} onChange={(v) => { updateMorador(index, { situacaoOcupacional: v }); limparInvalido(`${m.key}:ocupacao`); }} options={SITUACOES_OCUPACIONAIS} required error={invalido(`${m.key}:ocupacao`)} />
+                                        <Row>
+                                            <CheckboxField label="Doença crônica" checked={m.cronico} onChange={(v) => updateMorador(index, { cronico: v })} />
+                                            <CheckboxField label="Usa medicação" checked={m.medicacao} onChange={(v) => updateMorador(index, { medicacao: v })} />
+                                        </Row>
+                                        <div className="field">
+                                            <label>Prioridades</label>
+                                            <div className="priority-checks">
+                                                {prioridades.map((prioridade) => (
+                                                    <CheckboxField
+                                                        key={prioridade.id}
+                                                        label={prioridade.tipo ? `${prioridade.condicao} (${prioridade.tipo})` : prioridade.condicao}
+                                                        checked={m.prioridadeIds.includes(prioridade.id)}
+                                                        onChange={(checked) => updateMorador(index, {
+                                                            prioridadeIds: checked
+                                                                ? [...m.prioridadeIds, prioridade.id]
+                                                                : m.prioridadeIds.filter((id) => id !== prioridade.id)
+                                                        })}
+                                                    />
+                                                ))}
+                                            </div>
                                         </div>
-	                                </div>
 
-	                                {ehResponsavel && (
-                                    <div style={{ marginTop: 8, paddingTop: 12, borderTop: '1px dashed var(--cinza)' }}>
-                                        <p className="field-group-title" style={{ color: 'var(--laranja)', marginTop: 35 }}>
-                                            Dados exclusivos do responsável
-                                        </p>
-                                        <Row>
-                                            <SelectField label="Gênero" value={m.sexo} onChange={(v) => { updateMorador(index, { sexo: v }); limparInvalido(`${m.key}:sexo`); }} options={SEXOS} required error={invalido(`${m.key}:sexo`)} />
-                                            <SelectField label="Cor/Raça" value={m.raca} onChange={(v) => { updateMorador(index, { raca: v }); limparInvalido(`${m.key}:raca`); }} options={RACAS} required error={invalido(`${m.key}:raca`)} />
-                                        </Row>
-                                        <SelectField label="Estado civil" value={m.estadoCivil} onChange={(v) => { updateMorador(index, { estadoCivil: v }); limparInvalido(`${m.key}:estadoCivil`); }} options={ESTADOS_CIVIS} required error={invalido(`${m.key}:estadoCivil`)} />
-                                        <TextField label="Local de nascimento" value={m.localDeNascimento} onChange={(v) => updateMorador(index, { localDeNascimento: v })} placeholder="Ex.: Santo André - SP" />
-                                        <Row>
-                                            <TextField label="Nome do pai" value={m.nomeDoPai} onChange={(v) => updateMorador(index, { nomeDoPai: v })} placeholder="Ex.: João Silva" />
-                                            <TextField label="Nome da mãe" value={m.nomeDaMae} onChange={(v) => updateMorador(index, { nomeDaMae: v })} placeholder="Ex.: Ana Santos" />
-                                        </Row>
-                                        <Row>
-                                            <TextField label="NIS" value={m.nis} onChange={(v) => updateMorador(index, { nis: v })} inputMode="numeric" placeholder="Ex.: 12345678901" />
-                                            <TextField label="Renda mensal (R$)" value={m.renda} onChange={(v) => updateMorador(index, { renda: v })} inputMode="decimal" placeholder="Ex.: 1500,00" />
-                                        </Row>
-                                        <Row>
-                                            <TextField label="E-mail" value={m.email} onChange={(v) => updateMorador(index, { email: v })} inputMode="email" placeholder="Ex.: nome@email.com" />
-                                            <TextField label="Telefone" value={m.telefone} onChange={(v) => updateMorador(index, { telefone: maskTelefone(v) })} inputMode="tel" placeholder="(11) 99999-9999" />
-                                        </Row>
-                                        <Row>
-                                            <TextField label="Residência na moradia (desde)" value={m.dataResidenciaMoradia} onChange={(v) => updateMorador(index, { dataResidenciaMoradia: v })} type="date" placeholder="AAAA-MM-DD" />
-                                            <TextField label="Residência no estado (desde)" value={m.dataResidenciaEstado} onChange={(v) => updateMorador(index, { dataResidenciaEstado: v })} type="date" placeholder="AAAA-MM-DD" />
-                                        </Row>
-                                        <Row>
-                                            <CheckboxField label="Possui veículo" checked={m.veiculo} onChange={(v) => updateMorador(index, { veiculo: v })} />
-                                            <CheckboxField label="Programa social" checked={m.programaSocial} onChange={(v) => updateMorador(index, { programaSocial: v })} />
-                                        </Row>
-                                    </div>
-                                )}
+                                        {ehResponsavel && (
+                                            <div style={{ marginTop: 8, paddingTop: 12, borderTop: '1px dashed var(--cinza)' }}>
+                                                <p className="field-group-title" style={{ color: 'var(--laranja)', marginTop: 35 }}>
+                                                    Dados exclusivos do responsável
+                                                </p>
+                                                <Row>
+                                                    <SelectField label="Gênero" value={m.sexo} onChange={(v) => { updateMorador(index, { sexo: v }); limparInvalido(`${m.key}:sexo`); }} options={SEXOS} required error={invalido(`${m.key}:sexo`)} />
+                                                    <SelectField label="Cor/Raça" value={m.raca} onChange={(v) => { updateMorador(index, { raca: v }); limparInvalido(`${m.key}:raca`); }} options={RACAS} required error={invalido(`${m.key}:raca`)} />
+                                                </Row>
+                                                <SelectField label="Estado civil" value={m.estadoCivil} onChange={(v) => { updateMorador(index, { estadoCivil: v }); limparInvalido(`${m.key}:estadoCivil`); }} options={ESTADOS_CIVIS} required error={invalido(`${m.key}:estadoCivil`)} />
+                                                <TextField label="Local de nascimento" value={m.localDeNascimento} onChange={(v) => updateMorador(index, { localDeNascimento: v })} placeholder="Ex.: Santo André - SP" />
+                                                <Row>
+                                                    <TextField label="Nome do pai" value={m.nomeDoPai} onChange={(v) => updateMorador(index, { nomeDoPai: v })} placeholder="Ex.: João Silva" />
+                                                    <TextField label="Nome da mãe" value={m.nomeDaMae} onChange={(v) => updateMorador(index, { nomeDaMae: v })} placeholder="Ex.: Ana Santos" />
+                                                </Row>
+                                                <Row>
+                                                    <TextField label="NIS" value={m.nis} onChange={(v) => updateMorador(index, { nis: v })} inputMode="numeric" placeholder="Ex.: 12345678901" />
+                                                    <TextField label="Renda mensal (R$)" value={m.renda} onChange={(v) => updateMorador(index, { renda: v })} inputMode="decimal" placeholder="Ex.: 1500,00" />
+                                                </Row>
+                                                <Row>
+                                                    <TextField label="E-mail" value={m.email} onChange={(v) => updateMorador(index, { email: v })} inputMode="email" placeholder="Ex.: nome@email.com" />
+                                                    <TextField label="Telefone" value={m.telefone} onChange={(v) => updateMorador(index, { telefone: maskTelefone(v) })} inputMode="tel" placeholder="(11) 99999-9999" />
+                                                </Row>
+                                                <Row>
+                                                    <TextField label="Residência na moradia (desde)" value={m.dataResidenciaMoradia} onChange={(v) => updateMorador(index, { dataResidenciaMoradia: v })} type="date" placeholder="AAAA-MM-DD" />
+                                                    <TextField label="Residência no estado (desde)" value={m.dataResidenciaEstado} onChange={(v) => updateMorador(index, { dataResidenciaEstado: v })} type="date" placeholder="AAAA-MM-DD" />
+                                                </Row>
+                                                <Row>
+                                                    <CheckboxField label="Possui veículo" checked={m.veiculo} onChange={(v) => updateMorador(index, { veiculo: v })} />
+                                                    <CheckboxField label="Programa social" checked={m.programaSocial} onChange={(v) => updateMorador(index, { programaSocial: v })} />
+                                                </Row>
+                                            </div>
+                                        )}
                                     </div>
                                 )}
                             </div>
                         );
                     })}
 
-                    {!modoEdicaoPessoa && (
-                        <button className="btn-dashed" onClick={adicionarMorador}>+ Adicionar Morador</button>
-                    )}
                     {modoEdicaoPessoa ? (
                         <button className="btn btn-outline btn-block" disabled={enviando} onClick={enviar}>
                             {enviando ? 'Enviando...' : 'Salvar alterações'}
@@ -1471,49 +1500,49 @@ export default function Cadastro() {
                     {pets.map((p, index) => {
                         const cardAberto = petsAbertos.has(p.key);
                         return (
-                        <div key={p.key} className={`card collapsible-card${cardAberto ? ' open' : ''}`}>
-                            <div className="collapsible-card-head">
-                                <button type="button" className="collapsible-trigger" onClick={() => togglePetCard(p.key)}>
-                                    <span className="collapsible-title">Animal {index + 1}</span>
-                                    <span className="collapsible-summary">
-                                        {p.nome || 'Nome não informado'} · {p.tipo || 'Tipo pendente'}
-                                    </span>
-                                    <span className="collapsible-chevron" aria-hidden="true">{cardAberto ? '⌃' : '⌄'}</span>
-                                </button>
-                                <button type="button" className="collapsible-remove" onClick={() => setPets((prev) => prev.filter((_, i) => i !== index))}>
-                                    Remover
-                                </button>
-                            </div>
-
-                            {cardAberto && (
-                                <div className="collapsible-card-body">
-                            <Row>
-                                <TextField label="Nome do animal" value={p.nome} onChange={(v) => { updatePet(index, { nome: v }); limparInvalido(`${p.key}:petNome`); }} required error={invalido(`${p.key}:petNome`)} placeholder="Ex.: Thor" />
-                                <TextField label="Porte" value={p.porte} onChange={(v) => updatePet(index, { porte: v })} placeholder="Ex.: Médio" />
-                            </Row>
-                            <Row>
-                                <SelectField label="Tipo" value={p.tipo} onChange={(v) => { updatePet(index, { tipo: v }); limparInvalido(`${p.key}:petTipo`); }} options={TIPOS_PET} required error={invalido(`${p.key}:petTipo`)} />
-                                <TextField label="Cor do animal" value={p.cor} onChange={(v) => updatePet(index, { cor: v })} placeholder="Ex.: Caramelo" />
-                            </Row>
-                            <Row>
-                                <TextField label="Raça" value={p.raca} onChange={(v) => updatePet(index, { raca: v })} placeholder="Ex.: Sem raça definida" />
-                                <SelectField label="Status" value={p.status} onChange={(v) => updatePet(index, { status: v })} options={STATUS_PET} />
-                            </Row>
-                            <TextAreaField label="Observações sobre o animal" value={p.observacao} onChange={(v) => updatePet(index, { observacao: v })} placeholder="Ex.: Animal dócil, fica no quintal" />
-                            <div className="field">
-                                <label>Foto do animal</label>
-                                <PhotoPicker
-                                    fotos={p.fotos}
-                                    onAdd={(novas) => addFotosPet(index, novas)}
-                                    onRemove={(key) => removeFotoPet(index, key)}
-                                    label="Adicionar foto"
-                                    max={1}
-                                    showName
-                                />
-                            </div>
+                            <div key={p.key} className={`card collapsible-card${cardAberto ? ' open' : ''}`}>
+                                <div className="collapsible-card-head">
+                                    <button type="button" className="collapsible-trigger" onClick={() => togglePetCard(p.key)}>
+                                        <span className="collapsible-title">Animal {index + 1}</span>
+                                        <span className="collapsible-summary">
+                                            {p.nome || 'Nome não informado'} · {p.tipo || 'Tipo pendente'}
+                                        </span>
+                                        <span className="collapsible-chevron" aria-hidden="true">{cardAberto ? '⌃' : '⌄'}</span>
+                                    </button>
+                                    <button type="button" className="collapsible-remove" onClick={() => setPets((prev) => prev.filter((_, i) => i !== index))}>
+                                        Remover
+                                    </button>
                                 </div>
-                            )}
-                        </div>
+
+                                {cardAberto && (
+                                    <div className="collapsible-card-body">
+                                        <Row>
+                                            <TextField label="Nome do animal" value={p.nome} onChange={(v) => { updatePet(index, { nome: v }); limparInvalido(`${p.key}:petNome`); }} required error={invalido(`${p.key}:petNome`)} placeholder="Ex.: Thor" />
+                                            <TextField label="Porte" value={p.porte} onChange={(v) => updatePet(index, { porte: v })} placeholder="Ex.: Médio" />
+                                        </Row>
+                                        <Row>
+                                            <SelectField label="Tipo" value={p.tipo} onChange={(v) => { updatePet(index, { tipo: v }); limparInvalido(`${p.key}:petTipo`); }} options={TIPOS_PET} required error={invalido(`${p.key}:petTipo`)} />
+                                            <TextField label="Cor do animal" value={p.cor} onChange={(v) => updatePet(index, { cor: v })} placeholder="Ex.: Caramelo" />
+                                        </Row>
+                                        <Row>
+                                            <TextField label="Raça" value={p.raca} onChange={(v) => updatePet(index, { raca: v })} placeholder="Ex.: Sem raça definida" />
+                                            <SelectField label="Status" value={p.status} onChange={(v) => updatePet(index, { status: v })} options={STATUS_PET} />
+                                        </Row>
+                                        <TextAreaField label="Observações sobre o animal" value={p.observacao} onChange={(v) => updatePet(index, { observacao: v })} placeholder="Ex.: Animal dócil, fica no quintal" />
+                                        <div className="field">
+                                            <label>Foto do animal</label>
+                                            <PhotoPicker
+                                                fotos={p.fotos}
+                                                onAdd={(novas) => addFotosPet(index, novas)}
+                                                onRemove={(key) => removeFotoPet(index, key)}
+                                                label="Adicionar foto"
+                                                max={1}
+                                                showName
+                                            />
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
                         );
                     })}
                     <button className="btn-dashed" onClick={adicionarPet}>+ Adicionar Animal</button>
@@ -1590,8 +1619,7 @@ export default function Cadastro() {
                     </div>
 
                     <div className="overview-actions">
-                        <button type="button" className="btn btn-navy btn-block" onClick={() => setAba('pets')}>Voltar para Pets e Animais</button>
-                        <button className="btn btn-outline btn-block" disabled={enviando} onClick={enviar}>
+                        <button className="btn btn-outline btn-block" style={{ "width": "100%" }} disabled={enviando} onClick={enviar}>
                             {enviando ? 'Enviando...' : modoEdicao ? 'Salvar alterações' : `Concluir Cadastro${totalFotos > 0 ? ` (${totalFotos} foto(s))` : ''}`}
                         </button>
                     </div>

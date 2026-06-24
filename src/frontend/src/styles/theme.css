@@ -266,7 +266,7 @@ a {
 .field-group-title {
     font-size: 0.95rem;
     font-weight: 700;
-    color: var(--azul);
+    color: var(--cinza-escuro);
     margin: 14px 0 6px;
 }
 
@@ -995,6 +995,70 @@ a {
     line-height: 1.4;
 }
 
+.required-section-note {
+    margin-bottom: 14px;
+    border-color: #ffd8b8;
+    border-left-color: var(--laranja);
+    background: #fff8f2;
+}
+
+.existing-person-card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px;
+    /* border: 1px dashed #b7c7dc; */
+    border: 1px dashed black;
+    border-radius: var(--radius-sm);
+    background: transparent;
+}
+
+.existing-person-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.existing-person-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 12px;
+    /* border: 1px solid #d9e3ef; */
+    border: 1px solid var(--cinza-escuro);
+    border-radius: var(--radius-sm);
+    background: #fbfcfe;
+}
+
+.existing-person-item span {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.existing-person-item strong,
+.existing-person-item small {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.existing-person-item strong {
+    color: var(--texto);
+    font-size: 0.9rem;
+}
+
+.existing-person-item small {
+    color: var(--cinza-escuro);
+    font-size: 0.78rem;
+}
+
+.existing-person-state {
+    padding: 8px 0;
+}
+
 .edit-grid,
 .person-edit {
     display: grid;
@@ -1442,8 +1506,8 @@ a {
 }
 
 .overview-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    flex-direction: column;
     gap: 10px;
 }
 
@@ -2261,6 +2325,11 @@ html.anim-off *::after {
 
     .collapsible-remove {
         justify-self: flex-start;
+    }
+
+    .existing-person-item {
+        align-items: flex-start;
+        flex-direction: column;
     }
 
     .overview-grid,

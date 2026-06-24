@@ -169,6 +169,10 @@ export function buscarPessoas(
     return request<PessoaBuscaResultado[]>(`/pessoas/busca${query ? `?${query}` : ''}`);
 }
 
+export function listarPessoas(): Promise<PessoaBuscaResultado[]> {
+    return request<PessoaBuscaResultado[]>('/pessoas');
+}
+
 export function atualizarStatusPessoa(id: number, status: string): Promise<PessoaBuscaResultado> {
     return request<PessoaBuscaResultado>(`/pessoas/${id}`, {
         method: 'PUT',
