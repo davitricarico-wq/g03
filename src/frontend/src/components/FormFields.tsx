@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 
 interface TextFieldProps {
     label: string;
@@ -77,11 +77,12 @@ interface TextAreaFieldProps {
     value: string;
     onChange: (value: string) => void;
     placeholder?: string;
+    boxStyle?: CSSProperties;
 }
 
-export function TextAreaField({ label, value, onChange, placeholder }: TextAreaFieldProps) {
+export function TextAreaField({ label, value, onChange, placeholder, boxStyle }: TextAreaFieldProps) {
     return (
-        <div className="field">
+        <div style={boxStyle} className="field">
             <label>{label}</label>
             <textarea rows={3} value={value} placeholder={placeholder} onChange={(e) => onChange(e.target.value)} />
         </div>

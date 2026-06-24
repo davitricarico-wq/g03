@@ -1268,62 +1268,72 @@ export default function Cadastro() {
                     )}
                     {!adicionarApenasFamilia && (
                         <>
-                            <Row>
-                                <TextField label="CEP" value={loc.cep} onChange={(v) => setLocField('cep', maskCEP(v))} onBlur={lookupCep} inputMode="numeric" placeholder="00000-000" />
-                                <TextField label="Logradouro" value={loc.logradouro} onChange={(v) => setLocField('logradouro', v)} placeholder="Ex.: Rua das Flores" />
-                            </Row>
-                            <Row>
-                                <TextField placeholder='Ex.: Santo André' label="Cidade" value={loc.cidade} onChange={(v) => { setLocField('cidade', v); limparInvalido('cidade'); }} required error={invalido('cidade')} />
-                                <TextField label="Bairro" value={loc.bairro} onChange={(v) => setLocField('bairro', v)} placeholder="Ex.: Jardim Santo André" />
-                            </Row>
-                            <Row>
-                                <TextField label="Número" value={loc.numero} onChange={(v) => setLocField('numero', v)} placeholder="Ex.: 123" />
-                                <TextField label="Estado (UF)" value={loc.estado} onChange={(v) => { setLocField('estado', v); limparInvalido('estado'); }} maxLength={2} required error={invalido('estado')} placeholder="SP" />
-                            </Row>
-                            <TextField label="Complemento" value={loc.complemento} onChange={(v) => setLocField('complemento', v)} placeholder="Ex.: Casa 2, bloco B" />
+                            <>
+                                <p className="field-group-title">Endereço</p>
 
-                            <p className="field-group-title">Coordenadas (mapa)</p>
-                            <div className={`field gps-auto-status ${invalido('latitude') || invalido('longitude') ? 'invalid' : ''}`}>
-                                <label>Localização *</label>
-                                <span className="gps-status">
-                                    {capturando
-                                        ? 'Solicitando permissão e capturando localização...'
-                                        : loc.latitude && loc.longitude
-                                            ? 'Coordenadas capturadas automaticamente'
-                                            : 'Permita o uso da localização para capturar as coordenadas automaticamente.'}
-                                </span>
-                            </div>
+                                <Row>
+                                    <TextField label="CEP" value={loc.cep} onChange={(v) => setLocField('cep', maskCEP(v))} onBlur={lookupCep} inputMode="numeric" placeholder="00000-000" />
+                                    <TextField label="Logradouro" value={loc.logradouro} onChange={(v) => setLocField('logradouro', v)} placeholder="Ex.: Rua das Flores" />
+                                </Row>
+                                <Row>
+                                    <TextField placeholder='Ex.: Santo André' label="Cidade" value={loc.cidade} onChange={(v) => { setLocField('cidade', v); limparInvalido('cidade'); }} required error={invalido('cidade')} />
+                                    <TextField label="Bairro" value={loc.bairro} onChange={(v) => setLocField('bairro', v)} placeholder="Ex.: Jardim Santo André" />
+                                </Row>
+                                <Row>
+                                    <TextField label="Número" value={loc.numero} onChange={(v) => setLocField('numero', v)} placeholder="Ex.: 123" />
+                                    <TextField label="Estado (UF)" value={loc.estado} onChange={(v) => { setLocField('estado', v); limparInvalido('estado'); }} maxLength={2} required error={invalido('estado')} placeholder="SP" />
+                                </Row>
+                                <TextField label="Complemento" value={loc.complemento} onChange={(v) => setLocField('complemento', v)} placeholder="Ex.: Casa 2, bloco B" />
+                            </>
 
-                            <LocationPicker
-                                latitude={loc.latitude}
-                                longitude={loc.longitude}
-                                focusSignal={gpsSignal}
-                                onChange={setCoord}
-                            />
+                            <>
+                                <p className="field-group-title">Coordenadas (mapa)</p>
+                                <div className={`field gps-auto-status ${invalido('latitude') || invalido('longitude') ? 'invalid' : ''}`}>
+                                    <label>Localização *</label>
+                                    <span className={`gps-status${capturando ? ' gps-status-loading' : ''}`}>
+                                        {capturando
+                                            ? 'Solicitando permissão e capturando localização...'
+                                            : loc.latitude && loc.longitude
+                                                ? 'Coordenadas capturadas automaticamente'
+                                                : 'Permita o uso da localização para capturar as coordenadas automaticamente.'}
+                                    </span>
+                                </div>
 
-                            <p className="field-group-title">Construção</p>
-                            <Row>
-                                <SelectField label="Tipo" value={moradia.tipoConstrucao} onChange={(v) => { setMoradiaField('tipoConstrucao', v); limparInvalido('tipoConstrucao'); }} options={TIPOS_CONSTRUCAO} required error={invalido('tipoConstrucao')} />
-                                <TextField label="Tipo de pavimento" value={moradia.pavimentos} onChange={(v) => setMoradiaField('pavimentos', v)} inputMode="numeric" placeholder="Ex.: 1" />
-                            </Row>
-                            <Row>
-                                <SelectField label="Condição de ocupação" value={moradia.situacaoDeOcupacao} onChange={(v) => { setMoradiaField('situacaoDeOcupacao', v); limparInvalido('situacaoDeOcupacao'); }} options={SITUACOES_OCUPACAO_MORADIA} required error={invalido('situacaoDeOcupacao')} />
-                                <SelectField label="Uso do imóvel" value={moradia.usoImovel} onChange={(v) => { setMoradiaField('usoImovel', v); limparInvalido('usoImovel'); }} options={USOS_IMOVEL} required error={invalido('usoImovel')} />
-                            </Row>
-                            <SelectField label="Status da moradia" value={moradia.status} onChange={(v) => setMoradiaField('status', v)} options={STATUS_MORADIA} />
-                            <TextAreaField label="Referência geográfica" value={loc.referencia} onChange={(v) => setLocField('referencia', v)} placeholder="Ex.: Próximo à escola municipal" />
-                            <div className="field">
-                                <label>Fotos do imóvel (fachada e entorno)</label>
-                                <PhotoPicker
-                                    fotos={fotosCasa}
-                                    onAdd={(novas) => setFotosCasa((prev) => [...prev, ...novas])}
-                                    onRemove={(key) => setFotosCasa((prev) => prev.filter((f) => f.key !== key))}
-                                    label="Adicionar foto"
-                                    max={2}
-                                    showName
+                                <LocationPicker
+                                    latitude={loc.latitude}
+                                    longitude={loc.longitude}
+                                    focusSignal={gpsSignal}
+                                    onChange={setCoord}
                                 />
-                            </div>
-                            <TextAreaField label="Descrição da moradia" value={moradia.descricao} onChange={(v) => setMoradiaField('descricao', v)} placeholder="Ex.: Casa de alvenaria com acesso por viela" />
+
+                                <TextAreaField boxStyle={{ marginTop: '15px', marginBottom: '30px' }} label="Referência geográfica" value={loc.referencia} onChange={(v) => setLocField('referencia', v)} placeholder="Ex.: Próximo à escola municipal" />
+                            </>
+
+                            <>
+                                <p className="field-group-title">Construção</p>
+                                <Row>
+                                    <SelectField label="Tipo" value={moradia.tipoConstrucao} onChange={(v) => { setMoradiaField('tipoConstrucao', v); limparInvalido('tipoConstrucao'); }} options={TIPOS_CONSTRUCAO} required error={invalido('tipoConstrucao')} />
+                                    <TextField label="Tipo de pavimento" value={moradia.pavimentos} onChange={(v) => setMoradiaField('pavimentos', v)} inputMode="numeric" placeholder="Ex.: 1" />
+                                </Row>
+                                <Row>
+                                    <SelectField label="Condição de ocupação" value={moradia.situacaoDeOcupacao} onChange={(v) => { setMoradiaField('situacaoDeOcupacao', v); limparInvalido('situacaoDeOcupacao'); }} options={SITUACOES_OCUPACAO_MORADIA} required error={invalido('situacaoDeOcupacao')} />
+                                    <SelectField label="Uso do imóvel" value={moradia.usoImovel} onChange={(v) => { setMoradiaField('usoImovel', v); limparInvalido('usoImovel'); }} options={USOS_IMOVEL} required error={invalido('usoImovel')} />
+                                </Row>
+                                <SelectField label="Status da moradia" value={moradia.status} onChange={(v) => setMoradiaField('status', v)} options={STATUS_MORADIA} />
+                                <TextAreaField label="Descrição da moradia" value={moradia.descricao} onChange={(v) => setMoradiaField('descricao', v)} placeholder="Ex.: Casa de alvenaria com acesso por viela" />
+
+                                <div className="field">
+                                    <label>Fotos do imóvel (fachada e entorno)</label>
+                                    <PhotoPicker
+                                        fotos={fotosCasa}
+                                        onAdd={(novas) => setFotosCasa((prev) => [...prev, ...novas])}
+                                        onRemove={(key) => setFotosCasa((prev) => prev.filter((f) => f.key !== key))}
+                                        label="Adicionar foto"
+                                        max={2}
+                                        showName
+                                    />
+                                </div>
+                            </>
                         </>
                     )}
 
@@ -1423,8 +1433,9 @@ export default function Cadastro() {
                                             <CheckboxField label="Doença crônica" checked={m.cronico} onChange={(v) => updateMorador(index, { cronico: v })} />
                                             <CheckboxField label="Usa medicação" checked={m.medicacao} onChange={(v) => updateMorador(index, { medicacao: v })} />
                                         </Row>
+
                                         <div className="field">
-                                            <label>Prioridades</label>
+                                            <label>Condições físicas</label>
                                             <div className="priority-checks">
                                                 {prioridades.map((prioridade) => (
                                                     <CheckboxField
