@@ -3081,11 +3081,62 @@ Tivemos alterações nas Personas (ambas), User Stories (todas), RF, RNF e RN. D
 
 # <a name="c8"></a>8. Conclusões e trabalhos futuros (sprint 5)
 
-*Escreva de que formas a solução da aplicação web atingiu os objetivos descritos na seção 2 deste documento. Indique pontos fortes e pontos a melhorar de maneira geral.*
+### 8.1 Conclusões
 
-*Relacione os pontos de melhorias evidenciados nos testes com planos de ações para serem implementadas. O grupo não precisa implementá-las, pode deixar registrado aqui o plano para ações futuras*
 
-*Relacione também quaisquer outras ideias que o grupo tenha para melhorias futuras*
+O desenvolvimento do GeoRisco Santo André atingiu, de maneira geral, os principais objetivos definidos na seção 2 deste documento. A proposta inicial era criar uma **aplicação web capaz de apoiar a Defesa Civil na gestão de populações em áreas de risco, substituindo processos analógicos e descentralizados por uma solução digital integrada, com foco em cadastro rápido, organização das informações, visualização territorial e apoio à tomada de decisão**. Ao final do projeto, a aplicação consolidou esses objetivos ao reunir, em um mesmo sistema, dados de famílias, moradores, responsáveis, moradias, pets, fotos, vínculos familiares, status cadastrais e informações de localização.
+
+
+Um dos principais resultados alcançados foi a **centralização das informações operacionais da Defesa Civil**. A solução permite registrar e consultar dados que antes tenderiam a ficar dispersos em planilhas, fichas físicas ou registros isolados, fortalecendo a rastreabilidade e reduzindo o risco de perda de informações entre etapas do atendimento. O cadastro de cidadãos, famílias e responsáveis atende à necessidade de conhecer o perfil da população assistida, exigindo dados obrigatórios, responsável familiar e vínculos entre moradores e núcleo familiar. Além disso, a sinalização de cadastros incompletos contribui para manter a base de dados mais íntegra e útil para a operação.
+
+
+Também foram contemplados os objetivos relacionados ao **cadastro socioestrutural das moradias e ao registro de evidências visuais**. A aplicação permite armazenar informações como características do imóvel, condição de ocupação, pavimentos e fotos, criando uma base mais completa para análise das condições de moradia em áreas de risco. O cadastro de pets também foi entregue, permitindo que a Defesa Civil considere a presença de animais nas famílias atendidas, aspecto relevante em situações de evacuação e acolhimento.
+
+
+A solução alcançou ainda as promessas ligadas à **consulta, busca e edição de dados**. O gestor operacional pode localizar informações de famílias, moradias, moradores e pets de forma integrada, reduzindo a necessidade de cruzamento manual de dados. A edição de registros permite corrigir e atualizar informações existentes, mantendo a base mais próxima da realidade observada em campo. O arquivamento de moradias e moradores também atende ao objetivo de preservar histórico sem poluir a visualização operacional dos registros ativos, favorecendo a integridade dos dados ao longo do tempo.
+
+
+Outro ponto forte foi a **entrega de recursos voltados à visualização territorial e ao apoio à decisão**. A aplicação apresenta moradias em mapa georreferenciado por meio de pins, permitindo ao gestor visualizar a distribuição espacial dos cadastros e compreender melhor a concentração de famílias em áreas de risco. Esse recurso se conecta diretamente ao objetivo descrito na seção 2 de oferecer uma visão estratégica para a sede da Defesa Civil e apoiar decisões sobre priorização, atendimento e planejamento operacional.
+
+
+O objetivo de **registrar localização georreferenciada foi atingido parcialmente**. As coordenadas das moradias são representadas no mapa por pins, o que permite a visualização territorial dos registros. Entretanto, no mapa georreferenciado principal, esses pins não podem ser reposicionados diretamente. A correção da posição é possível na área de edição de moradias e famílias já existentes, onde o pin pode ser arrastado para uma nova coordenada. Dessa forma, a aplicação contempla a representação e a atualização da localização, mas ainda pode evoluir para permitir maior flexibilidade de ajuste no próprio fluxo de visualização georreferenciada.
+
+
+Por fim, a aplicação também atende ao objetivo de manter os cadastros atualizados por meio de avisos de recadastro, sinalizando registros com mais de um ano e apoiando a rotina de revisão das informações. Em conjunto, essas entregas demonstram que o GeoRisco Santo André cumpriu a proposta central da seção 2: oferecer uma ferramenta digital integrada, mais ágil e mais confiável para apoiar agentes de campo e gestores operacionais na proteção de populações vulneráveis em áreas de risco.
+
+
+### 8.2 Melhorias e Trabalhos Futuros
+
+
+Apesar de a aplicação ter atendido à maior parte dos objetivos definidos para a entrega final, os testes realizados e a análise do uso da solução evidenciaram oportunidades de melhoria. Esses pontos não invalidam as entregas realizadas, mas indicam caminhos para amadurecer a experiência do usuário, aumentar a estabilidade percebida e ampliar a capacidade operacional do sistema em versões futuras.
+
+
+#### 8.2.1 Pontos evidenciados nos testes e planos de ação
+
+
+- **Otimização do mapa georreferenciado:** conforme indicado na conclusão, os pins do mapa representam as coordenadas das moradias, mas só podem ser movidos manualmente quando o usuário está editando uma moradia já existente. Como plano de ação, recomenda-se implementar um modo de edição diretamente na tela do mapa, permitindo arrastar o pin, confirmar a alteração e salvar a nova coordenada sem precisar acessar todo o fluxo de cadastro ou edição da família.
+
+
+- **Ajuste do design e da organização dos elementos na tela:** nos testes SUS, foi relatado que o sistema ainda pode parecer complexo e exigir aprendizado inicial para uso pleno. Para reduzir essa dificuldade, o plano de ação é revisar a hierarquia visual das telas, simplificar fluxos com muitas etapas, destacar campos obrigatórios, padronizar botões e mensagens de feedback e validar as alterações em uma nova rodada de testes de usabilidade.
+
+
+- **Melhoria da estabilidade e consistência do sistema:** os testes SUS também apontaram percepção de inconsistências durante o uso. Como plano de ação, recomenda-se mapear os erros e comportamentos inesperados mais recorrentes, revisar validações de formulário, mensagens de erro, respostas da API e fluxos críticos entre front-end, back-end e banco de dados. Essa revisão deve ser acompanhada por testes automatizados e testes manuais nos principais cenários de uso.
+
+
+#### 8.2.2 Outras ideias para melhorias futuras
+
+
+- **Integração de abrigos temporários:** uma possibilidade de evolução é cadastrar e gerenciar abrigos temporários, vinculando famílias realocadas aos locais de acolhimento. Essa funcionalidade ampliaria o apoio da aplicação em situações de evacuação e resposta emergencial.
+
+
+- **Registro de bens perdidos ou sob guarda:** outra melhoria possível é incluir um módulo para registrar bens perdidos, recolhidos ou mantidos sob guarda após desastres. Esse recurso poderia funcionar de maneira semelhante ao cadastro de moradias e pessoas, aumentando a rastreabilidade dos atendimentos realizados pela Defesa Civil.
+
+
+- **Exportação de dados e relatórios:** também é recomendável adicionar a extração de fichas de moradores, moradias e famílias em formatos como PDF ou CSV. Essa melhoria facilitaria a comunicação entre agentes, gestores e demais atores envolvidos nas ações da Defesa Civil de Santo André, além de apoiar prestações de contas, relatórios operacionais e análises posteriores.
+
+
+Dessa forma, as melhorias propostas funcionam como continuidade natural do projeto. A aplicação já cumpre seu papel central de organizar e georreferenciar informações críticas, enquanto os trabalhos futuros apontam para uma solução ainda mais intuitiva, estável e preparada para apoiar diferentes etapas da gestão de risco e resposta a desastres.
+
 
 # <a name="c9"></a>9. Referências (sprints 1 a 5)
 
