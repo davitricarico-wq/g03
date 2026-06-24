@@ -20,7 +20,9 @@ import type {
     UpdatePessoaPayload
 } from './types.ts';
 
-const BASE = '/api';
+// Em dev usa o proxy do Vite ('/api' -> localhost:3000). Em produção o build
+// recebe VITE_API_BASE_URL (ex.: https://<projeto>.vercel.app/api).
+const BASE = import.meta.env.VITE_API_BASE_URL ?? '/api';
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
     const res = await fetch(`${BASE}${path}`, {
