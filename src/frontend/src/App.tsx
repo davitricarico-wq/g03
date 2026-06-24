@@ -5,7 +5,6 @@ import Cadastro from './pages/Cadastro.tsx';
 import Busca from './pages/Busca.tsx';
 import Mapa from './pages/Mapa.tsx';
 import Pessoas from './pages/Pessoas.tsx';
-import Historico from './pages/Historico.tsx';
 
 export default function App() {
     return (
@@ -16,7 +15,6 @@ export default function App() {
                 <Route path="/busca" element={<Busca />} />
                 <Route path="/pessoas" element={<Pessoas />} />
                 <Route path="/mapa" element={<Mapa />} />
-                <Route path="/historico" element={<Historico />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
             </Route>
         </Routes>

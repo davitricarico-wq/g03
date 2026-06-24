@@ -8,8 +8,7 @@ const cards = [
     { to: '/cadastro', icon: 'clipboard' as const, label: 'Cadastro', desc: 'Família, moradia e pets' },
     { to: '/busca', icon: 'search' as const, label: 'Busca', desc: 'Famílias e moradias' },
     { to: '/pessoas', icon: 'people' as const, label: 'Pessoas', desc: 'Ativos e histórico' },
-    { to: '/mapa', icon: 'map-pin' as const, label: 'Mapa', desc: 'Risco e ocupação' },
-    { to: '/historico', icon: 'history' as const, label: 'Histórico', desc: 'Famílias por moradia' }
+    { to: '/mapa', icon: 'map-pin' as const, label: 'Mapa', desc: 'Risco e ocupação' }
 ];
 
 export default function Home() {

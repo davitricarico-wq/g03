@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { atualizarStatusPessoa, buscarPessoas } from '../api.ts';
+import { atualizarStatusPessoa, buscarPessoas, listarPessoas, listarPessoasInativas } from '../api.ts';
 import { confirmDialog, toast } from '../components/feedback.tsx';
 import Icon from '../components/Icon.tsx';
 import type { EscopoPessoa, PessoaBuscaResultado } from '../types.ts';
@@ -44,6 +44,17 @@ export default function Pessoas() {
         const apenasDigitos = limpo.replace(/\D/g, '');
         const ehCpf = limpo.length > 0 && apenasDigitos.length >= 3 && apenasDigitos.length / limpo.length > 0.6;
         try {
+            if (!limpo) {
+                if (escopoAtual === 'inativas') {
+                    setResultados(await listarPessoasInativas());
+                } else if (escopoAtual === 'ativas') {
+                    setResultados(await listarPessoas());
+                } else {
+                    const [ativas, inativas] = await Promise.all([listarPessoas(), listarPessoasInativas()]);
+                    setResultados([...ativas, ...inativas]);
+                }
+                return;
+            }
             setResultados(
                 await buscarPessoas({
                     escopo: escopoAtual,
@@ -203,7 +214,7 @@ export default function Pessoas() {
                                 <section className="detail-section">
                                     <h3>Dados pessoais</h3>
                                     <div className="detail-list detail-grid">
-                                        <p><strong>Nome social:</strong> {p.nomeSocial || 'Não informado'}</p>
+                                        <p><strong>Apelido:</strong> {p.nomeSocial || 'Não informado'}</p>
                                         <p><strong>CPF:</strong> {p.cpf || 'Não informado'}</p>
                                         <p><strong>Nascimento:</strong> {p.dataDeNascimento ? p.dataDeNascimento.slice(0, 10) : 'Não informado'}</p>
                                         <p><strong>Idade:</strong> {anos !== null ? `${anos} ano(s)` : 'Não informado'}</p>

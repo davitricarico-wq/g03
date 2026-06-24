@@ -19,7 +19,7 @@ export const SITUACOES_OCUPACIONAIS = [
     'Do Lar',
     'Outro'
 ] as const;
-export const SEXOS = ['Masculino', 'Feminino', 'Outro', 'Não Declarado'] as const;
+export const SEXOS = ['Masculino', 'Feminino'] as const;
 export const RACAS = ['Branca', 'Preta', 'Parda', 'Amarela', 'Indígena', 'Não Declarado'] as const;
 export const ESTADOS_CIVIS = ['Solteiro', 'Casado', 'Divorciado', 'Viúvo', 'União Estável'] as const;
 
@@ -38,6 +38,11 @@ export const STATUS_MORADIA = ['Ativa', 'Interditada', 'Demolida', 'Em Risco', '
 export const TIPOS_PET = ['cachorro', 'gato', 'reptil', 'ave', 'roedor', 'outros'] as const;
 export const STATUS_PET = ['Ativo', 'Inativo', 'Desaparecido', 'Falecido'] as const;
 export const STATUS_PESSOA = ['Ativo', 'Obito', 'Inativo'] as const;
+export const ESTADOS_BRASIL = [
+    'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO',
+    'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI',
+    'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'
+] as const;
 export type EscopoPessoa = 'ativas' | 'inativas' | 'todas';
 
 export interface Localizacao {
@@ -99,6 +104,17 @@ export interface CreatePessoaPayload {
     escolaridade: string;
     cronico: boolean;
     medicacao: boolean;
+    nis?: string | null;
+    renda?: number | null;
+    sexo?: string | null;
+    raca?: string | null;
+    estadoCivil?: string | null;
+    veiculo?: boolean;
+    programasSociais?: number;
+    email?: string | null;
+    telefone?: string | null;
+    nomeDaMae?: string | null;
+    dataResidenciaMoradia?: string | null;
 }
 
 export interface CreateResponsavelPayload extends CreatePessoaPayload {
@@ -108,19 +124,16 @@ export interface CreateResponsavelPayload extends CreatePessoaPayload {
     raca: string;
     estadoCivil: string;
     veiculo?: boolean;
-    programaSocial?: boolean;
+    programasSociais?: number;
     email?: string | null;
     telefone?: string | null;
-    localDeNascimento?: string | null;
-    nomeDoPai?: string | null;
     nomeDaMae?: string | null;
-    dataResidenciaEstado?: string | null;
     dataResidenciaMoradia?: string | null;
 }
 
 export interface CreatePetPayload {
     tipo: string;
-    nome: string;
+    nome?: string | null;
     porte: string;
     raca: string;
     cor: string;
@@ -155,11 +168,8 @@ export interface Pessoa {
     raca?: string | null;
     estadoCivil?: string | null;
     veiculo?: boolean;
-    programaSocial?: boolean;
-    localDeNascimento?: string | null;
-    nomeDoPai?: string | null;
+    programasSociais?: number;
     nomeDaMae?: string | null;
-    dataResidenciaEstado?: string | null;
     dataResidenciaMoradia?: string | null;
 }
 
@@ -167,7 +177,7 @@ export interface Pet {
     id: number;
     idFamilia: number;
     tipo: string;
-    nome: string;
+    nome: string | null;
     porte: string;
     raca: string;
     cor: string;
