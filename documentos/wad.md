@@ -471,8 +471,8 @@ As Validações de Campo (VC) definem as restrições de preenchimento obrigató
 | RNF001 | **Usabilidade** | O sistema deve facilitar o preenchimento e a consulta de cadastros por meio de payloads padronizados, validações de entrada e respostas de erro compreensíveis. Evitando assim, a escrita de dados errados, inconsistentes e dados não padronizados.  | Derivado da US01 e US02: agentes atuam em áreas de risco sob pressão e precisam registrar dados de pessoas, moradias e famílias com o menor número possível de inconsistências. | O requisito evoluiu para decisões técnicas como uso de DTOs, funções de normalização em `request-utils.ts` e validações específicas em `validations/`, reduzindo erros de entrada antes que os dados cheguem aos services. | 100% das requisições com payload inválido retornam `400` com campo de erro descritivo; cobertura de branches em `validations/` ≥ 67% (medido: 67,07% — seção 5.1.4.2). | Relatório de cobertura — seção 5.1.4.2: `validations/` com 67,07% branches e 61,30% statements; funções de normalização em `request-utils.ts` ativas; CT06, CT34, CT96 validam respostas de erro descritivas. | RF001, RF002, RF005, RF012 | Testar chamadas da API com dados válidos e inválidos, verificando se os erros retornados orientam a correção do preenchimento. |
 | RNF002 | **Confiabilidade** | O backend deve preservar a integridade dos dados em operações compostas, evitando cadastros parciais quando uma etapa do processo falha. | Derivado da necessidade de manter cadastros familiares, moradias, responsáveis e vínculos consistentes, já que dados incompletos podem prejudicar consultas e ações da Defesa Civil. | O requisito evoluiu para o uso de transações nos services, com `BEGIN`, `COMMIT` e `ROLLBACK` em operações que envolvem múltiplas tabelas, como cadastro de responsável, moradia com localização e núcleo familiar. | 0 registros parciais persistidos em operações compostas com falha simulada; atomicidade validada pelo CT94 — `POST /api/familias/nucleo`. | Transações `BEGIN/COMMIT/ROLLBACK` implementadas nos services de família, moradia e responsável; CT94 — falha em etapa obrigatória não persiste dados parciais (seção 5.1.4.2). | RF001, RF002, RF003, RF012 | Simular falhas durante cadastros compostos e verificar se nenhum registro parcial permanece persistido no banco. |
 | RNF003 | **Eficiência de desempenho** | O sistema deve manter uma organização que permita consultas e operações de cadastro com baixo acoplamento e possibilidade de otimização futura. | Derivado da necessidade de consulta rápida a pessoas, moradias, famílias, pets e fotos, especialmente em cenários de uso operacional. | O requisito evoluiu para a separação entre controllers, services e repositories. O acesso ao banco foi isolado em repositories, permitindo otimizar queries SQL sem alterar a lógica dos controllers ou services. | Endpoints de consulta (`GET /api/moradias`, `GET /api/pessoas`) com objetivo de resposta < 1s; 0 dependências diretas entre controller e repository (acoplamento zero via service). | Separação controller → service → repository documentada na seção 3.2.1; queries SQL isoladas em `repositories/` sem lógica de negócio; cobertura de services: 72,26% statements (seção 5.1.4.2). | RF004, RF005, RF006, RF011 | Medir tempo de resposta dos endpoints principais e revisar queries em repositories para identificar pontos de otimização. |
-| RNF004 | **Adequação funcional** | A API deve oferecer endpoints coerentes com os fluxos centrais do sistema, cobrindo cadastro, consulta, atualização e remoção de pessoas, moradias, famílias, pets e fotos. Com todos estes seguindo o protocólo HTTP correto. | Derivado da necessidade de transformar os fluxos definidos no WAD em operações concretas no backend. | O requisito evoluiu para rotas REST organizadas por domínio em `routes/`, com controllers e services específicos para cada módulo funcional da aplicação. | 52 de 64 endpoints planejados implementados (81%); cobertura de branches em `controllers/` de 64,01% (seção 5.1.4.2). | 52 endpoints documentados em `documentos/endpoints.md` e `documentos/webapi-docs.html`; cobertura de controllers: 87,81% statements (seção 5.1.4.2). | Todos os RFs | Conferir a documentação da WebAPI e testar se os endpoints existentes cobrem os fluxos previstos nos requisitos funcionais. |
-| RNF005 | **Interoperabilidade** | A aplicação deve ser acessível por tecnologias web amplamente compatíveis e permitir consumo dos mesmos endpoints por diferentes interfaces. | Derivado da necessidade de uso em diferentes dispositivos e contextos, incluindo telas de cadastro, consulta e uso futuro em mobile/PWA. | O requisito evoluiu para o uso de Express, JSON, EJS e arquivos estáticos, permitindo acesso via navegador e consumo da API HTTP por diferentes interfaces. | API consumível simultaneamente por navegador (EJS) e cliente HTTP (JSON) sem adaptação; endpoints acessíveis em Chrome, Firefox e Edge sem configuração adicional. | Rotas HTML (`/pessoas`, `/pessoas/novo`) e rotas API (`/api/pessoas`) convivem no mesmo servidor Express — seção 3.7; formulário EJS e `curl` consomem os mesmos dados do banco. | RF001, RF002, RF003, RF004 | Testar a aplicação em navegadores e resoluções diferentes, verificando se os endpoints continuam acessíveis e consistentes. |
+| RNF004 | **Adequação funcional** | A API deve oferecer endpoints coerentes com os fluxos centrais do sistema, cobrindo cadastro, consulta, atualização e remoção de pessoas, moradias, famílias, pets e fotos. Com todos estes seguindo o protocólo HTTP correto. | Derivado da necessidade de transformar os fluxos definidos no WAD em operações concretas no backend. | O requisito evoluiu para rotas REST organizadas por domínio em `routes/`, com controllers e services específicos para cada módulo funcional da aplicação. | 56 de 64 endpoints planejados implementados (88%); cobertura de branches em `controllers/` de 64,01% (seção 5.1.4.2). | 56 endpoints documentados em `documentos/endpoints.md` e `documentos/webapi-docs.html`; cobertura de controllers: 87,81% statements (seção 5.1.4.2). | Todos os RFs | Conferir a documentação da WebAPI e testar se os endpoints existentes cobrem os fluxos previstos nos requisitos funcionais. |
+| RNF005 | **Interoperabilidade** | A aplicação deve ser acessível por tecnologias web amplamente compatíveis e permitir consumo dos mesmos endpoints por diferentes interfaces. | Derivado da necessidade de uso em diferentes dispositivos e contextos, incluindo telas de cadastro, consulta e uso futuro em mobile/PWA. | O requisito evoluiu para uma API REST em Express com contratos JSON sob o prefixo `/api`, consumida por um frontend SPA (React/Vite) e por clientes HTTP genéricos (curl/Postman). | Os mesmos endpoints JSON são consumidos pelo frontend SPA e por clientes HTTP genéricos sem adaptação; acessíveis em Chrome, Firefox e Edge sem configuração adicional. | Frontend implantado em `georisco-frontend.vercel.app` consome a API em `georisco.vercel.app/api`; o frontend e o `curl` consomem exatamente os mesmos endpoints (seções 3.2.6 e 3.7). | RF001, RF002, RF003, RF004 | Testar a aplicação em navegadores e resoluções diferentes, verificando se os endpoints continuam acessíveis e consistentes. |
 | RNF006 | **Segurança** | O sistema deve reduzir exposição de dados sensíveis e arquivos, validando entradas, controlando erros e evitando acesso direto a detalhes internos da aplicação. Importante explicitar que deve-se garantir que logs de erros ou informacionais do sistema não exponham dados sensíveis. | Derivado da LGPD e do tratamento de dados sensíveis de cidadãos vulneráveis, além da necessidade de proteger fotos e informações cadastrais. | O requisito evoluiu para validações de payload, uso de `HttpError`, tratamento padronizado com `handleControllerError` e integração com Supabase Storage por URLs assinadas. | 0 stack traces ou dados de infraestrutura expostos em respostas de erro; todas as respostas de erro no formato `{ "error": "..." }` sem campos internos do banco. | `handleControllerError` centraliza tratamento de erros em todos os controllers; CT06, CT34, CT96 — requisições inválidas retornam `400` sem dados internos ou caminhos sensíveis de storage. | RF001, RF002, RF009, RF010 | Enviar requisições inválidas e verificar se as respostas de erro são controladas e não expõem informações internas. |
 | RNF007 | **Compatibilidade** | O sistema deve separar o armazenamento de metadados do armazenamento de arquivos, permitindo integração entre PostgreSQL e serviço externo de storage. | Derivado da necessidade de registrar fotos de moradias e pets sem sobrecarregar o banco relacional com arquivos binários. | O requisito evoluiu para endpoints próprios de fotos e upload mediado por Supabase Storage. O banco mantém vínculos e metadados, enquanto o storage externo armazena os arquivos. | URL assinada gerada com sucesso em 100% dos casos testados (CT42, CT89); banco armazena apenas metadados e URL; arquivo físico isolado no bucket `georisco-fotos`. | CT42 e CT89 validados; `foto-storage.service.ts` com 93,93% cobertura (seção 5.1.4.2); banco mantém URL e metadados; arquivo físico no Supabase Storage. | RF002, RF007 | Testar criação de URL assinada, cadastro de foto e vínculo com moradia ou pet, verificando integração entre API, banco e storage. |
 | RNF008 | **Manutenibilidade** | O projeto deve manter uma estrutura organizada, auditável e segura para evolução, testes e uso de dados fictícios durante o desenvolvimento. | Derivado da necessidade de evolução contínua do projeto em sprints, com separação clara de responsabilidades e redução do risco de uso indevido de dados reais. | O requisito evoluiu para a organização do backend em `controllers`, `services`, `repositories`, `dtos`, `models`, `validations`, `errors`, `db` e `storage`, além do uso de variáveis de ambiente para configurações sensíveis. | 9 módulos separados por responsabilidade; cobertura geral de 72,67% statements (seção 5.1.4.2); 0 dados reais utilizados nos testes. | Estrutura de 9 módulos documentada na seção 3.2.1; variáveis de ambiente em `dotenv` isolam configurações sensíveis; dados fictícios em todos os testes unitários e de integração. | Todos os RFs | Revisar estrutura de pastas, testes e dados utilizados em desenvolvimento, garantindo que a evolução do sistema não dependa de dados reais. |
@@ -687,6 +687,57 @@ A seção de Validations (Validações) e DTOs (Data Transfer Objects) é a barr
 Este recorte exibe o coração da aplicação, onde a lógica e o armazenamento operam em conjunto. A camada de Services é responsável por centralizar as regras de negócio: ela orquestra validações complexas, regras de vinculação (ex: atrelar uma pessoa a uma moradia) e transações. Para buscar ou salvar essas informações, os Services não acessam o banco diretamente; eles delegam essa tarefa para os Repositories. A camada de Repositórios abstrai a comunicação direta com o banco de dados (PostgreSQL/Supabase), contendo as queries e isolando a infraestrutura de dados da lógica central.
 
 Documento disponível do diagrama para navegação e aprofundamento do entendimento: [diagramaArquitetura.md](diagramaArquitetura.md)
+
+> **Versão em Mermaid (fonte da verdade: código).** Os diagramas abaixo são renderizados a partir do texto e servem de base fiel para regerar os PNGs acima. Refletem o backend atual (sem `views`/EJS) extraído de `src/geoRisco/src/`.
+
+**Arquitetura em camadas — fluxo de uma requisição:**
+
+```mermaid
+flowchart TD
+    Client["Frontend Web (SPA React/Vite) / Cliente HTTP"] --> Routes["routes/ (Express Routers, prefixo /api)"]
+    Routes --> Controllers["controllers/ (borda HTTP + request-utils)"]
+    Controllers --> Validations["validations/ + dtos/ (normalização e validação)"]
+    Controllers --> Services["services/ (regras de negócio + transações BEGIN/COMMIT/ROLLBACK)"]
+    Services --> Repositories["repositories/ (SQL)"]
+    Repositories --> DB[("PostgreSQL / Supabase")]
+    Services --> Storage["storage/ (supabase-storage.client)"]
+    Storage --> Bucket[("bucket georisco-fotos")]
+    Errors["errors/ (HttpError + handleControllerError)"] -.-> Controllers
+    subgraph Prioridade["Módulo prioridade (exceção ao padrão)"]
+        PController["prioridade.controller"] --> PRepo["prioridade.repository"]
+    end
+    PController --> Routes
+    PRepo --> DB
+```
+
+**Diagrama de classes (camadas + interfaces):**
+
+```mermaid
+classDiagram
+    class IPessoaService { <<interface>> }
+    class IPessoaRepository { <<interface>> }
+    class PessoaController
+    class PessoaService
+    class PessoaRepository
+    class HttpError
+
+    PessoaController --> IPessoaService : usa
+    PessoaService ..|> IPessoaService : implementa
+    PessoaService --> IPessoaRepository : usa
+    PessoaRepository ..|> IPessoaRepository : implementa
+    PessoaController ..> HttpError : lança
+
+    class PrioridadeController
+    class PrioridadeRepository
+    PrioridadeController --> PrioridadeRepository : acesso direto (sem service/interface)
+
+    class FotoStorageService
+    class SupabaseStorageClient
+    FotoStorageService --> SupabaseStorageClient : adapter
+```
+
+> O mesmo trio **Controller → Service → Repository** (com interfaces `I*Service`/`I*Repository`) repete-se para os módulos `pessoa`, `responsavel`, `familia`, `moradia`, `pet` e `foto`. O módulo `prioridade` é a única exceção: o controller acessa o repository diretamente, sem service nem interface.
+
 ### 3.2.1.1. Mapeamento Endpoint → Componentes
 
 A tabela abaixo mapeia cada grupo de endpoints ao controller, service e repository responsável, evidenciando a separação de responsabilidades da arquitetura em camadas e a relação direta com a API documentada em `documentos/endpoints.md`.
@@ -750,7 +801,7 @@ Os doze fluxos documentados nesta seção cobrem o ciclo principal de uso do sis
 ```mermaid
 sequenceDiagram
     actor Agente as Agente de Campo (A01)
-    participant Frontend as Cliente HTTP
+    participant Frontend as Frontend Web (SPA React/Vite)
     participant Controller as FamiliaController
     participant Service as FamiliaService
     participant Repository as FamiliaRepository/MoradiaRepository/PessoaRepository/PetRepository/FotoRepository
@@ -859,7 +910,7 @@ Este fluxo descreve a jornada de cadastro conduzida pelo **Agente de Campo (A01)
 ```mermaid
 sequenceDiagram
     actor Gestor as Gestor Operacional (A02/A03)
-    participant Frontend as Cliente HTTP (Navegador)
+    participant Frontend as Frontend Web (SPA React/Vite)
     participant Controller as MoradiaController
     participant Service as MoradiaService
     participant Repository as MoradiaRepository/FamiliaRepository/FotoRepository
@@ -900,7 +951,7 @@ Este fluxo descreve a consulta de informações espaciais executada pelo **Gesto
 ```mermaid
 sequenceDiagram
     actor Gestor as Gestor Operacional (A02/A03)
-    participant Frontend as Cliente HTTP (Navegador)
+    participant Frontend as Frontend Web (SPA React/Vite)
     participant Controller as MoradiaController
     participant Service as MoradiaService
     participant Repository as MoradiaRepository/FamiliaRepository/FotoRepository
@@ -945,7 +996,7 @@ Este fluxo detalha a consulta integrada executada pelo **Gestor Operacional (A02
 ```mermaid
 sequenceDiagram
     actor Gestor as Gestor Operacional (A02/A03)
-    participant Frontend as Cliente HTTP (Navegador)
+    participant Frontend as Frontend Web (SPA React/Vite)
     participant Controller as MoradiaController
     participant Service as MoradiaService
     participant Repository as MoradiaRepository
@@ -981,7 +1032,7 @@ Este fluxo representa o uso de filtros avançados pelo **Gestor Operacional (A02
 ```mermaid
 sequenceDiagram
     actor Agente as Agente de Campo (A01)
-    participant Frontend as Cliente HTTP
+    participant Frontend as Frontend Web (SPA React/Vite)
     participant Controller as MoradiaController/PessoaController
     participant Service as MoradiaService/PessoaService
     participant Repository as MoradiaRepository/PessoaRepository/FamiliaRepository
@@ -1065,7 +1116,7 @@ Este fluxo descreve a revisão anual de uma família marcada para recadastro, co
 ```mermaid
 sequenceDiagram
     actor Agente as Agente de Campo (A01)
-    participant Frontend as Cliente HTTP
+    participant Frontend as Frontend Web (SPA React/Vite)
     participant Controller as PetController
     participant Service as PetService
     participant Repository as PetRepository
@@ -1113,7 +1164,7 @@ Este fluxo detalha a manutenção dos animais de estimação informados pelo **A
 ```mermaid
 sequenceDiagram
     actor Gestor as Gestor Operacional (A02/A03)
-    participant Frontend as Cliente HTTP (Navegador)
+    participant Frontend as Frontend Web (SPA React/Vite)
     participant Controller as IndicadorController
     participant Service as IndicadorService
 
@@ -1132,7 +1183,7 @@ Este fluxo descreve a geração do mapa de calor utilizado pelo **Gestor Operaci
 ```mermaid
 sequenceDiagram
     actor Gestor as Gestor Operacional (A03)
-    participant Frontend as Cliente HTTP (Navegador)
+    participant Frontend as Frontend Web (SPA React/Vite)
     participant MoradiaController as MoradiaController
     participant FamiliaController as FamiliaController
     participant Service as MoradiaService/FamiliaService
@@ -1201,7 +1252,7 @@ Este fluxo representa o arquivamento lógico de uma moradia pelo **Gestor Operac
 ```mermaid
 sequenceDiagram
     actor Gestor as Gestor Operacional (A02/A03)
-    participant Frontend as Cliente HTTP (Navegador)
+    participant Frontend as Frontend Web (SPA React/Vite)
     participant PessoaController as PessoaController
     participant Service as PessoaService
     participant Repository as PessoaRepository/FamiliaRepository
@@ -1281,7 +1332,7 @@ Este fluxo descreve o arquivamento lógico de um morador falecido realizado pelo
 ```mermaid
 sequenceDiagram
     actor Gestor as Gestor Operacional (A02/A03)
-    participant Frontend as Cliente HTTP (Navegador)
+    participant Frontend as Frontend Web (SPA React/Vite)
     participant Controller as MoradiaController
     participant Service as MoradiaService
     participant Repository as MoradiaRepository
@@ -1395,7 +1446,40 @@ Este fluxo consolida as validações derivadas das US13 e US14. Ele não represe
 
 *Ao menos um fluxo relevante em UML ou BPMN. Use a notação da ferramenta escolhida de forma consistente (sem misturar convenções).*
 
-### 3.2.6. Diagrama de Implantação (sprints 4 e 5)  O diagrama de implantação descreve como os componentes do GeoRisco são distribuídos nos ambientes de execução reais.  | Nó | Tecnologia | Artefatos hospedados | |---|---|---| | Máquina do desenvolvedor | Node.js 24, npm | `src/geoRisco/` — código-fonte TypeScript; servidor Express local em `http://localhost:3000` | | Supabase (nuvem) — PostgreSQL | PostgreSQL 15 (gerenciado) | Schema definido em `supabase/migrations/`; tabelas `pessoa`, `familia`, `moradia`, `localizacao`, `responsavel`, `pet`, `foto`, `grupo_prioritario` e tabelas associativas | | Supabase (nuvem) — Storage | Supabase Storage | Bucket `georisco-fotos` — arquivos físicos de fotos de moradias e pets; acesso via URL assinada |  **Comunicação entre nós:**  - O servidor Express (Node.js) conecta ao PostgreSQL via `DATABASE_URL`, usando o cliente `pg`. - O servidor Express conecta ao Supabase Storage via `SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY`, usando `@supabase/supabase-js`. - Clientes HTTP (navegador ou ferramentas como curl/Postman) comunicam com o servidor via HTTP/JSON na porta 3000. - Não há frontend próprio implantado — a aplicação é uma API REST pura.
+### 3.2.6. Diagrama de Implantação (sprints 4 e 5)
+
+O diagrama de implantação descreve como os componentes do GeoRisco são distribuídos nos ambientes de execução reais. Em produção, a aplicação é publicada na **Vercel** — frontend e backend em projetos separados — com persistência no **Supabase** (PostgreSQL + Storage). O passo a passo completo e replicável do deploy está documentado em [`documentos/outros/tutorial-deploy.md`](outros/tutorial-deploy.md).
+
+```mermaid
+graph TD
+    User["Navegador do usuário<br/>(Chrome / Firefox / Edge)"]
+    FE["Vercel — projeto georisco-frontend<br/>SPA React/Vite (estática)"]
+    BE["Vercel — projeto georisco<br/>API Express serverless (@vercel/node)"]
+    DB[("Supabase — PostgreSQL<br/>(Transaction Pooler :6543, SSL)")]
+    ST["Supabase — Storage<br/>bucket georisco-fotos"]
+
+    User -->|HTTPS: carrega a SPA| FE
+    User -->|HTTPS /api · JSON| BE
+    FE -. URL embutida no build via VITE_API_BASE_URL .-> BE
+    BE -->|cliente pg · DATABASE_URL| DB
+    BE -->|@supabase/supabase-js · URL assinada| ST
+```
+
+| Nó | Tecnologia | Artefatos hospedados |
+|---|---|---|
+| **Navegador do usuário** | Chrome / Firefox / Edge | SPA React/Vite carregada de `georisco-frontend.vercel.app` |
+| **Vercel — Frontend** (`georisco-frontend`) | Hospedagem estática + fallback de SPA | Build estático de `src/frontend` (HTML/CSS/JS); `vercel.json` com rewrite de todas as rotas para `index.html` |
+| **Vercel — Backend** (`georisco`) | Função serverless `@vercel/node` | App Express exportado em `src/geoRisco/api/index.ts` (sem `app.listen`); rotas sob o prefixo `/api` |
+| **Supabase — PostgreSQL** | PostgreSQL gerenciado (Transaction Pooler, porta 6543) | Schema das migrations em `src/geoRisco/src/db/migrations/`; tabelas `pessoa`, `familia`, `moradia`, `localizacao`, `responsavel`, `pet`, `foto`, `grupo_prioritario` e tabelas associativas |
+| **Supabase — Storage** | Supabase Storage | Bucket `georisco-fotos` — arquivos físicos de fotos de moradias e pets; acesso via URL assinada |
+
+**Comunicação entre nós:**
+
+- O navegador baixa a SPA do projeto frontend na Vercel e faz chamadas HTTP/JSON para `https://georisco.vercel.app/api/...`; a URL do backend é embutida no build do frontend pela variável `VITE_API_BASE_URL`, e o CORS é liberado pelo backend (`cors` no `app.ts`).
+- A função serverless do backend conecta ao PostgreSQL via `DATABASE_URL` (pooler do Supabase, com SSL em produção) usando o cliente `pg`, e ao Supabase Storage via `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` usando `@supabase/supabase-js`.
+- Em **desenvolvimento local**, o backend roda como processo tradicional (`src/server.ts` com `app.listen` na porta 3000) e o frontend usa o proxy do Vite (`/api` → `http://localhost:3000`).
+
+> **Observação (serverless ≠ servidor tradicional):** na Vercel não há processo permanente — cada requisição aciona uma função efêmera. Por isso o backend exporta o app Express em `api/index.ts` em vez de chamar `app.listen`, e usa o Transaction Pooler do Supabase para não esgotar conexões.
 
 ### 3.2.7. Padrões de Projeto Aplicados (sprints 3 a 5)
 
@@ -1403,16 +1487,16 @@ Durante o desenvolvimento do backend do GeoRisco, foram aplicados padrões arqui
 
 | Padrão / Conceito Arquitetural | Aplicação no GeoRisco | Justificativa |
 | :--- | :--- | :--- |
-| **Arquitetura em Camadas** | O backend está organizado em `routes`, `controllers`, `services`, `repositories`, `dtos`, `models`, `validations`, `errors`, `db`, `storage`, `views` e `public`. | Essa divisão separa entrada HTTP, interface EJS, regras de negócio, persistência e infraestrutura, facilitando evolução dos módulos de pessoas, moradias, famílias, pets, fotos e vínculos históricos. |
-| **Controller** | Os controllers recebem requisições, extraem parâmetros, normalizam payloads, chamam services e retornam JSON ou views EJS. | Evita que regras de negócio e SQL fiquem misturados com detalhes de rota, status code, renderização e contratos HTTP. |
-| **Service Layer** | Os services concentram validações de negócio, orquestração entre repositories, transações e composição de respostas agregadas, como núcleo familiar e detalhes da moradia. | Necessário para fluxos compostos, como cadastro de responsável, criação de moradia com localização, vínculo família-moradia, pets, fotos e consulta detalhada. |
-| **Repository Pattern** | Os repositories encapsulam SQL, acesso ao PostgreSQL/Supabase e mapeamento entre colunas do banco e objetos TypeScript. | Isola a persistência da lógica de negócio, permitindo alterar queries, views ou estratégia de banco sem impactar diretamente controllers e services. |
+| **Arquitetura em Camadas** | O backend está organizado em `routes`, `controllers`, `services`, `repositories`, `dtos`, `models`, `validations`, `errors`, `db` e `storage`. | Essa divisão separa entrada HTTP, regras de negócio, persistência e infraestrutura, facilitando evolução dos módulos de pessoas, moradias, famílias, pets, fotos e vínculos históricos. |
+| **Controller** | Os controllers recebem requisições, extraem parâmetros, normalizam payloads, chamam services e retornam respostas JSON. | Evita que regras de negócio e SQL fiquem misturados com detalhes de rota, status code e contratos HTTP. |
+| **Service Layer** | Os services (`familia.service.ts`, `moradia.service.ts`, `pessoa.service.ts`, `pet.service.ts`, `foto.service.ts`) concentram validações de negócio, orquestração entre repositories, transações e composição de respostas agregadas, como núcleo familiar e detalhes da moradia. | Necessário para fluxos compostos, como cadastro de responsável, criação de moradia com localização, vínculo família-moradia, pets, fotos e consulta detalhada. |
+| **Repository Pattern** | Os repositories (pasta `repositories/`) encapsulam SQL, acesso ao PostgreSQL/Supabase e mapeamento entre colunas do banco e objetos TypeScript. | Isola a persistência da lógica de negócio, permitindo alterar queries, views ou estratégia de banco sem impactar diretamente controllers e services. |
 | **DTO (Data Transfer Object)** | Os DTOs definem formatos de entrada e saída para pessoas, responsáveis, moradias, localização, famílias, pets, fotos e URLs assinadas. | Padroniza os dados trafegados entre frontend e backend, reduz exposição de campos sensíveis e torna os contratos da API mais claros. |
 | **Dependency Injection por Construtor** | Controllers recebem services, services recebem repositories e alguns repositories aceitam um `Queryable` para uso com `pool` ou cliente transacional. | Reduz acoplamento entre classes, facilita testes com mocks e permite reutilizar a mesma operação dentro ou fora de transações. |
 | **Interface Segregation / Contratos** | Existem interfaces específicas para services e repositories, como `IPessoaService`, `IFamiliaRepository`, `IMoradiaService`, `IPetRepository` e equivalentes. | Os contratos deixam claro o que cada camada pode consumir, evitando dependência direta de implementações concretas. |
 | **Validação e Normalização Centralizadas** | Arquivos em `validations/` e funções em `request-utils.ts` validam payloads, IDs, datas, números, booleanos, campos obrigatórios e aliases de campos. | Garante consistência antes da persistência, reduz duplicação nos controllers e melhora a qualidade dos dados coletados em campo. |
 | **Custom Exception e Erro Padronizado** | A classe `HttpError` representa erros de negócio com status HTTP, e `handleControllerError` padroniza as respostas de erro. | Diferencia erros esperados, como ID inválido, registro inexistente ou conflito de responsável, de falhas internas, sem expor detalhes técnicos. |
-| **Transação / Unit of Work** | Operações que afetam múltiplas tabelas usam `BEGIN`, `COMMIT` e `ROLLBACK` nos services com o mesmo cliente de banco. | Mantém integridade em fluxos críticos, como criação de responsável, moradia com localização, atualização conjunta e cadastro completo de núcleo familiar. |
+| **Transação / Unit of Work** | Operações que afetam múltiplas tabelas usam `BEGIN`, `COMMIT` e `ROLLBACK` nos services com o mesmo cliente de banco (ex.: `familia.service.ts` no cadastro de núcleo via `POST /api/familias/nucleo`). | Mantém integridade em fluxos críticos, como criação de responsável, moradia com localização, atualização conjunta e cadastro completo de núcleo familiar. |
 | **Soft Delete e Views Ativas** | O banco usa `deleted_at`, status e views como `vw_pessoa_ativa`, `vw_moradia_ativa` e `vw_familia_ativa` para consultas operacionais. | Preserva histórico e conformidade com LGPD, enquanto evita que registros arquivados apareçam nas listagens e vínculos ativos. |
 | **Regras de Integridade no Banco** | Migrações adicionam restrições como foto com exatamente um dono (`moradia` ou `pet`) e trigger de responsável único por família ativa. | Reforça regras críticas mesmo se uma chamada futura contornar a camada de serviço, protegendo consistência entre família, moradia, pessoa, pet e foto. |
 | **Adapter / Facade para Serviço Externo** | O acesso ao Supabase Storage fica isolado em `storage/supabase-storage.client.ts` e no `FotoStorageService`, com URLs assinadas para upload e leitura. | Centraliza a integração externa de fotos, separa metadados relacionais dos arquivos e evita que controllers e repositories dependam diretamente da API do Supabase. |
@@ -1780,6 +1864,25 @@ O **Modelo Entidade-Relacionamento (MER)** é uma abordagem conceitual que repre
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
+> **Versão em Mermaid (fonte da verdade: schema real em `src/geoRisco/src/`).** Base fiel para regerar o PNG. Cardinalidades conferidas contra os repositories e migrations.
+
+```mermaid
+erDiagram
+    familia ||--o{ pessoa_familia : "tem (N:N temporal)"
+    pessoa  ||--o{ pessoa_familia : "participa"
+    familia ||--o{ familia_moradia : "ocupa (N:N temporal)"
+    moradia ||--o{ familia_moradia : "ocupada por"
+    localizacao ||--|| moradia : "localiza (1:1)"
+    pessoa  ||--o| responsavel : "especializa (1:0..1, mesma PK)"
+    familia ||--o{ pet : "possui"
+    moradia ||--o{ foto : "tem"
+    pet     ||--o{ foto : "tem"
+    pessoa  ||--o{ pessoa_grupo_prioritario : "classificada em"
+    grupo_prioritario ||--o{ pessoa_grupo_prioritario : "agrupa"
+```
+
+> **Restrição não expressável em cardinalidade:** cada `foto` pertence a **exatamente um** dono — `id_moradia` XOR `id_pet` (`CHECK foto_um_dono_chk`). Especialização `pessoa → responsavel` por *class-table inheritance* (a PK de `responsavel` é a FK `id_pessoa`).
+
 O modelo de dados foi estruturado seguindo as melhores práticas de normalização, rastreabilidade e integridade referencial, com foco em sistemas governamentais. As principais decisões arquiteturais refletidas no diagrama são:
 
 #### 1. Herança e Especialização (Pessoa e Responsável)
@@ -1826,6 +1929,125 @@ Abaixo é apresentado o esquema visual do banco de dados, ilustrando as tabelas 
     <img src="outros/DER.png">
     <p>Feito pela própria equipe (2026)</p>
 </div>
+
+> **Versão em Mermaid (modelo físico — colunas e tipos extraídos dos models e das queries dos repositories).** Base fiel para regerar o PNG.
+
+```mermaid
+erDiagram
+    familia {
+        bigserial id PK
+        timestamptz deleted_at "soft delete (RULE soft_delete_familia)"
+    }
+    pessoa {
+        bigserial id PK
+        varchar nome
+        varchar nome_social
+        varchar cpf UK
+        date data_de_nascimento
+        parentesco_enum parentesco
+        situacao_ocupacional_enum situacao_ocupacional
+        escolaridade_enum escolaridade
+        boolean cronico
+        boolean medicacao
+        status_pessoa_enum status "Ativo|Obito|Inativo"
+        timestamptz deleted_at "RULE soft_delete_pessoa"
+    }
+    responsavel {
+        bigint id_pessoa PK "FK 1:1 -> pessoa.id"
+        varchar nis
+        numeric renda
+        sexo_enum sexo
+        raca_enum raca
+        estado_civil_enum estado_civil
+        boolean veiculo
+        boolean programa_social
+        varchar email UK
+        varchar telefone UK
+        varchar nome_do_pai
+        varchar nome_da_mae
+        varchar local_de_nascimento
+        date data_residencia_estado
+        date data_residencia_moradia
+    }
+    localizacao {
+        bigserial id PK
+        varchar logradouro
+        varchar numero
+        varchar bairro
+        varchar cidade
+        varchar estado
+        varchar cep
+        double latitude
+        double longitude
+        varchar referencia
+        varchar complemento
+    }
+    moradia {
+        bigserial id PK
+        bigint id_localizacao FK "UK (1:1)"
+        tipo_construcao_enum tipo_construcao
+        date data_registro
+        status_moradia_enum status "Ativa|Interditada|Demolida|Em Risco|Excluída"
+        uso_imovel_enum uso_imovel
+        int pavimentos
+        situacao_ocupacao_moradia_enum situacao_de_ocupacao
+        varchar descricao
+        timestamptz deleted_at "RULE soft_delete_moradia"
+    }
+    pet {
+        bigserial id PK
+        bigint id_familia FK
+        tipo_pet_enum tipo
+        varchar nome
+        varchar porte
+        varchar raca
+        varchar cor
+        varchar status "default Ativo"
+        varchar observacao
+    }
+    foto {
+        bigserial id PK
+        bigint id_moradia FK "nullable"
+        bigint id_pet FK "nullable, ON DELETE CASCADE"
+        varchar url
+    }
+    grupo_prioritario {
+        bigserial id PK
+        varchar condicao
+        tipo_prioridade_enum tipo "Mental|Físico"
+    }
+    pessoa_familia {
+        bigint id_pessoa PK_FK
+        bigint id_familia PK_FK
+        date data_entrada PK
+        date data_saida "null = vínculo ativo"
+    }
+    familia_moradia {
+        bigint id_familia PK_FK
+        bigint id_moradia PK_FK
+        date data_entrada PK
+        date data_saida "null = ocupação ativa"
+        varchar status
+    }
+    pessoa_grupo_prioritario {
+        bigint id_pessoa PK_FK
+        bigint id_grupo_prioritario PK_FK
+    }
+
+    familia ||--o{ pessoa_familia : ""
+    pessoa  ||--o{ pessoa_familia : ""
+    familia ||--o{ familia_moradia : ""
+    moradia ||--o{ familia_moradia : ""
+    localizacao ||--|| moradia : ""
+    pessoa  ||--o| responsavel : ""
+    familia ||--o{ pet : ""
+    moradia ||--o{ foto : ""
+    pet     ||--o{ foto : ""
+    pessoa  ||--o{ pessoa_grupo_prioritario : ""
+    grupo_prioritario ||--o{ pessoa_grupo_prioritario : ""
+```
+
+> **Notas de fidelidade:** índice único parcial `familia_moradia (id_moradia) WHERE data_saida IS NULL` garante uma única ocupação ativa por moradia (migration `08`). O soft delete de `pessoa`, `familia` e `moradia` é feito por `RULES` do PostgreSQL que interceptam `DELETE` e gravam `deleted_at`; as views `vw_pessoa_ativa`, `vw_moradia_ativa` e `vw_familia_ativa` filtram `deleted_at IS NULL`. `pet` e `foto` usam exclusão física.
 ---
 
 #### 1. Entidades Principais e Especializações
@@ -2073,7 +2295,7 @@ Essa abordagem evidencia a relação entre lógica matemática e bancos de dados
 
 A WebAPI do GeoRisco foi implementada em Express e expõe endpoints HTTP sob o prefixo `/api`, com contratos JSON para cadastro, consulta, atualização, remoção lógica, vínculos familiares, registro de pets e gerenciamento de metadados de fotos. A documentação de referência dos contratos está consolidada em [`documentos/endpoints.md`](endpoints.md), enquanto a versão navegável da documentação está em [`documentos/webapi-docs.html`](webapi-docs.html).
 
-O levantamento atual foi conferido contra os arquivos de rotas e controllers do backend (`pessoa.routes.ts`, `moradia.routes.ts`, `familia.routes.ts`, `pet.routes.ts` e `foto.routes.ts`). No estado atual do projeto, existem **55 endpoints implementados no prefixo `/api`**, distribuídos entre Pessoas, Responsáveis, Moradias, Famílias, Pets, Fotos e Prioridades. A contagem inclui os 3 endpoints do módulo `prioridade` (`GET /api/prioridades`, `GET /api/pessoas/:id/prioridades`, `PUT /api/pessoas/:id/prioridades`), documentados ao final desta seção.
+O levantamento atual foi conferido contra os arquivos de rotas e controllers do backend (`pessoa.routes.ts`, `moradia.routes.ts`, `familia.routes.ts`, `pet.routes.ts`, `foto.routes.ts` e `prioridade.routes.ts`). No estado atual do projeto, existem **56 endpoints implementados no prefixo `/api`**, distribuídos entre Pessoas, Responsáveis, Moradias, Famílias, Pets, Fotos e Prioridades. A contagem inclui os 3 endpoints do módulo `prioridade` (`GET /api/prioridades`, `GET /api/pessoas/:id/prioridades`, `PUT /api/pessoas/:id/prioridades`), documentados ao final desta seção.
 
 ### Padrões gerais da WebAPI
 
@@ -2456,7 +2678,7 @@ Dentre as dificuldades, encontramos problemas diversos considerando o prazo de e
 
 ### 4.2.1 O que foi implementado
 
-Esta sprint foi dedicada à consolidação e refatoração da API, corrigindo inconsistências de contrato, alinhando nomes de campos ao padrão camelCase e entregando funcionalidades que estavam planejadas mas incompletas na sprint anterior.
+Esta sprint foi dedicada à consolidação e refatoração da API, corrigindo inconsistências de contrato, alinhando nomes de campos ao padrão camelCase e entregando funcionalidades que estavam planejadas mas incompletas na sprint anterior. Nesta refatoração, as views EJS e as rotas HTML da primeira versão (seção 4.1) foram **removidas**: o backend passou a ser uma API REST pura sob o prefixo `/api`, e a interface migrou para um frontend SPA independente em React/Vite (`src/frontend`), implantado separadamente na Vercel (seção 3.2.6).
 #### Status das Funcionalidades — Sprint 4
 
 | Funcionalidade | Status | Observação |
