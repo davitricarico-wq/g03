@@ -4,7 +4,7 @@ import type { StatusPet, TipoPet } from '../models/pet.model';
 export interface CreatePetDto {
     idFamilia: number;
     tipo: TipoPet;
-    nome: string;
+    nome?: string | null;
     porte: string;
     raca: string;
     cor: string;

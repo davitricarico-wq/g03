@@ -11,6 +11,9 @@ import type { Pessoa, Responsavel } from '../../models/pessoa.model';
 
 export type CreateResponsavelRepositoryRequest = CreateResponsavelDto & {
     idPessoa: number;
+    programaSocial?: boolean;
+    nomeDoPai?: string | null;
+    localDeNascimento?: string | null;
 };
 
 export interface IPessoaRepository {

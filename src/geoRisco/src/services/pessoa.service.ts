@@ -109,7 +109,7 @@ export class PessoaService implements IPessoaService {
             ...data,
             idPessoa: pessoa.id,
             veiculo: data.veiculo ?? false,
-            programaSocial: data.programaSocial ?? false
+            programasSociais: data.programasSociais ?? 0
         });
     }
 

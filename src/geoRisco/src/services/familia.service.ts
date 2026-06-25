@@ -96,11 +96,6 @@ export class FamiliaService implements IFamiliaService {
             throw new HttpError(404, 'Pessoa não encontrada');
         }
         if (isParentescoResponsavel(pessoa.parentesco)) {
-            const responsavel = await this.pessoaRepo.getResponsavelByPessoaId(data.idPessoa);
-            if (!responsavel) {
-                throw new HttpError(400, 'Pessoa com parentesco Responsavel deve existir na tabela responsavel');
-            }
-
             const responsavelAtivo = await this.familiaRepo.getResponsavelAtivo(idFamilia);
             if (responsavelAtivo && responsavelAtivo.id !== data.idPessoa) {
                 throw new HttpError(409, 'Familia ja possui responsavel ativo');
@@ -204,7 +199,7 @@ export class FamiliaService implements IFamiliaService {
                     ...data.responsavel,
                     idPessoa: responsavelPessoa.id,
                     veiculo: data.responsavel.veiculo ?? false,
-                    programaSocial: data.responsavel.programaSocial ?? false
+                    programasSociais: data.responsavel.programasSociais ?? 0
                 },
                 client
             );
@@ -232,7 +227,7 @@ export class FamiliaService implements IFamiliaService {
                     familia.id,
                     {
                         tipo: pet.tipo,
-                        nome: pet.nome.trim(),
+                        nome: pet.nome?.trim() || null,
                         porte: pet.porte.trim(),
                         raca: pet.raca.trim(),
                         cor: pet.cor.trim(),

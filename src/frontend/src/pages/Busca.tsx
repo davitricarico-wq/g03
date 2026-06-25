@@ -6,6 +6,8 @@ import {
     buscarFamilias,
     detalharFamilia,
     detalharMoradia,
+    historicoFamiliasMoradia,
+    historicoMoradiasFamilia,
     listarMoradias,
     listarPrioridades,
     removerFamilia
@@ -15,6 +17,7 @@ import PhotoGallery from '../components/PhotoGallery.tsx';
 import { exportarCSV, exportarPDF } from '../utils/export.ts';
 import {
     ESCOLARIDADES,
+    ESTADOS_BRASIL,
     PARENTESCOS,
     SITUACOES_OCUPACAO_MORADIA,
     SITUACOES_OCUPACIONAIS,
@@ -23,7 +26,16 @@ import {
     USOS_IMOVEL
 } from '../types.ts';
 import Icon from '../components/Icon.tsx';
-import type { FamiliaBuscaResultado, FamiliaDetalhe, MoradiaComLocalizacao, MoradiaDetalhe, Pessoa, Prioridade } from '../types.ts';
+import type {
+    FamiliaBuscaResultado,
+    FamiliaDetalhe,
+    FamiliaMoradiaHistorico,
+    MoradiaComLocalizacao,
+    MoradiaDetalhe,
+    MoradiaFamiliaHistorico,
+    Pessoa,
+    Prioridade
+} from '../types.ts';
 
 interface MoradiaDraft {
     logradouro: string;
@@ -118,12 +130,79 @@ function dataInput(value: string | null | undefined): string {
     return value ? String(value).slice(0, 10) : '';
 }
 
+function dataCurta(value: string | null): string {
+    if (!value) return 'Atual';
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return String(value).slice(0, 10);
+    return date.toLocaleDateString('pt-BR');
+}
+
+function periodoHistorico(entrada: string, saida: string | null): string {
+    return `${dataCurta(entrada)} até ${dataCurta(saida)}`;
+}
+
 function selecionar<T extends readonly string[]>({ value, onChange, options }: { value: string; onChange: (v: string) => void; options: T }) {
     return (
         <select value={value} onChange={(event) => onChange(event.target.value)}>
             <option value="">Selecione</option>
             {options.map((option) => <option key={option} value={option}>{option}</option>)}
         </select>
+    );
+}
+
+function HistoricoMoradiasFamilia({ historico, carregando }: { historico: FamiliaMoradiaHistorico[] | undefined; carregando: boolean }) {
+    return (
+        <section className="detail-section">
+            <h3>Histórico de moradias</h3>
+            {carregando && !historico && <p className="state-msg">Carregando histórico...</p>}
+            {!carregando && historico?.length === 0 && <p className="state-msg">Nenhum vínculo de moradia encontrado.</p>}
+            {historico && historico.length > 0 && (
+                <div className="history-list history-list-inline">
+                    {historico.map((item) => (
+                        <article key={`${item.vinculo.idMoradia}-${item.vinculo.dataEntrada}`} className={`history-card${item.ativo ? ' active' : ''}`}>
+                            <div className="history-line-icon"><Icon name="home" size={18} /></div>
+                            <div>
+                                <div className="history-card-head">
+                                    <strong>Moradia #{item.vinculo.idMoradia}</strong>
+                                    <span>{item.ativo ? 'Ativo' : 'Encerrado'}</span>
+                                </div>
+                                <p>{periodoHistorico(item.vinculo.dataEntrada, item.vinculo.dataSaida)}</p>
+                                <p>{item.moradia.tipoConstrucao} · {item.moradia.usoImovel} · {item.moradia.status}</p>
+                                {item.vinculo.status && <p>Status do vínculo: {item.vinculo.status}</p>}
+                            </div>
+                        </article>
+                    ))}
+                </div>
+            )}
+        </section>
+    );
+}
+
+function HistoricoFamiliasMoradia({ historico, carregando }: { historico: MoradiaFamiliaHistorico[] | undefined; carregando: boolean }) {
+    return (
+        <section className="detail-section">
+            <h3>Histórico de famílias</h3>
+            {carregando && !historico && <p className="state-msg">Carregando histórico...</p>}
+            {!carregando && historico?.length === 0 && <p className="state-msg">Nenhuma família encontrada para esta moradia.</p>}
+            {historico && historico.length > 0 && (
+                <div className="history-list history-list-inline">
+                    {historico.map((item) => (
+                        <article key={`${item.vinculo.idFamilia}-${item.vinculo.dataEntrada}`} className={`history-card${item.ativo ? ' active' : ''}`}>
+                            <div className="history-line-icon"><Icon name="people" size={18} /></div>
+                            <div>
+                                <div className="history-card-head">
+                                    <strong>Família #{item.vinculo.idFamilia}</strong>
+                                    <span>{item.ativo ? 'Ativo' : 'Encerrado'}</span>
+                                </div>
+                                <p>{periodoHistorico(item.vinculo.dataEntrada, item.vinculo.dataSaida)}</p>
+                                {item.vinculo.status && <p>Status do vínculo: {item.vinculo.status}</p>}
+                                {item.familia.deletedAt && <p>Família removida em {dataCurta(item.familia.deletedAt)}</p>}
+                            </div>
+                        </article>
+                    ))}
+                </div>
+            )}
+        </section>
     );
 }
 
@@ -144,6 +223,9 @@ export default function Busca() {
     const [moradias, setMoradias] = useState<MoradiaComLocalizacao[]>([]);
     const [detalhes, setDetalhes] = useState<Record<number, FamiliaDetalhe>>({});
     const [detalhesMoradia, setDetalhesMoradia] = useState<Record<number, MoradiaDetalhe>>({});
+    const [historicoFamilias, setHistoricoFamilias] = useState<Record<number, FamiliaMoradiaHistorico[]>>({});
+    const [historicoMoradias, setHistoricoMoradias] = useState<Record<number, MoradiaFamiliaHistorico[]>>({});
+    const [historicoCarregando, setHistoricoCarregando] = useState<Record<string, boolean>>({});
     const [aberto, setAberto] = useState<number | null>(null);
     const [moradiaAberta, setMoradiaAberta] = useState<number | null>(null);
     const [editando, setEditando] = useState<number | null>(null);
@@ -241,13 +323,20 @@ export default function Busca() {
             return;
         }
         setMoradiaAberta(moradia.id);
-        if (detalhesMoradia[moradia.id]) return;
+        if (detalhesMoradia[moradia.id] && historicoMoradias[moradia.id]) return;
+        setHistoricoCarregando((prev) => ({ ...prev, [`moradia-${moradia.id}`]: true }));
         try {
-            const detalhe = await detalharMoradia(moradia.id);
+            const [detalhe, historico] = await Promise.all([
+                detalhesMoradia[moradia.id] ? Promise.resolve(detalhesMoradia[moradia.id]) : detalharMoradia(moradia.id),
+                historicoMoradias[moradia.id] ? Promise.resolve(historicoMoradias[moradia.id]) : historicoFamiliasMoradia(moradia.id)
+            ]);
             setDetalhesMoradia((prev) => ({ ...prev, [moradia.id]: detalhe }));
+            setHistoricoMoradias((prev) => ({ ...prev, [moradia.id]: historico }));
         } catch (e) {
             toast.error(e instanceof Error ? e.message : 'Erro ao carregar detalhes da moradia.');
             setMoradiaAberta(null);
+        } finally {
+            setHistoricoCarregando((prev) => ({ ...prev, [`moradia-${moradia.id}`]: false }));
         }
     }
 
@@ -259,14 +348,23 @@ export default function Busca() {
         }
         setAberto(familia.id);
         setEditando(null);
-        if (detalhes[familia.id]) return;
+        if (detalhes[familia.id] && historicoFamilias[familia.id]) return;
+        setHistoricoCarregando((prev) => ({ ...prev, [`familia-${familia.id}`]: true }));
         try {
-            setDetalhes((prev) => ({ ...prev, [familia.id]: { id: familia.id, pessoas: [], moradias: [], pets: [] } }));
-            const detalhe = await detalharFamilia(familia.id);
+            if (!detalhes[familia.id]) {
+                setDetalhes((prev) => ({ ...prev, [familia.id]: { id: familia.id, pessoas: [], moradias: [], pets: [] } }));
+            }
+            const [detalhe, historico] = await Promise.all([
+                detalhes[familia.id] ? Promise.resolve(detalhes[familia.id]) : detalharFamilia(familia.id),
+                historicoFamilias[familia.id] ? Promise.resolve(historicoFamilias[familia.id]) : historicoMoradiasFamilia(familia.id)
+            ]);
             setDetalhes((prev) => ({ ...prev, [familia.id]: detalhe }));
+            setHistoricoFamilias((prev) => ({ ...prev, [familia.id]: historico }));
         } catch (e) {
             toast.error(e instanceof Error ? e.message : 'Erro ao carregar detalhes.');
             setAberto(null);
+        } finally {
+            setHistoricoCarregando((prev) => ({ ...prev, [`familia-${familia.id}`]: false }));
         }
     }
 
@@ -532,7 +630,7 @@ export default function Busca() {
                                                     <label>Número<input value={draft.moradia.numero} onChange={(e) => setMoradiaDraft('numero', e.target.value)} /></label>
                                                     <label>Bairro<input value={draft.moradia.bairro} onChange={(e) => setMoradiaDraft('bairro', e.target.value)} /></label>
                                                     <label>Cidade<input value={draft.moradia.cidade} onChange={(e) => setMoradiaDraft('cidade', e.target.value)} /></label>
-                                                    <label>Estado<input value={draft.moradia.estado} onChange={(e) => setMoradiaDraft('estado', e.target.value.toUpperCase())} /></label>
+                                                    <label>Estado{selecionar({ value: draft.moradia.estado, onChange: (v) => setMoradiaDraft('estado', v), options: ESTADOS_BRASIL })}</label>
                                                     <label>CEP<input value={draft.moradia.cep} onChange={(e) => setMoradiaDraft('cep', e.target.value)} /></label>
                                                     <label>Latitude<input value={draft.moradia.latitude} onChange={(e) => setMoradiaDraft('latitude', e.target.value)} /></label>
                                                     <label>Longitude<input value={draft.moradia.longitude} onChange={(e) => setMoradiaDraft('longitude', e.target.value)} /></label>
@@ -556,6 +654,13 @@ export default function Busca() {
                                                 ))
                                             )}
                                         </section>
+
+                                        {!modoEdicao && (
+                                            <HistoricoMoradiasFamilia
+                                                historico={historicoFamilias[f.id]}
+                                                carregando={Boolean(historicoCarregando[`familia-${f.id}`])}
+                                            />
+                                        )}
 
                                         <section className="detail-section">
                                             <h3>Moradores</h3>
@@ -719,6 +824,11 @@ export default function Busca() {
                                                         </div>
                                                     )}
                                                 </section>
+
+                                                <HistoricoFamiliasMoradia
+                                                    historico={historicoMoradias[moradia.id]}
+                                                    carregando={Boolean(historicoCarregando[`moradia-${moradia.id}`])}
+                                                />
                                             </>
                                         )}
                                     </div>

@@ -45,7 +45,7 @@ function optionalFotos(value: unknown) {
 export function validateCreatePet(data: CreatePetDto | CreatePetSemFamiliaDto): CreatePetSemFamiliaDto {
     return {
         tipo: ensureValidTipo(data.tipo),
-        nome: requiredString(data.nome, 'Nome'),
+        nome: optionalString(data.nome),
         porte: requiredString(data.porte, 'Porte'),
         raca: requiredString(data.raca, 'Raca'),
         cor: requiredString(data.cor, 'Cor'),
@@ -58,7 +58,7 @@ export function validateCreatePet(data: CreatePetDto | CreatePetSemFamiliaDto): 
 export function validateUpdatePet(data: UpdatePetDto): UpdatePetDto {
     return {
         tipo: data.tipo === undefined ? undefined : ensureValidTipo(data.tipo),
-        nome: data.nome === undefined ? undefined : requiredString(data.nome, 'Nome'),
+        nome: data.nome === undefined ? undefined : optionalString(data.nome),
         porte: data.porte === undefined ? undefined : requiredString(data.porte, 'Porte'),
         raca: data.raca === undefined ? undefined : requiredString(data.raca, 'Raca'),
         cor: data.cor === undefined ? undefined : requiredString(data.cor, 'Cor'),

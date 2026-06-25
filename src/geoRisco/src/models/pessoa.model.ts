@@ -20,7 +20,7 @@ export const SITUACOES_OCUPACIONAIS = [
     'Do Lar',
     'Outro'
 ] as const;
-export const SEXOS = ['Masculino', 'Feminino', 'Outro', 'Não Declarado'] as const;
+export const SEXOS = ['Masculino', 'Feminino'] as const;
 export const RACAS = ['Branca', 'Preta', 'Parda', 'Amarela', 'Indígena', 'Não Declarado'] as const;
 export const ESTADOS_CIVIS = ['Solteiro', 'Casado', 'Divorciado', 'Viúvo', 'União Estável'] as const;
 
@@ -45,21 +45,30 @@ export interface Pessoa {
     medicacao: boolean;
     status: StatusPessoa;
     deletedAt: Date | null;
+    nis?: string | null;
+    renda?: number | null;
+    sexo?: Sexo | null;
+    raca?: Raca | null;
+    estadoCivil?: EstadoCivil | null;
+    veiculo?: boolean;
+    programasSociais?: number;
+    email?: string | null;
+    telefone?: string | null;
+    nomeDaMae?: string | null;
+    dataResidenciaMoradia?: Date | null;
 }
 
 export interface Responsavel extends Pessoa {
+    idPessoa?: number;
     nis: string | null;
     renda: number | null;
     sexo: Sexo;
     raca: Raca;
     estadoCivil: EstadoCivil;
     veiculo: boolean;
-    programaSocial: boolean;
+    programasSociais: number;
     email: string | null;
     telefone: string | null;
-    nomeDoPai: string | null;
     nomeDaMae: string | null;
-    localDeNascimento: string | null;
-    dataResidenciaEstado: Date | null;
     dataResidenciaMoradia: Date | null;
 }
