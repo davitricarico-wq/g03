@@ -180,9 +180,12 @@ function requiredNumber(value: unknown, field: string): number {
 
 export function normalizeCreatePessoaDto(bodyValue: unknown, defaultParentesco?: Parentesco): CreatePessoaDto {
     const body = asBody(bodyValue);
+    const renda = get(body, 'renda');
+    const programasSociais = get(body, 'programasSociais', 'programas_sociais', 'programaSocial', 'programa_social');
+    const dataResidenciaMoradia = get(body, 'dataResidenciaMoradia', 'data_residencia_moradia');
     return {
         nome: requiredString(get(body, 'nome'), 'Nome'),
-        nomeSocial: optionalString(get(body, 'nomeSocial', 'nome_social')),
+        nomeSocial: optionalString(get(body, 'apelido', 'nomeSocial', 'nome_social')),
         cpf: optionalCpf(get(body, 'cpf')),
         dataDeNascimento: requiredDate(get(body, 'dataDeNascimento', 'data_de_nascimento')),
         parentesco: (optionalString(get(body, 'parentesco')) ?? defaultParentesco) as Parentesco,
@@ -190,15 +193,27 @@ export function normalizeCreatePessoaDto(bodyValue: unknown, defaultParentesco?:
         escolaridade: requiredString(get(body, 'escolaridade'), 'Escolaridade') as Escolaridade,
         cronico: requiredBoolean(get(body, 'cronico'), 'Cronico'),
         medicacao: requiredBoolean(get(body, 'medicacao'), 'Medicacao'),
+        ...(get(body, 'nis') === undefined ? {} : { nis: optionalString(get(body, 'nis')) }),
+        ...(renda === undefined ? {} : { renda: optionalNumber(renda) ?? null }),
+        ...(get(body, 'sexo') === undefined ? {} : { sexo: optionalString(get(body, 'sexo')) as Sexo | null }),
+        ...(get(body, 'raca') === undefined ? {} : { raca: optionalString(get(body, 'raca')) as Raca | null }),
+        ...(get(body, 'estadoCivil', 'estado_civil') === undefined ? {} : { estadoCivil: optionalString(get(body, 'estadoCivil', 'estado_civil')) as EstadoCivil | null }),
+        ...(get(body, 'veiculo') === undefined ? {} : { veiculo: optionalBoolean(get(body, 'veiculo')) ?? false }),
+        ...(programasSociais === undefined ? {} : { programasSociais: optionalNumber(programasSociais) ?? 0 }),
+        ...(get(body, 'email') === undefined ? {} : { email: optionalString(get(body, 'email')) }),
+        ...(get(body, 'telefone') === undefined ? {} : { telefone: optionalString(get(body, 'telefone')) }),
+        ...(get(body, 'nomeDaMae', 'nome_da_mae') === undefined ? {} : { nomeDaMae: optionalString(get(body, 'nomeDaMae', 'nome_da_mae')) }),
+        ...(dataResidenciaMoradia === undefined ? {} : { dataResidenciaMoradia: optionalDate(dataResidenciaMoradia) }),
         status: (optionalString(get(body, 'status')) ?? 'Ativo') as StatusPessoa
     };
 }
 
 export function normalizeUpdatePessoaDto(bodyValue: unknown): UpdatePessoaDto {
     const body = asBody(bodyValue);
+    const apelidoValue = get(body, 'apelido', 'nomeSocial', 'nome_social');
     return {
         nome: optionalString(get(body, 'nome')) ?? undefined,
-        nomeSocial: get(body, 'nomeSocial', 'nome_social') === undefined ? undefined : optionalString(get(body, 'nomeSocial', 'nome_social')),
+        nomeSocial: apelidoValue === undefined ? undefined : optionalString(apelidoValue),
         cpf: get(body, 'cpf') === undefined ? undefined : optionalCpf(get(body, 'cpf')),
         dataDeNascimento: get(body, 'dataDeNascimento', 'data_de_nascimento') === undefined ? undefined : requiredDate(get(body, 'dataDeNascimento', 'data_de_nascimento')),
         parentesco: optionalStringField(body, 'parentesco') as Parentesco | undefined,
@@ -206,6 +221,19 @@ export function normalizeUpdatePessoaDto(bodyValue: unknown): UpdatePessoaDto {
         escolaridade: optionalStringField(body, 'escolaridade') as Escolaridade | undefined,
         cronico: optionalBoolean(get(body, 'cronico')),
         medicacao: optionalBoolean(get(body, 'medicacao')),
+        nis: get(body, 'nis') === undefined ? undefined : optionalString(get(body, 'nis')),
+        renda: get(body, 'renda') === undefined ? undefined : optionalNumber(get(body, 'renda')) ?? null,
+        sexo: optionalString(get(body, 'sexo')) as Sexo | undefined,
+        raca: optionalString(get(body, 'raca')) as Raca | undefined,
+        estadoCivil: optionalString(get(body, 'estadoCivil', 'estado_civil')) as EstadoCivil | undefined,
+        veiculo: optionalBoolean(get(body, 'veiculo')),
+        programasSociais: get(body, 'programasSociais', 'programas_sociais', 'programaSocial', 'programa_social') === undefined
+            ? undefined
+            : optionalNumber(get(body, 'programasSociais', 'programas_sociais', 'programaSocial', 'programa_social')) ?? 0,
+        email: get(body, 'email') === undefined ? undefined : optionalString(get(body, 'email')),
+        telefone: get(body, 'telefone') === undefined ? undefined : optionalString(get(body, 'telefone')),
+        nomeDaMae: get(body, 'nomeDaMae', 'nome_da_mae') === undefined ? undefined : optionalString(get(body, 'nomeDaMae', 'nome_da_mae')),
+        dataResidenciaMoradia: get(body, 'dataResidenciaMoradia', 'data_residencia_moradia') === undefined ? undefined : optionalDate(get(body, 'dataResidenciaMoradia', 'data_residencia_moradia')),
         status: optionalStringField(body, 'status') as StatusPessoa | undefined
     };
 }
@@ -221,13 +249,10 @@ export function normalizeCreateResponsavelDto(bodyValue: unknown): CreateRespons
         raca: requiredString(get(body, 'raca'), 'Raça') as Raca,
         estadoCivil: requiredString(get(body, 'estadoCivil', 'estado_civil'), 'Estado civil') as EstadoCivil,
         veiculo: optionalBoolean(get(body, 'veiculo')) ?? false,
-        programaSocial: optionalBoolean(get(body, 'programaSocial', 'programa_social')) ?? false,
+        programasSociais: optionalNumber(get(body, 'programasSociais', 'programas_sociais', 'programaSocial', 'programa_social')) ?? 0,
         email: optionalString(get(body, 'email')),
         telefone: optionalString(get(body, 'telefone')),
-        nomeDoPai: optionalString(get(body, 'nomeDoPai', 'nome_do_pai')),
         nomeDaMae: optionalString(get(body, 'nomeDaMae', 'nome_da_mae')),
-        localDeNascimento: optionalString(get(body, 'localDeNascimento', 'local_de_nascimento')),
-        dataResidenciaEstado: optionalDate(get(body, 'dataResidenciaEstado', 'data_residencia_estado')),
         dataResidenciaMoradia: optionalDate(get(body, 'dataResidenciaMoradia', 'data_residencia_moradia'))
     };
 }
@@ -242,13 +267,12 @@ export function normalizeUpdateResponsavelDto(bodyValue: unknown): UpdateRespons
         raca: optionalString(get(body, 'raca')) as Raca | undefined,
         estadoCivil: optionalString(get(body, 'estadoCivil', 'estado_civil')) as EstadoCivil | undefined,
         veiculo: optionalBoolean(get(body, 'veiculo')),
-        programaSocial: optionalBoolean(get(body, 'programaSocial', 'programa_social')),
+        programasSociais: get(body, 'programasSociais', 'programas_sociais', 'programaSocial', 'programa_social') === undefined
+            ? undefined
+            : optionalNumber(get(body, 'programasSociais', 'programas_sociais', 'programaSocial', 'programa_social')) ?? 0,
         email: get(body, 'email') === undefined ? undefined : optionalString(get(body, 'email')),
         telefone: get(body, 'telefone') === undefined ? undefined : optionalString(get(body, 'telefone')),
-        nomeDoPai: get(body, 'nomeDoPai', 'nome_do_pai') === undefined ? undefined : optionalString(get(body, 'nomeDoPai', 'nome_do_pai')),
         nomeDaMae: get(body, 'nomeDaMae', 'nome_da_mae') === undefined ? undefined : optionalString(get(body, 'nomeDaMae', 'nome_da_mae')),
-        localDeNascimento: get(body, 'localDeNascimento', 'local_de_nascimento') === undefined ? undefined : optionalString(get(body, 'localDeNascimento', 'local_de_nascimento')),
-        dataResidenciaEstado: get(body, 'dataResidenciaEstado', 'data_residencia_estado') === undefined ? undefined : optionalDate(get(body, 'dataResidenciaEstado', 'data_residencia_estado')),
         dataResidenciaMoradia: get(body, 'dataResidenciaMoradia', 'data_residencia_moradia') === undefined ? undefined : optionalDate(get(body, 'dataResidenciaMoradia', 'data_residencia_moradia'))
     };
 }

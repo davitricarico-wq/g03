@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { MapContainer, Marker, Popup, TileLayer, ZoomControl, useMap } from 'react-leaflet';
 import { useNavigate } from 'react-router-dom';
 import L from 'leaflet';
@@ -15,6 +15,13 @@ const TILE_CLARO = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 const TILE_ESCURO = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
 
 const iconeRisco = pinIcon(COR_RISCO);
+const iconeLocalizacaoAtual = L.divIcon({
+    className: '',
+    html: '<div class="map-current-location-pin"><span></span></div>',
+    iconSize: [26, 26],
+    iconAnchor: [13, 13],
+    popupAnchor: [0, -14]
+});
 
 function pinIcon(cor: string): L.DivIcon {
     return L.divIcon({
@@ -71,6 +78,19 @@ function CamadaCalor({ pontos }: { pontos: [number, number, number][] }) {
     return null;
 }
 
+function IniciarNaLocalizacaoAtual({ localizacaoAtual }: { localizacaoAtual: [number, number] | null }) {
+    const map = useMap();
+    const iniciou = useRef(false);
+
+    useEffect(() => {
+        if (!localizacaoAtual || iniciou.current) return;
+        iniciou.current = true;
+        map.setView(localizacaoAtual, Math.max(map.getZoom(), 16), { animate: true });
+    }, [localizacaoAtual, map]);
+
+    return null;
+}
+
 function normalizar(texto: string): string {
     return texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 }
@@ -100,6 +120,7 @@ export default function Mapa() {
     const [painelAberto, setPainelAberto] = useState(true);
     const [modo, setModo] = useState<'pinos' | 'calor'>('pinos');
     const [carregandoDetalhe, setCarregandoDetalhe] = useState<number | null>(null);
+    const [localizacaoAtual, setLocalizacaoAtual] = useState<[number, number] | null>(null);
 
     useEffect(() => {
         Promise.all([listarMoradias(), buscarFamilias(), listarPrioridades()])
@@ -119,6 +140,26 @@ export default function Mapa() {
             })
             .catch((e) => setErro(e instanceof Error ? e.message : 'Erro ao carregar moradias.'))
             .finally(() => setCarregando(false));
+    }, []);
+
+    useEffect(() => {
+        if (!navigator.geolocation) return;
+
+        const watchId = navigator.geolocation.watchPosition(
+            (position) => {
+                setLocalizacaoAtual([position.coords.latitude, position.coords.longitude]);
+            },
+            () => {
+                setLocalizacaoAtual(null);
+            },
+            {
+                enableHighAccuracy: true,
+                maximumAge: 30000,
+                timeout: 10000
+            }
+        );
+
+        return () => navigator.geolocation.clearWatch(watchId);
     }, []);
 
     const comCoordenadas = useMemo(
@@ -164,9 +205,9 @@ export default function Mapa() {
         [filtradas]
     );
 
-    const centro: [number, number] = filtradas.length > 0
+    const centro: [number, number] = localizacaoAtual ?? (filtradas.length > 0
         ? [filtradas[0].localizacao.latitude, filtradas[0].localizacao.longitude]
-        : CENTRO_PADRAO;
+        : CENTRO_PADRAO);
 
     const filtrosAtivos = statusOcultos.size + prioridadesAtivas.size + (bairroFiltro ? 1 : 0);
 
@@ -280,7 +321,8 @@ export default function Mapa() {
             {erro && <div className="map-erro card error-msg">{erro}</div>}
 
             {!carregando && (
-                <MapContainer center={centro} zoom={13} zoomControl={false}>
+                <MapContainer center={centro} zoom={localizacaoAtual ? 16 : 13} zoomControl={false}>
+                    <IniciarNaLocalizacaoAtual localizacaoAtual={localizacaoAtual} />
                     <ZoomControl position="bottomleft" />
                     <TileLayer
                         attribution={modo === 'calor' ? '&copy; OpenStreetMap &copy; CARTO' : '&copy; OpenStreetMap'}
@@ -313,11 +355,17 @@ export default function Mapa() {
                                 </Marker>
                             );
                         })}
+                    {localizacaoAtual && (
+                        <Marker position={localizacaoAtual} icon={iconeLocalizacaoAtual} zIndexOffset={1000}>
+                            <Popup>Sua localização atual</Popup>
+                        </Marker>
+                    )}
                 </MapContainer>
             )}
 
             <div className="map-legend">
                 <div className="legend-row"><span className="legend-dot" style={{ background: COR_RISCO }} />Moradia em área de risco</div>
+                {localizacaoAtual && <div className="legend-row"><span className="legend-dot" style={{ background: '#0ea5e9' }} />Sua localização atual</div>}
             </div>
         </div>
     );

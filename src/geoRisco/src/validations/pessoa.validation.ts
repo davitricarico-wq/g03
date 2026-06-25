@@ -62,6 +62,23 @@ export function validatePessoaPayload(data: CreatePessoaDto | UpdatePessoaDto, p
     if (data.status !== undefined && !isOneOf(data.status, STATUS_PESSOA)) {
         throw new HttpError(400, 'Status invalido');
     }
+    if (data.sexo !== undefined && data.sexo !== null && !isOneOf(data.sexo, SEXOS)) {
+        throw new HttpError(400, 'Sexo invalido');
+    }
+    if (data.raca !== undefined && data.raca !== null && !isOneOf(data.raca, RACAS)) {
+        throw new HttpError(400, 'Raca invalida');
+    }
+    if (data.estadoCivil !== undefined && data.estadoCivil !== null && !isOneOf(data.estadoCivil, ESTADOS_CIVIS)) {
+        throw new HttpError(400, 'Estado civil invalido');
+    }
+    if (data.veiculo !== undefined && typeof data.veiculo !== 'boolean') {
+        throw new HttpError(400, 'Campo veiculo deve ser booleano');
+    }
+    if (data.programasSociais !== undefined) {
+        if (!Number.isInteger(data.programasSociais) || data.programasSociais < 0) {
+            throw new HttpError(400, 'Campo programasSociais deve ser um inteiro maior ou igual a zero');
+        }
+    }
 }
 
 export function validateResponsavelPayload(data: CreateResponsavelDto | UpdateResponsavelDto, partial = false) {
@@ -85,11 +102,5 @@ export function validateResponsavelPayload(data: CreateResponsavelDto | UpdateRe
         if (!isOneOf(data.estadoCivil, ESTADOS_CIVIS)) {
             throw new HttpError(400, 'Estado civil invalido');
         }
-    }
-    if (data.veiculo !== undefined && typeof data.veiculo !== 'boolean') {
-        throw new HttpError(400, 'Campo veiculo deve ser booleano');
-    }
-    if (data.programaSocial !== undefined && typeof data.programaSocial !== 'boolean') {
-        throw new HttpError(400, 'Campo programaSocial deve ser booleano');
     }
 }

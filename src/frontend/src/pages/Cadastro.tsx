@@ -16,6 +16,7 @@ import {
     detalharFamilia,
     detalharMoradia,
     enviarFoto,
+    listarPessoas,
     listarMoradias,
     listarPrioridades,
     listarPrioridadesPessoa,
@@ -28,12 +29,13 @@ import {
     vincularPessoaFamilia
 } from '../api.ts';
 import { toast } from '../components/feedback.tsx';
-import { buscarCep, capturarGPS, maskCEP, maskCPF, maskTelefone } from '../utils/forms.ts';
+import { buscarCep, buscarEnderecoPorCoordenadas, capturarGPS, cpfValido, emailValido, maskCEP, maskCPF, maskTelefone } from '../utils/forms.ts';
 import { CheckboxField, Row, SelectField, TextAreaField, TextField } from '../components/FormFields.tsx';
 import LocationPicker from '../components/LocationPicker.tsx';
 import PhotoPicker, { type FotoLocal } from '../components/PhotoPicker.tsx';
 import {
     ESCOLARIDADES,
+    ESTADOS_BRASIL,
     ESTADOS_CIVIS,
     PARENTESCOS,
     RACAS,
@@ -62,8 +64,6 @@ interface MoradorForm {
     escolaridade: string;
     cronico: boolean;
     medicacao: boolean;
-    // exclusivos do responsável
-    localDeNascimento: string;
     nis: string;
     renda: string;
     sexo: string;
@@ -71,12 +71,10 @@ interface MoradorForm {
     estadoCivil: string;
     email: string;
     telefone: string;
-    nomeDoPai: string;
     nomeDaMae: string;
     dataResidenciaMoradia: string;
-    dataResidenciaEstado: string;
     veiculo: boolean;
-    programaSocial: boolean;
+    programasSociais: string;
     prioridadeIds: number[];
 }
 
@@ -98,9 +96,9 @@ function novoMorador(parentesco = ''): MoradorForm {
         key: crypto.randomUUID(),
         nome: '', nomeSocial: '', cpf: '', dataDeNascimento: '', parentesco,
         situacaoOcupacional: '', escolaridade: '', cronico: false, medicacao: false,
-        localDeNascimento: '', nis: '', renda: '', sexo: '', raca: '', estadoCivil: '',
-        email: '', telefone: '', nomeDoPai: '', nomeDaMae: '',
-        dataResidenciaMoradia: '', dataResidenciaEstado: '', veiculo: false, programaSocial: false,
+        nis: '', renda: '', sexo: '', raca: '', estadoCivil: '',
+        email: '', telefone: '', nomeDaMae: '',
+        dataResidenciaMoradia: '', veiculo: false, programasSociais: '0',
         prioridadeIds: []
     };
 }
@@ -114,7 +112,7 @@ function petFromPet(pet: Pet): PetForm {
         key: crypto.randomUUID(),
         id: pet.id,
         tipo: pet.tipo,
-        nome: pet.nome,
+        nome: pet.nome ?? '',
         porte: pet.porte,
         raca: pet.raca,
         cor: pet.cor,
@@ -124,18 +122,21 @@ function petFromPet(pet: Pet): PetForm {
     };
 }
 
-type Aba = 'moradia' | 'moradores' | 'pets';
+type Aba = 'moradia' | 'moradores' | 'pets' | 'visaoGeral';
 const ABAS: { id: Aba; label: string }[] = [
     { id: 'moradia', label: 'Moradia' },
     { id: 'moradores', label: 'Moradores' },
-    { id: 'pets', label: 'Pets e Animais' }
+    { id: 'pets', label: 'Pets e Animais' },
+    { id: 'visaoGeral', label: 'Visão Geral' }
 ];
 const TITULOS: Record<Aba, string> = {
-    moradia: 'Seção 1 - Moradia',
-    moradores: 'Seção 2 - Moradores',
-    pets: 'Seção 3 - Pets e animais'
+    moradia: 'Cadastro - Moradia',
+    moradores: 'Cadastro - Moradores',
+    pets: 'Cadastro - Pets e animais',
+    visaoGeral: 'Visão Geral'
 };
 type ModoMoradia = 'nova' | 'existente';
+type CampoFeedback = { type: 'error' | 'warning' | 'success' | 'info'; message: string };
 
 function limpar(valor: string): string | null {
     const t = valor.trim();
@@ -152,7 +153,18 @@ function pessoaBase(m: MoradorForm): CreatePessoaPayload {
         situacaoOcupacional: m.situacaoOcupacional,
         escolaridade: m.escolaridade,
         cronico: m.cronico,
-        medicacao: m.medicacao
+        medicacao: m.medicacao,
+        nis: limpar(m.nis),
+        renda: m.renda.trim() ? Number(m.renda) : null,
+        sexo: limpar(m.sexo),
+        raca: limpar(m.raca),
+        estadoCivil: limpar(m.estadoCivil),
+        email: limpar(m.email),
+        telefone: m.telefone.trim() ? m.telefone.replace(/\D/g, '') : null,
+        nomeDaMae: limpar(m.nomeDaMae),
+        dataResidenciaMoradia: limpar(m.dataResidenciaMoradia),
+        veiculo: m.veiculo,
+        programasSociais: Math.max(0, Number.parseInt(m.programasSociais || '0', 10) || 0)
     };
 }
 
@@ -171,7 +183,9 @@ export default function Cadastro() {
     const [enviando, setEnviando] = useState(false);
     const [erro, setErro] = useState<string | null>(null);
     const [invalidos, setInvalidos] = useState<Set<string>>(new Set());
+    const [feedbackAssincrono, setFeedbackAssincrono] = useState<Record<string, CampoFeedback>>({});
     const [capturando, setCapturando] = useState(false);
+    const [gpsSolicitadoAutomaticamente, setGpsSolicitadoAutomaticamente] = useState(false);
 
     const [loc, setLoc] = useState({
         logradouro: '', numero: '', bairro: '', cidade: '', estado: '', cep: '',
@@ -180,8 +194,10 @@ export default function Cadastro() {
     const [moradia, setMoradia] = useState({
         tipoConstrucao: '', usoImovel: '', situacaoDeOcupacao: '', pavimentos: '1', status: 'Ativa', descricao: ''
     });
-    const [moradores, setMoradores] = useState<MoradorForm[]>([novoMorador(RESPONSAVEL)]);
+    const [moradores, setMoradores] = useState<MoradorForm[]>(() => [novoMorador(RESPONSAVEL)]);
     const [pets, setPets] = useState<PetForm[]>([]);
+    const [moradoresAbertos, setMoradoresAbertos] = useState<Set<string>>(new Set());
+    const [petsAbertos, setPetsAbertos] = useState<Set<string>>(new Set());
     const [fotosCasa, setFotosCasa] = useState<FotoLocal[]>([]);
     const [gpsSignal, setGpsSignal] = useState(0);
     const [prioridades, setPrioridades] = useState<Prioridade[]>([]);
@@ -195,6 +211,7 @@ export default function Cadastro() {
     const [buscaPessoa, setBuscaPessoa] = useState('');
     const [pessoasEncontradas, setPessoasEncontradas] = useState<PessoaBuscaResultado[]>([]);
     const [buscandoPessoa, setBuscandoPessoa] = useState(false);
+    const [mostrarBuscaPessoaExistente, setMostrarBuscaPessoaExistente] = useState(false);
 
     const temResponsavel = useMemo(() => moradores.some((m) => m.parentesco === RESPONSAVEL), [moradores]);
     const abasVisiveis = useMemo(
@@ -208,6 +225,10 @@ export default function Cadastro() {
     const totalFotos = useMemo(
         () => fotosCasa.length + pets.reduce((acc, p) => acc + p.fotos.length, 0),
         [fotosCasa, pets]
+    );
+    const enderecoResumo = useMemo(
+        () => [loc.logradouro, loc.numero, loc.bairro, loc.cidade, loc.estado].filter(Boolean).join(', '),
+        [loc.bairro, loc.cidade, loc.estado, loc.logradouro, loc.numero]
     );
 
     const setLocField = (campo: keyof typeof loc, valor: string) => setLoc((p) => ({ ...p, [campo]: valor }));
@@ -258,12 +279,247 @@ export default function Cadastro() {
         }
     }, [aba, modoEdicaoPessoa]);
 
+    useEffect(() => {
+        setMoradoresAbertos((prev) => sincronizarCardsAbertos(prev, moradores.map((m) => m.key), true));
+    }, [moradores]);
+
+    useEffect(() => {
+        setPetsAbertos((prev) => sincronizarCardsAbertos(prev, pets.map((p) => p.key), false));
+    }, [pets]);
+
+    useEffect(() => {
+        if (!mostrarBuscaPessoaExistente || modoEdicaoPessoa) return;
+        const timer = window.setTimeout(() => {
+            void pesquisarPessoaExistente(buscaPessoa);
+        }, 250);
+        return () => window.clearTimeout(timer);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [mostrarBuscaPessoaExistente, buscaPessoa, moradores, modoEdicaoPessoa]);
+
+    useEffect(() => {
+        if (
+            gpsSolicitadoAutomaticamente ||
+            modoEdicao ||
+            modoEdicaoPessoa ||
+            moradiaId ||
+            adicionarApenasFamilia ||
+            modoMoradia !== 'nova'
+        ) {
+            return;
+        }
+        setGpsSolicitadoAutomaticamente(true);
+        void pegarGPS();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [gpsSolicitadoAutomaticamente, modoEdicao, modoEdicaoPessoa, moradiaId, adicionarApenasFamilia, modoMoradia]);
+    const feedbackLocal = useMemo<Record<string, CampoFeedback>>(() => {
+        const feedback: Record<string, CampoFeedback> = {};
+        const cpfs = new Map<string, string[]>();
+        const hoje = new Date();
+        hoje.setHours(0, 0, 0, 0);
+
+        for (const morador of moradores) {
+            const cpf = morador.cpf.replace(/\D/g, '');
+            if (cpf) {
+                const key = `${morador.key}:cpf`;
+                if (cpf.length < 11) {
+                    feedback[key] = { type: 'warning', message: 'CPF incompleto. Digite os 11 números.' };
+                } else if (!cpfValido(cpf)) {
+                    feedback[key] = { type: 'error', message: 'CPF inválido. Confira os números digitados.' };
+                }
+                cpfs.set(cpf, [...(cpfs.get(cpf) ?? []), morador.key]);
+            }
+
+            if (morador.dataDeNascimento) {
+                const data = new Date(`${morador.dataDeNascimento}T00:00:00`);
+                if (Number.isNaN(data.getTime()) || data > hoje) {
+                    feedback[`${morador.key}:data`] = { type: 'error', message: 'Data de nascimento inválida.' };
+                }
+            }
+
+            if (morador.parentesco === RESPONSAVEL && morador.email.trim() && !emailValido(morador.email)) {
+                feedback[`${morador.key}:email`] = { type: 'error', message: 'E-mail inválido. Use o formato nome@dominio.com.' };
+            }
+        }
+
+        for (const keys of cpfs.values()) {
+            if (keys.length > 1) {
+                for (const key of keys) {
+                    feedback[`${key}:cpf`] = { type: 'error', message: 'Este CPF está repetido no formulário.' };
+                }
+            }
+        }
+
+        return feedback;
+    }, [moradores]);
+
+    const feedbackCampo = (chave: string): CampoFeedback | undefined => feedbackLocal[chave] ?? feedbackAssincrono[chave];
+
+    useEffect(() => {
+        const checks = moradores.flatMap((morador) => {
+            const itens: { key: string; tipo: 'cpf' | 'email'; valor: string; id?: number }[] = [];
+            const cpf = morador.cpf.replace(/\D/g, '');
+            const cpfKey = `${morador.key}:cpf`;
+            if (cpf.length === 11 && cpfValido(cpf) && !feedbackLocal[cpfKey]) {
+                itens.push({ key: cpfKey, tipo: 'cpf', valor: cpf, id: morador.id });
+            }
+
+            const email = morador.email.trim();
+            const emailKey = `${morador.key}:email`;
+            if (morador.parentesco === RESPONSAVEL && email && emailValido(email) && !feedbackLocal[emailKey]) {
+                itens.push({ key: emailKey, tipo: 'email', valor: email, id: morador.id });
+            }
+            return itens;
+        });
+
+        const trackedKeys = new Set(moradores.flatMap((morador) => [`${morador.key}:cpf`, `${morador.key}:email`]));
+        setFeedbackAssincrono((prev) => {
+            const next: Record<string, CampoFeedback> = {};
+            for (const key of Object.keys(prev)) {
+                if (!trackedKeys.has(key)) continue;
+                const aindaValido = checks.some((check) => check.key === key);
+                if (aindaValido) next[key] = { type: 'info', message: 'Verificando cadastro existente...' };
+            }
+            for (const check of checks) {
+                next[check.key] = { type: 'info', message: 'Verificando cadastro existente...' };
+            }
+            return next;
+        });
+
+        if (checks.length === 0) return;
+
+        let cancelado = false;
+        const timer = window.setTimeout(() => {
+            void Promise.all(checks.map(async (check) => {
+                try {
+                    const pessoas = await buscarPessoas({
+                        escopo: 'todas',
+                        cpf: check.tipo === 'cpf' ? check.valor : undefined,
+                        email: check.tipo === 'email' ? check.valor : undefined
+                    });
+                    const existente = pessoas.find((pessoa) => pessoa.id !== check.id);
+                    if (existente) {
+                        return {
+                            key: check.key,
+                            feedback: {
+                                type: 'error',
+                                message: check.tipo === 'cpf'
+                                    ? `CPF já cadastrado para ${existente.nome}.`
+                                    : `E-mail já cadastrado para ${existente.nome}.`
+                            } as CampoFeedback
+                        };
+                    }
+                    return {
+                        key: check.key,
+                        feedback: {
+                            type: 'success',
+                            message: check.tipo === 'cpf' ? 'CPF válido e disponível.' : 'E-mail disponível.'
+                        } as CampoFeedback
+                    };
+                } catch {
+                    return {
+                        key: check.key,
+                        feedback: {
+                            type: 'warning',
+                            message: 'Não foi possível verificar duplicidade agora.'
+                        } as CampoFeedback
+                    };
+                }
+            })).then((resultados) => {
+                if (cancelado) return;
+                setFeedbackAssincrono((prev) => {
+                    const next = { ...prev };
+                    for (const resultado of resultados) {
+                        next[resultado.key] = resultado.feedback;
+                    }
+                    return next;
+                });
+            });
+        }, 450);
+
+        return () => {
+            cancelado = true;
+            window.clearTimeout(timer);
+        };
+    }, [moradores, feedbackLocal]);
+
+    async function preencherEnderecoPorCoordenadas(lat: number, lng: number) {
+        const endereco = await buscarEnderecoPorCoordenadas(lat, lng);
+        if (!endereco) return;
+        setLoc((p) => ({
+            ...p,
+            cep: endereco.cep ? maskCEP(endereco.cep) : p.cep,
+            logradouro: endereco.logradouro || p.logradouro,
+            bairro: endereco.bairro || p.bairro,
+            cidade: endereco.cidade || p.cidade,
+            estado: endereco.uf || p.estado
+        }));
+        if (endereco.cidade) limparInvalido('cidade');
+        if (endereco.uf) limparInvalido('estado');
+        toast.info('Endereço preenchido pelas coordenadas.');
+    }
+
     // posiciona o pino no mapa (clique/arraste) sem disparar recentralização
     const setCoord = (lat: number, lng: number) => {
         setLoc((p) => ({ ...p, latitude: String(lat), longitude: String(lng) }));
         limparInvalido('latitude');
         limparInvalido('longitude');
+        void preencherEnderecoPorCoordenadas(lat, lng);
     };
+
+    function sincronizarCardsAbertos(prev: Set<string>, keys: string[], abrirPrimeiro: boolean) {
+        const keysAtuais = new Set(keys);
+        const next = new Set([...prev].filter((key) => keysAtuais.has(key)));
+        if (abrirPrimeiro && next.size === 0 && keys[0]) {
+            next.add(keys[0]);
+        }
+        return next;
+    }
+
+    function toggleMoradorCard(key: string) {
+        setMoradoresAbertos((prev) => {
+            const next = new Set(prev);
+            if (next.has(key)) next.delete(key);
+            else next.add(key);
+            return next;
+        });
+    }
+
+    function togglePetCard(key: string) {
+        setPetsAbertos((prev) => {
+            const next = new Set(prev);
+            if (next.has(key)) next.delete(key);
+            else next.add(key);
+            return next;
+        });
+    }
+
+    function adicionarMorador() {
+        const novo = novoMorador();
+        setMoradores((prev) => [...prev, novo]);
+        setMoradoresAbertos((prev) => new Set(prev).add(novo.key));
+    }
+
+    function adicionarPet() {
+        const novo = novoPet();
+        setPets((prev) => [...prev, novo]);
+        setPetsAbertos((prev) => new Set(prev).add(novo.key));
+    }
+
+    function abrirCardsComCamposInvalidos(campos: string[]) {
+        const chavesMoradores = campos
+            .filter((campo) => campo.includes(':') && moradores.some((m) => campo.startsWith(`${m.key}:`)))
+            .map((campo) => campo.split(':')[0]);
+        const chavesPets = campos
+            .filter((campo) => campo.includes(':') && pets.some((p) => campo.startsWith(`${p.key}:`)))
+            .map((campo) => campo.split(':')[0]);
+
+        if (chavesMoradores.length > 0) {
+            setMoradoresAbertos((prev) => new Set([...prev, ...chavesMoradores]));
+        }
+        if (chavesPets.length > 0) {
+            setPetsAbertos((prev) => new Set([...prev, ...chavesPets]));
+        }
+    }
 
     const invalido = (chave: string) => invalidos.has(chave);
     const limparInvalido = (chave: string) =>
@@ -272,9 +528,10 @@ export default function Cadastro() {
             const next = new Set(prev);
             next.delete(chave);
             return next;
-	        });
+        });
 
     function moradorFromPessoa(pessoa: Pessoa, prioridadeIds: number[], responsavel?: Pessoa): MoradorForm {
+        const dadosPessoa = responsavel ?? pessoa;
         return {
             ...novoMorador(pessoa.parentesco ?? ''),
             id: pessoa.id,
@@ -287,20 +544,17 @@ export default function Cadastro() {
             escolaridade: pessoa.escolaridade ?? '',
             cronico: pessoa.cronico,
             medicacao: pessoa.medicacao,
-            localDeNascimento: responsavel?.localDeNascimento ?? '',
-            nis: responsavel?.nis ?? '',
-            renda: responsavel?.renda === null || responsavel?.renda === undefined ? '' : String(responsavel.renda),
-            sexo: responsavel?.sexo ?? '',
-            raca: responsavel?.raca ?? '',
-            estadoCivil: responsavel?.estadoCivil ?? '',
-            email: responsavel?.email ?? '',
-            telefone: responsavel?.telefone ?? '',
-            nomeDoPai: responsavel?.nomeDoPai ?? '',
-            nomeDaMae: responsavel?.nomeDaMae ?? '',
-            dataResidenciaMoradia: responsavel?.dataResidenciaMoradia ? String(responsavel.dataResidenciaMoradia).slice(0, 10) : '',
-            dataResidenciaEstado: responsavel?.dataResidenciaEstado ? String(responsavel.dataResidenciaEstado).slice(0, 10) : '',
-            veiculo: Boolean(responsavel?.veiculo),
-            programaSocial: Boolean(responsavel?.programaSocial),
+            nis: dadosPessoa.nis ?? '',
+            renda: dadosPessoa.renda === null || dadosPessoa.renda === undefined ? '' : String(dadosPessoa.renda),
+            sexo: dadosPessoa.sexo ?? '',
+            raca: dadosPessoa.raca ?? '',
+            estadoCivil: dadosPessoa.estadoCivil ?? '',
+            email: dadosPessoa.email ?? '',
+            telefone: dadosPessoa.telefone ?? '',
+            nomeDaMae: dadosPessoa.nomeDaMae ?? '',
+            dataResidenciaMoradia: dadosPessoa.dataResidenciaMoradia ? String(dadosPessoa.dataResidenciaMoradia).slice(0, 10) : '',
+            veiculo: Boolean(dadosPessoa.veiculo),
+            programasSociais: String(dadosPessoa.programasSociais ?? 0),
             prioridadeIds
         };
     }
@@ -363,6 +617,21 @@ export default function Cadastro() {
         }
     }
 
+    function selecionarCadastroApenasFamilia(ativo: boolean) {
+        setAdicionarApenasFamilia(ativo);
+        if (ativo) {
+            setModoMoradia('nova');
+            setMoradiaSelecionadaId(null);
+            setInvalidos(new Set());
+            setFotosCasa([]);
+            return;
+        }
+        if (moradiaOriginalId) {
+            setMoradiaSelecionadaId(moradiaOriginalId);
+            setModoMoradia('existente');
+        }
+    }
+
     async function selecionarMoradiaExistente(id: string) {
         const parsed = Number(id);
         if (!Number.isInteger(parsed) || parsed <= 0) {
@@ -409,25 +678,27 @@ export default function Cadastro() {
         }
     }
 
-    async function pesquisarPessoaExistente() {
-        const termo = buscaPessoa.trim();
-        if (!termo) {
-            setPessoasEncontradas([]);
-            return;
-        }
+    async function pesquisarPessoaExistente(termoBusca = buscaPessoa) {
+        const termo = termoBusca.trim();
         setBuscandoPessoa(true);
         try {
             const apenasDigitos = termo.replace(/\D/g, '');
             const ehCpf = apenasDigitos.length >= 3 && apenasDigitos.length / termo.length > 0.6;
-            const pessoas = await buscarPessoas({
-                escopo: 'todas',
-                nome: ehCpf ? undefined : termo,
-                cpf: ehCpf ? apenasDigitos : undefined
-            });
-            setPessoasEncontradas(pessoas.filter((p) => {
-                const responsavelAtivo = p.responsavel && p.status === 'Ativo';
-                return !responsavelAtivo && !moradores.some((m) => m.id === p.id);
-            }));
+            const pessoas = termo
+                ? await buscarPessoas({
+                    escopo: 'todas',
+                    nome: ehCpf ? undefined : termo,
+                    cpf: ehCpf ? apenasDigitos : undefined
+                })
+                : await listarPessoas();
+            setPessoasEncontradas(
+                pessoas
+                    .filter((p) => {
+                        const responsavelAtivo = p.responsavel && p.status === 'Ativo';
+                        return !responsavelAtivo && !moradores.some((m) => m.id === p.id);
+                    })
+                    .slice(0, termo ? 5 : 3)
+            );
         } catch (e) {
             toast.error(e instanceof Error ? e.message : 'Erro ao buscar pessoas.');
         } finally {
@@ -446,14 +717,13 @@ export default function Cadastro() {
                 return;
             }
             const responsavelDetalhe = await obterResponsavel(pessoa.id).catch(() => undefined);
-            setMoradores((prev) => [
-                ...prev,
-                moradorFromPessoa(
-                    responsavelDetalhe ?? detalhePessoa,
-                    prioridadesPessoa.map((prioridade) => prioridade.id),
-                    responsavelDetalhe
-                )
-            ]);
+            const novo = moradorFromPessoa(
+                responsavelDetalhe ?? detalhePessoa,
+                prioridadesPessoa.map((prioridade) => prioridade.id),
+                responsavelDetalhe
+            );
+            setMoradores((prev) => [...prev, novo]);
+            setMoradoresAbertos((prev) => new Set(prev).add(novo.key));
             setPessoasEncontradas((prev) => prev.filter((p) => p.id !== pessoa.id));
             toast.success('Pessoa adicionada ao formulário.');
         } catch (e) {
@@ -581,7 +851,7 @@ export default function Cadastro() {
         if (!moradia.usoImovel) campos.push('usoImovel');
         const msg = campos.length
             ? campos.includes('latitude') || campos.includes('longitude')
-                ? 'Informe coordenadas válidas (use o botão GPS) e os dados da moradia.'
+                ? 'Aguarde a captura da localização ou marque a posição no mapa, e preencha os dados da moradia.'
                 : 'Preencha os campos obrigatórios da moradia.'
             : null;
         return { campos, msg };
@@ -591,42 +861,100 @@ export default function Cadastro() {
     function validarMoradores(): { campos: string[]; msg: string | null } {
         const campos: string[] = [];
         const responsavel = moradores.find((m) => m.parentesco === RESPONSAVEL);
-        if (!modoEdicaoPessoa && !responsavel) return { campos: [], msg: 'É necessário um morador com vínculo "Responsável".' };
+        if (!modoEdicaoPessoa && !responsavel) return { campos: [], msg: 'Cadastre um responsável antes de acessar a Visão Geral.' };
         for (const m of moradores) {
             if (!m.nome.trim()) campos.push(`${m.key}:nome`);
             if (!m.dataDeNascimento) campos.push(`${m.key}:data`);
             if (!m.parentesco) campos.push(`${m.key}:parentesco`);
             if (!m.situacaoOcupacional) campos.push(`${m.key}:ocupacao`);
             if (!m.escolaridade) campos.push(`${m.key}:escolaridade`);
-            if (m.parentesco === RESPONSAVEL) {
-                if (!m.sexo) campos.push(`${m.key}:sexo`);
-                if (!m.raca) campos.push(`${m.key}:raca`);
-                if (!m.estadoCivil) campos.push(`${m.key}:estadoCivil`);
+            for (const chave of [`${m.key}:cpf`, `${m.key}:email`, `${m.key}:data`]) {
+                const feedback = feedbackCampo(chave);
+                if (feedback && feedback.type !== 'success') campos.push(chave);
             }
+            if (!m.sexo) campos.push(`${m.key}:sexo`);
+            if (!m.raca) campos.push(`${m.key}:raca`);
+            if (!m.estadoCivil) campos.push(`${m.key}:estadoCivil`);
         }
-        return { campos, msg: campos.length ? 'Preencha os dados obrigatórios de cada morador.' : null };
+        return { campos, msg: campos.length ? 'Revise os campos destacados antes de continuar.' : null };
+    }
+
+    function validarPets(): { campos: string[]; msg: string | null } {
+        const campos: string[] = [];
+        for (const p of pets) {
+            if (!p.nome.trim()) campos.push(`${p.key}:petNome`);
+            if (!p.tipo) campos.push(`${p.key}:petTipo`);
+        }
+        return { campos, msg: campos.length ? 'Preencha nome e tipo dos animais adicionados.' : null };
     }
 
     function avancarDe(de: Aba, para: Aba) {
-        const r = de === 'moradia' ? validarMoradia() : validarMoradores();
+        const r = de === 'moradia' ? validarMoradia() : de === 'moradores' ? validarMoradores() : validarPets();
         if (r.msg) {
             setInvalidos(new Set(r.campos));
+            abrirCardsComCamposInvalidos(r.campos);
             toast.error(r.msg);
             return;
         }
         setInvalidos(new Set());
-        setAba(para);
+        navegarParaAba(para, true);
+    }
+
+    function navegarParaAba(proximaAba: Aba, rolarAoTopo = false) {
+        setAba(proximaAba);
+        if (!rolarAoTopo) return;
+        requestAnimationFrame(() => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
+
+    function validarTudoAntesDaRevisao(): boolean {
+        const rMoradia = validarMoradia();
+        const rMoradores = validarMoradores();
+        const rPets = validarPets();
+        if (rMoradia.msg || rMoradores.msg || rPets.msg) {
+            const camposInvalidos = [...rMoradia.campos, ...rMoradores.campos, ...rPets.campos];
+            setInvalidos(new Set(camposInvalidos));
+            abrirCardsComCamposInvalidos(camposInvalidos);
+            if (rMoradia.msg) {
+                setAba('moradia');
+                toast.error(rMoradia.msg);
+            } else if (rMoradores.msg) {
+                setAba('moradores');
+                toast.error(rMoradores.msg);
+            } else {
+                setAba('pets');
+                toast.error(rPets.msg!);
+            }
+            return false;
+        }
+        setInvalidos(new Set());
+        return true;
+    }
+
+    function irParaVisaoGeral() {
+        if (validarTudoAntesDaRevisao()) {
+            navegarParaAba('visaoGeral', true);
+        }
     }
 
     async function pegarGPS() {
         setCapturando(true);
-        const c = await capturarGPS();
-        setLoc((p) => ({ ...p, latitude: String(c.latitude), longitude: String(c.longitude) }));
-        limparInvalido('latitude');
-        limparInvalido('longitude');
-        setGpsSignal((s) => s + 1);
-        setCapturando(false);
-        toast.success(c.demo ? 'Coordenadas aproximadas (modo demonstração).' : `Localização capturada (±${c.accuracy}m).`);
+        try {
+            const c = await capturarGPS();
+            setLoc((p) => ({ ...p, latitude: String(c.latitude), longitude: String(c.longitude) }));
+            limparInvalido('latitude');
+            limparInvalido('longitude');
+            setGpsSignal((s) => s + 1);
+            void preencherEnderecoPorCoordenadas(c.latitude, c.longitude);
+            toast.success(`Localização capturada (±${c.accuracy ?? '?'}m).`);
+        } catch (error) {
+            const mensagem = error instanceof Error ? error.message : 'Não foi possível capturar a localização atual.';
+            setErro(mensagem);
+            toast.error(mensagem);
+        } finally {
+            setCapturando(false);
+        }
     }
 
     async function lookupCep() {
@@ -645,21 +973,7 @@ export default function Cadastro() {
     function payloadResponsavel(m: MoradorForm): Record<string, unknown> {
         return {
             ...pessoaBase(m),
-            parentesco: RESPONSAVEL,
-            localDeNascimento: limpar(m.localDeNascimento),
-            nis: limpar(m.nis),
-            renda: m.renda.trim() ? Number(m.renda) : null,
-            sexo: m.sexo,
-            raca: m.raca,
-            estadoCivil: m.estadoCivil,
-            email: limpar(m.email),
-            telefone: m.telefone.trim() ? m.telefone.replace(/\D/g, '') : null,
-            nomeDoPai: limpar(m.nomeDoPai),
-            nomeDaMae: limpar(m.nomeDaMae),
-            dataResidenciaMoradia: limpar(m.dataResidenciaMoradia),
-            dataResidenciaEstado: limpar(m.dataResidenciaEstado),
-            veiculo: m.veiculo,
-            programaSocial: m.programaSocial
+            parentesco: RESPONSAVEL
         };
     }
 
@@ -822,7 +1136,7 @@ export default function Cadastro() {
     function petPayload(p: PetForm) {
         return {
             tipo: p.tipo,
-            nome: p.nome.trim(),
+            nome: limpar(p.nome),
             porte: p.porte.trim(),
             raca: p.raca.trim(),
             cor: p.cor.trim(),
@@ -890,14 +1204,20 @@ export default function Cadastro() {
     async function enviar() {
         const rMoradia = validarMoradia();
         const rMoradores = validarMoradores();
-        if (rMoradia.msg || rMoradores.msg) {
-            setInvalidos(new Set([...rMoradia.campos, ...rMoradores.campos]));
+        const rPets = validarPets();
+        if (rMoradia.msg || rMoradores.msg || rPets.msg) {
+            const camposInvalidos = [...rMoradia.campos, ...rMoradores.campos, ...rPets.campos];
+            setInvalidos(new Set(camposInvalidos));
+            abrirCardsComCamposInvalidos(camposInvalidos);
             if (rMoradia.msg) {
                 setAba('moradia');
                 toast.error(rMoradia.msg);
-            } else {
+            } else if (rMoradores.msg) {
                 setAba('moradores');
                 toast.error(rMoradores.msg!);
+            } else {
+                setAba('pets');
+                toast.error(rPets.msg!);
             }
             return;
         }
@@ -925,7 +1245,6 @@ export default function Cadastro() {
             responsavel: {
                 ...pessoaBase(r),
                 parentesco: RESPONSAVEL,
-                localDeNascimento: limpar(r.localDeNascimento),
                 nis: limpar(r.nis),
                 renda: r.renda.trim() ? Number(r.renda) : null,
                 sexo: r.sexo,
@@ -933,12 +1252,10 @@ export default function Cadastro() {
                 estadoCivil: r.estadoCivil,
                 email: limpar(r.email),
                 telefone: r.telefone.trim() ? r.telefone.replace(/\D/g, '') : null,
-                nomeDoPai: limpar(r.nomeDoPai),
                 nomeDaMae: limpar(r.nomeDaMae),
                 dataResidenciaMoradia: limpar(r.dataResidenciaMoradia),
-                dataResidenciaEstado: limpar(r.dataResidenciaEstado),
                 veiculo: r.veiculo,
-                programaSocial: r.programaSocial
+                programasSociais: Math.max(0, Number.parseInt(r.programasSociais || '0', 10) || 0)
             },
             dependentes,
             pets: pets.map(petPayload)
@@ -1044,7 +1361,12 @@ export default function Cadastro() {
         <div className="cadastro-page">
             <div className="pill-tabs">
                 {abasVisiveis.map((a) => (
-                    <button key={a.id} className={`pill-tab${aba === a.id ? ' active' : ''}`} onClick={() => setAba(a.id)}>
+                    <button
+                        key={a.id}
+                        type="button"
+                        className={`pill-tab${aba === a.id ? ' active' : ''}`}
+                        onClick={() => a.id === 'visaoGeral' ? irParaVisaoGeral() : setAba(a.id)}
+                    >
                         {a.label}
                     </button>
                 ))}
@@ -1054,36 +1376,37 @@ export default function Cadastro() {
 
             {aba === 'moradia' && (
                 <div className="card">
+                    <p className="required-note"><span className="required-mark">*</span> Campos obrigatórios precisam ser preenchidos para avançar.</p>
                     {!modoEdicaoPessoa && (
-                        <CheckboxField
-                            label="Adicionar apenas família"
-                            checked={adicionarApenasFamilia}
-                            onChange={(checked) => {
-                                setAdicionarApenasFamilia(checked);
-                                if (checked) {
-                                    setModoMoradia('nova');
-                                    setMoradiaSelecionadaId(null);
-                                    setInvalidos(new Set());
-                                    setFotosCasa([]);
-                                    setAba('moradores');
-                                }
-                            }}
-                        />
+                        <div className="family-housing-mode" role="group" aria-label="Tipo de cadastro">
+                            <button
+                                type="button"
+                                className={`mode-choice${!adicionarApenasFamilia ? ' active' : ''}`}
+                                onClick={() => selecionarCadastroApenasFamilia(false)}
+                            >
+                                <span className="mode-choice-title">Família com moradia</span>
+                                <span className="mode-choice-copy">Exige um morador com parentesco Responsável</span>
+                            </button>
+                            <button
+                                type="button"
+                                className={`mode-choice${adicionarApenasFamilia ? ' active warning' : ''}`}
+                                onClick={() => selecionarCadastroApenasFamilia(true)}
+                            >
+                                <span className="mode-choice-title">{modoEdicao && moradiaOriginalId ? 'Desvincular da moradia' : 'Apenas família'}</span>
+                                <span className="mode-choice-copy">{modoEdicao && moradiaOriginalId ? 'Salvar família sem casa atual' : 'Continuar sem dados da casa'}</span>
+                            </button>
+                        </div>
                     )}
-                    {!modoEdicaoPessoa && (
+
+                    {modoEdicao && adicionarApenasFamilia && moradiaOriginalId && (
+                        <div className="inline-alert warning">
+                            Ao salvar, esta família será desvinculada da moradia #{moradiaOriginalId}.
+                        </div>
+                    )}
+
+                    {!modoEdicaoPessoa && !adicionarApenasFamilia && (
                         <>
-                            <div className="field">
-                                <label>Moradia da família</label>
-                                <select
-                                    value={modoMoradia}
-                                    onChange={(e) => selecionarModoMoradia(e.target.value as ModoMoradia)}
-                                    disabled={adicionarApenasFamilia}
-                                >
-                                    <option value="nova">Cadastrar nova moradia</option>
-                                    <option value="existente">Usar moradia existente</option>
-                                </select>
-                            </div>
-                            {modoMoradia === 'existente' && !adicionarApenasFamilia && (
+                            {modoMoradia === 'existente' && (
                                 <div className="field">
                                     <label>Vincular família a uma moradia existente</label>
                                     <select
@@ -1101,257 +1424,564 @@ export default function Cadastro() {
                             )}
                         </>
                     )}
+
                     {!adicionarApenasFamilia && (
                         <>
-                    <Row>
-                        <TextField label="CEP" value={loc.cep} onChange={(v) => setLocField('cep', maskCEP(v))} onBlur={lookupCep} inputMode="numeric" placeholder="00000-000" />
-                        <TextField label="Logradouro" value={loc.logradouro} onChange={(v) => setLocField('logradouro', v)} />
-                    </Row>
-                    <Row>
-                        <TextField label="Cidade" value={loc.cidade} onChange={(v) => { setLocField('cidade', v); limparInvalido('cidade'); }} required error={invalido('cidade')} />
-                        <TextField label="Bairro" value={loc.bairro} onChange={(v) => setLocField('bairro', v)} />
-                    </Row>
-                    <Row>
-                        <TextField label="Número" value={loc.numero} onChange={(v) => setLocField('numero', v)} />
-                        <TextField label="Estado (UF)" value={loc.estado} onChange={(v) => { setLocField('estado', v); limparInvalido('estado'); }} maxLength={2} required error={invalido('estado')} />
-                    </Row>
-                    <TextField label="Complemento" value={loc.complemento} onChange={(v) => setLocField('complemento', v)} />
+                            <>
+                                <p className="field-group-title">Endereço</p>
 
-                    <p className="field-group-title">Coordenadas (mapa)</p>
-                    <div className="field">
-                        <label>Localização *</label>
-                        <div className="input-with-btn">
-                            <input
-                                className={invalido('latitude') || invalido('longitude') ? 'invalid' : undefined}
-                                placeholder="Latitude, Longitude"
-                                value={loc.latitude && loc.longitude ? `${loc.latitude}, ${loc.longitude}` : ''}
-                                readOnly
-                                style={invalido('latitude') || invalido('longitude') ? { borderColor: '#e53935', background: '#fff6f6' } : undefined}
-                            />
-                            <button type="button" className="gps-btn" disabled={capturando} onClick={pegarGPS}>
-                                {capturando ? 'Capturando…' : '◎ GPS'}
-                            </button>
-                        </div>
-                        {loc.latitude && loc.longitude && <span className="gps-status">✓ Coordenadas capturadas</span>}
-                    </div>
+                                <Row>
+                                    <TextField label="CEP" value={loc.cep} onChange={(v) => setLocField('cep', maskCEP(v))} onBlur={lookupCep} inputMode="numeric" placeholder="00000-000" />
+                                    <TextField label="Logradouro" value={loc.logradouro} onChange={(v) => setLocField('logradouro', v)} placeholder="Ex.: Rua das Flores" />
+                                </Row>
+                                <Row>
+                                    <TextField placeholder='Ex.: Santo André' label="Cidade" value={loc.cidade} onChange={(v) => { setLocField('cidade', v); limparInvalido('cidade'); }} required error={invalido('cidade')} errorMessage="Informe a cidade" />
+                                    <TextField label="Bairro" value={loc.bairro} onChange={(v) => setLocField('bairro', v)} placeholder="Ex.: Jardim Santo André" />
+                                </Row>
+                                <Row>
+                                    <TextField label="Número" value={loc.numero} onChange={(v) => setLocField('numero', v)} placeholder="Ex.: 123" />
+                                    <TextField label="Estado (UF)" value={loc.estado} onChange={(v) => { setLocField('estado', v); limparInvalido('estado'); }} maxLength={2} required error={invalido('estado')} errorMessage="Selecione o estado" placeholder="SP" />
+                                </Row>
+                                <TextField label="Complemento" value={loc.complemento} onChange={(v) => setLocField('complemento', v)} placeholder="Ex.: Casa 2, bloco B" />
+                            </>
 
-                    <LocationPicker
-                        latitude={loc.latitude}
-                        longitude={loc.longitude}
-                        focusSignal={gpsSignal}
-                        onChange={setCoord}
-                    />
+                            <>
+                                <p className="field-group-title">Coordenadas (mapa)</p>
+                                <div className={`field gps-auto-status ${invalido('latitude') || invalido('longitude') ? 'invalid' : ''}`}>
+                                    <label>Localização *</label>
+                                    <span className={`gps-status${capturando ? ' gps-status-loading' : ''}`}>
+                                        {capturando
+                                            ? 'Solicitando permissão e capturando localização...'
+                                            : loc.latitude && loc.longitude
+                                                ? 'Coordenadas capturadas automaticamente'
+                                                : 'Permita o uso da localização para capturar as coordenadas automaticamente.'}
+                                    </span>
+                                </div>
 
-                    <p className="field-group-title">Construção</p>
-                    <Row>
-                        <SelectField label="Tipo" value={moradia.tipoConstrucao} onChange={(v) => { setMoradiaField('tipoConstrucao', v); limparInvalido('tipoConstrucao'); }} options={TIPOS_CONSTRUCAO} required error={invalido('tipoConstrucao')} />
-                        <TextField label="Tipo de pavimento" value={moradia.pavimentos} onChange={(v) => setMoradiaField('pavimentos', v)} inputMode="numeric" />
-                    </Row>
-                    <Row>
-                        <SelectField label="Condição de ocupação" value={moradia.situacaoDeOcupacao} onChange={(v) => { setMoradiaField('situacaoDeOcupacao', v); limparInvalido('situacaoDeOcupacao'); }} options={SITUACOES_OCUPACAO_MORADIA} required error={invalido('situacaoDeOcupacao')} />
-                        <SelectField label="Uso do imóvel" value={moradia.usoImovel} onChange={(v) => { setMoradiaField('usoImovel', v); limparInvalido('usoImovel'); }} options={USOS_IMOVEL} required error={invalido('usoImovel')} />
-                    </Row>
-                    <SelectField label="Status da moradia" value={moradia.status} onChange={(v) => setMoradiaField('status', v)} options={STATUS_MORADIA} />
-                    <TextAreaField label="Referência geográfica" value={loc.referencia} onChange={(v) => setLocField('referencia', v)} />
-                    <div className="field">
-                        <label>Fotos do imóvel (fachada e entorno)</label>
-                        <PhotoPicker
-                            fotos={fotosCasa}
-                            onAdd={(novas) => setFotosCasa((prev) => [...prev, ...novas])}
-                            onRemove={(key) => setFotosCasa((prev) => prev.filter((f) => f.key !== key))}
-                            label="Adicionar foto"
-                            max={2}
-                            showName
-                        />
-                    </div>
-                    <TextAreaField label="Descrição da moradia" value={moradia.descricao} onChange={(v) => setMoradiaField('descricao', v)} />
+                                <LocationPicker
+                                    latitude={loc.latitude}
+                                    longitude={loc.longitude}
+                                    focusSignal={gpsSignal}
+                                    onChange={setCoord}
+                                />
+
+                                <TextAreaField boxStyle={{ marginTop: '15px', marginBottom: '30px' }} label="Referência geográfica" value={loc.referencia} onChange={(v) => setLocField('referencia', v)} placeholder="Ex.: Próximo à escola municipal" />
+                            </>
+
+                            <>
+                                <p className="field-group-title">Construção</p>
+                                <Row>
+                                    <SelectField label="Tipo" value={moradia.tipoConstrucao} onChange={(v) => { setMoradiaField('tipoConstrucao', v); limparInvalido('tipoConstrucao'); }} options={TIPOS_CONSTRUCAO} required error={invalido('tipoConstrucao')} errorMessage="Selecione o tipo de construção" />
+                                    <TextField label="Número de pavimentos" value={moradia.pavimentos} onChange={(v) => setMoradiaField('pavimentos', v)} inputMode="numeric" placeholder="Ex.: 1" />
+                                </Row>
+                                <Row>
+                                    <SelectField label="Condição de ocupação" value={moradia.situacaoDeOcupacao} onChange={(v) => { setMoradiaField('situacaoDeOcupacao', v); limparInvalido('situacaoDeOcupacao'); }} options={SITUACOES_OCUPACAO_MORADIA} required error={invalido('situacaoDeOcupacao')} errorMessage="Selecione a condição de ocupação" />
+                                    <SelectField label="Uso do imóvel" value={moradia.usoImovel} onChange={(v) => { setMoradiaField('usoImovel', v); limparInvalido('usoImovel'); }} options={USOS_IMOVEL} required error={invalido('usoImovel')} errorMessage="Selecione o uso do imóvel" />
+                                </Row>
+                                <SelectField label="Status da moradia" value={moradia.status} onChange={(v) => setMoradiaField('status', v)} options={STATUS_MORADIA} />
+                                <TextAreaField label="Descrição da moradia" value={moradia.descricao} onChange={(v) => setMoradiaField('descricao', v)} placeholder="Ex.: Casa de alvenaria com acesso por viela" />
+
+                                <div className="field">
+                                    <label>Fotos do imóvel (fachada e entorno)</label>
+                                    <PhotoPicker
+                                        fotos={fotosCasa}
+                                        onAdd={(novas) => setFotosCasa((prev) => [...prev, ...novas])}
+                                        onRemove={(key) => setFotosCasa((prev) => prev.filter((f) => f.key !== key))}
+                                        label="Adicionar foto"
+                                        max={2}
+                                        showName
+                                    />
+                                </div>
+                            </>
                         </>
                     )}
 
                     <button className="btn btn-navy btn-block" style={{ marginTop: 6 }} onClick={() => avancarDe('moradia', 'moradores')}>Próximo</button>
-                </div>
+                </div >
             )}
 
-            {aba === 'moradores' && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-                    {!modoEdicaoPessoa && (
-                        <div className="card">
-                            <p className="field-group-title" style={{ marginTop: 0 }}>Adicionar pessoa existente</p>
-                            <div className="input-with-btn">
-                                <input
-                                    value={buscaPessoa}
-                                    onChange={(e) => setBuscaPessoa(e.target.value)}
-                                    placeholder="Buscar por nome ou CPF"
-                                />
-                                <button type="button" className="btn btn-azul" disabled={buscandoPessoa} onClick={pesquisarPessoaExistente}>
-                                    {buscandoPessoa ? 'Buscando...' : 'Buscar'}
+            {
+                aba === 'moradores' && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                        {!modoEdicaoPessoa && (
+                            <>
+                                {/* Alerta resgatado do Arthur */}
+                                <div className="inline-alert info">
+                                    Cada família precisa ter exatamente um morador com grau de parentesco Responsável.
+                                </div>
+
+                                <p className="required-note">
+                                    <span className="required-mark">*</span> Campos obrigatórios.
+                                </p>
+
+                                <button
+                                    type="button"
+                                    className="btn-dashed"
+                                    style={{ marginTop: '15px' }}
+                                    onClick={() => setMostrarBuscaPessoaExistente((atual) => !atual)}
+                                >
+                                    {mostrarBuscaPessoaExistente ? '- Ocultar busca de pessoa existente' : '+ Adicionar pessoa existente'}
                                 </button>
-                            </div>
-                            {pessoasEncontradas.length > 0 && (
-                                <div className="detail-list" style={{ marginTop: 12 }}>
-                                    {pessoasEncontradas.map((pessoa) => (
-                                        <p key={pessoa.id} style={{ display: 'flex', justifyContent: 'space-between', gap: 10, alignItems: 'center' }}>
-                                            <span>
-                                                <strong>{pessoa.nome}</strong> · {pessoa.cpf ?? 'CPF n/d'} · {pessoa.parentesco ?? 'sem parentesco'}
+
+                                {mostrarBuscaPessoaExistente && (
+                                    <div className="existing-person-card">
+                                        <p className="field-group-title" style={{ marginTop: 0, color: 'black' }}>Buscar pessoa existente</p>
+
+                                        <div className="field">
+                                            <label>Nome ou CPF</label>
+                                            {/* Input unificado com o botão de busca do Arthur */}
+                                            <div className="input-with-btn">
+                                                <input
+                                                    value={buscaPessoa}
+                                                    onChange={(e) => setBuscaPessoa(e.target.value)}
+                                                    placeholder="Digite nome ou CPF"
+                                                />
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-azul"
+                                                    disabled={buscandoPessoa}
+                                                    onClick={() => void pesquisarPessoaExistente()}
+                                                >
+                                                    {buscandoPessoa ? 'Buscando...' : 'Buscar'}
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div className="existing-person-list">
+                                            {/* Seus feedbacks visuais aprimorados */}
+                                            {buscandoPessoa && <p className="state-msg existing-person-state">Buscando pessoas...</p>}
+
+                                            {!buscandoPessoa && pessoasEncontradas.length === 0 && buscaPessoa.length > 0 && (
+                                                <p className="state-msg existing-person-state">Nenhuma pessoa disponível encontrada.</p>
+                                            )}
+
+                                            {!buscandoPessoa && pessoasEncontradas.map((pessoa) => (
+                                                <div key={pessoa.id} className="existing-person-item">
+                                                    <span>
+                                                        <strong>{pessoa.nome}</strong>
+                                                        <small>{pessoa.cpf ?? 'CPF n/d'} · {pessoa.parentesco ?? 'sem parentesco'}</small>
+                                                    </span>
+                                                    <button type="button" className="btn-editar" onClick={() => void adicionarPessoaExistente(pessoa)}>
+                                                        Adicionar
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                                <button className="btn-dashed" onClick={adicionarMorador}>+ Adicionar Morador</button>
+                            </>
+                        )}
+                        {moradores.map((m, index) => {
+                            const ehResponsavel = m.parentesco === RESPONSAVEL;
+                            const outroResponsavel = temResponsavel && !ehResponsavel;
+                            const cardAberto = moradoresAbertos.has(m.key);
+                            return (
+                                <div key={m.key} className={`card collapsible-card${cardAberto ? ' open' : ''}`}>
+                                    <div className="collapsible-card-head">
+                                        <button type="button" className="collapsible-trigger" onClick={() => toggleMoradorCard(m.key)}>
+                                            <span className="collapsible-title">
+                                                {modoEdicaoPessoa ? 'Pessoa' : ehResponsavel ? 'Responsável' : `Morador ${index + 1}`}
                                             </span>
-                                            <button type="button" className="btn-editar" onClick={() => void adicionarPessoaExistente(pessoa)}>
-                                                Adicionar
+                                            <span className="collapsible-summary">
+                                                {m.nome || 'Nome não informado'} · {m.parentesco || 'Parentesco pendente'}
+                                            </span>
+                                            <span className="collapsible-chevron" aria-hidden="true">{cardAberto ? '⌃' : '⌄'}</span>
+                                        </button>
+                                        {!modoEdicaoPessoa && moradores.length > 1 && (
+                                            <button type="button" className="collapsible-remove" onClick={() => setMoradores((prev) => prev.filter((_, i) => i !== index))}>
+                                                Remover
                                             </button>
-                                        </p>
+                                        )}
+                                    </div>
+
+                                    {
+                                        cardAberto && (
+                                            <div className="collapsible-card-body">
+                                                <SelectField
+                                                    label="Grau de parentesco c/ responsável"
+                                                    value={m.parentesco}
+                                                    onChange={(v) => {
+                                                        updateMorador(index, { parentesco: v });
+                                                        limparInvalido(`${m.key}:parentesco`);
+                                                    }}
+                                                    options={PARENTESCOS}
+                                                    disabledOptions={outroResponsavel ? [RESPONSAVEL] : []}
+                                                    required
+                                                    error={invalido(`${m.key}:parentesco`)}
+                                                />
+
+                                                <Row>
+                                                    <TextField
+                                                        label="Nome completo"
+                                                        value={m.nome}
+                                                        onChange={(v) => {
+                                                            updateMorador(index, { nome: v });
+                                                            limparInvalido(`${m.key}:nome`);
+                                                        }}
+                                                        required
+                                                        error={invalido(`${m.key}:nome`)}
+                                                        placeholder="Ex.: Maria Silva Santos"
+                                                    />
+
+                                                    <TextField
+                                                        label="Data de nascimento"
+                                                        value={m.dataDeNascimento}
+                                                        onChange={(v) => {
+                                                            updateMorador(index, { dataDeNascimento: v });
+                                                            limparInvalido(`${m.key}:data`);
+                                                        }}
+                                                        type="date"
+                                                        required
+                                                        error={invalido(`${m.key}:data`)}
+                                                        placeholder="AAAA-MM-DD"
+                                                    />
+                                                </Row>
+
+                                                <Row>
+                                                    <TextField
+                                                        label="Apelido"
+                                                        value={m.nomeSocial}
+                                                        onChange={(v) => updateMorador(index, { nomeSocial: v })}
+                                                        placeholder="Ex.: Maria"
+                                                    />
+
+                                                    <TextField
+                                                        label="CPF"
+                                                        value={m.cpf}
+                                                        onChange={(v) => updateMorador(index, { cpf: maskCPF(v) })}
+                                                        inputMode="numeric"
+                                                        maxLength={14}
+                                                        placeholder="000.000.000-00"
+                                                    />
+                                                </Row>
+
+                                                <SelectField
+                                                    label="Escolaridade"
+                                                    value={m.escolaridade}
+                                                    onChange={(v) => {
+                                                        updateMorador(index, { escolaridade: v });
+                                                        limparInvalido(`${m.key}:escolaridade`);
+                                                    }}
+                                                    options={ESCOLARIDADES}
+                                                    required
+                                                    error={invalido(`${m.key}:escolaridade`)}
+                                                />
+
+                                                <SelectField
+                                                    label="Situação ocupacional"
+                                                    value={m.situacaoOcupacional}
+                                                    onChange={(v) => {
+                                                        updateMorador(index, { situacaoOcupacional: v });
+                                                        limparInvalido(`${m.key}:ocupacao`);
+                                                    }}
+                                                    options={SITUACOES_OCUPACIONAIS}
+                                                    required
+                                                    error={invalido(`${m.key}:ocupacao`)}
+                                                />
+
+                                                <Row>
+                                                    <CheckboxField
+                                                        label="Doença crônica"
+                                                        checked={m.cronico}
+                                                        onChange={(v) => updateMorador(index, { cronico: v })}
+                                                    />
+
+                                                    <CheckboxField
+                                                        label="Usa medicação"
+                                                        checked={m.medicacao}
+                                                        onChange={(v) => updateMorador(index, { medicacao: v })}
+                                                    />
+                                                </Row>
+
+                                                <div className="field">
+                                                    <label>Condições físicas</label>
+                                                    <div className="priority-checks">
+                                                        {prioridades.map((prioridade) => (
+                                                            <CheckboxField
+                                                                key={prioridade.id}
+                                                                label={
+                                                                    prioridade.tipo
+                                                                        ? `${prioridade.condicao} (${prioridade.tipo})`
+                                                                        : prioridade.condicao
+                                                                }
+                                                                checked={m.prioridadeIds.includes(prioridade.id)}
+                                                                onChange={(checked) =>
+                                                                    updateMorador(index, {
+                                                                        prioridadeIds: checked
+                                                                            ? [...m.prioridadeIds, prioridade.id]
+                                                                            : m.prioridadeIds.filter((id) => id !== prioridade.id)
+                                                                    })
+                                                                }
+                                                            />
+                                                        ))}
+                                                    </div>
+                                                </div>
+
+                                                {ehResponsavel && (
+                                                    <div style={{ marginTop: 8, paddingTop: 12, borderTop: '1px dashed var(--cinza)' }}>
+                                                        <p className="field-group-title" style={{ color: 'var(--laranja)', marginTop: 35 }}>
+                                                            Dados exclusivos do responsável
+                                                        </p>
+
+                                                        <Row>
+                                                            <SelectField
+                                                                label="Gênero"
+                                                                value={m.sexo}
+                                                                onChange={(v) => {
+                                                                    updateMorador(index, { sexo: v });
+                                                                    limparInvalido(`${m.key}:sexo`);
+                                                                }}
+                                                                options={SEXOS}
+                                                                required
+                                                                error={invalido(`${m.key}:sexo`)}
+                                                            />
+
+                                                            <SelectField
+                                                                label="Cor/Raça"
+                                                                value={m.raca}
+                                                                onChange={(v) => {
+                                                                    updateMorador(index, { raca: v });
+                                                                    limparInvalido(`${m.key}:raca`);
+                                                                }}
+                                                                options={RACAS}
+                                                                required
+                                                                error={invalido(`${m.key}:raca`)}
+                                                            />
+                                                        </Row>
+
+                                                        <SelectField
+                                                            label="Estado civil"
+                                                            value={m.estadoCivil}
+                                                            onChange={(v) => {
+                                                                updateMorador(index, { estadoCivil: v });
+                                                                limparInvalido(`${m.key}:estadoCivil`);
+                                                            }}
+                                                            options={ESTADOS_CIVIS}
+                                                            required
+                                                            error={invalido(`${m.key}:estadoCivil`)}
+                                                        />
+                                                        <Row>
+                                                            <TextField
+                                                                label="Nome da mãe"
+                                                                value={m.nomeDaMae}
+                                                                onChange={(v) => updateMorador(index, { nomeDaMae: v })}
+                                                                placeholder="Ex.: Ana Santos"
+                                                            />
+                                                        </Row>
+
+                                                        <Row>
+                                                            <TextField
+                                                                label="NIS"
+                                                                value={m.nis}
+                                                                onChange={(v) => updateMorador(index, { nis: v })}
+                                                                inputMode="numeric"
+                                                                placeholder="Ex.: 12345678901"
+                                                            />
+
+                                                            <TextField
+                                                                label="Renda mensal (R$)"
+                                                                value={m.renda}
+                                                                onChange={(v) => updateMorador(index, { renda: v })}
+                                                                inputMode="decimal"
+                                                                placeholder="Ex.: 1500,00"
+                                                            />
+                                                        </Row>
+
+                                                        <Row>
+                                                            <TextField
+                                                                label="E-mail"
+                                                                value={m.email}
+                                                                onChange={(v) => updateMorador(index, { email: v })}
+                                                                inputMode="email"
+                                                                placeholder="Ex.: nome@email.com"
+                                                            />
+
+                                                            <TextField
+                                                                label="Telefone"
+                                                                value={m.telefone}
+                                                                onChange={(v) => updateMorador(index, { telefone: maskTelefone(v) })}
+                                                                inputMode="tel"
+                                                                placeholder="(11) 99999-9999"
+                                                            />
+                                                        </Row>
+
+                                                        <Row>
+                                                            <CheckboxField
+                                                                label="Possui veículo"
+                                                                checked={m.veiculo}
+                                                                onChange={(v) => updateMorador(index, { veiculo: v })}
+                                                            />
+
+                                                            <TextField
+                                                                label="Programas sociais"
+                                                                value={m.programasSociais}
+                                                                onChange={(v) => updateMorador(index, { programasSociais: v.replace(/\D/g, '') })}
+                                                                inputMode="numeric"
+                                                                placeholder="Ex.: 1"
+                                                            />
+                                                        </Row>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )
+                                    }
+                                </div >
+                            );
+                        })}
+
+                        {
+                            modoEdicaoPessoa ? (
+                                <button className="btn btn-outline btn-block" disabled={enviando} onClick={enviar}>
+                                    {enviando ? 'Enviando...' : 'Salvar alterações'}
+                                </button>
+                            ) : (
+                                <button className="btn btn-navy btn-block" onClick={() => avancarDe('moradores', 'pets')}>Próximo</button>
+                            )
+                        }
+                    </div >
+                )}
+
+            {
+                aba === 'pets' && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                        <div className="optional-section-note">
+                            <strong>Pets e Animais são opcionais</strong>
+                            <span>Se a família não tiver animais, você pode seguir para a Visão Geral sem adicionar nenhum cadastro.</span>
+                        </div>
+                        {pets.length === 0 && <p className="state-msg">Nenhum animal adicionado. Esta etapa pode ficar em branco.</p>}
+                        {pets.map((p, index) => {
+                            const cardAberto = petsAbertos.has(p.key);
+                            return (
+                                <div key={p.key} className={`card collapsible-card${cardAberto ? ' open' : ''}`}>
+                                    <div className="collapsible-card-head">
+                                        <button type="button" className="collapsible-trigger" onClick={() => togglePetCard(p.key)}>
+                                            <span className="collapsible-title">Animal {index + 1}</span>
+                                            <span className="collapsible-summary">
+                                                {p.nome || 'Nome não informado'} · {p.tipo || 'Tipo pendente'}
+                                            </span>
+                                            <span className="collapsible-chevron" aria-hidden="true">{cardAberto ? '⌃' : '⌄'}</span>
+                                        </button>
+                                        <button type="button" className="collapsible-remove" onClick={() => setPets((prev) => prev.filter((_, i) => i !== index))}>
+                                            Remover
+                                        </button>
+                                    </div>
+
+                                    {cardAberto && (
+                                        <div className="collapsible-card-body">
+                                            <Row>
+                                                <TextField label="Nome do animal" value={p.nome} onChange={(v) => { updatePet(index, { nome: v }); limparInvalido(`${p.key}:petNome`); }} required error={invalido(`${p.key}:petNome`)} placeholder="Ex.: Thor" />
+                                                <TextField label="Porte" value={p.porte} onChange={(v) => updatePet(index, { porte: v })} placeholder="Ex.: Médio" />
+                                            </Row>
+                                            <Row>
+                                                <SelectField label="Tipo" value={p.tipo} onChange={(v) => { updatePet(index, { tipo: v }); limparInvalido(`${p.key}:petTipo`); }} options={TIPOS_PET} required error={invalido(`${p.key}:petTipo`)} />
+                                                <TextField label="Cor do animal" value={p.cor} onChange={(v) => updatePet(index, { cor: v })} placeholder="Ex.: Caramelo" />
+                                            </Row>
+                                            <Row>
+                                                <TextField label="Raça" value={p.raca} onChange={(v) => updatePet(index, { raca: v })} placeholder="Ex.: Sem raça definida" />
+                                                <SelectField label="Status" value={p.status} onChange={(v) => updatePet(index, { status: v })} options={STATUS_PET} />
+                                            </Row>
+                                            <TextAreaField label="Observações sobre o animal" value={p.observacao} onChange={(v) => updatePet(index, { observacao: v })} placeholder="Ex.: Animal dócil, fica no quintal" />
+                                            <div className="field">
+                                                <label>Foto do animal</label>
+                                                <PhotoPicker
+                                                    fotos={p.fotos}
+                                                    onAdd={(novas) => addFotosPet(index, novas)}
+                                                    onRemove={(key) => removeFotoPet(index, key)}
+                                                    label="Adicionar foto"
+                                                    max={1}
+                                                    showName
+                                                />
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            );
+                        })}
+                        <button className="btn-dashed" onClick={adicionarPet}>+ Adicionar Animal</button>
+                        <button className="btn btn-navy btn-block" onClick={irParaVisaoGeral}>Próximo</button>
+                    </div>
+                )
+            }
+
+            {
+                aba === 'visaoGeral' && (
+                    <div className="overview-flow">
+                        <div className="card overview-card">
+                            <div className="overview-card-head">
+                                <div>
+                                    <strong>Moradia</strong>
+                                    <span>{adicionarApenasFamilia ? 'Família sem moradia vinculada' : modoMoradia === 'existente' ? 'Moradia existente vinculada' : 'Nova moradia'}</span>
+                                </div>
+                                <button type="button" className="btn-editar" onClick={() => setAba('moradia')}>Editar</button>
+                            </div>
+                            {adicionarApenasFamilia ? (
+                                <p className="state-msg overview-empty">Cadastro marcado como apenas família.</p>
+                            ) : (
+                                <div className="overview-grid">
+                                    <p><span>Endereço</span><strong>{enderecoResumo || 'Não informado'}</strong></p>
+                                    <p><span>CEP</span><strong>{loc.cep || 'Não informado'}</strong></p>
+                                    <p><span>Coordenadas</span><strong>{loc.latitude && loc.longitude ? `${loc.latitude}, ${loc.longitude}` : 'Não capturadas'}</strong></p>
+                                    <p><span>Tipo</span><strong>{moradia.tipoConstrucao || 'Não informado'}</strong></p>
+                                    <p><span>Ocupação</span><strong>{moradia.situacaoDeOcupacao || 'Não informado'}</strong></p>
+                                    <p><span>Uso</span><strong>{moradia.usoImovel || 'Não informado'}</strong></p>
+                                    <p><span>Status</span><strong>{moradia.status || 'Não informado'}</strong></p>
+                                    <p><span>Fotos</span><strong>{fotosCasa.length}</strong></p>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="card overview-card">
+                            <div className="overview-card-head">
+                                <div>
+                                    <strong>Moradores</strong>
+                                    <span>{moradores.length} pessoa(s) adicionada(s)</span>
+                                </div>
+                                <button type="button" className="btn-editar" onClick={() => setAba('moradores')}>Editar</button>
+                            </div>
+                            <div className="overview-list">
+                                {moradores.map((m) => (
+                                    <div key={m.key} className="overview-list-item">
+                                        <strong>{m.nome || 'Nome não informado'}</strong>
+                                        <span>{m.parentesco || 'Parentesco não informado'}{m.cpf ? ` · CPF ${m.cpf}` : ''}</span>
+                                        <small>{[m.dataDeNascimento, m.escolaridade, m.situacaoOcupacional].filter(Boolean).join(' · ') || 'Dados básicos pendentes'}</small>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="card overview-card">
+                            <div className="overview-card-head">
+                                <div>
+                                    <strong>Pets e Animais</strong>
+                                    <span>{pets.length} animal(is) adicionado(s)</span>
+                                </div>
+                                <button type="button" className="btn-editar" onClick={() => setAba('pets')}>Editar</button>
+                            </div>
+                            {pets.length === 0 ? (
+                                <p className="state-msg overview-empty">Nenhum animal adicionado.</p>
+                            ) : (
+                                <div className="overview-list">
+                                    {pets.map((p) => (
+                                        <div key={p.key} className="overview-list-item">
+                                            <strong>{p.nome || 'Nome não informado'}</strong>
+                                            <span>{[p.tipo, p.porte, p.cor].filter(Boolean).join(' · ') || 'Dados do animal pendentes'}</span>
+                                            <small>{p.fotos.length} foto(s){p.observacao ? ` · ${p.observacao}` : ''}</small>
+                                        </div>
                                     ))}
                                 </div>
                             )}
                         </div>
-                    )}
-                    {moradores.map((m, index) => {
-                        const ehResponsavel = m.parentesco === RESPONSAVEL;
-                        const outroResponsavel = temResponsavel && !ehResponsavel;
-                        return (
-                            <div key={m.key} className="card">
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-                                    <strong style={{ color: 'var(--hover)' }}>
-                                        {modoEdicaoPessoa ? 'Pessoa' : ehResponsavel ? 'Responsável' : `Morador ${index + 1}`}
-                                    </strong>
-                                    {!modoEdicaoPessoa && moradores.length > 1 && (
-                                        <button onClick={() => setMoradores((prev) => prev.filter((_, i) => i !== index))} style={{ color: 'var(--laranja)', fontWeight: 700, fontSize: '0.85rem' }}>
-                                            Remover
-                                        </button>
-                                    )}
-                                </div>
 
-                                <SelectField
-                                    label="Grau de parentesco c/ responsável"
-                                    value={m.parentesco}
-                                    onChange={(v) => { updateMorador(index, { parentesco: v }); limparInvalido(`${m.key}:parentesco`); }}
-                                    options={PARENTESCOS}
-                                    disabledOptions={outroResponsavel ? [RESPONSAVEL] : []}
-                                    required
-                                    error={invalido(`${m.key}:parentesco`)}
-                                />
-                                <Row>
-                                    <TextField label="Nome completo" value={m.nome} onChange={(v) => { updateMorador(index, { nome: v }); limparInvalido(`${m.key}:nome`); }} required error={invalido(`${m.key}:nome`)} />
-                                    <TextField label="Data de nascimento" value={m.dataDeNascimento} onChange={(v) => { updateMorador(index, { dataDeNascimento: v }); limparInvalido(`${m.key}:data`); }} type="date" required error={invalido(`${m.key}:data`)} />
-                                </Row>
-                                <Row>
-                                    <TextField label="Nome social" value={m.nomeSocial} onChange={(v) => updateMorador(index, { nomeSocial: v })} />
-                                    <TextField label="CPF" value={m.cpf} onChange={(v) => updateMorador(index, { cpf: maskCPF(v) })} inputMode="numeric" maxLength={14} placeholder="Opcional" />
-                                </Row>
-                                <SelectField label="Escolaridade" value={m.escolaridade} onChange={(v) => { updateMorador(index, { escolaridade: v }); limparInvalido(`${m.key}:escolaridade`); }} options={ESCOLARIDADES} required error={invalido(`${m.key}:escolaridade`)} />
-                                <SelectField label="Situação ocupacional" value={m.situacaoOcupacional} onChange={(v) => { updateMorador(index, { situacaoOcupacional: v }); limparInvalido(`${m.key}:ocupacao`); }} options={SITUACOES_OCUPACIONAIS} required error={invalido(`${m.key}:ocupacao`)} />
-	                                <Row>
-	                                    <CheckboxField label="Doença crônica" checked={m.cronico} onChange={(v) => updateMorador(index, { cronico: v })} />
-	                                    <CheckboxField label="Usa medicação" checked={m.medicacao} onChange={(v) => updateMorador(index, { medicacao: v })} />
-	                                </Row>
-	                                <div className="field">
-	                                    <label>Prioridades</label>
-                                        <div className="priority-checks">
-	                                        {prioridades.map((prioridade) => (
-	                                            <CheckboxField
-                                                    key={prioridade.id}
-                                                    label={prioridade.tipo ? `${prioridade.condicao} (${prioridade.tipo})` : prioridade.condicao}
-                                                    checked={m.prioridadeIds.includes(prioridade.id)}
-                                                    onChange={(checked) => updateMorador(index, {
-                                                        prioridadeIds: checked
-                                                            ? [...m.prioridadeIds, prioridade.id]
-                                                            : m.prioridadeIds.filter((id) => id !== prioridade.id)
-                                                    })}
-                                                />
-	                                        ))}
-                                        </div>
-	                                </div>
-
-	                                {ehResponsavel && (
-                                    <div style={{ marginTop: 8, paddingTop: 12, borderTop: '1px dashed var(--cinza)' }}>
-                                        <p className="field-group-title" style={{ color: 'var(--laranja)', marginTop: 0 }}>
-                                            Dados exclusivos do responsável
-                                        </p>
-                                        <Row>
-                                            <SelectField label="Gênero" value={m.sexo} onChange={(v) => { updateMorador(index, { sexo: v }); limparInvalido(`${m.key}:sexo`); }} options={SEXOS} required error={invalido(`${m.key}:sexo`)} />
-                                            <SelectField label="Cor/Raça" value={m.raca} onChange={(v) => { updateMorador(index, { raca: v }); limparInvalido(`${m.key}:raca`); }} options={RACAS} required error={invalido(`${m.key}:raca`)} />
-                                        </Row>
-                                        <SelectField label="Estado civil" value={m.estadoCivil} onChange={(v) => { updateMorador(index, { estadoCivil: v }); limparInvalido(`${m.key}:estadoCivil`); }} options={ESTADOS_CIVIS} required error={invalido(`${m.key}:estadoCivil`)} />
-                                        <TextField label="Local de nascimento" value={m.localDeNascimento} onChange={(v) => updateMorador(index, { localDeNascimento: v })} />
-                                        <Row>
-                                            <TextField label="Nome do pai" value={m.nomeDoPai} onChange={(v) => updateMorador(index, { nomeDoPai: v })} />
-                                            <TextField label="Nome da mãe" value={m.nomeDaMae} onChange={(v) => updateMorador(index, { nomeDaMae: v })} />
-                                        </Row>
-                                        <Row>
-                                            <TextField label="NIS" value={m.nis} onChange={(v) => updateMorador(index, { nis: v })} inputMode="numeric" />
-                                            <TextField label="Renda mensal (R$)" value={m.renda} onChange={(v) => updateMorador(index, { renda: v })} inputMode="decimal" />
-                                        </Row>
-                                        <Row>
-                                            <TextField label="E-mail" value={m.email} onChange={(v) => updateMorador(index, { email: v })} inputMode="email" />
-                                            <TextField label="Telefone" value={m.telefone} onChange={(v) => updateMorador(index, { telefone: maskTelefone(v) })} inputMode="tel" />
-                                        </Row>
-                                        <Row>
-                                            <TextField label="Residência na moradia (desde)" value={m.dataResidenciaMoradia} onChange={(v) => updateMorador(index, { dataResidenciaMoradia: v })} type="date" />
-                                            <TextField label="Residência no estado (desde)" value={m.dataResidenciaEstado} onChange={(v) => updateMorador(index, { dataResidenciaEstado: v })} type="date" />
-                                        </Row>
-                                        <Row>
-                                            <CheckboxField label="Possui veículo" checked={m.veiculo} onChange={(v) => updateMorador(index, { veiculo: v })} />
-                                            <CheckboxField label="Programa social" checked={m.programaSocial} onChange={(v) => updateMorador(index, { programaSocial: v })} />
-                                        </Row>
-                                    </div>
-                                )}
-                            </div>
-                        );
-                    })}
-
-                    {!modoEdicaoPessoa && (
-                        <button className="btn-dashed" onClick={() => setMoradores((prev) => [...prev, novoMorador()])}>+ Adicionar Morador</button>
-                    )}
-                    <button className="btn btn-navy btn-block" onClick={() => avancarDe('moradores', 'pets')}>Próximo</button>
-                </div>
-            )}
-
-            {aba === 'pets' && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-                    {pets.length === 0 && <p className="state-msg">Nenhum animal adicionado.</p>}
-                    {pets.map((p, index) => (
-                        <div key={p.key} className="card">
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-                                <strong style={{ color: 'var(--hover)' }}>Animal {index + 1}</strong>
-                                <button onClick={() => setPets((prev) => prev.filter((_, i) => i !== index))} style={{ color: 'var(--laranja)', fontWeight: 700, fontSize: '0.85rem' }}>
-                                    Remover
-                                </button>
-                            </div>
-                            <Row>
-                                <TextField label="Nome do animal" value={p.nome} onChange={(v) => updatePet(index, { nome: v })} required />
-                                <TextField label="Porte" value={p.porte} onChange={(v) => updatePet(index, { porte: v })} />
-                            </Row>
-                            <Row>
-                                <SelectField label="Tipo" value={p.tipo} onChange={(v) => updatePet(index, { tipo: v })} options={TIPOS_PET} required />
-                                <TextField label="Cor do animal" value={p.cor} onChange={(v) => updatePet(index, { cor: v })} />
-                            </Row>
-                            <Row>
-                                <TextField label="Raça" value={p.raca} onChange={(v) => updatePet(index, { raca: v })} />
-                                <SelectField label="Status" value={p.status} onChange={(v) => updatePet(index, { status: v })} options={STATUS_PET} />
-                            </Row>
-                            <TextAreaField label="Observações sobre o animal" value={p.observacao} onChange={(v) => updatePet(index, { observacao: v })} />
-                            <div className="field">
-                                <label>Foto do animal</label>
-                                <PhotoPicker
-                                    fotos={p.fotos}
-                                    onAdd={(novas) => addFotosPet(index, novas)}
-                                    onRemove={(key) => removeFotoPet(index, key)}
-                                    label="Adicionar foto"
-                                    max={1}
-                                    showName
-                                />
-                            </div>
+                        <div className="overview-actions">
+                            <button className="btn btn-outline btn-block" style={{ "width": "100%" }} disabled={enviando} onClick={enviar}>
+                                {enviando ? 'Enviando...' : modoEdicao ? 'Salvar alterações' : `Concluir Cadastro${totalFotos > 0 ? ` (${totalFotos} foto(s))` : ''}`}
+                            </button>
                         </div>
-                    ))}
-                    <button className="btn-dashed" onClick={() => setPets((prev) => [...prev, novoPet()])}>+ Adicionar Animal</button>
-                </div>
-            )}
+                    </div>
+                )}
 
             {erro && <p className="error-msg">{erro}</p>}
-
-	            {aba === 'pets' && (
-	                <button className="btn btn-outline btn-block" style={{ marginTop: 16 }} disabled={enviando} onClick={enviar}>
-	                    {enviando ? 'Enviando...' : modoEdicao ? 'Salvar alterações' : `Concluir Cadastro${totalFotos > 0 ? ` (${totalFotos} foto(s))` : ''}`}
-	                </button>
-	            )}
         </div>
     );
 }

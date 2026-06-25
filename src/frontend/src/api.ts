@@ -161,14 +161,24 @@ export function removerFamilia(id: number): Promise<unknown> {
    Pessoas — busca por escopo (ativas/inativas/todas) e status
    =========================================================== */
 export function buscarPessoas(
-    filtros: { nome?: string; cpf?: string; escopo?: EscopoPessoa } = {}
+    filtros: { nome?: string; cpf?: string; email?: string; telefone?: string; escopo?: EscopoPessoa } = {}
 ): Promise<PessoaBuscaResultado[]> {
     const params = new URLSearchParams();
     if (filtros.nome) params.set('nome', filtros.nome);
     if (filtros.cpf) params.set('cpf', filtros.cpf);
+    if (filtros.email) params.set('email', filtros.email);
+    if (filtros.telefone) params.set('telefone', filtros.telefone);
     if (filtros.escopo) params.set('escopo', filtros.escopo);
     const query = params.toString();
     return request<PessoaBuscaResultado[]>(`/pessoas/busca${query ? `?${query}` : ''}`);
+}
+
+export function listarPessoas(): Promise<PessoaBuscaResultado[]> {
+    return request<PessoaBuscaResultado[]>('/pessoas');
+}
+
+export function listarPessoasInativas(): Promise<PessoaBuscaResultado[]> {
+    return request<PessoaBuscaResultado[]>('/pessoas/inativas');
 }
 
 export function atualizarStatusPessoa(id: number, status: string): Promise<PessoaBuscaResultado> {
