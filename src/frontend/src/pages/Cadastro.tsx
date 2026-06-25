@@ -29,13 +29,14 @@ import {
     vincularPessoaFamilia
 } from '../api.ts';
 import { toast } from '../components/feedback.tsx';
+import { estaOnline } from '../utils/connectivity.ts';
+import { enfileirarCadastro } from '../utils/outbox.ts';
 import { buscarCep, buscarEnderecoPorCoordenadas, capturarGPS, cpfValido, emailValido, maskCEP, maskCPF, maskTelefone } from '../utils/forms.ts';
 import { CheckboxField, Row, SelectField, TextAreaField, TextField } from '../components/FormFields.tsx';
 import LocationPicker from '../components/LocationPicker.tsx';
 import PhotoPicker, { type FotoLocal } from '../components/PhotoPicker.tsx';
 import {
     ESCOLARIDADES,
-    ESTADOS_BRASIL,
     ESTADOS_CIVIS,
     PARENTESCOS,
     RACAS,
@@ -585,38 +586,6 @@ export default function Cadastro() {
         });
     }
 
-    function limparFormularioMoradia() {
-        setMoradiaSelecionadaId(null);
-        setLoc({
-            logradouro: '',
-            numero: '',
-            bairro: '',
-            cidade: '',
-            estado: '',
-            cep: '',
-            latitude: '',
-            longitude: '',
-            referencia: '',
-            complemento: ''
-        });
-        setMoradia({
-            tipoConstrucao: '',
-            usoImovel: '',
-            situacaoDeOcupacao: '',
-            pavimentos: '1',
-            status: 'Ativa',
-            descricao: ''
-        });
-        setFotosCasa([]);
-    }
-
-    function selecionarModoMoradia(modo: ModoMoradia) {
-        setModoMoradia(modo);
-        if (modo === 'nova') {
-            limparFormularioMoradia();
-        }
-    }
-
     function selecionarCadastroApenasFamilia(ativo: boolean) {
         setAdicionarApenasFamilia(ativo);
         if (ativo) {
@@ -870,11 +839,18 @@ export default function Cadastro() {
             if (!m.escolaridade) campos.push(`${m.key}:escolaridade`);
             for (const chave of [`${m.key}:cpf`, `${m.key}:email`, `${m.key}:data`]) {
                 const feedback = feedbackCampo(chave);
-                if (feedback && feedback.type !== 'success') campos.push(chave);
+                // Só erros reais (CPF inválido, duplicado, e-mail/data inválidos) bloqueiam.
+                // 'warning' (ex.: não deu para checar duplicidade offline) e 'info'
+                // (checagem em andamento) não devem travar o envio.
+                if (feedback && feedback.type === 'error') campos.push(chave);
             }
-            if (!m.sexo) campos.push(`${m.key}:sexo`);
-            if (!m.raca) campos.push(`${m.key}:raca`);
-            if (!m.estadoCivil) campos.push(`${m.key}:estadoCivil`);
+            // sexo/raça/estado civil só são coletados para o responsável (ver bloco
+            // `ehResponsavel` no formulário), então só são exigidos dele.
+            if (m.parentesco === RESPONSAVEL) {
+                if (!m.sexo) campos.push(`${m.key}:sexo`);
+                if (!m.raca) campos.push(`${m.key}:raca`);
+                if (!m.estadoCivil) campos.push(`${m.key}:estadoCivil`);
+            }
         }
         return { campos, msg: campos.length ? 'Revise os campos destacados antes de continuar.' : null };
     }
@@ -1264,6 +1240,34 @@ export default function Cadastro() {
         if (!adicionarApenasFamilia) {
             payload.localizacao = localizacaoPayload();
             payload.moradia = moradiaPayload();
+        }
+
+        // Offline-first (A1 + C1): sem conexão, um cadastro NOVO de núcleo vai
+        // para a fila local (com as fotos) e sobe sozinho quando a internet
+        // voltar. Cadastros que reaproveitam pessoas/moradias já existentes
+        // dependem de dados do servidor, então exigem rede.
+        if (!estaOnline()) {
+            if (temVinculosExistentes) {
+                toast.error('Sem conexão: cadastros que usam pessoas ou moradias já existentes precisam de internet.');
+                setEnviando(false);
+                return;
+            }
+            try {
+                await enfileirarCadastro({
+                    payload,
+                    responsavelPrioridadeIds: r.prioridadeIds,
+                    dependentesPrioridadeIds: dependentesMoradores.map((m) => m.prioridadeIds),
+                    fotosMoradia: fotosCasa.map((f) => f.file),
+                    fotosPets: pets.map((p) => p.fotos.map((f) => f.file))
+                });
+                toast.success('Sem conexão: cadastro salvo no aparelho. Será enviado automaticamente quando a internet voltar.');
+                navigate('/');
+            } catch {
+                toast.error('Não foi possível salvar o cadastro offline neste aparelho.');
+            } finally {
+                setEnviando(false);
+            }
+            return;
         }
 
         try {

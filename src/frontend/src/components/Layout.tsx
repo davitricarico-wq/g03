@@ -1,6 +1,7 @@
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { ConfirmHost, ToastHost } from './feedback.tsx';
 import Icon from './Icon.tsx';
+import OfflineIndicator from './OfflineIndicator.tsx';
 import { useAnimacoes } from '../utils/anim.ts';
 
 const logo = '/logo-defesa-civil.png';
@@ -61,6 +62,7 @@ export default function Layout() {
                 ))}
             </nav>
 
+            <OfflineIndicator />
             <ToastHost />
             <ConfirmHost />
         </div>

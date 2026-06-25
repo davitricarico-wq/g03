@@ -454,15 +454,15 @@ export class PessoaRepository implements IPessoaRepository {
 
     async getAllResponsaveis(db: Queryable = this.db): Promise<Responsavel[]> {
         try {
-            const res = await db.query<PessoaApiRow>(`
+            const res = await db.query<Responsavel>(`
                 SELECT ${responsavelSelect}
                 FROM vw_pessoa_ativa p
                 WHERE p.parentesco::text IN ('Responsável', 'RESPONSAVEL')
                 ORDER BY p.nome
             `);
-            return res.rows
-                .map(mapResponsavelApiRow)
-                .filter((responsavel): responsavel is Responsavel => responsavel !== null);
+            // O SELECT já devolve as colunas em camelCase (shape de Responsavel).
+            // mapResponsavelApiRow é só para o caminho Supabase (linhas em snake_case).
+            return res.rows;
         } catch (err) {
             if (!isDatabaseHostResolutionError(err)) {
                 throw err;
@@ -473,7 +473,7 @@ export class PessoaRepository implements IPessoaRepository {
 
     async getResponsavelByPessoaId(idPessoa: number, db: Queryable = this.db): Promise<Responsavel | null> {
         try {
-            const res = await db.query<PessoaApiRow>(
+            const res = await db.query<Responsavel>(
                 `
                 SELECT ${responsavelSelect}
                 FROM pessoa p
@@ -482,7 +482,8 @@ export class PessoaRepository implements IPessoaRepository {
                 `,
                 [idPessoa]
             );
-            return res.rows[0] ? mapResponsavelApiRow(res.rows[0]) : null;
+            // O SELECT já devolve camelCase (shape de Responsavel); o map é só p/ Supabase.
+            return res.rows[0] ?? null;
         } catch (err) {
             if (!isDatabaseHostResolutionError(err)) {
                 throw err;
