@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import Icon from '../components/Icon.tsx';
-import { useAnimacoes } from '../utils/anim.ts';
+import OfflineMapButton from '../components/OfflineMapButton.tsx';
 
 const logo = '/logo-defesa-civil.png';
 
@@ -13,7 +13,6 @@ const cards = [
 
 export default function Home() {
     const navigate = useNavigate();
-    const [animacoes, alternarAnimacoes] = useAnimacoes();
 
     return (
         <div>
@@ -42,14 +41,7 @@ export default function Home() {
             </div>
 
             <div className="home-anim">
-                <button
-                    className={`anim-toggle${animacoes ? ' on' : ''}`}
-                    aria-pressed={!animacoes}
-                    onClick={alternarAnimacoes}
-                >
-                    <span className="ic"><Icon name={animacoes ? 'sparkle' : 'x-circle'} size={19} /></span>
-                    <span className="lbl">{animacoes ? 'Normal' : 'Modo Leve'}</span>
-                </button>
+                <OfflineMapButton />
             </div>
         </div>
     );
