@@ -4,6 +4,14 @@ stages:
 
 image: node:20-bookworm
 
+# backend:integration removido pela coordenacao/admin em 2026-06-22.
+# Motivo: o job subia o servico postgres:14 sem POSTGRES_PASSWORD /
+# POSTGRES_HOST_AUTH_METHOD, entao o banco nunca inicializava; o before_script
+# "until pg_isready -h db -p 5432; do ...; sleep 1; done" ficava em loop infinito
+# ate bater o timeout de 1h, monopolizando o runner compartilhado de toda a
+# instituicao (concorrencia 1). So reintroduzir apos corrigir: definir
+# POSTGRES_PASSWORD no service e colocar teto no loop de espera.
+
 backend:test:
   stage: test
   cache:
