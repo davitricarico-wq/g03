@@ -736,7 +736,7 @@ classDiagram
     FotoStorageService --> SupabaseStorageClient : adapter
 ```
 
-> O mesmo trio **Controller → Service → Repository** (com interfaces `I*Service`/`I*Repository`) repete-se para os módulos `pessoa`, `responsavel`, `familia`, `moradia`, `pet` e `foto`. O módulo `prioridade` é a única exceção: o controller acessa o repository diretamente, sem service nem interface.
+> O mesmo trio **Controller → Service → Repository** (com interfaces `I*Service`/`I*Repository`) repete-se para os módulos `pessoa`, `familia`, `moradia`, `pet` e `foto`. Os endpoints `/api/responsaveis` são atendidos pelo módulo `pessoa` (após a migration `09`, "responsável" deixou de ser tabela/módulo próprio e passou a ser uma pessoa com atributos específicos). O módulo `prioridade` é a única exceção ao padrão: o controller acessa o repository diretamente, sem service nem interface.
 
 ### 3.2.1.1. Mapeamento Endpoint → Componentes
 
@@ -1079,7 +1079,7 @@ sequenceDiagram
             Frontend->>Controller: PUT /api/responsaveis/{id_pessoa} {dados_financeiros_sociais}
             Controller->>Service: Atualizar responsável
             Service->>Repository: Iniciar transação (BEGIN)
-            Repository->>DB: UPDATE pessoa ... ; UPDATE responsavel ...
+            Repository->>DB: UPDATE pessoa ... (inclui campos de responsável)
             Repository-->>Service: Commit (COMMIT)
             Service-->>Controller: Responsável atualizado
             Controller-->>Frontend: HTTP 200 OK
@@ -1266,7 +1266,7 @@ sequenceDiagram
     Frontend->>PessoaController: DELETE /api/pessoas/{id_pessoa}
     PessoaController->>Service: Validar exclusão do morador
     Service->>Repository: Verificar se o morador é o responsável ativo da família
-    Repository->>DB: SELECT * FROM vw_pessoa_ativa p INNER JOIN responsavel r ON r.id_pessoa=p.id WHERE p.id=:id AND p.parentesco='Responsável'
+    Repository->>DB: SELECT * FROM vw_pessoa_ativa p WHERE p.id=:id AND p.parentesco='Responsável'
     DB-->>Repository: Registro de responsável ativo encontrado
     Repository-->>Service: Confirmado (morador é o responsável atual)
 
@@ -1416,7 +1416,7 @@ sequenceDiagram
         Service-->>Chamador: Validação ignorada (histórico)
     else Família ativa
         Service->>Repository: Verificar se há responsável ativo na família
-        Repository->>DB: SELECT * FROM pessoa_familia pf JOIN vw_pessoa_ativa p JOIN responsavel r ON r.id_pessoa=p.id WHERE pf.id_familia=:id AND pf.data_saida IS NULL
+        Repository->>DB: SELECT * FROM pessoa_familia pf JOIN vw_pessoa_ativa p ON p.id=pf.id_pessoa WHERE pf.id_familia=:id AND pf.data_saida IS NULL AND p.parentesco='Responsável'
         DB-->>Repository: Responsável ativo ou vazio
         Repository-->>Service: Resultado
 
@@ -1470,7 +1470,7 @@ graph TD
 | **Navegador do usuário** | Chrome / Firefox / Edge | SPA React/Vite carregada de `georisco-frontend.vercel.app` |
 | **Vercel — Frontend** (`georisco-frontend`) | Hospedagem estática + fallback de SPA | Build estático de `src/frontend` (HTML/CSS/JS); `vercel.json` com rewrite de todas as rotas para `index.html` |
 | **Vercel — Backend** (`georisco`) | Função serverless `@vercel/node` | App Express exportado em `src/geoRisco/api/index.ts` (sem `app.listen`); rotas sob o prefixo `/api` |
-| **Supabase — PostgreSQL** | PostgreSQL gerenciado (Transaction Pooler, porta 6543) | Schema das migrations em `src/geoRisco/src/db/migrations/`; tabelas `pessoa`, `familia`, `moradia`, `localizacao`, `responsavel`, `pet`, `foto`, `grupo_prioritario` e tabelas associativas |
+| **Supabase — PostgreSQL** | PostgreSQL gerenciado (Transaction Pooler, porta 6543) | Schema das migrations em `src/geoRisco/src/db/migrations/`; tabelas `pessoa` (inclui os atributos de responsável), `familia`, `moradia`, `localizacao`, `pet`, `foto`, `grupo_prioritario` e tabelas associativas |
 | **Supabase — Storage** | Supabase Storage | Bucket `georisco-fotos` — arquivos físicos de fotos de moradias e pets; acesso via URL assinada |
 
 **Comunicação entre nós:**
@@ -1873,7 +1873,6 @@ erDiagram
     familia ||--o{ familia_moradia : "ocupa (N:N temporal)"
     moradia ||--o{ familia_moradia : "ocupada por"
     localizacao ||--|| moradia : "localiza (1:1)"
-    pessoa  ||--o| responsavel : "especializa (1:0..1, mesma PK)"
     familia ||--o{ pet : "possui"
     moradia ||--o{ foto : "tem"
     pet     ||--o{ foto : "tem"
@@ -1881,7 +1880,7 @@ erDiagram
     grupo_prioritario ||--o{ pessoa_grupo_prioritario : "agrupa"
 ```
 
-> **Restrição não expressável em cardinalidade:** cada `foto` pertence a **exatamente um** dono — `id_moradia` XOR `id_pet` (`CHECK foto_um_dono_chk`). Especialização `pessoa → responsavel` por *class-table inheritance* (a PK de `responsavel` é a FK `id_pessoa`).
+> **Restrição não expressável em cardinalidade:** cada `foto` pertence a **exatamente um** dono — `id_moradia` XOR `id_pet` (`CHECK foto_um_dono_chk`). O **"responsável" não é mais uma entidade separada**: a tabela `responsavel` foi removida (migration `09_merge_responsavel_into_pessoa`) e seus atributos viraram colunas opcionais em `pessoa`. Uma pessoa é responsável quando tem `parentesco = 'Responsável'` e esses campos preenchidos; a regra de um responsável ativo por família é garantida por trigger (migration `05`).
 
 O modelo de dados foi estruturado seguindo as melhores práticas de normalização, rastreabilidade e integridade referencial, com foco em sistemas governamentais. As principais decisões arquiteturais refletidas no diagrama são:
 
@@ -1951,23 +1950,17 @@ erDiagram
         boolean medicacao
         status_pessoa_enum status "Ativo|Obito|Inativo"
         timestamptz deleted_at "RULE soft_delete_pessoa"
-    }
-    responsavel {
-        bigint id_pessoa PK "FK 1:1 -> pessoa.id"
-        varchar nis
-        numeric renda
-        sexo_enum sexo
-        raca_enum raca
-        estado_civil_enum estado_civil
-        boolean veiculo
-        boolean programa_social
-        varchar email UK
-        varchar telefone UK
-        varchar nome_do_pai
-        varchar nome_da_mae
-        varchar local_de_nascimento
-        date data_residencia_estado
-        date data_residencia_moradia
+        varchar nis "ex-responsavel, nullable"
+        numeric renda "nullable"
+        sexo_enum sexo "nullable"
+        raca_enum raca "nullable"
+        estado_civil_enum estado_civil "nullable"
+        boolean veiculo "nullable"
+        int programas_sociais "nullable"
+        varchar email UK "nullable"
+        varchar telefone UK "nullable"
+        varchar nome_da_mae "nullable"
+        date data_residencia_moradia "nullable"
     }
     localizacao {
         bigserial id PK
@@ -2039,7 +2032,6 @@ erDiagram
     familia ||--o{ familia_moradia : ""
     moradia ||--o{ familia_moradia : ""
     localizacao ||--|| moradia : ""
-    pessoa  ||--o| responsavel : ""
     familia ||--o{ pet : ""
     moradia ||--o{ foto : ""
     pet     ||--o{ foto : ""
@@ -2053,12 +2045,11 @@ erDiagram
 #### 1. Entidades Principais e Especializações
 
 **Pessoa**
-Entidade base (superclasse) que guarda os dados demográficos e de saúde básicos de qualquer morador ou cidadão assistido.
-* **Campos:** `id` (PK), `cpf`, `nome`, `nome_social`, `data_de_nascimento`, `parentesco`, `situacao_ocupacional`, `escolaridade`, `cronico`, `medicacao`, `status`, `deleted_at`.
+Entidade base que guarda os dados de qualquer morador ou cidadão assistido. Após a consolidação do responsável (migration `09`), também armazena os atributos de responsável como colunas **opcionais** na própria tabela.
+* **Campos (núcleo):** `id` (PK), `cpf` (UK), `nome`, `nome_social`, `data_de_nascimento`, `parentesco`, `situacao_ocupacional`, `escolaridade`, `cronico`, `medicacao`, `status`, `deleted_at`.
+* **Campos de responsável (opcionais, preenchidos quando `parentesco = 'Responsável'`):** `nis`, `renda`, `sexo`, `raca`, `estado_civil`, `veiculo`, `programas_sociais` (inteiro), `email` (UK), `telefone` (UK), `nome_da_mae`, `data_residencia_moradia`.
 
-**Responsável**
-Subclasse de `Pessoa` (Herança 1:1), responsável por isolar e armazenar os dados burocráticos, financeiros e de contato (dados sensíveis) do chefe de família.
-* **Campos:** `id_pessoa` (PK, FK para `pessoa`), `nis`, `renda`, `sexo`, `raca`, `estado_civil`, `veiculo`, `programa_social`, `email`, `telefone`, `nome_do_pai`, `nome_da_mae`, `local_de_nascimento`, `data_residencia_estado`, `data_residencia_moradia`.
+> **Nota:** o "Responsável" **não é mais uma entidade/tabela separada** — a tabela `responsavel` foi removida (`DROP TABLE responsavel CASCADE`, migration `09`) e seus campos foram absorvidos por `pessoa`.
 
 **Família**
 Atua como a entidade agregadora central do sistema (*hub*), permitindo agrupar os cidadãos e os respectivos animais de estimação independentemente da moradia física, o que facilita sobremaneira as transições e relocalizações em casos de desalojamento.
@@ -2119,7 +2110,7 @@ Por forma a padronizar as entradas de dados e evitar inconsistências nos formul
 
 * **Integridade Referencial:** Todas as *Foreign Keys* estão acompanhadas da ação `ON DELETE CASCADE`. Deste modo, assegura-se que a base de dados não manterá registos órfãos quando entidades de nível superior (ex: localização ou moradia real) forem limpas.
 * **Exclusão Lógica (*Soft Delete*):** A eliminação física de Famílias, Moradias e Pessoas não ocorre. Qualquer comando `DELETE` emitido pela aplicação é interceptado de modo transparente pelo PostgreSQL (através de `RULES`), passando apenas a atualizar as colunas de estado e preenchendo o campo `deleted_at`.
-* **Unicidade Restrita (`UNIQUE`):** Implementada para impossibilitar redundâncias em documentos e contatos de alta criticidade (`pessoa.cpf`, `responsavel.email`, `responsavel.telefone`) e para garantir o relacionamento um-para-um (1:1) rigoroso do campo `id_localizacao` alocado a cada `moradia`.
+* **Unicidade Restrita (`UNIQUE`):** Implementada para impossibilitar redundâncias em documentos e contatos de alta criticidade (`pessoa.cpf`, `pessoa.email` e `pessoa.telefone` — estes dois últimos via índices únicos `pessoa_email_unique_idx` e `pessoa_telefone_unique_idx`, após a consolidação do responsável em `pessoa`) e para garantir o relacionamento um-para-um (1:1) rigoroso do campo `id_localizacao` alocado a cada `moradia`.
 
 ### 3.6.3. Modelo Físico
 
@@ -2137,10 +2128,11 @@ A entidade **`familia`** é o núcleo organizador e o hub de conectividade do si
 - Transição simplificada de moradias em cenários de evacuação emergencial.
 - Atualizações cadastrais em massa (ex: o núcleo familiar inteiro mudou de endereço).
 
-##### 2. Herança de Pessoa: Responsável
-A hierarquia de especialização `Pessoa` → `Responsável` foi consolidada por meio da estratégia de **class-table inheritance**:
-- A tabela **`pessoa`** funciona como superclasse, armazenando atributos universais de qualquer cidadão cadastrado (nome, data de nascimento, escolaridade e situação ocupacional).
-- A tabela **`responsavel`** atua como a subclasse, estendendo a superclasse e compartilhando a mesma Primary Key (`id_pessoa`) como uma Foreign Key. Ela isola dados burocráticos, financeiros e de contato.
+##### 2. Responsável como Atributos de Pessoa
+O "responsável" **deixou de ser uma tabela/entidade separada** (migration `09_merge_responsavel_into_pessoa`, que executa `DROP TABLE responsavel CASCADE`). Seus atributos foram **consolidados como colunas opcionais na própria tabela `pessoa`** (`nis`, `renda`, `sexo`, `raca`, `estado_civil`, `veiculo`, `programas_sociais`, `email`, `telefone`, `nome_da_mae`, `data_residencia_moradia`):
+- Uma pessoa é tratada como **responsável** quando tem `parentesco = 'Responsável'` e esses campos preenchidos.
+- A regra de **um único responsável ativo por família** continua garantida por trigger no banco (migration `05`), agora avaliando `pessoa.parentesco` via `pessoa_familia` (sem depender de uma tabela `responsavel`).
+- Os endpoints `/api/responsaveis` permanecem na API, atendidos pelo módulo `pessoa`.
 
 ##### 3. Relacionamento N:N com Histórico Temporal Desmembrado
 Para garantir auditoria governamental completa, as relações associativas foram desmembradas em duas frentes com persistência temporal:
@@ -2343,7 +2335,7 @@ O levantamento atual foi conferido contra os arquivos de rotas e controllers do 
 | PUT | `/api/responsaveis/{id}` | Atualiza parcialmente um responsável | `200` | RF012, RF014, RF019 |
 | DELETE | `/api/responsaveis/{id}` | Remove responsável | `204` | RF010 |
 
-Os endpoints de pessoa aceitam os campos `nome`, `nomeSocial`, `dataDeNascimento`, `parentesco`, `situacaoOcupacional`, `escolaridade`, `cronico`, `medicacao` e `status`, com aliases em `snake_case` para `nomeSocial`, `dataDeNascimento` e `situacaoOcupacional`. Responsáveis são tratados como pessoas com dados complementares: além dos campos de pessoa, aceitam `cpf`, `nis`, `renda`, `sexo`, `raca`, `estadoCivil`, `veiculo`, `programaSocial`, `email`, `telefone`, `nomeDoPai`, `nomeDaMae`, `localDeNascimento`, `dataResidenciaEstado` e `dataResidenciaMoradia`. Na criação, o backend força `parentesco` para `Responsável`.
+Os endpoints de pessoa aceitam os campos `nome`, `nomeSocial`, `dataDeNascimento`, `parentesco`, `situacaoOcupacional`, `escolaridade`, `cronico`, `medicacao` e `status`, com aliases em `snake_case` para `nomeSocial`, `dataDeNascimento` e `situacaoOcupacional`. Responsáveis são tratados como pessoas com dados complementares: além dos campos de pessoa, aceitam `cpf`, `nis`, `renda`, `sexo`, `raca`, `estadoCivil`, `veiculo`, `programasSociais` (inteiro), `email`, `telefone`, `nomeDaMae` e `dataResidenciaMoradia`. Na criação, o backend força `parentesco` para `Responsável`.
 
 > **Pendência — Grupos Prioritários (RF001):** O banco já possui as tabelas `grupo_prioritario` e `pessoa_grupo_prioritario`, e o model TypeScript correspondente existe em `models/grupo-prioritario.model.ts`. Porém, nenhum endpoint, service ou repository manipula esses dados atualmente — campos como `grupos` ou `idGrupoPrioritario` enviados no corpo serão silenciosamente ignorados. O suporte completo a grupos de vulnerabilidade (idoso, criança, gestante/lactante, PCD, mobilidade reduzida) está pendente de implementação.
 
@@ -2887,7 +2879,7 @@ O exemplo abaixo, extraído de `familia.service.test.ts`, ilustra as três etapa
 ```ts
 it('CT01 - Deve lançar HttpError 409 se a família já possuir um responsável ativo diferente', async () => {
     // Arrange: família existente, pessoa com parentesco Responsável,
-    // registro na tabela responsavel e outro responsavel ativo na família
+    // dados de responsável preenchidos em pessoa e outro responsável ativo na família
     familiaRepoMock.getById.mockResolvedValue({ id: 1 });
     pessoaRepoMock.getById.mockResolvedValue({ id: 2, parentesco: 'Responsável' });
     pessoaRepoMock.getResponsavelByPessoaId.mockResolvedValue({ id: 2 });
@@ -3150,7 +3142,7 @@ Assim, a camada Service atende ao critério mínimo de 80% de cobertura, tanto n
 | Caso | RN | RF relacionado | Evidência automatizada |
 |---|---|---|---|
 | CT01 | RN02 | RF014 | `familia.service.test.ts` — `it('CT01')` valida que a família já possui responsável ativo; `vincularPessoa` lança `HttpError 409`. |
-| CT02 | RN01 | RF014 | `familia.service.test.ts` — `it('CT02')` valida que pessoa com parentesco Responsável deve existir na tabela responsavel; lança `HttpError 400`. |
+| CT02 | RN01 | RF014 | `familia.service.test.ts` — `it('CT02')` valida que a pessoa com parentesco Responsável deve ter os dados de responsável preenchidos em `pessoa`; lança `HttpError 400`. |
 | CT03 | RN06 | RF009 / RF010 | `familia.service.test.ts` e `moradia.service.test.ts` validam soft delete: `delete` chamado para entidade existente, `HttpError 404` para entidade inexistente. |
 | CT04 | RN05 | RF002 / RF003 | `moradia.service.test.ts` — cadastro transacional com localização: `COMMIT` no caminho feliz e `ROLLBACK` quando moradia não é encontrada após criação. |
 | CT05 | RN05 | RF005 | `moradia.service.test.ts` — `it('CT05')` valida árvore consolidada de `getDetalhes`: verifica `familias[0].pessoas` e `fotos`; `HttpError 500` quando dependências não estão configuradas. |
@@ -3383,7 +3375,7 @@ Link do arquivo: https://miro.com/app/board/uXjVHLRyshY=/?share_link_id=86927684
     <td colspan="2">
       <strong>🚚 Canais</strong><br><br>
       • WebApp responsivo<br>
-      • Projeto deployado no Git Pages<br>
+      • Projeto deployado na Vercel (frontend e backend) com banco/Storage no Supabase<br>
       • Documentação completa no arquivo wad.md no repositório
     </td>
   </tr>
