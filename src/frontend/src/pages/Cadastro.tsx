@@ -1667,7 +1667,7 @@ export default function Cadastro() {
                                             <span className="collapsible-summary">
                                                 {m.nome || 'Nome não informado'} · {m.parentesco || 'Parentesco pendente'}
                                             </span>
-                                            <span className="collapsible-chevron" aria-hidden="true">{cardAberto ? '⌃' : '⌄'}</span>
+                                            <span className="collapsible-chevron" aria-hidden="true">{cardAberto ? '▴' : '▾'}</span>
                                         </button>
                                         {!modoEdicaoPessoa && moradores.length > 1 && (
                                             <button type="button" className="collapsible-remove" onClick={() => setMoradores((prev) => prev.filter((_, i) => i !== index))}>
@@ -1692,6 +1692,7 @@ export default function Cadastro() {
                                                     error={invalido(`${m.key}:parentesco`)}
                                                 />
 
+                                                <p className="field-group-title">Identificação</p>
                                                 <Row>
                                                     <TextField
                                                         label="Nome completo"
@@ -1703,6 +1704,24 @@ export default function Cadastro() {
                                                         required
                                                         error={invalido(`${m.key}:nome`)}
                                                         placeholder="Ex.: Maria Silva Santos"
+                                                    />
+
+                                                    <TextField
+                                                        label="Apelido"
+                                                        value={m.nomeSocial}
+                                                        onChange={(v) => updateMorador(index, { nomeSocial: v })}
+                                                        placeholder="Ex.: Maria"
+                                                    />
+                                                </Row>
+
+                                                <Row>
+                                                    <TextField
+                                                        label="CPF"
+                                                        value={m.cpf}
+                                                        onChange={(v) => updateMorador(index, { cpf: maskCPF(v) })}
+                                                        inputMode="numeric"
+                                                        maxLength={14}
+                                                        placeholder="000.000.000-00"
                                                     />
 
                                                     <TextField
@@ -1719,48 +1738,72 @@ export default function Cadastro() {
                                                     />
                                                 </Row>
 
+                                                <SelectField
+                                                    label="Estado civil"
+                                                    value={m.estadoCivil}
+                                                    onChange={(v) => {
+                                                        updateMorador(index, { estadoCivil: v });
+                                                        limparInvalido(`${m.key}:estadoCivil`);
+                                                    }}
+                                                    options={ESTADOS_CIVIS}
+                                                    required
+                                                    error={invalido(`${m.key}:estadoCivil`)}
+                                                />
+
+                                                <p className="field-group-title">Perfil social</p>
                                                 <Row>
-                                                    <TextField
-                                                        label="Apelido"
-                                                        value={m.nomeSocial}
-                                                        onChange={(v) => updateMorador(index, { nomeSocial: v })}
-                                                        placeholder="Ex.: Maria"
+                                                    <SelectField
+                                                        label="Gênero"
+                                                        value={m.sexo}
+                                                        onChange={(v) => {
+                                                            updateMorador(index, { sexo: v });
+                                                            limparInvalido(`${m.key}:sexo`);
+                                                        }}
+                                                        options={SEXOS}
+                                                        required
+                                                        error={invalido(`${m.key}:sexo`)}
                                                     />
 
-                                                    <TextField
-                                                        label="CPF"
-                                                        value={m.cpf}
-                                                        onChange={(v) => updateMorador(index, { cpf: maskCPF(v) })}
-                                                        inputMode="numeric"
-                                                        maxLength={14}
-                                                        placeholder="000.000.000-00"
+                                                    <SelectField
+                                                        label="Cor/Raça"
+                                                        value={m.raca}
+                                                        onChange={(v) => {
+                                                            updateMorador(index, { raca: v });
+                                                            limparInvalido(`${m.key}:raca`);
+                                                        }}
+                                                        options={RACAS}
+                                                        required
+                                                        error={invalido(`${m.key}:raca`)}
                                                     />
                                                 </Row>
 
-                                                <SelectField
-                                                    label="Escolaridade"
-                                                    value={m.escolaridade}
-                                                    onChange={(v) => {
-                                                        updateMorador(index, { escolaridade: v });
-                                                        limparInvalido(`${m.key}:escolaridade`);
-                                                    }}
-                                                    options={ESCOLARIDADES}
-                                                    required
-                                                    error={invalido(`${m.key}:escolaridade`)}
-                                                />
+                                                <Row>
+                                                    <SelectField
+                                                        label="Escolaridade"
+                                                        value={m.escolaridade}
+                                                        onChange={(v) => {
+                                                            updateMorador(index, { escolaridade: v });
+                                                            limparInvalido(`${m.key}:escolaridade`);
+                                                        }}
+                                                        options={ESCOLARIDADES}
+                                                        required
+                                                        error={invalido(`${m.key}:escolaridade`)}
+                                                    />
 
-                                                <SelectField
-                                                    label="Situação ocupacional"
-                                                    value={m.situacaoOcupacional}
-                                                    onChange={(v) => {
-                                                        updateMorador(index, { situacaoOcupacional: v });
-                                                        limparInvalido(`${m.key}:ocupacao`);
-                                                    }}
-                                                    options={SITUACOES_OCUPACIONAIS}
-                                                    required
-                                                    error={invalido(`${m.key}:ocupacao`)}
-                                                />
+                                                    <SelectField
+                                                        label="Situação ocupacional"
+                                                        value={m.situacaoOcupacional}
+                                                        onChange={(v) => {
+                                                            updateMorador(index, { situacaoOcupacional: v });
+                                                            limparInvalido(`${m.key}:ocupacao`);
+                                                        }}
+                                                        options={SITUACOES_OCUPACIONAIS}
+                                                        required
+                                                        error={invalido(`${m.key}:ocupacao`)}
+                                                    />
+                                                </Row>
 
+                                                <p className="field-group-title">Saúde e condições</p>
                                                 <Row>
                                                     <CheckboxField
                                                         label="Doença crônica"
@@ -1800,48 +1843,11 @@ export default function Cadastro() {
                                                 </div>
 
                                                 {ehResponsavel && (
-                                                    <div style={{ marginTop: 8, paddingTop: 12, borderTop: '1px dashed var(--cinza)' }}>
-                                                        <p className="field-group-title" style={{ color: 'var(--laranja)', marginTop: 35 }}>
+                                                    <div style={{ marginTop: 8, paddingTop: 12 }}>
+                                                        {/* <p className="field-group-title" style={{ color: 'var(--laranja)', marginTop: 0 }}>
                                                             Dados exclusivos do responsável
-                                                        </p>
+                                                        </p> */}
 
-                                                        <Row>
-                                                            <SelectField
-                                                                label="Gênero"
-                                                                value={m.sexo}
-                                                                onChange={(v) => {
-                                                                    updateMorador(index, { sexo: v });
-                                                                    limparInvalido(`${m.key}:sexo`);
-                                                                }}
-                                                                options={SEXOS}
-                                                                required
-                                                                error={invalido(`${m.key}:sexo`)}
-                                                            />
-
-                                                            <SelectField
-                                                                label="Cor/Raça"
-                                                                value={m.raca}
-                                                                onChange={(v) => {
-                                                                    updateMorador(index, { raca: v });
-                                                                    limparInvalido(`${m.key}:raca`);
-                                                                }}
-                                                                options={RACAS}
-                                                                required
-                                                                error={invalido(`${m.key}:raca`)}
-                                                            />
-                                                        </Row>
-
-                                                        <SelectField
-                                                            label="Estado civil"
-                                                            value={m.estadoCivil}
-                                                            onChange={(v) => {
-                                                                updateMorador(index, { estadoCivil: v });
-                                                                limparInvalido(`${m.key}:estadoCivil`);
-                                                            }}
-                                                            options={ESTADOS_CIVIS}
-                                                            required
-                                                            error={invalido(`${m.key}:estadoCivil`)}
-                                                        />
                                                         <Row>
                                                             <TextField
                                                                 label="Nome da mãe"
@@ -1941,7 +1947,7 @@ export default function Cadastro() {
                                             <span className="collapsible-summary">
                                                 {p.nome || 'Nome não informado'} · {p.tipo || 'Tipo pendente'}
                                             </span>
-                                            <span className="collapsible-chevron" aria-hidden="true">{cardAberto ? '⌃' : '⌄'}</span>
+                                            <span className="collapsible-chevron" aria-hidden="true">{cardAberto ? '▴' : '▾'}</span>
                                         </button>
                                         <button type="button" className="collapsible-remove" onClick={() => setPets((prev) => prev.filter((_, i) => i !== index))}>
                                             Remover

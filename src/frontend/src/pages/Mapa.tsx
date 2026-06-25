@@ -16,6 +16,13 @@ const TILE_CLARO = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 const TILE_ESCURO = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
 
 const iconeRisco = pinIcon(COR_RISCO);
+const iconeSemResponsavel = L.divIcon({
+    className: '',
+    html: `<div class="map-pin map-pin-alert" style="background:${COR_RISCO}"><span>!</span></div>`,
+    iconSize: [28, 28],
+    iconAnchor: [14, 28],
+    popupAnchor: [0, -24]
+});
 const iconeLocalizacaoAtual = L.divIcon({
     className: '',
     html: '<div class="map-current-location-pin"><span></span></div>',
@@ -105,6 +112,14 @@ function familiaTemPrioridade(familia: FamiliaBuscaResultado, prioridade: Priori
     if (chave.includes('gravida') || chave.includes('gestante')) return familia.grupos.gestante;
     if (chave.includes('cronica') || chave.includes('medicacao')) return familia.grupos.doencaCronica;
     return false;
+}
+
+function pessoaEhResponsavelAtivo(pessoa: MoradiaDetalhe['familias'][number]['pessoas'][number]): boolean {
+    return pessoa.parentesco === 'Responsável' && !pessoa.deletedAt && (pessoa.status ?? 'Ativo') === 'Ativo';
+}
+
+function moradiaTemFamiliaSemResponsavel(detalhe?: MoradiaDetalhe): boolean {
+    return Boolean(detalhe?.familias.some((item) => item.pessoas.length > 0 && !item.pessoas.some(pessoaEhResponsavelAtivo)));
 }
 
 export default function Mapa() {
@@ -211,6 +226,10 @@ export default function Mapa() {
         : CENTRO_PADRAO);
 
     const filtrosAtivos = statusOcultos.size + prioridadesAtivas.size + (bairroFiltro ? 1 : 0);
+    const moradiasVisiveisSemResponsavel = useMemo(
+        () => filtradas.filter((moradia) => moradiaTemFamiliaSemResponsavel(detalhesMoradia[moradia.id])).length,
+        [filtradas, detalhesMoradia]
+    );
 
     function toggleStatus(status: string) {
         setStatusOcultos((prev) => {
@@ -311,6 +330,11 @@ export default function Mapa() {
                 </div>
                 <div className="filtros-resumo">
                     <strong>Moradias visíveis:</strong> {filtradas.length}
+                    {moradiasVisiveisSemResponsavel > 0 && (
+                        <span className="map-responsible-warning">
+                            {moradiasVisiveisSemResponsavel} sem responsável ativo
+                        </span>
+                    )}
                 </div>
             </div>
 
@@ -320,6 +344,14 @@ export default function Mapa() {
             </div>
 
             {erro && <div className="map-erro card error-msg">{erro}</div>}
+
+            {carregando && (
+                <div className="map-loading" role="status" aria-live="polite">
+                    <span className="map-loading-spinner" aria-hidden="true" />
+                    <strong>Carregando mapa</strong>
+                    <p>Buscando moradias, famílias e filtros...</p>
+                </div>
+            )}
 
             {!carregando && (
                 <MapContainer center={centro} zoom={localizacaoAtual ? 16 : 13} zoomControl={false}>
@@ -332,9 +364,11 @@ export default function Mapa() {
                     {modo === 'calor'
                         ? <CamadaCalor pontos={pontosCalor} />
                         : filtradas.map((m) => {
-                            const ocupada = (detalhesMoradia[m.id]?.familias.length ?? 0) > 0;
+                            const detalhe = detalhesMoradia[m.id];
+                            const ocupada = (detalhe?.familias.length ?? 0) > 0;
+                            const semResponsavel = moradiaTemFamiliaSemResponsavel(detalhe);
                             return (
-                                <Marker key={m.id} position={[m.localizacao.latitude, m.localizacao.longitude]} icon={iconeRisco}>
+                                <Marker key={m.id} position={[m.localizacao.latitude, m.localizacao.longitude]} icon={semResponsavel ? iconeSemResponsavel : iconeRisco}>
                                     <Popup>
                                         <strong>Moradia #{m.id}</strong><br />
                                         {m.localizacao.logradouro ?? 'Endereço n/d'}{m.localizacao.numero ? `, ${m.localizacao.numero}` : ''}<br />
@@ -343,6 +377,11 @@ export default function Mapa() {
                                         <span className={`map-popup-occupancy${ocupada ? ' occupied' : ''}`}>
                                             {ocupada ? 'Ocupada' : 'Sem família ativa'}
                                         </span><br />
+                                        {semResponsavel && (
+                                            <>
+                                                <span className="map-popup-responsible-alert">Família sem responsável ativo</span><br />
+                                            </>
+                                        )}
                                         <em style={{ color: '#5e5e5e' }}>{m.tipoConstrucao}</em>
                                         <button
                                             type="button"
@@ -366,6 +405,7 @@ export default function Mapa() {
 
             <div className="map-legend">
                 <div className="legend-row"><span className="legend-dot" style={{ background: COR_RISCO }} />Moradia em área de risco</div>
+                <div className="legend-row"><span className="legend-dot legend-dot-alert">!</span>Moradia com família sem responsável ativo</div>
                 {localizacaoAtual && <div className="legend-row"><span className="legend-dot" style={{ background: '#0ea5e9' }} />Sua localização atual</div>}
             </div>
         </div>
