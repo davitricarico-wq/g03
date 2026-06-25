@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import Icon from '../components/Icon.tsx';
+import OfflineMapButton from '../components/OfflineMapButton.tsx';
 import { useAnimacoes } from '../utils/anim.ts';
 
 const logo = '/logo-defesa-civil.png';
@@ -40,6 +41,8 @@ export default function Home() {
                     </button>
                 ))}
             </div>
+
+            <OfflineMapButton />
 
             <div className="home-anim">
                 <button

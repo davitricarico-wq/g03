@@ -6,34 +6,48 @@ import { toast } from './feedback.tsx';
 // Indicador fixo de status offline-first:
 //  - mostra um aviso quando não há conexão;
 //  - mostra quantos cadastros estão aguardando envio;
+//  - sinaliza cadastros que travaram com erro (não reenviam sozinhos);
 //  - permite sincronizar manualmente quando a conexão volta.
-// Fica oculto quando está online e não há pendências.
+// Fica oculto quando está online e a fila está vazia.
 
 export default function OfflineIndicator() {
     const [online, setOnline] = useState(estaOnline());
-    const [pendencias, setPendencias] = useState(0);
+    const [total, setTotal] = useState(0);
+    const [bloqueados, setBloqueados] = useState(0);
     const [sincronizandoUi, setSincronizandoUi] = useState(false);
 
     useEffect(() => aoMudarConectividade(setOnline), []);
-    useEffect(() => aoMudarPendencias(setPendencias), []);
+    useEffect(
+        () =>
+            aoMudarPendencias((resumo) => {
+                setTotal(resumo.total);
+                setBloqueados(resumo.bloqueados);
+            }),
+        []
+    );
 
     async function sincronizarAgora() {
         if (sincronizandoUi) return;
         setSincronizandoUi(true);
         try {
-            const { enviados, falhas } = await sincronizar();
+            const { enviados, falhas, bloqueados: travados } = await sincronizar();
             if (enviados > 0) toast.success(`${enviados} cadastro(s) enviado(s).`);
             if (falhas > 0) toast.error(`${falhas} cadastro(s) ainda não puderam ser enviados.`);
-            if (enviados === 0 && falhas === 0) toast.success('Nada pendente para enviar.');
+            if (travados > 0) toast.error(`${travados} cadastro(s) com erro — revise os dados (ex.: CPF já cadastrado).`);
+            if (enviados === 0 && falhas === 0 && travados === 0) toast.success('Nada pendente para enviar.');
         } finally {
             setSincronizandoUi(false);
         }
     }
 
-    if (online && pendencias === 0) return null;
+    if (online && total === 0) return null;
 
-    const cor = online ? '#0a7d2c' : '#b25a00';
-    const fundo = online ? '#e6f6ea' : '#fff3e0';
+    const aguardando = Math.max(0, total - bloqueados);
+    const temErro = bloqueados > 0;
+
+    // vermelho para erro travado, laranja para offline, verde para "só aguardando envio".
+    const cor = temErro ? '#b00020' : online ? '#0a7d2c' : '#b25a00';
+    const fundo = temErro ? '#fdecea' : online ? '#e6f6ea' : '#fff3e0';
 
     return (
         <div
@@ -61,10 +75,12 @@ export default function OfflineIndicator() {
             <span style={{ width: 9, height: 9, borderRadius: 999, background: cor, flex: '0 0 auto' }} />
             <span>
                 {!online && 'Sem conexão — cadastros serão salvos no aparelho. '}
-                {pendencias > 0 && `${pendencias} aguardando envio`}
-                {online && pendencias > 0 && '.'}
+                {aguardando > 0 && `${aguardando} aguardando envio`}
+                {aguardando > 0 && temErro && ' · '}
+                {temErro && `${bloqueados} com erro`}
+                {online && aguardando > 0 && !temErro && '.'}
             </span>
-            {online && pendencias > 0 && (
+            {online && total > 0 && (
                 <button
                     type="button"
                     onClick={sincronizarAgora}
@@ -81,7 +97,7 @@ export default function OfflineIndicator() {
                         opacity: sincronizandoUi ? 0.7 : 1
                     }}
                 >
-                    {sincronizandoUi ? 'Enviando…' : 'Enviar agora'}
+                    {sincronizandoUi ? 'Enviando…' : temErro ? 'Tentar de novo' : 'Enviar agora'}
                 </button>
             )}
         </div>

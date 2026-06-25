@@ -41,7 +41,18 @@ export interface NovoCadastroOffline {
     fotosPets: File[][]; // por índice de pet
 }
 
-type Ouvinte = (pendencias: number) => void;
+// Após este número de tentativas falhas, o cadastro deixa de ser reenviado
+// automaticamente (mensagem-veneno: ex.: CPF que já existe no servidor falharia
+// para sempre). Ele continua salvo no aparelho e é sinalizado ao usuário.
+export const MAX_TENTATIVAS = 5;
+
+/** Resumo da fila para o indicador: total na fila e quantos travaram com erro. */
+export interface ResumoFila {
+    total: number;
+    bloqueados: number;
+}
+
+type Ouvinte = (resumo: ResumoFila) => void;
 const ouvintes = new Set<Ouvinte>();
 
 function gerarId(): string {
@@ -50,22 +61,27 @@ function gerarId(): string {
         : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
-async function notificar(): Promise<void> {
-    let qtd = 0;
+async function calcularResumo(): Promise<ResumoFila> {
     try {
-        qtd = await idbContar();
+        const itens = await idbListar<CadastroPendente>();
+        const bloqueados = itens.filter((i) => i.tentativas >= MAX_TENTATIVAS).length;
+        return { total: itens.length, bloqueados };
     } catch {
-        qtd = 0;
+        return { total: 0, bloqueados: 0 };
     }
-    ouvintes.forEach((cb) => cb(qtd));
 }
 
-/** Assina mudanças no número de cadastros pendentes (para o indicador de UI). */
+async function notificar(): Promise<void> {
+    const resumo = await calcularResumo();
+    ouvintes.forEach((cb) => cb(resumo));
+}
+
+/** Assina mudanças na fila de cadastros pendentes (para o indicador de UI). */
 export function aoMudarPendencias(cb: Ouvinte): () => void {
     ouvintes.add(cb);
-    idbContar()
+    calcularResumo()
         .then(cb)
-        .catch(() => cb(0));
+        .catch(() => cb({ total: 0, bloqueados: 0 }));
     return () => {
         ouvintes.delete(cb);
     };
@@ -73,6 +89,10 @@ export function aoMudarPendencias(cb: Ouvinte): () => void {
 
 export function contarPendencias(): Promise<number> {
     return idbContar();
+}
+
+export function resumoFila(): Promise<ResumoFila> {
+    return calcularResumo();
 }
 
 /** Salva um cadastro novo na fila local para envio posterior. */
@@ -127,31 +147,50 @@ async function enviarPrioridades(item: CadastroPendente, nucleo: Awaited<ReturnT
 let sincronizando = false;
 
 /** Reenvia todos os cadastros pendentes na ordem em que foram criados. */
-export async function sincronizar(): Promise<{ enviados: number; falhas: number }> {
-    if (sincronizando || !estaOnline()) return { enviados: 0, falhas: 0 };
+export async function sincronizar(): Promise<{ enviados: number; falhas: number; bloqueados: number }> {
+    if (sincronizando || !estaOnline()) return { enviados: 0, falhas: 0, bloqueados: 0 };
     sincronizando = true;
     let enviados = 0;
     let falhas = 0;
+    let bloqueados = 0;
     try {
         const pendentes = await idbListar<CadastroPendente>();
         pendentes.sort((a, b) => a.criadoEm - b.criadoEm);
         for (const item of pendentes) {
+            // Mensagem-veneno: parou de tentar. Continua salvo, mas não reenvia.
+            if (item.tentativas >= MAX_TENTATIVAS) {
+                bloqueados++;
+                continue;
+            }
+
+            let nucleo: Awaited<ReturnType<typeof cadastrarNucleoFamiliar>>;
             try {
-                const nucleo = await cadastrarNucleoFamiliar(item.payload);
-                await enviarPrioridades(item, nucleo);
-                await enviarFotosDoItem(item, nucleo);
-                await idbRemover(item.id);
-                enviados++;
+                nucleo = await cadastrarNucleoFamiliar(item.payload);
             } catch (e) {
                 falhas++;
                 item.tentativas += 1;
                 item.ultimoErro = e instanceof Error ? e.message : 'erro desconhecido';
+                if (item.tentativas >= MAX_TENTATIVAS) bloqueados++;
                 await idbAdicionar(item); // mantém na fila para nova tentativa
+                continue;
+            }
+
+            // O núcleo foi criado no servidor: remove da fila AGORA para nunca
+            // recriar uma família duplicada caso algo abaixo falhe. Prioridades e
+            // fotos são complementares (podem ser refeitas via edição) e não
+            // reenfileiram o cadastro.
+            await idbRemover(item.id);
+            enviados++;
+            try {
+                await enviarPrioridades(item, nucleo);
+                await enviarFotosDoItem(item, nucleo);
+            } catch {
+                // dados complementares ficam para uma edição posterior; o núcleo já está salvo.
             }
         }
     } finally {
         sincronizando = false;
         await notificar();
     }
-    return { enviados, falhas };
+    return { enviados, falhas, bloqueados };
 }

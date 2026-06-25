@@ -1,7 +1,7 @@
 import 'fake-indexeddb/auto';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { CreateNucleoFamiliarPayload } from '../types.ts';
-import { contarPendencias, enfileirarCadastro, sincronizar } from './outbox.ts';
+import { MAX_TENTATIVAS, contarPendencias, enfileirarCadastro, sincronizar } from './outbox.ts';
 
 // Teste headless da fila offline (A1 + B1 + B3 + C1):
 //  - IndexedDB é simulado por fake-indexeddb;
@@ -90,7 +90,7 @@ describe('fila offline (outbox)', () => {
 
         const r = await sincronizar();
 
-        expect(r).toEqual({ enviados: 1, falhas: 0 });
+        expect(r).toEqual({ enviados: 1, falhas: 0, bloqueados: 0 });
         expect(await contarPendencias()).toBe(0);
 
         // 1 chamada ao endpoint transacional
@@ -104,6 +104,59 @@ describe('fila offline (outbox)', () => {
         // foto do pet de índice 0 subiu para o pet id 200 (e não para o 201)
         expect(chamadas.some((c) => c.url.includes('/pets/200/fotos/upload-url'))).toBe(true);
         expect(chamadas.some((c) => c.url.includes('/pets/201/'))).toBe(false);
+    });
+
+    it('não recria a família se as etapas após o núcleo falharem (idempotência)', async () => {
+        await enfileirarCadastro(cadastroExemplo());
+
+        // núcleo é criado com sucesso, mas TUDO depois (prioridades, fotos) falha.
+        vi.stubGlobal('fetch', vi.fn((input: unknown, init?: { method?: string }) => {
+            const url = String(input);
+            if (url.endsWith('/familias/nucleo') && (init?.method ?? '').toUpperCase() === 'POST') {
+                return Promise.resolve(resposta({
+                    moradia: { id: 10 }, familia: { id: 5 }, responsavel: { id: 100 },
+                    dependentes: [{ id: 101 }], pets: [{ id: 200 }, { id: 201 }], fotos: []
+                }));
+            }
+            return Promise.resolve(resposta({ error: 'falhou' }, 500)); // prioridades/fotos quebram
+        }));
+
+        const r = await sincronizar();
+
+        // o núcleo foi salvo: conta como enviado e SAI da fila.
+        expect(r.enviados).toBe(1);
+        expect(await contarPendencias()).toBe(0);
+
+        // um segundo sync não pode criar outra família (fila vazia).
+        const chamadasNucleoAntes = chamadas.filter((c) => c.url.endsWith('/familias/nucleo')).length;
+        await sincronizar();
+        const chamadasNucleoDepois = chamadas.filter((c) => c.url.endsWith('/familias/nucleo')).length;
+        expect(chamadasNucleoDepois).toBe(chamadasNucleoAntes); // nenhuma nova criação de núcleo
+    });
+
+    it('para de reenviar (e marca como bloqueado) após MAX_TENTATIVAS falhas', async () => {
+        await enfileirarCadastro(cadastroExemplo());
+
+        // backend rejeita o núcleo sempre (ex.: CPF já cadastrado) — mensagem-veneno.
+        vi.stubGlobal('fetch', vi.fn((input: unknown, init?: { method?: string }) => {
+            const url = String(input);
+            if (url.endsWith('/familias/nucleo') && (init?.method ?? '').toUpperCase() === 'POST') {
+                return Promise.resolve(resposta({ error: 'CPF já cadastrado' }, 409));
+            }
+            return Promise.resolve(resposta({}, 200));
+        }));
+
+        for (let i = 0; i < MAX_TENTATIVAS; i++) {
+            await sincronizar();
+        }
+        expect(await contarPendencias()).toBe(1); // continua salvo, não some
+
+        // a partir daqui não tenta mais reenviar o núcleo automaticamente.
+        chamadas = [];
+        const r = await sincronizar();
+        expect(r.bloqueados).toBe(1);
+        expect(r.falhas).toBe(0);
+        expect(chamadas.filter((c) => c.url.endsWith('/familias/nucleo'))).toHaveLength(0);
     });
 
     it('mantém o item na fila quando a sincronização falha', async () => {

@@ -29,6 +29,12 @@ function comStore<T>(modo: IDBTransactionMode, fn: (store: IDBObjectStore) => ID
                 req.onsuccess = () => resolve(req.result as T);
                 req.onerror = () => reject(req.error);
                 tx.oncomplete = () => db.close();
+                // Em erro/abort a transação não dispara 'oncomplete'; fecha mesmo assim
+                // para não vazar a conexão (e rejeita caso ainda não tenha rejeitado).
+                tx.onabort = () => {
+                    db.close();
+                    reject(tx.error ?? req.error);
+                };
             })
     );
 }

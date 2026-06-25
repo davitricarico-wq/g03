@@ -29,7 +29,7 @@ import {
     vincularPessoaFamilia
 } from '../api.ts';
 import { toast } from '../components/feedback.tsx';
-import { estaOnline } from '../utils/connectivity.ts';
+import { aoMudarConectividade, estaOnline } from '../utils/connectivity.ts';
 import { enfileirarCadastro } from '../utils/outbox.ts';
 import { buscarCep, buscarEnderecoPorCoordenadas, capturarGPS, cpfValido, emailValido, maskCEP, maskCPF, maskTelefone } from '../utils/forms.ts';
 import { CheckboxField, Row, SelectField, TextAreaField, TextField } from '../components/FormFields.tsx';
@@ -144,6 +144,20 @@ function limpar(valor: string): string | null {
     return t === '' ? null : t;
 }
 
+// Distingue falha de REDE (offline / sem internet de fato) de erro de regra de
+// negócio do servidor. fetch() lança TypeError quando a rede falha; assim, mesmo
+// com navigator.onLine === true (que pode mentir), conseguimos cair na fila local.
+function ehErroDeRede(e: unknown): boolean {
+    if (e instanceof TypeError) return true;
+    const msg = e instanceof Error ? e.message.toLowerCase() : '';
+    return (
+        msg.includes('failed to fetch') ||
+        msg.includes('networkerror') ||
+        msg.includes('network request failed') ||
+        msg.includes('load failed')
+    );
+}
+
 function pessoaBase(m: MoradorForm): CreatePessoaPayload {
     return {
         nome: m.nome.trim(),
@@ -181,6 +195,7 @@ export default function Cadastro() {
     const modoEdicao = Number.isInteger(familiaId) && Number(familiaId) > 0;
     const modoEdicaoPessoa = Number.isInteger(pessoaId) && Number(pessoaId) > 0;
     const [aba, setAba] = useState<Aba>(modoEdicaoPessoa ? 'moradores' : 'moradia');
+    const [online, setOnline] = useState(estaOnline());
     const [enviando, setEnviando] = useState(false);
     const [erro, setErro] = useState<string | null>(null);
     const [invalidos, setInvalidos] = useState<Set<string>>(new Set());
@@ -242,6 +257,8 @@ export default function Cadastro() {
         setPets((prev) => prev.map((p, idx) => (idx === i ? { ...p, fotos: [...p.fotos, ...novas] } : p)));
     const removeFotoPet = (i: number, key: string) =>
         setPets((prev) => prev.map((p, idx) => (idx === i ? { ...p, fotos: p.fotos.filter((f) => f.key !== key) } : p)));
+
+    useEffect(() => aoMudarConectividade(setOnline), []);
 
     useEffect(() => {
         listarPrioridades()
@@ -1242,10 +1259,22 @@ export default function Cadastro() {
             payload.moradia = moradiaPayload();
         }
 
-        // Offline-first (A1 + C1): sem conexão, um cadastro NOVO de núcleo vai
-        // para a fila local (com as fotos) e sobe sozinho quando a internet
-        // voltar. Cadastros que reaproveitam pessoas/moradias já existentes
-        // dependem de dados do servidor, então exigem rede.
+        // Offline-first (A1 + C1): um cadastro NOVO de núcleo vai para a fila
+        // local (com as fotos) e sobe sozinho quando a internet voltar. Cadastros
+        // que reaproveitam pessoas/moradias já existentes dependem de dados do
+        // servidor, então exigem rede.
+        const salvarOffline = async () => {
+            await enfileirarCadastro({
+                payload,
+                responsavelPrioridadeIds: r.prioridadeIds,
+                dependentesPrioridadeIds: dependentesMoradores.map((m) => m.prioridadeIds),
+                fotosMoradia: fotosCasa.map((f) => f.file),
+                fotosPets: pets.map((p) => p.fotos.map((f) => f.file))
+            });
+            toast.success('Sem conexão: cadastro salvo no aparelho. Será enviado automaticamente quando a internet voltar.');
+            navigate('/');
+        };
+
         if (!estaOnline()) {
             if (temVinculosExistentes) {
                 toast.error('Sem conexão: cadastros que usam pessoas ou moradias já existentes precisam de internet.');
@@ -1253,15 +1282,7 @@ export default function Cadastro() {
                 return;
             }
             try {
-                await enfileirarCadastro({
-                    payload,
-                    responsavelPrioridadeIds: r.prioridadeIds,
-                    dependentesPrioridadeIds: dependentesMoradores.map((m) => m.prioridadeIds),
-                    fotosMoradia: fotosCasa.map((f) => f.file),
-                    fotosPets: pets.map((p) => p.fotos.map((f) => f.file))
-                });
-                toast.success('Sem conexão: cadastro salvo no aparelho. Será enviado automaticamente quando a internet voltar.');
-                navigate('/');
+                await salvarOffline();
             } catch {
                 toast.error('Não foi possível salvar o cadastro offline neste aparelho.');
             } finally {
@@ -1270,10 +1291,35 @@ export default function Cadastro() {
             return;
         }
 
+        // Cria o núcleo. Se a rede cair no meio (navigator.onLine pode dizer que
+        // há rede sem internet real), faz fallback para a fila local em vez de
+        // perder o cadastro já preenchido.
+        let nucleo: Awaited<ReturnType<typeof cadastrarNucleoFamiliar>>;
         try {
-            const nucleo = temVinculosExistentes
+            nucleo = temVinculosExistentes
                 ? await salvarNovoComVinculos(r, dependentesMoradores)
                 : await cadastrarNucleoFamiliar(payload);
+        } catch (e) {
+            if (!temVinculosExistentes && ehErroDeRede(e)) {
+                try {
+                    await salvarOffline();
+                } catch {
+                    toast.error('Não foi possível salvar o cadastro neste aparelho.');
+                } finally {
+                    setEnviando(false);
+                }
+                return;
+            }
+            const msg = e instanceof Error ? e.message : 'Erro ao cadastrar núcleo familiar.';
+            setErro(msg);
+            toast.error(msg);
+            setEnviando(false);
+            return;
+        }
+
+        // Núcleo criado com sucesso: prioridades e fotos são complementares e não
+        // recriam a família, então uma falha aqui não exige refazer o cadastro.
+        try {
             if (!temVinculosExistentes) {
                 await atualizarPrioridadesPessoa(nucleo.responsavel.id, r.prioridadeIds);
                 await Promise.all(dependentesMoradores.map((morador, index) => {
@@ -1285,7 +1331,7 @@ export default function Cadastro() {
             await enviarFotos(nucleo);
             navigate('/busca');
         } catch (e) {
-            const msg = e instanceof Error ? e.message : 'Erro ao cadastrar núcleo familiar.';
+            const msg = e instanceof Error ? e.message : 'Cadastro salvo, mas houve erro ao enviar dados complementares.';
             setErro(msg);
             toast.error(msg);
         } finally {
@@ -1381,6 +1427,14 @@ export default function Cadastro() {
             {aba === 'moradia' && (
                 <div className="card">
                     <p className="required-note"><span className="required-mark">*</span> Campos obrigatórios precisam ser preenchidos para avançar.</p>
+                    {!online && !adicionarApenasFamilia && (
+                        <div className="inline-alert warning">
+                            Sem conexão: marque a casa tocando no mapa (baixe o mapa offline na Home antes de ir a
+                            campo) ou use o GPS — que funciona offline apenas em aparelhos com chip de GPS. O
+                            preenchimento automático de endereço (CEP) fica indisponível: preencha
+                            <strong> Cidade</strong> e <strong>Estado</strong> manualmente.
+                        </div>
+                    )}
                     {!modoEdicaoPessoa && (
                         <div className="family-housing-mode" role="group" aria-label="Tipo de cadastro">
                             <button
@@ -1457,10 +1511,33 @@ export default function Cadastro() {
                                         {capturando
                                             ? 'Solicitando permissão e capturando localização...'
                                             : loc.latitude && loc.longitude
-                                                ? 'Coordenadas capturadas automaticamente'
-                                                : 'Permita o uso da localização para capturar as coordenadas automaticamente.'}
+                                                ? 'Coordenadas definidas. Ajuste tocando ou arrastando o pino no mapa.'
+                                                : 'Use o GPS, ou toque no mapa para marcar a casa.'}
                                     </span>
                                 </div>
+
+                                <button
+                                    type="button"
+                                    onClick={pegarGPS}
+                                    disabled={capturando}
+                                    style={{
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: 8,
+                                        margin: '0 0 12px',
+                                        padding: '9px 16px',
+                                        borderRadius: 999,
+                                        border: 'none',
+                                        background: '#0a3d62',
+                                        color: '#fff',
+                                        fontWeight: 700,
+                                        fontSize: 13,
+                                        cursor: capturando ? 'default' : 'pointer',
+                                        opacity: capturando ? 0.7 : 1
+                                    }}
+                                >
+                                    {capturando ? 'Capturando localização…' : '📍 Usar minha localização (GPS)'}
+                                </button>
 
                                 <LocationPicker
                                     latitude={loc.latitude}

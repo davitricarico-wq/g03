@@ -2,10 +2,12 @@ import { useEffect, useState } from 'react';
 import { MapContainer, Marker, Popup, TileLayer, useMap, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import { registrarCoordenadaGPS } from '../utils/forms.ts';
+import { TILE_URL } from '../utils/offlineMap.ts';
 
 // Santo André - SP
 const CENTRO_PADRAO: [number, number] = [-23.6639, -46.5383];
-const TILE = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+// Host único (sem subdomínio {s}) para que os tiles pré-baixados sirvam offline.
+const TILE = TILE_URL;
 
 const pinIcon = L.divIcon({
     className: '',

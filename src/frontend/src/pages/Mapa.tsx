@@ -11,7 +11,8 @@ import type { FamiliaBuscaResultado, MoradiaComLocalizacao, MoradiaDetalhe, Prio
 // Santo André - SP
 const CENTRO_PADRAO: [number, number] = [-23.6639, -46.5383];
 
-const TILE_CLARO = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+// Host único (sem {s}) para casar com os tiles pré-baixados para uso offline.
+const TILE_CLARO = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 const TILE_ESCURO = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
 
 const iconeRisco = pinIcon(COR_RISCO);
