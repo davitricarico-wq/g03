@@ -130,6 +130,25 @@ function dataInput(value: string | null | undefined): string {
     return value ? String(value).slice(0, 10) : '';
 }
 
+type PessoaResponsavelCheck = Pick<Pessoa, 'parentesco' | 'status' | 'deletedAt'>;
+
+function pessoaEhResponsavelAtivo(pessoa: PessoaResponsavelCheck): boolean {
+    return normalizar(pessoa.parentesco ?? '') === 'responsavel' && !pessoa.deletedAt && (pessoa.status ?? 'Ativo') === 'Ativo';
+}
+
+function familiaSemResponsavelAtivo(familia: FamiliaBuscaResultado, detalhe?: FamiliaDetalhe): boolean {
+    if (detalhe) return !detalhe.pessoas.some(pessoaEhResponsavelAtivo);
+    return !familia.responsavel;
+}
+
+function moradiaTemFamiliaSemResponsavel(detalhe?: MoradiaDetalhe): boolean {
+    return Boolean(detalhe?.familias.some((item) => (
+        !item.familia.deletedAt
+        && item.pessoas.length > 0
+        && !item.pessoas.some(pessoaEhResponsavelAtivo)
+    )));
+}
+
 function dataCurta(value: string | null): string {
     if (!value) return 'Atual';
     const date = new Date(value);
@@ -226,6 +245,7 @@ export default function Busca() {
     const [historicoFamilias, setHistoricoFamilias] = useState<Record<number, FamiliaMoradiaHistorico[]>>({});
     const [historicoMoradias, setHistoricoMoradias] = useState<Record<number, MoradiaFamiliaHistorico[]>>({});
     const [historicoCarregando, setHistoricoCarregando] = useState<Record<string, boolean>>({});
+    const [detalhesMoradiaFalhos, setDetalhesMoradiaFalhos] = useState<Set<number>>(() => new Set());
     const [aberto, setAberto] = useState<number | null>(null);
     const [moradiaAberta, setMoradiaAberta] = useState<number | null>(null);
     const [editando, setEditando] = useState<number | null>(null);
@@ -294,6 +314,11 @@ export default function Busca() {
         [resultados, prioridadesAtivas, prioridades]
     );
 
+    const familiasFiltradasSemResponsavel = useMemo(
+        () => filtrados.filter((familia) => familiaSemResponsavelAtivo(familia, detalhes[familia.id])).length,
+        [filtrados, detalhes]
+    );
+
     const moradiasFiltradas = useMemo(() => {
         const termoNormalizado = normalizar(termoMoradia.trim());
         const bairroNormalizado = normalizar(bairroMoradia.trim());
@@ -316,6 +341,45 @@ export default function Busca() {
             return true;
         });
     }, [moradias, termoMoradia, bairroMoradia, statusMoradiaFiltro]);
+
+    const moradiasFiltradasSemResponsavel = useMemo(
+        () => moradiasFiltradas.filter((moradia) => moradiaTemFamiliaSemResponsavel(detalhesMoradia[moradia.id])).length,
+        [moradiasFiltradas, detalhesMoradia]
+    );
+
+    useEffect(() => {
+        const faltantes = moradiasFiltradas.filter((moradia) => !detalhesMoradia[moradia.id] && !detalhesMoradiaFalhos.has(moradia.id));
+        if (faltantes.length === 0) return;
+
+        let ativo = true;
+        void Promise.all(
+            faltantes.map((moradia) =>
+                detalharMoradia(moradia.id)
+                    .then((detalhe) => ({ id: moradia.id, detalhe }))
+                    .catch(() => ({ id: moradia.id, detalhe: null }))
+            )
+        ).then((resultadosDetalhes) => {
+            if (!ativo) return;
+            setDetalhesMoradia((prev) => {
+                const next = { ...prev };
+                resultadosDetalhes.forEach((item) => {
+                    if (item.detalhe) next[item.id] = item.detalhe;
+                });
+                return next;
+            });
+            setDetalhesMoradiaFalhos((prev) => {
+                const next = new Set(prev);
+                resultadosDetalhes.forEach((item) => {
+                    if (!item.detalhe) next.add(item.id);
+                });
+                return next;
+            });
+        });
+
+        return () => {
+            ativo = false;
+        };
+    }, [moradiasFiltradas, detalhesMoradia, detalhesMoradiaFalhos]);
 
     async function abrirDetalhesMoradia(moradia: MoradiaComLocalizacao) {
         if (moradiaAberta === moradia.id) {
@@ -572,6 +636,11 @@ export default function Busca() {
                 <h2>Resultados:</h2>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                     {jaBuscou && !erro && <span className="count-pill">{filtrados.length} encontrado(s)</span>}
+                    {jaBuscou && !erro && (
+                        <span className="count-pill count-pill-warning">
+                            {familiasFiltradasSemResponsavel} sem responsavel
+                        </span>
+                    )}
                     {filtrados.length > 0 && (
                         <div className="export-actions">
                             <button className="btn-export" onClick={baixarCSV}><Icon name="arrow-down" size={15} /> CSV</button>
@@ -590,13 +659,19 @@ export default function Busca() {
             {filtrados.map((f) => {
                 const detalhe = detalhes[f.id];
                 const modoEdicao = editando === f.id;
+                const semResponsavel = familiaSemResponsavelAtivo(f, detalhe);
                 return (
-                    <div key={f.id} className="familia-card">
+                    <div key={f.id} className={`familia-card${semResponsavel ? ' has-responsible-alert' : ''}`}>
                         <div className="familia-card-top">
                             <div style={{ flex: 1 }}>
                                 <span className="familia-id-badge">ID da família #{f.id}</span>
                                 <div className="nome">{f.responsavel?.nome ?? 'Sem responsável'}</div>
                                 <div className="cpf">{f.responsavel?.cpf ?? 'CPF não informado'}</div>
+                                {semResponsavel && (
+                                    <span className="responsible-alert-badge">
+                                        <Icon name="alert" size={14} /> Familia sem responsavel ativo
+                                    </span>
+                                )}
                                 <div className="familia-meta">
                                     <span><Icon name="map-pin" size={14} /> {f.bairro ?? 'Bairro n/d'}</span>
                                     <span><Icon name="person" size={14} /> {f.totalPessoas} pessoa(s)</span>
@@ -756,7 +831,12 @@ export default function Busca() {
 
                     <div className="resultados-head">
                         <h2>Resultados de moradias:</h2>
-                        <span className="count-pill">{moradiasFiltradas.length} encontrada(s)</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                            <span className="count-pill">{moradiasFiltradas.length} encontrada(s)</span>
+                            <span className="count-pill count-pill-warning">
+                                {moradiasFiltradasSemResponsavel} sem responsavel
+                            </span>
+                        </div>
                     </div>
 
                     {moradiasFiltradas.length === 0 && <p className="state-msg">Nenhuma moradia encontrada.</p>}
@@ -764,14 +844,20 @@ export default function Busca() {
                     {moradiasFiltradas.map((moradia) => {
                         const detalhe = detalhesMoradia[moradia.id];
                         const familiaAtiva = detalhe?.familias[0];
+                        const semResponsavel = moradiaTemFamiliaSemResponsavel(detalhe);
                         return (
-                            <div key={moradia.id} className="familia-card">
+                            <div key={moradia.id} className={`familia-card${semResponsavel ? ' has-responsible-alert' : ''}`}>
                                 <div className="familia-card-top">
                                     <div style={{ flex: 1 }}>
                                         <div className="nome">Moradia #{moradia.id}</div>
                                         <div className="cpf">
                                             {[moradia.localizacao.logradouro, moradia.localizacao.numero, moradia.localizacao.bairro].filter(Boolean).join(', ') || 'Endereço não informado'}
                                         </div>
+                                        {semResponsavel && (
+                                            <span className="responsible-alert-badge">
+                                                <Icon name="alert" size={14} /> Moradia com familia sem responsavel ativo
+                                            </span>
+                                        )}
                                         <div className="familia-meta">
                                             <span><Icon name="map-pin" size={14} /> {moradia.localizacao.cidade}/{moradia.localizacao.estado}</span>
                                             <span>{moradia.tipoConstrucao}</span>
@@ -811,6 +897,11 @@ export default function Busca() {
                                                         <div className="detail-list">
                                                             <p><strong>Família #{familiaAtiva.familia.id}</strong></p>
                                                             <p>{familiaAtiva.pessoas.length} pessoa(s) · {familiaAtiva.pets.length} pet(s)</p>
+                                                            {!familiaAtiva.pessoas.some(pessoaEhResponsavelAtivo) && (
+                                                                <span className="responsible-alert-badge">
+                                                                    <Icon name="alert" size={14} /> Familia sem responsavel ativo
+                                                                </span>
+                                                            )}
                                                             <button className="btn-editar" onClick={() => void abrirFamiliaDaMoradia(familiaAtiva.familia.id)}>
                                                                 Ver detalhe da família
                                                             </button>

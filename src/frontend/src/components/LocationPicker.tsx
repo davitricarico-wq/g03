@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { MapContainer, Marker, Popup, TileLayer, useMap, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import { registrarCoordenadaGPS } from '../utils/forms.ts';
@@ -27,11 +27,13 @@ const currentLocationIcon = L.divIcon({
 function Recenter({
     pos,
     currentPos,
-    focusSignal
+    focusSignal,
+    currentFocusSignal
 }: {
     pos: [number, number] | null;
     currentPos: [number, number] | null;
     focusSignal: number;
+    currentFocusSignal: number;
 }) {
     const map = useMap();
     useEffect(() => {
@@ -41,6 +43,10 @@ function Recenter({
     useEffect(() => {
         if (!pos && currentPos) map.setView(currentPos, Math.max(map.getZoom(), 15), { animate: true });
     }, [currentPos, map, pos]);
+    useEffect(() => {
+        if (currentPos) map.setView(currentPos, Math.max(map.getZoom(), 16), { animate: true });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentFocusSignal]);
     // garante render correto quando o container aparece (troca de aba)
     useEffect(() => {
         const t = setTimeout(() => map.invalidateSize(), 60);
@@ -49,9 +55,90 @@ function Recenter({
     return null;
 }
 
-function ClickCapture({ onPick }: { onPick: (lat: number, lng: number) => void }) {
+function MapInteractionLock({ locked }: { locked: boolean }) {
+    const map = useMap();
+
+    useEffect(() => {
+        const interactions = [
+            map.dragging,
+            map.touchZoom,
+            map.doubleClickZoom,
+            map.scrollWheelZoom,
+            map.boxZoom,
+            map.keyboard
+        ];
+
+        interactions.forEach((interaction) => {
+            if (locked) interaction.disable();
+            else interaction.enable();
+        });
+
+        const t = window.setTimeout(() => map.invalidateSize(), 50);
+        return () => window.clearTimeout(t);
+    }, [locked, map]);
+
+    return null;
+}
+
+function MapControls({
+    currentPos,
+    locked,
+    onLocate,
+    onToggleLock
+}: {
+    currentPos: [number, number] | null;
+    locked: boolean;
+    onLocate: () => void;
+    onToggleLock: () => void;
+}) {
+    const map = useMap();
+    const controlsRef = useRef<HTMLDivElement | null>(null);
+
+    useEffect(() => {
+        if (!controlsRef.current) return;
+        L.DomEvent.disableClickPropagation(controlsRef.current);
+        L.DomEvent.disableScrollPropagation(controlsRef.current);
+    }, []);
+
+    function centralizarNaLocalizacao() {
+        if (currentPos) {
+            map.setView(currentPos, Math.max(map.getZoom(), 16), { animate: true });
+        }
+        onLocate();
+    }
+
+    return (
+        <div className="loc-picker-controls" ref={controlsRef}>
+            <button
+                type="button"
+                className="loc-map-btn"
+                onMouseDown={(e) => e.stopPropagation()}
+                onClick={(e) => {
+                    e.stopPropagation();
+                    centralizarNaLocalizacao();
+                }}
+            >
+                Minha localização
+            </button>
+            <button
+                type="button"
+                className={`loc-map-btn ${locked ? 'locked' : ''}`}
+                onMouseDown={(e) => e.stopPropagation()}
+                onClick={(e) => {
+                    e.stopPropagation();
+                    onToggleLock();
+                }}
+            >
+                {locked ? 'Destravar mapa' : 'Travar mapa'}
+            </button>
+        </div>
+    );
+}
+
+function ClickCapture({ locked, onPick }: { locked: boolean; onPick: (lat: number, lng: number) => void }) {
     useMapEvents({
         click(e) {
+            if (locked) return;
             onPick(Number(e.latlng.lat.toFixed(6)), Number(e.latlng.lng.toFixed(6)));
         }
     });
@@ -67,6 +154,8 @@ interface LocationPickerProps {
 
 export default function LocationPicker({ latitude, longitude, focusSignal = 0, onChange }: LocationPickerProps) {
     const [currentPos, setCurrentPos] = useState<[number, number] | null>(null);
+    const [mapLocked, setMapLocked] = useState(true);
+    const [currentFocusSignal, setCurrentFocusSignal] = useState(0);
     const lat = Number(latitude);
     const lng = Number(longitude);
     const temPos = latitude.trim() !== '' && longitude.trim() !== '' && Number.isFinite(lat) && Number.isFinite(lng);
@@ -92,12 +181,32 @@ export default function LocationPicker({ latitude, longitude, focusSignal = 0, o
         return () => navigator.geolocation.clearWatch(watchId);
     }, []);
 
+    function localizarUsuario() {
+        if (!navigator.geolocation) return;
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const coordenada = registrarCoordenadaGPS(position);
+                setCurrentPos([coordenada.latitude, coordenada.longitude]);
+                setCurrentFocusSignal((signal) => signal + 1);
+            },
+            () => undefined,
+            { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+        );
+    }
+
     return (
         <div className="loc-picker">
-            <MapContainer center={center} zoom={temPos || currentPos ? 16 : 13} className="loc-picker-map" zoomControl scrollWheelZoom>
+            <MapContainer center={center} zoom={temPos || currentPos ? 16 : 13} className="loc-picker-map" zoomControl scrollWheelZoom={!mapLocked} dragging={!mapLocked}>
                 <TileLayer url={TILE} attribution="&copy; OpenStreetMap" />
-                <ClickCapture onPick={onChange} />
-                <Recenter pos={pos} currentPos={currentPos} focusSignal={focusSignal} />
+                <ClickCapture locked={mapLocked} onPick={onChange} />
+                <MapInteractionLock locked={mapLocked} />
+                <MapControls
+                    currentPos={currentPos}
+                    locked={mapLocked}
+                    onLocate={localizarUsuario}
+                    onToggleLock={() => setMapLocked((locked) => !locked)}
+                />
+                <Recenter pos={pos} currentPos={currentPos} focusSignal={focusSignal} currentFocusSignal={currentFocusSignal} />
                 {currentPos && (
                     <Marker position={currentPos} icon={currentLocationIcon} zIndexOffset={1000}>
                         <Popup>Sua localização atual</Popup>
@@ -105,9 +214,10 @@ export default function LocationPicker({ latitude, longitude, focusSignal = 0, o
                 )}
                 {pos && (
                     <Marker
+                        key={`moradia-${pos[0]}-${pos[1]}-${mapLocked ? 'locked' : 'unlocked'}`}
                         position={pos}
                         icon={pinIcon}
-                        draggable
+                        draggable={!mapLocked}
                         eventHandlers={{
                             dragend: (e) => {
                                 const m = e.target as L.Marker;

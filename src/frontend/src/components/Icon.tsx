@@ -2,6 +2,7 @@ import type { SVGProps } from 'react';
 
 type IconName =
     | 'activity'
+    | 'alert'
     | 'arrow-down'
     | 'chevron-right'
     | 'clipboard'
@@ -22,6 +23,7 @@ type IconName =
 
 const paths: Record<IconName, string[]> = {
     activity: ['M4 12h4l2-7 4 14 2-7h4'],
+    alert: ['M12 3 22 20H2L12 3Z', 'M12 9v5', 'M12 17h.01'],
     'arrow-down': ['M12 3v14', 'M6 11l6 6 6-6', 'M5 21h14'],
     'chevron-right': ['M9 18l6-6-6-6'],
     clipboard: ['M9 4h6', 'M10 2h4a2 2 0 0 1 2 2v1H8V4a2 2 0 0 1 2-2Z', 'M7 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-1'],

@@ -6,9 +6,9 @@ import Icon from '../components/Icon.tsx';
 import type { EscopoPessoa, PessoaBuscaResultado } from '../types.ts';
 
 const ESCOPOS: { id: EscopoPessoa; label: string }[] = [
+    { id: 'todas', label: 'Todos' },
     { id: 'ativas', label: 'Ativos' },
-    { id: 'inativas', label: 'Inativos' },
-    { id: 'todas', label: 'Todos' }
+    { id: 'inativas', label: 'Inativos' }
 ];
 
 function ehInativo(p: PessoaBuscaResultado): boolean {
