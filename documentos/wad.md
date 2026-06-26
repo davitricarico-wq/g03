@@ -3476,7 +3476,7 @@ A solução alcançou ainda as promessas ligadas à consulta, busca e edição d
 
 Outro ponto forte foi a entrega de recursos voltados à visualização territorial e ao apoio à decisão. A aplicação apresenta moradias em mapa georreferenciado por meio de pins, permitindo ao gestor visualizar a distribuição espacial dos cadastros e compreender melhor a concentração de famílias em áreas de risco. Esse recurso se conecta diretamente ao objetivo descrito na seção 2 de oferecer uma visão estratégica para a sede da Defesa Civil e apoiar decisões sobre priorização, atendimento e planejamento operacional.
 
-O objetivo de registrar localização georreferenciada foi atingido parcialmente. As coordenadas das moradias são representadas no mapa por pins, o que permite a visualização territorial dos registros. Entretanto, no mapa georreferenciado principal, esses pins não podem ser reposicionados diretamente. A correção da posição é possível na área de edição de moradias e famílias já existentes, onde o pin pode ser arrastado para uma nova coordenada. Dessa forma, a aplicação contempla a representação e a atualização da localização, mas ainda pode evoluir para permitir maior flexibilidade de ajuste no próprio fluxo de visualização georreferenciada.
+O objetivo de registrar localização georreferenciada foi atingido. As coordenadas das moradias são representadas no mapa por pins, o que permite a visualização territorial dos registros. Além disso, os pins são movíveis manualmente, através do arraste. Assim que um pin é movido de um local para outro, as coordenadas também acompanham automaticamente.
 
 Por fim, a aplicação também atende ao objetivo de manter os cadastros atualizados por meio de avisos de recadastro, sinalizando registros com mais de um ano e apoiando a rotina de revisão das informações.
 
@@ -3490,10 +3490,6 @@ Apesar de a aplicação ter atendido à maior parte dos objetivos definidos para
 
 
 #### 8.2.1 Pontos evidenciados nos testes e planos de ação
-
-
-- **Otimização do mapa georreferenciado:** conforme indicado na conclusão, os pins do mapa representam as coordenadas das moradias, mas só podem ser movidos manualmente quando o usuário está editando uma moradia já existente. Como plano de ação, recomenda-se implementar um modo de edição diretamente na tela do mapa, permitindo arrastar o pin, confirmar a alteração e salvar a nova coordenada sem precisar acessar todo o fluxo de cadastro ou edição da família.
-
 
 - **Ajuste do design e da organização dos elementos na tela:** nos testes SUS, foi relatado que o sistema ainda pode parecer complexo e exigir aprendizado inicial para uso pleno. Para reduzir essa dificuldade, o plano de ação é revisar a hierarquia visual das telas, simplificar fluxos com muitas etapas, destacar campos obrigatórios, padronizar botões e mensagens de feedback e validar as alterações em uma nova rodada de testes de usabilidade.
 
