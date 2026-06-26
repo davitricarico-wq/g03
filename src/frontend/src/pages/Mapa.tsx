@@ -10,6 +10,10 @@ import type { FamiliaBuscaResultado, MoradiaComLocalizacao, MoradiaDetalhe, Prio
 
 // Santo André - SP
 const CENTRO_PADRAO: [number, number] = [-23.6639, -46.5383];
+const BRASIL_BOUNDS: L.LatLngTuple[] = [
+    [-34.1, -74.0],
+    [6.3, -28.5]
+];
 
 // Host único (sem {s}) para casar com os tiles pré-baixados para uso offline.
 const TILE_CLARO = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
@@ -95,6 +99,31 @@ function IniciarNaLocalizacaoAtual({ localizacaoAtual }: { localizacaoAtual: [nu
         iniciou.current = true;
         map.setView(localizacaoAtual, Math.max(map.getZoom(), 16), { animate: true });
     }, [localizacaoAtual, map]);
+
+    return null;
+}
+
+function LimitesBrasil() {
+    const map = useMap();
+
+    useEffect(() => {
+        const bounds = L.latLngBounds(BRASIL_BOUNDS);
+        const aplicarLimites = () => {
+            const minZoom = map.getBoundsZoom(bounds, true);
+            map.setMinZoom(minZoom);
+            if (map.getZoom() < minZoom) {
+                map.setZoom(minZoom);
+            }
+            map.setMaxBounds(bounds);
+            map.panInsideBounds(bounds, { animate: false });
+        };
+
+        aplicarLimites();
+        map.on('resize', aplicarLimites);
+        return () => {
+            map.off('resize', aplicarLimites);
+        };
+    }, [map]);
 
     return null;
 }
@@ -354,12 +383,21 @@ export default function Mapa() {
             )}
 
             {!carregando && (
-                <MapContainer center={centro} zoom={localizacaoAtual ? 16 : 13} zoomControl={false}>
+                <MapContainer
+                    center={centro}
+                    zoom={localizacaoAtual ? 16 : 13}
+                    minZoom={4}
+                    maxBounds={BRASIL_BOUNDS}
+                    maxBoundsViscosity={1}
+                    zoomControl={false}
+                >
+                    <LimitesBrasil />
                     <IniciarNaLocalizacaoAtual localizacaoAtual={localizacaoAtual} />
                     <ZoomControl position="bottomleft" />
                     <TileLayer
                         attribution={modo === 'calor' ? '&copy; OpenStreetMap &copy; CARTO' : '&copy; OpenStreetMap'}
                         url={modo === 'calor' ? TILE_ESCURO : TILE_CLARO}
+                        noWrap
                     />
                     {modo === 'calor'
                         ? <CamadaCalor pontos={pontosCalor} />

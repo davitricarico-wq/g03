@@ -7,6 +7,10 @@ import { TILE_URL } from '../utils/offlineMap.ts';
 
 // Santo André - SP
 const CENTRO_PADRAO: [number, number] = [-23.6639, -46.5383];
+const BRASIL_BOUNDS: L.LatLngTuple[] = [
+    [-34.1, -74.0],
+    [6.3, -28.5]
+];
 // Host único (sem subdomínio {s}) para que os tiles pré-baixados sirvam offline.
 const TILE = TILE_URL;
 
@@ -55,6 +59,31 @@ function Recenter({
         const t = setTimeout(() => map.invalidateSize(), 60);
         return () => clearTimeout(t);
     }, [map]);
+    return null;
+}
+
+function LimitesBrasil() {
+    const map = useMap();
+
+    useEffect(() => {
+        const bounds = L.latLngBounds(BRASIL_BOUNDS);
+        const aplicarLimites = () => {
+            const minZoom = map.getBoundsZoom(bounds, true);
+            map.setMinZoom(minZoom);
+            if (map.getZoom() < minZoom) {
+                map.setZoom(minZoom);
+            }
+            map.setMaxBounds(bounds);
+            map.panInsideBounds(bounds, { animate: false });
+        };
+
+        aplicarLimites();
+        map.on('resize', aplicarLimites);
+        return () => {
+            map.off('resize', aplicarLimites);
+        };
+    }, [map]);
+
     return null;
 }
 
@@ -178,8 +207,19 @@ export default function LocationPicker({ latitude, longitude, focusSignal = 0, g
                     <span>{mapLocked ? 'Destravar mapa' : 'Travar mapa'}</span>
                 </button>
             </div>
-            <MapContainer center={center} zoom={temPos || currentPos ? 16 : 13} className="loc-picker-map" zoomControl scrollWheelZoom={!mapLocked} dragging={!mapLocked}>
-                <TileLayer url={TILE} attribution="&copy; OpenStreetMap" />
+            <MapContainer
+                center={center}
+                zoom={temPos || currentPos ? 16 : 13}
+                minZoom={4}
+                maxBounds={BRASIL_BOUNDS}
+                maxBoundsViscosity={1}
+                className="loc-picker-map"
+                zoomControl
+                scrollWheelZoom={!mapLocked}
+                dragging={!mapLocked}
+            >
+                <LimitesBrasil />
+                <TileLayer url={TILE} attribution="&copy; OpenStreetMap" noWrap />
                 <ClickCapture locked={mapLocked} onPick={onChange} />
                 <MapInteractionLock locked={mapLocked} />
                 <Recenter pos={pos} currentPos={currentPos} focusSignal={focusSignal} currentFocusSignal={currentFocusSignal} />
