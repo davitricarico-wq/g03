@@ -53,6 +53,7 @@ export function emailValido(value: string): boolean {
    =========================================================== */
 export interface EnderecoViaCep {
     logradouro: string;
+    numero?: string;
     bairro: string;
     cidade: string;
     uf: string;
@@ -87,6 +88,7 @@ type NominatimAddress = {
     house_number?: string;
     neighbourhood?: string;
     suburb?: string;
+    quarter?: string;
     city_district?: string;
     city?: string;
     town?: string;
@@ -133,6 +135,10 @@ function normalizarEstado(value: string | undefined): string {
         .toLowerCase();
 }
 
+function obterBairro(address: NominatimAddress): string {
+    return address.neighbourhood ?? address.suburb ?? address.quarter ?? '';
+}
+
 export async function buscarEnderecoPorCoordenadas(latitude: number, longitude: number): Promise<EnderecoViaCep | null> {
     try {
         const params = new URLSearchParams({
@@ -149,7 +155,8 @@ export async function buscarEnderecoPorCoordenadas(latitude: number, longitude: 
         const estado = normalizarEstado(address.state);
         return {
             logradouro: address.road ?? address.pedestrian ?? address.footway ?? address.residential ?? '',
-            bairro: address.neighbourhood ?? address.suburb ?? address.city_district ?? '',
+            numero: address.house_number ?? '',
+            bairro: obterBairro(address),
             cidade: address.city ?? address.town ?? address.village ?? address.municipality ?? '',
             uf: UF_POR_ESTADO[estado] ?? '',
             cep: address.postcode ?? ''

@@ -466,8 +466,9 @@ export default function Cadastro() {
         setLoc((p) => ({
             ...p,
             cep: endereco.cep ? maskCEP(endereco.cep) : p.cep,
-            logradouro: endereco.logradouro || p.logradouro,
-            bairro: endereco.bairro || p.bairro,
+            logradouro: endereco.logradouro,
+            numero: endereco.numero ?? '',
+            bairro: endereco.bairro,
             cidade: endereco.cidade || p.cidade,
             estado: endereco.uf || p.estado
         }));
