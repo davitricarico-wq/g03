@@ -1,10 +1,18 @@
-import { useEffect } from 'react';
-import { MapContainer, Marker, TileLayer, useMap, useMapEvents } from 'react-leaflet';
+import { useEffect, useState } from 'react';
+import { MapContainer, Marker, Popup, TileLayer, useMap, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
+import Icon from './Icon.tsx';
+import { registrarCoordenadaGPS } from '../utils/forms.ts';
+import { TILE_URL } from '../utils/offlineMap.ts';
 
 // Santo André - SP
 const CENTRO_PADRAO: [number, number] = [-23.6639, -46.5383];
-const TILE = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+const BRASIL_BOUNDS: L.LatLngTuple[] = [
+    [-34.1, -74.0],
+    [6.3, -28.5]
+];
+// Host único (sem subdomínio {s}) para que os tiles pré-baixados sirvam offline.
+const TILE = TILE_URL;
 
 const pinIcon = L.divIcon({
     className: '',
@@ -13,14 +21,39 @@ const pinIcon = L.divIcon({
     iconAnchor: [14, 28]
 });
 
+const currentLocationIcon = L.divIcon({
+    className: '',
+    html: '<div class="map-current-location-pin"><span></span></div>',
+    iconSize: [26, 26],
+    iconAnchor: [13, 13],
+    popupAnchor: [0, -14]
+});
+
 /** Recentraliza o mapa apenas quando `focusSignal` muda (ex.: ao capturar GPS),
  *  para não "pular" enquanto o usuário arrasta o pino. */
-function Recenter({ pos, focusSignal }: { pos: [number, number] | null; focusSignal: number }) {
+function Recenter({
+    pos,
+    currentPos,
+    focusSignal,
+    currentFocusSignal
+}: {
+    pos: [number, number] | null;
+    currentPos: [number, number] | null;
+    focusSignal: number;
+    currentFocusSignal: number;
+}) {
     const map = useMap();
     useEffect(() => {
         if (pos) map.setView(pos, Math.max(map.getZoom(), 16), { animate: true });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [focusSignal]);
+    useEffect(() => {
+        if (!pos && currentPos) map.setView(currentPos, Math.max(map.getZoom(), 15), { animate: true });
+    }, [currentPos, map, pos]);
+    useEffect(() => {
+        if (currentPos) map.setView(currentPos, Math.max(map.getZoom(), 16), { animate: true });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentFocusSignal]);
     // garante render correto quando o container aparece (troca de aba)
     useEffect(() => {
         const t = setTimeout(() => map.invalidateSize(), 60);
@@ -29,9 +62,60 @@ function Recenter({ pos, focusSignal }: { pos: [number, number] | null; focusSig
     return null;
 }
 
-function ClickCapture({ onPick }: { onPick: (lat: number, lng: number) => void }) {
+function LimitesBrasil() {
+    const map = useMap();
+
+    useEffect(() => {
+        const bounds = L.latLngBounds(BRASIL_BOUNDS);
+        const aplicarLimites = () => {
+            const minZoom = map.getBoundsZoom(bounds, true);
+            map.setMinZoom(minZoom);
+            if (map.getZoom() < minZoom) {
+                map.setZoom(minZoom);
+            }
+            map.setMaxBounds(bounds);
+            map.panInsideBounds(bounds, { animate: false });
+        };
+
+        aplicarLimites();
+        map.on('resize', aplicarLimites);
+        return () => {
+            map.off('resize', aplicarLimites);
+        };
+    }, [map]);
+
+    return null;
+}
+
+function MapInteractionLock({ locked }: { locked: boolean }) {
+    const map = useMap();
+
+    useEffect(() => {
+        const interactions = [
+            map.dragging,
+            map.touchZoom,
+            map.doubleClickZoom,
+            map.scrollWheelZoom,
+            map.boxZoom,
+            map.keyboard
+        ];
+
+        interactions.forEach((interaction) => {
+            if (locked) interaction.disable();
+            else interaction.enable();
+        });
+
+        const t = window.setTimeout(() => map.invalidateSize(), 50);
+        return () => window.clearTimeout(t);
+    }, [locked, map]);
+
+    return null;
+}
+
+function ClickCapture({ locked, onPick }: { locked: boolean; onPick: (lat: number, lng: number) => void }) {
     useMapEvents({
         click(e) {
+            if (locked) return;
             onPick(Number(e.latlng.lat.toFixed(6)), Number(e.latlng.lng.toFixed(6)));
         }
     });
@@ -42,27 +126,114 @@ interface LocationPickerProps {
     latitude: string;
     longitude: string;
     focusSignal?: number;
+    gpsLoading?: boolean;
+    onUseGps?: () => void;
     onChange: (lat: number, lng: number) => void;
 }
 
-export default function LocationPicker({ latitude, longitude, focusSignal = 0, onChange }: LocationPickerProps) {
+export default function LocationPicker({ latitude, longitude, focusSignal = 0, gpsLoading = false, onUseGps, onChange }: LocationPickerProps) {
+    const [currentPos, setCurrentPos] = useState<[number, number] | null>(null);
+    const [mapLocked, setMapLocked] = useState(true);
+    const [currentFocusSignal, setCurrentFocusSignal] = useState(0);
     const lat = Number(latitude);
     const lng = Number(longitude);
     const temPos = latitude.trim() !== '' && longitude.trim() !== '' && Number.isFinite(lat) && Number.isFinite(lng);
     const pos: [number, number] | null = temPos ? [lat, lng] : null;
-    const center = pos ?? CENTRO_PADRAO;
+    const center = pos ?? currentPos ?? CENTRO_PADRAO;
+
+    useEffect(() => {
+        if (!navigator.geolocation) return;
+
+        const watchId = navigator.geolocation.watchPosition(
+            (position) => {
+                const coordenada = registrarCoordenadaGPS(position);
+                setCurrentPos([coordenada.latitude, coordenada.longitude]);
+            },
+            () => setCurrentPos(null),
+            {
+                enableHighAccuracy: true,
+                maximumAge: 30000,
+                timeout: 10000
+            }
+        );
+
+        return () => navigator.geolocation.clearWatch(watchId);
+    }, []);
+
+    function localizarUsuario() {
+        if (!navigator.geolocation) return;
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const coordenada = registrarCoordenadaGPS(position);
+                setCurrentPos([coordenada.latitude, coordenada.longitude]);
+                setCurrentFocusSignal((signal) => signal + 1);
+            },
+            () => undefined,
+            { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+        );
+    }
+
+    function centralizarNaLocalizacao() {
+        if (currentPos) {
+            setCurrentFocusSignal((signal) => signal + 1);
+        }
+        localizarUsuario();
+    }
 
     return (
         <div className="loc-picker">
-            <MapContainer center={center} zoom={temPos ? 16 : 13} className="loc-picker-map" zoomControl scrollWheelZoom>
-                <TileLayer url={TILE} attribution="&copy; OpenStreetMap" />
-                <ClickCapture onPick={onChange} />
-                <Recenter pos={pos} focusSignal={focusSignal} />
+            <div className="loc-picker-actions">
+                {onUseGps && (
+                    <button
+                        type="button"
+                        className="loc-action-btn loc-action-primary"
+                        disabled={gpsLoading}
+                        onClick={onUseGps}
+                    >
+                        <Icon name="map-pin" size={17} />
+                        <span>{gpsLoading ? 'Capturando localização...' : 'Usar minha localização (GPS)'}</span>
+                    </button>
+                )}
+                <button type="button" className="loc-action-btn" onClick={centralizarNaLocalizacao}>
+                    <Icon name="target" size={17} />
+                    <span>Ver minha localização</span>
+                </button>
+                <button
+                    type="button"
+                    className={`loc-action-btn ${mapLocked ? 'is-locked' : 'is-unlocked'}`}
+                    onClick={() => setMapLocked((locked) => !locked)}
+                >
+                    <Icon name={mapLocked ? 'unlock' : 'lock'} size={17} />
+                    <span>{mapLocked ? 'Destravar mapa' : 'Travar mapa'}</span>
+                </button>
+            </div>
+            <MapContainer
+                center={center}
+                zoom={temPos || currentPos ? 16 : 13}
+                minZoom={4}
+                maxBounds={BRASIL_BOUNDS}
+                maxBoundsViscosity={1}
+                className="loc-picker-map"
+                zoomControl
+                scrollWheelZoom={!mapLocked}
+                dragging={!mapLocked}
+            >
+                <LimitesBrasil />
+                <TileLayer url={TILE} attribution="&copy; OpenStreetMap" noWrap />
+                <ClickCapture locked={mapLocked} onPick={onChange} />
+                <MapInteractionLock locked={mapLocked} />
+                <Recenter pos={pos} currentPos={currentPos} focusSignal={focusSignal} currentFocusSignal={currentFocusSignal} />
+                {currentPos && (
+                    <Marker position={currentPos} icon={currentLocationIcon} zIndexOffset={1000}>
+                        <Popup>Sua localização atual</Popup>
+                    </Marker>
+                )}
                 {pos && (
                     <Marker
+                        key={`moradia-${pos[0]}-${pos[1]}-${mapLocked ? 'locked' : 'unlocked'}`}
                         position={pos}
                         icon={pinIcon}
-                        draggable
+                        draggable={!mapLocked}
                         eventHandlers={{
                             dragend: (e) => {
                                 const m = e.target as L.Marker;
@@ -75,8 +246,8 @@ export default function LocationPicker({ latitude, longitude, focusSignal = 0, o
             </MapContainer>
             <p className="loc-picker-hint">
                 {pos
-                    ? 'Arraste o pino ou clique no mapa para ajustar a localização exata da casa.'
-                    : 'Clique no mapa para marcar a localização da casa (caso o GPS não funcione).'}
+                    ? 'Pino vermelho: moradia. Pino azul: sua localização atual. Arraste ou clique no mapa para ajustar a casa.'
+                    : 'Pino azul: sua localização atual. Clique no mapa para marcar a localização da casa.'}
             </p>
         </div>
     );

@@ -8,7 +8,7 @@ export interface Pet {
     id: number;
     idFamilia: number;
     tipo: TipoPet;
-    nome: string;
+    nome: string | null;
     porte: string;
     raca: string;
     cor: string;

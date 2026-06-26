@@ -6,6 +6,8 @@ import {
     buscarFamilias,
     detalharFamilia,
     detalharMoradia,
+    historicoFamiliasMoradia,
+    historicoMoradiasFamilia,
     listarMoradias,
     listarPrioridades,
     removerFamilia
@@ -15,6 +17,7 @@ import PhotoGallery from '../components/PhotoGallery.tsx';
 import { exportarCSV, exportarPDF } from '../utils/export.ts';
 import {
     ESCOLARIDADES,
+    ESTADOS_BRASIL,
     PARENTESCOS,
     SITUACOES_OCUPACAO_MORADIA,
     SITUACOES_OCUPACIONAIS,
@@ -23,7 +26,16 @@ import {
     USOS_IMOVEL
 } from '../types.ts';
 import Icon from '../components/Icon.tsx';
-import type { FamiliaBuscaResultado, FamiliaDetalhe, MoradiaComLocalizacao, MoradiaDetalhe, Pessoa, Prioridade } from '../types.ts';
+import type {
+    FamiliaBuscaResultado,
+    FamiliaDetalhe,
+    FamiliaMoradiaHistorico,
+    MoradiaComLocalizacao,
+    MoradiaDetalhe,
+    MoradiaFamiliaHistorico,
+    Pessoa,
+    Prioridade
+} from '../types.ts';
 
 interface MoradiaDraft {
     logradouro: string;
@@ -118,12 +130,98 @@ function dataInput(value: string | null | undefined): string {
     return value ? String(value).slice(0, 10) : '';
 }
 
+type PessoaResponsavelCheck = Pick<Pessoa, 'parentesco' | 'status' | 'deletedAt'>;
+
+function pessoaEhResponsavelAtivo(pessoa: PessoaResponsavelCheck): boolean {
+    return normalizar(pessoa.parentesco ?? '') === 'responsavel' && !pessoa.deletedAt && (pessoa.status ?? 'Ativo') === 'Ativo';
+}
+
+function familiaSemResponsavelAtivo(familia: FamiliaBuscaResultado, detalhe?: FamiliaDetalhe): boolean {
+    if (detalhe) return !detalhe.pessoas.some(pessoaEhResponsavelAtivo);
+    return !familia.responsavel;
+}
+
+function moradiaTemFamiliaSemResponsavel(detalhe?: MoradiaDetalhe): boolean {
+    return Boolean(detalhe?.familias.some((item) => (
+        !item.familia.deletedAt
+        && item.pessoas.length > 0
+        && !item.pessoas.some(pessoaEhResponsavelAtivo)
+    )));
+}
+
+function dataCurta(value: string | null): string {
+    if (!value) return 'Atual';
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return String(value).slice(0, 10);
+    return date.toLocaleDateString('pt-BR');
+}
+
+function periodoHistorico(entrada: string, saida: string | null): string {
+    return `${dataCurta(entrada)} até ${dataCurta(saida)}`;
+}
+
 function selecionar<T extends readonly string[]>({ value, onChange, options }: { value: string; onChange: (v: string) => void; options: T }) {
     return (
         <select value={value} onChange={(event) => onChange(event.target.value)}>
             <option value="">Selecione</option>
             {options.map((option) => <option key={option} value={option}>{option}</option>)}
         </select>
+    );
+}
+
+function HistoricoMoradiasFamilia({ historico, carregando }: { historico: FamiliaMoradiaHistorico[] | undefined; carregando: boolean }) {
+    return (
+        <section className="detail-section">
+            <h3>Histórico de moradias</h3>
+            {carregando && !historico && <p className="state-msg">Carregando histórico...</p>}
+            {!carregando && historico?.length === 0 && <p className="state-msg">Nenhum vínculo de moradia encontrado.</p>}
+            {historico && historico.length > 0 && (
+                <div className="history-list history-list-inline">
+                    {historico.map((item) => (
+                        <article key={`${item.vinculo.idMoradia}-${item.vinculo.dataEntrada}`} className={`history-card${item.ativo ? ' active' : ''}`}>
+                            <div className="history-line-icon"><Icon name="home" size={18} /></div>
+                            <div>
+                                <div className="history-card-head">
+                                    <strong>Moradia #{item.vinculo.idMoradia}</strong>
+                                    <span>{item.ativo ? 'Ativo' : 'Encerrado'}</span>
+                                </div>
+                                <p>{periodoHistorico(item.vinculo.dataEntrada, item.vinculo.dataSaida)}</p>
+                                <p>{item.moradia.tipoConstrucao} · {item.moradia.usoImovel} · {item.moradia.status}</p>
+                                {item.vinculo.status && <p>Status do vínculo: {item.vinculo.status}</p>}
+                            </div>
+                        </article>
+                    ))}
+                </div>
+            )}
+        </section>
+    );
+}
+
+function HistoricoFamiliasMoradia({ historico, carregando }: { historico: MoradiaFamiliaHistorico[] | undefined; carregando: boolean }) {
+    return (
+        <section className="detail-section">
+            <h3>Histórico de famílias</h3>
+            {carregando && !historico && <p className="state-msg">Carregando histórico...</p>}
+            {!carregando && historico?.length === 0 && <p className="state-msg">Nenhuma família encontrada para esta moradia.</p>}
+            {historico && historico.length > 0 && (
+                <div className="history-list history-list-inline">
+                    {historico.map((item) => (
+                        <article key={`${item.vinculo.idFamilia}-${item.vinculo.dataEntrada}`} className={`history-card${item.ativo ? ' active' : ''}`}>
+                            <div className="history-line-icon"><Icon name="people" size={18} /></div>
+                            <div>
+                                <div className="history-card-head">
+                                    <strong>Família #{item.vinculo.idFamilia}</strong>
+                                    <span>{item.ativo ? 'Ativo' : 'Encerrado'}</span>
+                                </div>
+                                <p>{periodoHistorico(item.vinculo.dataEntrada, item.vinculo.dataSaida)}</p>
+                                {item.vinculo.status && <p>Status do vínculo: {item.vinculo.status}</p>}
+                                {item.familia.deletedAt && <p>Família removida em {dataCurta(item.familia.deletedAt)}</p>}
+                            </div>
+                        </article>
+                    ))}
+                </div>
+            )}
+        </section>
     );
 }
 
@@ -144,6 +242,10 @@ export default function Busca() {
     const [moradias, setMoradias] = useState<MoradiaComLocalizacao[]>([]);
     const [detalhes, setDetalhes] = useState<Record<number, FamiliaDetalhe>>({});
     const [detalhesMoradia, setDetalhesMoradia] = useState<Record<number, MoradiaDetalhe>>({});
+    const [historicoFamilias, setHistoricoFamilias] = useState<Record<number, FamiliaMoradiaHistorico[]>>({});
+    const [historicoMoradias, setHistoricoMoradias] = useState<Record<number, MoradiaFamiliaHistorico[]>>({});
+    const [historicoCarregando, setHistoricoCarregando] = useState<Record<string, boolean>>({});
+    const [detalhesMoradiaFalhos, setDetalhesMoradiaFalhos] = useState<Set<number>>(() => new Set());
     const [aberto, setAberto] = useState<number | null>(null);
     const [moradiaAberta, setMoradiaAberta] = useState<number | null>(null);
     const [editando, setEditando] = useState<number | null>(null);
@@ -212,6 +314,11 @@ export default function Busca() {
         [resultados, prioridadesAtivas, prioridades]
     );
 
+    const familiasFiltradasSemResponsavel = useMemo(
+        () => filtrados.filter((familia) => familiaSemResponsavelAtivo(familia, detalhes[familia.id])).length,
+        [filtrados, detalhes]
+    );
+
     const moradiasFiltradas = useMemo(() => {
         const termoNormalizado = normalizar(termoMoradia.trim());
         const bairroNormalizado = normalizar(bairroMoradia.trim());
@@ -235,19 +342,65 @@ export default function Busca() {
         });
     }, [moradias, termoMoradia, bairroMoradia, statusMoradiaFiltro]);
 
+    const moradiasFiltradasSemResponsavel = useMemo(
+        () => moradiasFiltradas.filter((moradia) => moradiaTemFamiliaSemResponsavel(detalhesMoradia[moradia.id])).length,
+        [moradiasFiltradas, detalhesMoradia]
+    );
+
+    useEffect(() => {
+        const faltantes = moradiasFiltradas.filter((moradia) => !detalhesMoradia[moradia.id] && !detalhesMoradiaFalhos.has(moradia.id));
+        if (faltantes.length === 0) return;
+
+        let ativo = true;
+        void Promise.all(
+            faltantes.map((moradia) =>
+                detalharMoradia(moradia.id)
+                    .then((detalhe) => ({ id: moradia.id, detalhe }))
+                    .catch(() => ({ id: moradia.id, detalhe: null }))
+            )
+        ).then((resultadosDetalhes) => {
+            if (!ativo) return;
+            setDetalhesMoradia((prev) => {
+                const next = { ...prev };
+                resultadosDetalhes.forEach((item) => {
+                    if (item.detalhe) next[item.id] = item.detalhe;
+                });
+                return next;
+            });
+            setDetalhesMoradiaFalhos((prev) => {
+                const next = new Set(prev);
+                resultadosDetalhes.forEach((item) => {
+                    if (!item.detalhe) next.add(item.id);
+                });
+                return next;
+            });
+        });
+
+        return () => {
+            ativo = false;
+        };
+    }, [moradiasFiltradas, detalhesMoradia, detalhesMoradiaFalhos]);
+
     async function abrirDetalhesMoradia(moradia: MoradiaComLocalizacao) {
         if (moradiaAberta === moradia.id) {
             setMoradiaAberta(null);
             return;
         }
         setMoradiaAberta(moradia.id);
-        if (detalhesMoradia[moradia.id]) return;
+        if (detalhesMoradia[moradia.id] && historicoMoradias[moradia.id]) return;
+        setHistoricoCarregando((prev) => ({ ...prev, [`moradia-${moradia.id}`]: true }));
         try {
-            const detalhe = await detalharMoradia(moradia.id);
+            const [detalhe, historico] = await Promise.all([
+                detalhesMoradia[moradia.id] ? Promise.resolve(detalhesMoradia[moradia.id]) : detalharMoradia(moradia.id),
+                historicoMoradias[moradia.id] ? Promise.resolve(historicoMoradias[moradia.id]) : historicoFamiliasMoradia(moradia.id)
+            ]);
             setDetalhesMoradia((prev) => ({ ...prev, [moradia.id]: detalhe }));
+            setHistoricoMoradias((prev) => ({ ...prev, [moradia.id]: historico }));
         } catch (e) {
             toast.error(e instanceof Error ? e.message : 'Erro ao carregar detalhes da moradia.');
             setMoradiaAberta(null);
+        } finally {
+            setHistoricoCarregando((prev) => ({ ...prev, [`moradia-${moradia.id}`]: false }));
         }
     }
 
@@ -259,14 +412,23 @@ export default function Busca() {
         }
         setAberto(familia.id);
         setEditando(null);
-        if (detalhes[familia.id]) return;
+        if (detalhes[familia.id] && historicoFamilias[familia.id]) return;
+        setHistoricoCarregando((prev) => ({ ...prev, [`familia-${familia.id}`]: true }));
         try {
-            setDetalhes((prev) => ({ ...prev, [familia.id]: { id: familia.id, pessoas: [], moradias: [], pets: [] } }));
-            const detalhe = await detalharFamilia(familia.id);
+            if (!detalhes[familia.id]) {
+                setDetalhes((prev) => ({ ...prev, [familia.id]: { id: familia.id, pessoas: [], moradias: [], pets: [] } }));
+            }
+            const [detalhe, historico] = await Promise.all([
+                detalhes[familia.id] ? Promise.resolve(detalhes[familia.id]) : detalharFamilia(familia.id),
+                historicoFamilias[familia.id] ? Promise.resolve(historicoFamilias[familia.id]) : historicoMoradiasFamilia(familia.id)
+            ]);
             setDetalhes((prev) => ({ ...prev, [familia.id]: detalhe }));
+            setHistoricoFamilias((prev) => ({ ...prev, [familia.id]: historico }));
         } catch (e) {
             toast.error(e instanceof Error ? e.message : 'Erro ao carregar detalhes.');
             setAberto(null);
+        } finally {
+            setHistoricoCarregando((prev) => ({ ...prev, [`familia-${familia.id}`]: false }));
         }
     }
 
@@ -362,20 +524,20 @@ export default function Busca() {
         }
     }
 
-    async function excluir(f: FamiliaBuscaResultado) {
+    async function inativar(f: FamiliaBuscaResultado) {
         const ok = await confirmDialog({
-            title: 'Excluir família',
-            message: `Tem certeza que deseja excluir o cadastro de "${f.responsavel?.nome ?? 'Sem responsável'}"? Esta ação não pode ser desfeita.`,
-            okLabel: 'Excluir',
+            title: 'Inativar família',
+            message: `Tem certeza que deseja inativar o cadastro de "${f.responsavel?.nome ?? 'Sem responsável'}"? A família sairá das listas ativas e os vínculos atuais serão encerrados, sem apagar o histórico.`,
+            okLabel: 'Inativar',
             danger: true
         });
         if (!ok) return;
         try {
             await removerFamilia(f.id);
             setResultados((prev) => prev.filter((x) => x.id !== f.id));
-            toast.success('Cadastro excluído com sucesso.');
+            toast.success('Cadastro inativado com sucesso.');
         } catch (e) {
-            toast.error(e instanceof Error ? e.message : 'Erro ao excluir cadastro.');
+            toast.error(e instanceof Error ? e.message : 'Erro ao inativar cadastro.');
         }
     }
 
@@ -474,6 +636,11 @@ export default function Busca() {
                 <h2>Resultados:</h2>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                     {jaBuscou && !erro && <span className="count-pill">{filtrados.length} encontrado(s)</span>}
+                    {jaBuscou && !erro && (
+                        <span className="count-pill count-pill-warning">
+                            {familiasFiltradasSemResponsavel} sem responsavel
+                        </span>
+                    )}
                     {filtrados.length > 0 && (
                         <div className="export-actions">
                             <button className="btn-export" onClick={baixarCSV}><Icon name="arrow-down" size={15} /> CSV</button>
@@ -492,13 +659,19 @@ export default function Busca() {
             {filtrados.map((f) => {
                 const detalhe = detalhes[f.id];
                 const modoEdicao = editando === f.id;
+                const semResponsavel = familiaSemResponsavelAtivo(f, detalhe);
                 return (
-                    <div key={f.id} className="familia-card">
+                    <div key={f.id} className={`familia-card${semResponsavel ? ' has-responsible-alert' : ''}`}>
                         <div className="familia-card-top">
                             <div style={{ flex: 1 }}>
                                 <span className="familia-id-badge">ID da família #{f.id}</span>
                                 <div className="nome">{f.responsavel?.nome ?? 'Sem responsável'}</div>
                                 <div className="cpf">{f.responsavel?.cpf ?? 'CPF não informado'}</div>
+                                {semResponsavel && (
+                                    <span className="responsible-alert-badge">
+                                        <Icon name="alert" size={14} /> Familia sem responsavel ativo
+                                    </span>
+                                )}
                                 <div className="familia-meta">
                                     <span><Icon name="map-pin" size={14} /> {f.bairro ?? 'Bairro n/d'}</span>
                                     <span><Icon name="person" size={14} /> {f.totalPessoas} pessoa(s)</span>
@@ -506,12 +679,41 @@ export default function Busca() {
                                 </div>
                                 <Tags familia={f} prioridades={prioridades} />
                             </div>
-                            <div className="card-actions">
-                                <button className="btn-editar" onClick={() => abrirDetalhes(f)}>
-                                    {aberto === f.id ? 'Ocultar' : 'Detalhes'}
-                                </button>
-	                                <button className="btn-editar" onClick={() => navigate(`/cadastro?familiaId=${f.id}`)}><Icon name="edit" size={15} /> Editar</button>
-                                <button className="btn-trash" aria-label="Remover" onClick={() => excluir(f)}><Icon name="trash" size={17} /></button>
+                            <div className="busca-card-actions">
+                                <div className="card-actions-bottom">
+                                    <div className="action-column">
+                                        <button
+                                            type="button"
+                                            className={`card-action-btn secondary${aberto === f.id ? ' active' : ''}`}
+                                            aria-expanded={aberto === f.id}
+                                            title={aberto === f.id ? 'Ocultar detalhes' : 'Ver detalhes'}
+                                            onClick={() => abrirDetalhes(f)}
+                                        >
+                                            <Icon name={aberto === f.id ? 'eye-off' : 'eye'} size={16} />
+                                            <span>{aberto === f.id ? 'Ocultar' : 'Detalhes'}</span>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="card-action-btn secondary"
+                                            title="Editar cadastro"
+                                            onClick={() => navigate(`/cadastro?familiaId=${f.id}`)}
+                                        >
+                                            <Icon name="edit" size={16} />
+                                            <span>Editar</span>
+                                        </button>
+                                    </div>
+                                    <div className="action-column">
+                                        <button
+                                            type="button"
+                                            className="card-action-btn danger"
+                                            title="Inativar família"
+                                            onClick={() => inativar(f)}
+                                        >
+                                            <Icon name="user-x" size={16} />
+                                            <span>Inativar</span>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -532,7 +734,7 @@ export default function Busca() {
                                                     <label>Número<input value={draft.moradia.numero} onChange={(e) => setMoradiaDraft('numero', e.target.value)} /></label>
                                                     <label>Bairro<input value={draft.moradia.bairro} onChange={(e) => setMoradiaDraft('bairro', e.target.value)} /></label>
                                                     <label>Cidade<input value={draft.moradia.cidade} onChange={(e) => setMoradiaDraft('cidade', e.target.value)} /></label>
-                                                    <label>Estado<input value={draft.moradia.estado} onChange={(e) => setMoradiaDraft('estado', e.target.value.toUpperCase())} /></label>
+                                                    <label>Estado{selecionar({ value: draft.moradia.estado, onChange: (v) => setMoradiaDraft('estado', v), options: ESTADOS_BRASIL })}</label>
                                                     <label>CEP<input value={draft.moradia.cep} onChange={(e) => setMoradiaDraft('cep', e.target.value)} /></label>
                                                     <label>Latitude<input value={draft.moradia.latitude} onChange={(e) => setMoradiaDraft('latitude', e.target.value)} /></label>
                                                     <label>Longitude<input value={draft.moradia.longitude} onChange={(e) => setMoradiaDraft('longitude', e.target.value)} /></label>
@@ -556,6 +758,13 @@ export default function Busca() {
                                                 ))
                                             )}
                                         </section>
+
+                                        {!modoEdicao && (
+                                            <HistoricoMoradiasFamilia
+                                                historico={historicoFamilias[f.id]}
+                                                carregando={Boolean(historicoCarregando[`familia-${f.id}`])}
+                                            />
+                                        )}
 
                                         <section className="detail-section">
                                             <h3>Moradores</h3>
@@ -651,7 +860,12 @@ export default function Busca() {
 
                     <div className="resultados-head">
                         <h2>Resultados de moradias:</h2>
-                        <span className="count-pill">{moradiasFiltradas.length} encontrada(s)</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                            <span className="count-pill">{moradiasFiltradas.length} encontrada(s)</span>
+                            <span className="count-pill count-pill-warning">
+                                {moradiasFiltradasSemResponsavel} sem responsavel
+                            </span>
+                        </div>
                     </div>
 
                     {moradiasFiltradas.length === 0 && <p className="state-msg">Nenhuma moradia encontrada.</p>}
@@ -659,25 +873,48 @@ export default function Busca() {
                     {moradiasFiltradas.map((moradia) => {
                         const detalhe = detalhesMoradia[moradia.id];
                         const familiaAtiva = detalhe?.familias[0];
+                        const semResponsavel = moradiaTemFamiliaSemResponsavel(detalhe);
                         return (
-                            <div key={moradia.id} className="familia-card">
+                            <div key={moradia.id} className={`familia-card${semResponsavel ? ' has-responsible-alert' : ''}`}>
                                 <div className="familia-card-top">
                                     <div style={{ flex: 1 }}>
                                         <div className="nome">Moradia #{moradia.id}</div>
                                         <div className="cpf">
                                             {[moradia.localizacao.logradouro, moradia.localizacao.numero, moradia.localizacao.bairro].filter(Boolean).join(', ') || 'Endereço não informado'}
                                         </div>
+                                        {semResponsavel && (
+                                            <span className="responsible-alert-badge">
+                                                <Icon name="alert" size={14} /> Moradia com familia sem responsavel ativo
+                                            </span>
+                                        )}
                                         <div className="familia-meta">
                                             <span><Icon name="map-pin" size={14} /> {moradia.localizacao.cidade}/{moradia.localizacao.estado}</span>
                                             <span>{moradia.tipoConstrucao}</span>
                                             <span>{moradia.status}</span>
                                         </div>
                                     </div>
-                                    <div className="card-actions">
-                                        <button className="btn-editar" onClick={() => void abrirDetalhesMoradia(moradia)}>
-                                            {moradiaAberta === moradia.id ? 'Ocultar' : 'Detalhes'}
-                                        </button>
-                                        <button className="btn-editar" onClick={() => navigate(`/cadastro?moradiaId=${moradia.id}`)}>Usar no cadastro</button>
+                                    <div className="busca-card-actions busca-card-actions-two">
+                                        <div className="card-actions-bottom">
+                                            <button
+                                                type="button"
+                                                className={`card-action-btn secondary${moradiaAberta === moradia.id ? ' active' : ''}`}
+                                                aria-expanded={moradiaAberta === moradia.id}
+                                                title={moradiaAberta === moradia.id ? 'Ocultar detalhes' : 'Ver detalhes'}
+                                                onClick={() => void abrirDetalhesMoradia(moradia)}
+                                            >
+                                                <Icon name={moradiaAberta === moradia.id ? 'eye-off' : 'eye'} size={16} />
+                                                <span>{moradiaAberta === moradia.id ? 'Ocultar' : 'Detalhes'}</span>
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className="card-action-btn secondary"
+                                                title="Usar moradia no cadastro"
+                                                onClick={() => navigate(`/cadastro?moradiaId=${moradia.id}`)}
+                                            >
+                                                <Icon name="edit" size={16} />
+                                                <span>Usar no cadastro</span>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -706,6 +943,11 @@ export default function Busca() {
                                                         <div className="detail-list">
                                                             <p><strong>Família #{familiaAtiva.familia.id}</strong></p>
                                                             <p>{familiaAtiva.pessoas.length} pessoa(s) · {familiaAtiva.pets.length} pet(s)</p>
+                                                            {!familiaAtiva.pessoas.some(pessoaEhResponsavelAtivo) && (
+                                                                <span className="responsible-alert-badge">
+                                                                    <Icon name="alert" size={14} /> Familia sem responsavel ativo
+                                                                </span>
+                                                            )}
                                                             <button className="btn-editar" onClick={() => void abrirFamiliaDaMoradia(familiaAtiva.familia.id)}>
                                                                 Ver detalhe da família
                                                             </button>
@@ -719,6 +961,11 @@ export default function Busca() {
                                                         </div>
                                                     )}
                                                 </section>
+
+                                                <HistoricoFamiliasMoradia
+                                                    historico={historicoMoradias[moradia.id]}
+                                                    carregando={Boolean(historicoCarregando[`moradia-${moradia.id}`])}
+                                                />
                                             </>
                                         )}
                                     </div>

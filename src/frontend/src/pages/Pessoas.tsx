@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { atualizarStatusPessoa, buscarPessoas } from '../api.ts';
+import { atualizarStatusPessoa, buscarPessoas, listarPessoas, listarPessoasInativas } from '../api.ts';
 import { confirmDialog, toast } from '../components/feedback.tsx';
 import Icon from '../components/Icon.tsx';
 import type { EscopoPessoa, PessoaBuscaResultado } from '../types.ts';
 
 const ESCOPOS: { id: EscopoPessoa; label: string }[] = [
+    { id: 'todas', label: 'Todos' },
     { id: 'ativas', label: 'Ativos' },
-    { id: 'inativas', label: 'Inativos' },
-    { id: 'todas', label: 'Todos' }
+    { id: 'inativas', label: 'Inativos' }
 ];
 
 function ehInativo(p: PessoaBuscaResultado): boolean {
@@ -44,6 +44,17 @@ export default function Pessoas() {
         const apenasDigitos = limpo.replace(/\D/g, '');
         const ehCpf = limpo.length > 0 && apenasDigitos.length >= 3 && apenasDigitos.length / limpo.length > 0.6;
         try {
+            if (!limpo) {
+                if (escopoAtual === 'inativas') {
+                    setResultados(await listarPessoasInativas());
+                } else if (escopoAtual === 'ativas') {
+                    setResultados(await listarPessoas());
+                } else {
+                    const [ativas, inativas] = await Promise.all([listarPessoas(), listarPessoasInativas()]);
+                    setResultados([...ativas, ...inativas]);
+                }
+                return;
+            }
             setResultados(
                 await buscarPessoas({
                     escopo: escopoAtual,
@@ -139,8 +150,8 @@ export default function Pessoas() {
                 const anos = idade(p.dataDeNascimento);
                 return (
                     <div key={p.id} className={`familia-card anim-fade${inativo ? ' is-inativo' : ''}`}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10 }}>
-                            <div style={{ flex: 1, minWidth: 0 }}>
+                        <div className="familia-card-top pessoa-card-top">
+                            <div className="pessoa-card-main">
                                 <div className="nome">
                                     {p.nome}
                                     {p.responsavel && <span className="tag tag-resp">RESPONSÁVEL</span>}
@@ -152,50 +163,87 @@ export default function Pessoas() {
                                     {p.telefone && <span>{p.telefone}</span>}
                                 </div>
                             </div>
-                            <div className="card-actions" style={{ alignItems: 'flex-end' }}>
-                                <span className={`status-badge ${inativo ? 'status-inativo' : 'status-ativo'}`}>
-                                    {inativo ? p.status ?? 'Inativo' : 'Ativo'}
-                                </span>
-                                <button className="btn-editar" onClick={() => setAberto((id) => id === p.id ? null : p.id)}>
-                                    {aberto === p.id ? 'Ocultar' : 'Detalhes'}
-                                </button>
-                                <button className="btn-editar" onClick={() => navigate(`/cadastro?pessoaId=${p.id}`)}>
-                                    Editar
-                                </button>
-                                {p.responsavel ? (
-                                    <button
-                                        className="btn-status inativar"
-                                        disabled
-                                        title="Responsável familiar não pode ter status alterado por esta tela."
-                                    >
-                                        Responsável
-                                    </button>
-                                ) : inativo ? (
-                                    <button
-                                        className="btn-status reativar"
-                                        disabled={salvandoId === p.id}
-                                        onClick={() => alterarStatus(p, 'Ativo')}
-                                    >
-                                        {salvandoId === p.id ? '...' : 'Reativar'}
-                                    </button>
-                                ) : (
-                                    <>
+                            <div className="pessoa-card-actions">
+                                <div className="card-actions-top">
+                                    <span className={`status-badge ${inativo ? 'status-inativo' : 'status-ativo'}`}>
+                                        {inativo ? p.status ?? 'Inativo' : 'Ativo'}
+                                    </span>
+                                </div>
+
+                                <div className="card-actions-bottom">
+
+                                    <div className="action-column">
                                         <button
-                                            className="btn-status inativar"
-                                            disabled={salvandoId === p.id}
-                                            onClick={() => alterarStatus(p, 'Inativo')}
+                                            type="button"
+                                            className={`card-action-btn secondary${aberto === p.id ? ' active' : ''}`}
+                                            aria-expanded={aberto === p.id}
+                                            title={aberto === p.id ? 'Ocultar detalhes' : 'Ver detalhes'}
+                                            onClick={() => setAberto((id) => id === p.id ? null : p.id)}
                                         >
-                                            {salvandoId === p.id ? '...' : 'Inativar'}
+                                            <Icon name={aberto === p.id ? 'eye-off' : 'eye'} size={16} />
+                                            <span>{aberto === p.id ? 'Ocultar' : 'Detalhes'}</span>
                                         </button>
+
                                         <button
-                                            className="btn-status inativar"
-                                            disabled={salvandoId === p.id}
-                                            onClick={() => alterarStatus(p, 'Obito')}
+                                            type="button"
+                                            className="card-action-btn secondary"
+                                            title="Editar cadastro"
+                                            onClick={() => navigate(`/cadastro?pessoaId=${p.id}`)}
                                         >
-                                            Óbito
+                                            <Icon name="edit" size={16} />
+                                            <span>Editar</span>
                                         </button>
-                                    </>
-                                )}
+                                    </div>
+
+                                    {/* Coluna 2: Inativar / Óbito / Responsável / Reativar */}
+                                    <div className="action-column">
+                                        {p.responsavel ? (
+                                            <button
+                                                type="button"
+                                                className="card-action-btn neutral"
+                                                disabled
+                                                title="Responsável familiar não pode ter status alterado por esta tela."
+                                            >
+                                                <Icon name="people" size={16} />
+                                                <span>Responsável</span>
+                                            </button>
+                                        ) : inativo ? (
+                                            <button
+                                                type="button"
+                                                className="card-action-btn success"
+                                                disabled={salvandoId === p.id}
+                                                title="Reativar pessoa"
+                                                onClick={() => alterarStatus(p, 'Ativo')}
+                                            >
+                                                <Icon name="user-check" size={16} />
+                                                <span>{salvandoId === p.id ? '...' : 'Reativar'}</span>
+                                            </button>
+                                        ) : (
+                                            <>
+                                                <button
+                                                    type="button"
+                                                    className="card-action-btn warning"
+                                                    disabled={salvandoId === p.id}
+                                                    title="Inativar pessoa"
+                                                    onClick={() => alterarStatus(p, 'Inativo')}
+                                                >
+                                                    <Icon name="user-x" size={16} />
+                                                    <span>{salvandoId === p.id ? '...' : 'Inativar'}</span>
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    className="card-action-btn danger"
+                                                    disabled={salvandoId === p.id}
+                                                    title="Registrar óbito"
+                                                    onClick={() => alterarStatus(p, 'Obito')}
+                                                >
+                                                    <Icon name="x-circle" size={16} />
+                                                    <span>Óbito</span>
+                                                </button>
+                                            </>
+                                        )}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         {aberto === p.id && (
@@ -203,7 +251,7 @@ export default function Pessoas() {
                                 <section className="detail-section">
                                     <h3>Dados pessoais</h3>
                                     <div className="detail-list detail-grid">
-                                        <p><strong>Nome social:</strong> {p.nomeSocial || 'Não informado'}</p>
+                                        <p><strong>Apelido:</strong> {p.nomeSocial || 'Não informado'}</p>
                                         <p><strong>CPF:</strong> {p.cpf || 'Não informado'}</p>
                                         <p><strong>Nascimento:</strong> {p.dataDeNascimento ? p.dataDeNascimento.slice(0, 10) : 'Não informado'}</p>
                                         <p><strong>Idade:</strong> {anos !== null ? `${anos} ano(s)` : 'Não informado'}</p>

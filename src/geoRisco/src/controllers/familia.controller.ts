@@ -29,7 +29,7 @@ function normalizePetSemFamiliaDto(value: unknown): CreatePetSemFamiliaDto {
         : String(body.status).trim();
     return {
         tipo: String(body.tipo ?? '') as CreatePetSemFamiliaDto['tipo'],
-        nome: String(body.nome ?? ''),
+        nome: body.nome === undefined || body.nome === null || String(body.nome).trim() === '' ? null : String(body.nome).trim(),
         porte: String(body.porte ?? ''),
         raca: String(body.raca ?? ''),
         cor: String(body.cor ?? ''),

@@ -22,7 +22,7 @@ type FamiliaApiRow = {
 type PessoaApiRow = {
     id: number;
     nome: string;
-    nome_social: string | null;
+    apelido: string | null;
     cpf: string | null;
     data_de_nascimento: Date | string;
     parentesco: Pessoa['parentesco'];
@@ -32,6 +32,17 @@ type PessoaApiRow = {
     medicacao: boolean;
     status: Pessoa['status'];
     deleted_at: Date | string | null;
+    nis: string | null;
+    renda: number | string | null;
+    sexo: Pessoa['sexo'];
+    raca: Pessoa['raca'];
+    estado_civil: Pessoa['estadoCivil'];
+    veiculo: boolean;
+    programas_sociais: number;
+    email: string | null;
+    telefone: string | null;
+    nome_da_mae: string | null;
+    data_residencia_moradia: Date | string | null;
 };
 
 type PessoaFamiliaApiRow = {
@@ -103,7 +114,7 @@ const familiaAliasedSelect = `
 const pessoaSelect = `
     p.id,
     p.nome,
-    p.nome_social AS "nomeSocial",
+    p.apelido AS "nomeSocial",
     p.cpf,
     p.data_de_nascimento AS "dataDeNascimento",
     p.parentesco,
@@ -112,8 +123,21 @@ const pessoaSelect = `
     p.cronico,
     p.medicacao,
     p.status,
-    p.deleted_at AS "deletedAt"
+    p.deleted_at AS "deletedAt",
+    p.nis,
+    p.renda::float8 AS renda,
+    p.sexo,
+    p.raca,
+    p.estado_civil AS "estadoCivil",
+    p.veiculo,
+    p.programas_sociais AS "programasSociais",
+    p.email,
+    p.telefone,
+    p.nome_da_mae AS "nomeDaMae",
+    p.data_residencia_moradia AS "dataResidenciaMoradia"
 `;
+
+const pessoaSupabaseSelect = 'id, nome, apelido, cpf, data_de_nascimento, parentesco, situacao_ocupacional, escolaridade, cronico, medicacao, status, deleted_at, nis, renda, sexo, raca, estado_civil, veiculo, programas_sociais, email, telefone, nome_da_mae, data_residencia_moradia';
 
 const moradiaSelect = `
     m.id,
@@ -172,7 +196,7 @@ function mapPessoaApiRow(row: PessoaApiRow): Pessoa {
     return {
         id: row.id,
         nome: row.nome,
-        nomeSocial: row.nome_social,
+        nomeSocial: row.apelido,
         cpf: row.cpf,
         dataDeNascimento: row.data_de_nascimento as Date,
         parentesco: row.parentesco,
@@ -181,7 +205,18 @@ function mapPessoaApiRow(row: PessoaApiRow): Pessoa {
         cronico: row.cronico,
         medicacao: row.medicacao,
         status: row.status,
-        deletedAt: row.deleted_at as Date | null
+        deletedAt: row.deleted_at as Date | null,
+        nis: row.nis,
+        renda: row.renda === null ? null : Number(row.renda),
+        sexo: row.sexo,
+        raca: row.raca,
+        estadoCivil: row.estado_civil,
+        veiculo: row.veiculo,
+        programasSociais: row.programas_sociais,
+        email: row.email,
+        telefone: row.telefone,
+        nomeDaMae: row.nome_da_mae,
+        dataResidenciaMoradia: row.data_residencia_moradia as Date | null
     };
 }
 
@@ -385,7 +420,6 @@ export class FamiliaRepository implements IFamiliaRepository {
                 SELECT p.id, p.nome, p.cpf
                 FROM pessoa_familia pf
                 INNER JOIN vw_pessoa_ativa p ON p.id = pf.id_pessoa
-                INNER JOIN responsavel r ON r.id_pessoa = pf.id_pessoa
                 WHERE pf.id_familia = f.id
                   AND pf.data_saida IS NULL
                   AND p.parentesco::text IN ('Responsável', 'RESPONSAVEL')
@@ -450,12 +484,9 @@ export class FamiliaRepository implements IFamiliaRepository {
         const pessoaIds = [...new Set(pessoaFamilia.map((vinculo) => vinculo.id_pessoa))];
         const moradiaIds = [...new Set(((familiaMoradiaResult.data ?? []) as FamiliaMoradiaApiRow[]).map((vinculo) => vinculo.id_moradia))];
 
-        const [pessoasResult, responsaveisResult, moradiasResult, pessoaGruposResult] = await Promise.all([
+        const [pessoasResult, moradiasResult, pessoaGruposResult] = await Promise.all([
             pessoaIds.length
-                ? supabase.from('vw_pessoa_ativa').select('id, nome, nome_social, cpf, data_de_nascimento, parentesco, situacao_ocupacional, escolaridade, cronico, medicacao, status, deleted_at').in('id', pessoaIds).range(0, 9999)
-                : Promise.resolve({ data: [], error: null }),
-            pessoaIds.length
-                ? supabase.from('responsavel').select('id_pessoa').in('id_pessoa', pessoaIds).range(0, 9999)
+                ? supabase.from('vw_pessoa_ativa').select(pessoaSupabaseSelect).in('id', pessoaIds).range(0, 9999)
                 : Promise.resolve({ data: [], error: null }),
             moradiaIds.length
                 ? supabase.from('moradia').select('id, id_localizacao, tipo_construcao, data_registro, status, uso_imovel, pavimentos, situacao_de_ocupacao, descricao, deleted_at').in('id', moradiaIds).is('deleted_at', null).range(0, 9999)
@@ -465,7 +496,6 @@ export class FamiliaRepository implements IFamiliaRepository {
                 : Promise.resolve({ data: [], error: null })
         ]);
         if (pessoasResult.error) throw pessoasResult.error;
-        if (responsaveisResult.error) throw responsaveisResult.error;
         if (moradiasResult.error) throw moradiasResult.error;
         if (pessoaGruposResult.error) throw pessoaGruposResult.error;
 
@@ -477,7 +507,6 @@ export class FamiliaRepository implements IFamiliaRepository {
         if (localizacoesResult.error) throw localizacoesResult.error;
 
         const pessoaById = new Map(((pessoasResult.data ?? []) as PessoaApiRow[]).map((pessoa) => [pessoa.id, pessoa]));
-        const responsavelIds = new Set((responsaveisResult.data ?? []).map((row) => row.id_pessoa));
         const petsByFamilia = new Map<number, PetApiRow[]>();
         for (const pet of (petsResult.data ?? []) as PetApiRow[]) {
             petsByFamilia.set(pet.id_familia, [...(petsByFamilia.get(pet.id_familia) ?? []), pet]);
@@ -493,7 +522,7 @@ export class FamiliaRepository implements IFamiliaRepository {
                 const pessoasDaFamilia = vinculosPessoa
                     .map((vinculo) => pessoaById.get(vinculo.id_pessoa))
                     .filter((pessoa): pessoa is PessoaApiRow => Boolean(pessoa));
-                const responsavel = pessoasDaFamilia.find((pessoa) => responsavelIds.has(pessoa.id) && pessoa.parentesco === 'Responsável') ?? null;
+                const responsavel = pessoasDaFamilia.find((pessoa) => pessoa.parentesco === 'Responsável') ?? null;
                 const primeiroVinculoMoradia = ((familiaMoradiaResult.data ?? []) as FamiliaMoradiaApiRow[]).find((vinculo) => vinculo.id_familia === familia.id);
                 const moradia = primeiroVinculoMoradia ? moradiaById.get(primeiroVinculoMoradia.id_moradia) : undefined;
                 const localizacao = moradia ? localizacaoById.get(moradia.id_localizacao) : undefined;
@@ -736,7 +765,7 @@ export class FamiliaRepository implements IFamiliaRepository {
 
         const { data, error } = await supabase
             .from('vw_pessoa_ativa')
-            .select('id, nome, nome_social, cpf, data_de_nascimento, parentesco, situacao_ocupacional, escolaridade, cronico, medicacao, status, deleted_at')
+            .select(pessoaSupabaseSelect)
             .in('id', pessoaIds)
             .order('nome');
         if (error) throw error;
@@ -769,7 +798,6 @@ export class FamiliaRepository implements IFamiliaRepository {
             SELECT ${pessoaSelect}
             FROM pessoa_familia pf
             INNER JOIN vw_pessoa_ativa p ON p.id = pf.id_pessoa
-            INNER JOIN responsavel r ON r.id_pessoa = pf.id_pessoa
             WHERE pf.id_familia = $1
               AND pf.data_saida IS NULL
               AND p.parentesco::text IN ('Responsável', 'RESPONSAVEL')

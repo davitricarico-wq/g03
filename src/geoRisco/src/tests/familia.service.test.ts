@@ -169,18 +169,18 @@ describe('FamiliaService - Suíte Completa', () => {
         it('CT01 - Deve lançar HttpError 409 se a família já possuir um responsável ativo diferente', async () => {
             familiaRepoMock.getById.mockResolvedValue({ id: 1 });
             pessoaRepoMock.getById.mockResolvedValue({ id: 2, parentesco: 'Responsável' });
-            pessoaRepoMock.getResponsavelByPessoaId.mockResolvedValue({ id: 2 });
             familiaRepoMock.getResponsavelAtivo.mockResolvedValue({ id: 3 });
 
             await expect(service.vincularPessoa(1, { idPessoa: 2 })).rejects.toThrow(new HttpError(409, 'Familia ja possui responsavel ativo'));
         });
 
-        it('CT02 - Deve lançar HttpError 400 se a pessoa tem parentesco Responsavel mas não existe na tabela responsavel', async () => {
+        it('CT02 - Deve vincular responsável quando a família não possui outro responsável ativo', async () => {
             familiaRepoMock.getById.mockResolvedValue({ id: 1 });
             pessoaRepoMock.getById.mockResolvedValue({ id: 2, parentesco: 'Responsável' });
-            pessoaRepoMock.getResponsavelByPessoaId.mockResolvedValue(null);
+            familiaRepoMock.getResponsavelAtivo.mockResolvedValue(null);
+            familiaRepoMock.vincularPessoa.mockResolvedValue({ idFamilia: 1, idPessoa: 2 });
 
-            await expect(service.vincularPessoa(1, { idPessoa: 2 })).rejects.toThrow(new HttpError(400, 'Pessoa com parentesco Responsavel deve existir na tabela responsavel'));
+            await expect(service.vincularPessoa(1, { idPessoa: 2 })).resolves.toEqual({ idFamilia: 1, idPessoa: 2 });
         });
     });
 

@@ -145,7 +145,6 @@ describe('Integração com banco real', () => {
                 nomeDoPai: null,
                 nomeDaMae: null,
                 localDeNascimento: null,
-                dataResidenciaEstado: null,
                 dataResidenciaMoradia: null
             };
 

@@ -20,7 +20,7 @@ function normalizeCreatePetDto(bodyValue: unknown, idFamilia?: number): CreatePe
     return {
         idFamilia: idFamilia ?? parseId(body.idFamilia),
         tipo: String(body.tipo ?? '') as CreatePetDto['tipo'],
-        nome: String(body.nome ?? ''),
+        nome: optionalString(body.nome),
         porte: String(body.porte ?? ''),
         raca: String(body.raca ?? ''),
         cor: String(body.cor ?? ''),
@@ -33,7 +33,7 @@ function normalizeUpdatePetDto(bodyValue: unknown): UpdatePetDto {
     const body = asBody(bodyValue);
     return {
         tipo: body.tipo === undefined ? undefined : (String(body.tipo) as CreatePetDto['tipo']),
-        nome: body.nome === undefined ? undefined : String(body.nome),
+        nome: body.nome === undefined ? undefined : optionalString(body.nome),
         porte: body.porte === undefined ? undefined : String(body.porte),
         raca: body.raca === undefined ? undefined : String(body.raca),
         cor: body.cor === undefined ? undefined : String(body.cor),
