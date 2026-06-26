@@ -3200,7 +3200,54 @@ Para efeitos observáveis, a suíte verifica que o método mockado do service fo
 
 ### 5.2.1. Relatório de testes de guerrilha
 
-Posicione aqui as tabelas com enunciados de tarefas, etapas e resultados de testes de usabilidade. Ou utilize um link para seu relatório de testes (mantenha o link sempre público para visualização).
+#### 1. O que foi feito
+
+Foram realizados testes de usabilidade no formato **guerrilla testing** (testes rápidos, informais, com participantes recrutados no momento, fora de um laboratório controlado) com o protótipo do sistema **GeoRisco Santo André**, voltado ao cadastro e à visualização de moradias, famílias e riscos em campo.
+
+- **Data:** 17/06/2026
+- **Participantes:** 8 pessoas (codificadas como P01 a P08)
+- **Moderadores:** 5 pessoas diferentes (Daniel Hamoui, Luiza Cardoso, Lucas, Vitor Goia e Arthur), cada uma conduzindo sessões com parte da amostra
+- **Perfis simulados:** a maioria dos participantes assumiu o perfil de **agente de campo (João)**, da Defesa Civil, com alta familiaridade com sistemas digitais; em alguns formulários esse perfil não foi registrado explicitamente
+- **Tarefas testadas:** 5 tarefas centrais do fluxo do sistema (cadastro de moradia, cadastro de responsável e morador, inclusão de novos moradores, busca de família e visualização no mapa georreferenciado)
+
+Cada participante executou as tarefas enquanto um moderador observava e registrava, etapa por etapa, se houve sucesso, dificuldade ou abandono — e, ao final, todos os moderadores preencheram um formulário padronizado com essas observações.
+
+#### 2. O que é cada planilha
+
+Duas planilhas dão suporte a este relatório, e ambas estão linkadas como evidência bruta do processo:
+
+##### 2.1 Respostas do formulário de testes
+🔗 [Acessar planilha](https://docs.google.com/spreadsheets/d/1_YkkN8Hb35cVR4VDSEwGBEdQtqU57sx7I-pnvt_9EFY/edit?usp=sharing)
+
+É a planilha **gerada automaticamente pelas respostas do formulário** que cada moderador preencheu durante/após cada sessão. Contém o registro primário e não tratado: uma linha por sessão, com campos como participante, tarefa, tempo de execução, sucesso/fracasso por etapa e comentários livres do moderador. É a fonte de dados original — qualquer divergência de interpretação deve ser checada aqui.
+
+##### 2.2 Planilha de testes de usabilidade preenchida
+🔗 [Acessar planilha](https://docs.google.com/spreadsheets/d/116teBzb_B4RqFABgO4sRbahugusNzhGRSA7o4lAzssI/edit?usp=sharing)
+
+É a **tabulação/consolidação** desses dados brutos no template de relatório do grupo, organizada para leitura humana. Tem duas abas:
+
+- **"Registro dos testes"**: uma tabela por tarefa, com o enunciado do cenário, a expectativa de fluxo ideal, as 4 etapas avaliadas, a(s) heurística(s) de Nielsen relacionadas, e uma linha por participante mostrando o resultado geral (concluiu / não concluiu, com tempo) e o que ocorreu em cada etapa.
+- **"Ocorrências"**: a lista de problemas e oportunidades de melhoria extraídos das observações, **priorizada por severidade** (cosmética, baixa, alta, catástrofe — escala adaptada de Nielsen), indicando em quais tarefas ocorreram, quais participantes relataram cada problema e a ação recomendada para corrigir.
+
+Em resumo: a planilha de **respostas do formulário** é o dado cru; a planilha **preenchida/tabulada** é a análise organizada a partir desse dado, que serve de base para as conclusões do relatório.
+
+#### 3. Principais achados (resumo)
+
+- **Problema mais crítico (severidade catastrófica):** falha na captura automática de coordenadas GPS a partir do endereço digitado e falta de clareza na confirmação da posição no mini-mapa — relatado por 4 dos 8 participantes (P02, P05, P06, P07) e responsável pela única tarefa não concluída por erro de sistema.
+- **Mensagens de erro genéricas:** ao menos um cadastro falhou ao salvar sem indicar qual campo causou o problema, impedindo a conclusão da tarefa.
+- **Padrões recorrentes de severidade alta:** campos obrigatórios sem sinalização visual, autocomplete de CEP pouco confiável, identificação genérica de registros nas listas (ex. "moradia #1" em vez do nome do responsável), e dificuldade de orientação dentro do mapa georreferenciado.
+- **Pontos positivos:** tarefas de busca e visualização no mapa foram, em geral, bem avaliadas e consideradas intuitivas pela maioria dos participantes.
+
+#### 4. Limitações do protocolo de teste
+
+- Nenhum participante simulou explicitamente o perfil de **gestor operacional**, previsto no enunciado das Tarefas 4 e 5 — todos testaram a partir da perspectiva de agente de campo ou sem perfil declarado. Recomenda-se uma rodada futura cobrindo esse perfil.
+- Por se tratar de guerrilla testing, as sessões ocorreram em ambientes não controlados, o que pode ter introduzido variação nos tempos registrados.
+- A Tarefa 3 teve um caso de abandono (P03) sem detalhamento da etapa exata da interrupção, registrado como ponto de atenção para nova observação direcionada.
+
+#### 5. Como navegar os links
+
+1. **Respostas do formulário de testes** ([link](https://docs.google.com/spreadsheets/d/1_YkkN8Hb35cVR4VDSEwGBEdQtqU57sx7I-pnvt_9EFY/edit?usp=sharing)) → consulte se quiser verificar a fonte primária de uma observação específica ou auditar um dado da tabulação.
+2. **Planilha de testes preenchida** ([link](https://docs.google.com/spreadsheets/d/116teBzb_B4RqFABgO4sRbahugusNzhGRSA7o4lAzssI/edit?usp=sharing)) → use como referência principal de leitura: aba "Registro dos testes" para o detalhe por tarefa/participante, e aba "Ocorrências" para a lista priorizada de melhorias que deve orientar o backlog de correções.
 
 ### 5.2.2. Relatório de Testes SUS (System Usability Scale)
 
