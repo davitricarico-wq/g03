@@ -2458,25 +2458,127 @@ Alguns endpoints apareceram em versões anteriores da documentação, mas ainda 
 > - **RF015 (Marcação Manual da Situação da Moradia):** não requer endpoint próprio; é coberto pelo `PUT /api/moradias/{id}` via o campo `status` do objeto `moradia`. O endpoint `PATCH /api/moradias/{id_moradia}/status` listado acima era uma alternativa anterior que nunca chegou a ser implementada — o `PUT` atual é a forma correta de atualizar a situação.
 > - **RF017 (Indicador de Cadastro Incompleto):** não possui endpoint próprio pois o indicador é derivado automaticamente da ausência de vínculo família-moradia; é exposto indiretamente por `GET /api/familias/{id}/moradias` (lista vazia = sem moradia) e `GET /api/moradias/{id}/detalhes`. Seu status no WAD é "Planejado", o que é consistente com a ausência de endpoint dedicado.
 
-## 3.8. Autenticação, Autorização e Resiliência (sprint 5)
+## 3.8. Autenticação, Autorização e Resiliência
 
-> **Escopo desta entrega:** o sistema não implementará autenticação nem controle de acesso por perfil (RBAC). O ambiente opera exclusivamente com dados fictícios. Esta seção será preenchida em sprint futura, caso a autenticação seja incluída no escopo.
+Na sprint 5, a versão final do GeoRisco foi estabilizada como uma aplicação web operacional para cadastro, consulta e visualização georreferenciada de famílias, moradias, moradores, responsáveis, pets e fotos. O foco técnico da entrega final esteve na consolidação do fluxo ponta a ponta entre frontend, backend, banco de dados e armazenamento de imagens, com ênfase em resiliência operacional para uso em campo, consistência transacional, tratamento de erros, execução em produção e documentação de apoio.
+
+É importante registrar que autenticação de usuários e autorização por perfil não foram implementadas nesta versão. Não havendo o uso de middleware de login, emissão de token, sessão persistida, RBAC, verificação de permissões por rota dentre outros conceitos voltados à autenticação. Portanto, esta seção documenta o estado real do sistema: a segurança da entrega está concentrada na separação entre cliente e servidor, no uso de variáveis de ambiente, na não exposição das credenciais de banco no frontend, em URLs assinadas para acesso a arquivos e na padronização de contratos e erros. Uma camada formal de autenticação permanece como evolução futura.
 
 ### 3.8.1. Autenticação
 
-*Descreva o fluxo de autenticação implementado: persistência de senha com hash bcrypt/argon2 (parâmetros de custo explícitos e justificados), validação de credenciais e criação de sessão. Senhas em texto plano no banco não são aceitas.*
+Não há fluxo de autenticação de usuário implementado no Web App final. Consequentemente, também não há cadastro de credenciais, persistência de senhas, hash com `bcrypt` ou `argon2`, endpoint de login, renovação de credenciais, recuperação de senha ou armazenamento de token no navegador.
+
+Essa ausência é coerente com outras partes do WAD e com o contrato atual da WebAPI, que registra que os status `401 Unauthorized` e `403 Forbidden` não fazem parte dos controllers desta entrega. As rotas foram projetadas para operar em ambiente controlado de demonstração acadêmica e de validação funcional com dados fictícios, priorizando o funcionamento dos cadastros, consultas, georreferenciamento, vínculos familiares e sincronização offline.
+
+Mesmo sem autenticação de usuário final, algumas decisões reduzem exposição técnica:
+
+- O frontend não contém credenciais de banco de dados, chaves administrativas ou segredos de Supabase; ele consome apenas a URL pública da API definida por `VITE_API_BASE_URL`.
+- O acesso ao PostgreSQL/Supabase fica concentrado no backend Express, por meio de variáveis de ambiente carregadas no servidor.
+- O armazenamento de fotos utiliza serviços próprios no backend para gerar URLs de upload e acesso assinado, evitando que o frontend manipule diretamente credenciais sensíveis de storage.
+- A URL de API é injetada no build do Vite, permitindo separar o endereço de produção (`https://georisco.vercel.app/api`) do proxy local de desenvolvimento (`/api`) sem alterar código-fonte.
+
+Para uma evolução futura em ambiente real, recomenda-se implementar autenticação antes do uso com dados pessoais verdadeiros, incluindo hash de senha, sessão ou token com expiração, revogação, proteção contra força bruta e definição clara de perfis de acesso.
 
 ### 3.8.2. Controle de sessão
 
-*Descreva o controle de sessão baseado em `session id` persistido em tabela própria, com expiração. Se optar por JWT, justifique a escolha explicando os trade-offs (stateless, não revogável, payload exposto).*
+Como não existe login na versão final, também não existe controle de sessão de usuário. O sistema não cria `session id`, não mantém tabela de sessões, não emite JWT, não utiliza cookies autenticados e não executa renovação de sessão.
+
+O estado mantido no navegador é de natureza operacional, não de autenticação. O frontend preserva dados necessários à experiência do agente em campo, como:
+
+- pendências de cadastro offline em IndexedDB, por meio da fila local `georisco-offline`;
+- informações do mapa offline baixado para uso em Santo André;
+- estado temporário de formulários e componentes da interface durante o preenchimento;
+- recursos da PWA e service worker para permitir carregamento básico da aplicação sem conexão.
+
+Essa separação é relevante porque o armazenamento local usado pela PWA não deve ser confundido com sessão autenticada. Ele serve para continuidade operacional e sincronização posterior, não para provar identidade do usuário. Em uma implantação futura com autenticação, os dados offline precisariam ser vinculados a uma identidade de agente, com regras de expiração, limpeza local e criptografia ou proteção adicional em dispositivos compartilhados.
 
 ### 3.8.3. Autorização
 
-*Descreva as regras de autorização por rota e por operação, baseadas no perfil do usuário autenticado. A verificação deve ocorrer no backend — o frontend nunca é fonte de verdade para autorização.*
+Não há autorização por perfil no backend atual. As rotas Express não verificam papéis como agente de campo, gestor operacional ou administrador, e o frontend não envia credenciais para diferenciar permissões. Assim, a aplicação não implementa RBAC, ABAC ou qualquer política formal de permissão por operação.
+
+As personas A01 e A02 continuam sendo usadas para rastreabilidade funcional, definição de telas, jornadas e requisitos, mas não foram convertidas em perfis técnicos de acesso. Na prática, as restrições existentes são regras de negócio e validações de domínio, não autorizações de segurança. Exemplos:
+
+- validação de dados obrigatórios antes de criar pessoas, responsáveis, moradias e pets;
+- preservação de histórico em operações de vínculo e inativação;
+- rejeição de payloads inválidos com códigos `400`, `404` ou `409`, conforme o caso;
+- padronização de erros por controllers e services.
+
+Para produção com dados reais, a autorização deve ser implementada no backend, nunca apenas no frontend. O modelo recomendado é associar cada usuário autenticado a um perfil e validar, rota a rota, quais operações podem ser realizadas. Por exemplo, agentes poderiam cadastrar e atualizar registros em campo, enquanto gestores poderiam revisar, inativar, consultar históricos e acessar visões operacionais consolidadas.
 
 ### 3.8.4. Estratégias de Resiliência
 
-*Descreva as estratégias aplicadas no tratamento de falhas de rede: timeout, retry com backoff exponencial, circuit breaker e idempotência em operações críticas (`PUT`, `DELETE`, operações de pagamento etc.).*
+A resiliência foi o eixo principal de maturidade técnica da sprint 5. O GeoRisco foi refinado para lidar com instabilidade de rede, uso em campo, falhas de backend, erros de validação e necessidade de preservar cadastros iniciados em locais sem conectividade.
+
+No frontend, a principal estratégia é o fluxo offline-first para cadastro de núcleo familiar. Quando o navegador identifica indisponibilidade de rede ou falha real de conexão, o cadastro completo é salvo em IndexedDB na fila local de pendências. Essa fila preserva o payload do endpoint transacional `POST /api/familias/nucleo` e também os arquivos de imagem selecionados pelo usuário, permitindo sincronização posterior sem descaracterizar a operação original. Quando a conexão retorna, a aplicação tenta reenviar as pendências para a WebAPI, atualiza o contador exibido ao usuário e impede que falhas transitórias destruam o trabalho de campo.
+
+O mecanismo de outbox também trata repetição de tentativas. Registros com falhas sucessivas são mantidos como pendência travada após atingir o limite configurado, evitando loop infinito de sincronização. Esse comportamento é importante para diferenciar falhas temporárias de rede de erros persistentes de contrato ou regra de negócio. A interface apresenta indicador visual de status offline, pendências e sincronização, reduzindo ambiguidade para o usuário durante o uso em campo.
+
+Além da fila de cadastros, a PWA recebeu suporte operacional para mapa offline. O usuário pode baixar previamente os blocos de mapa de Santo André, e a seleção de localização continua possível mesmo sem internet. O formulário de moradia também orienta o usuário a utilizar GPS, CEP, referência textual ou seleção manual no mapa, de acordo com a disponibilidade do dispositivo e da rede. O mapa foi limitado ao território brasileiro para reduzir navegação acidental fora da área de interesse do projeto.
+
+Nos formulários, a resiliência aparece na validação preventiva e no feedback de erro. A sprint 5 refinou mensagens para datas inválidas ou futuras, restringiu o NIS a números, destacou campos obrigatórios, ajustou obrigatoriedade de raça em cadastro de pets e tratou o caso de morador já associado a outra moradia. Com isso, parte relevante dos erros é resolvida antes da requisição HTTP, evitando chamadas desnecessárias e melhorando a compreensão do usuário.
+
+No backend, a principal estratégia de resiliência é a transacionalidade. Operações compostas, especialmente `POST /api/familias/nucleo`, utilizam transações com `BEGIN`, `COMMIT` e `ROLLBACK`, garantindo que uma falha no meio do processo não deixe registros parciais de pessoa, responsável, família, moradia, vínculo, pet ou foto. Essa decisão atende diretamente ao RNF002 de confiabilidade, pois preserva a integridade do cadastro familiar.
+
+Também foram padronizados tratamentos de exceção em controllers e services. A classe `HttpError` e os handlers de controller permitem retornar erros controlados em JSON, com status compatível com a causa da falha. Erros de validação, conflito de regra de negócio, entidade inexistente e falhas externas passam a ser diferenciados, reduzindo respostas genéricas e facilitando o diagnóstico pelo frontend.
+
+Não foram implementados circuit breaker formal, timeout configurável por requisição ou backoff exponencial completo. A estratégia adotada foi adequada ao escopo do MVP: persistência local, retry controlado da fila offline, transações no backend, feedback claro na interface e separação entre falhas de rede e falhas de domínio. Em uma evolução futura com maior volume de uso, recomenda-se adicionar timeout explícito, backoff exponencial parametrizado, idempotência por UUID de operação e observabilidade centralizada.
+
+### 3.8.5. Refinamentos finais do Web App
+
+A versão final do Web App consolidou a migração para uma SPA em React, TypeScript e Vite, com navegação por React Router e visualização geográfica baseada em Leaflet. As telas principais foram estabilizadas em torno dos fluxos de Home, Cadastro, Busca, Pessoas e Mapa. O backend permaneceu em Express com TypeScript, organizado em controllers, services, repositories, DTOs, models, validations, errors, db e storage.
+
+Entre os refinamentos de frontend realizados na sprint 5, destacam-se:
+
+- melhoria do fluxo de cadastro de núcleo familiar, com validações mais claras para responsável, moradores, moradia, pets, fotos e localização;
+- ajustes de usabilidade no feedback visual de campos inválidos e mensagens de erro personalizadas;
+- mudança de linguagem da interface para explicitar inativação/arquivamento em vez de deleção física, preservando o alinhamento com o escopo de soft delete;
+- refinamento dos elementos de uso offline na Home, agrupando melhor o download do mapa e o estado de preparação para campo;
+- limitação de navegação do mapa à região do Brasil e foco operacional em Santo André;
+- preservação de imagens selecionadas em cadastros offline para envio posterior durante a sincronização.
+
+No backend, a estabilização concentrou-se na preservação dos contratos de API e na consistência entre validações, serviços e respostas HTTP. O endpoint `POST /api/familias/nucleo` tornou-se o principal contrato para o cadastro completo transacional, enquanto endpoints específicos continuam disponíveis para consulta, atualização, vínculos, fotos e pets.
+
+### 3.8.6. Refatorações de qualidade e manutenção
+
+A sprint final também consolidou refatorações de manutenção. A aplicação passou a separar com mais clareza responsabilidades entre interface, camada de API do frontend, utilitários offline, componentes reutilizáveis e regras de formulário. No backend, a arquitetura em camadas reduziu acoplamento entre rotas HTTP, regras de negócio e persistência.
+
+No frontend, o arquivo de API centraliza chamadas HTTP e normaliza a base de URL por ambiente. Os tipos TypeScript descrevem os payloads e respostas esperadas, reduzindo divergências entre formulário e WebAPI. Os utilitários de outbox, conectividade, IndexedDB e mapa offline isolam comportamentos complexos fora das telas, facilitando teste e manutenção.
+
+No backend, a separação entre controllers, services e repositories mantém os controllers focados no contrato HTTP, os services focados em regras de negócio e transações, e os repositories focados no acesso ao PostgreSQL/Supabase. Essa estrutura favorece testes unitários e evita que regras críticas fiquem espalhadas em handlers de rota.
+
+Essas refatorações atendem especialmente ao RNF008 de manutenibilidade, pois tornam o sistema mais compreensível, testável e evolutivo. Também contribuem para o RNF005 de interoperabilidade, já que os contratos JSON entre frontend e backend foram preservados e documentados.
+
+### 3.8.7. Estabilização dos testes
+
+A entrega final manteve testes automatizados no backend com Jest e Supertest e adicionou validação específica da fila offline no frontend com Vitest e `fake-indexeddb`. No backend, os testes cobrem services e controllers, verificando cenários de sucesso, validação, conflitos de regra de negócio, entidade inexistente e propagação controlada de falhas. A documentação de testes do WAD registra cobertura agregada relevante para controllers e services, além de evidências por grupo de endpoint.
+
+No frontend, os testes da outbox verificam comportamento essencial para o uso em campo:
+
+- persistência do cadastro offline em IndexedDB;
+- reenvio posterior para `POST /api/familias/nucleo`;
+- atualização de prioridades e dados sincronizados;
+- upload e associação de fotos de pets após criação do núcleo familiar;
+- bloqueio de registros com falhas recorrentes, evitando tentativas infinitas.
+
+Esses testes são importantes porque validam a parte mais sensível da experiência offline: a garantia de que o cadastro feito sem internet não desaparece e pode ser sincronizado quando houver conexão. Com isso, a suite passa a cobrir não apenas contratos HTTP do backend, mas também comportamento crítico do cliente em ambiente instável.
+
+### 3.8.8. Execução local, deploy e contratos de ambiente
+
+A execução local foi organizada em dois projetos principais. O frontend, em `src/frontend`, utiliza os scripts `npm run dev`, `npm run build`, `npm run preview` e `npm run test`. O backend, em `src/geoRisco`, utiliza `npm run dev`, `npm run build`, `npm run start`, `npm run migrate`, `npm run test` e comandos de cobertura.
+
+Para desenvolvimento local, o frontend pode consumir `/api` via proxy ou apontar explicitamente para uma API por meio de `VITE_API_BASE_URL`. Em produção, o build do Vite deve receber `VITE_API_BASE_URL=https://georisco.vercel.app/api`, garantindo que a SPA hospedada na Vercel chame a WebAPI correta. O backend depende de variáveis de ambiente para conexão PostgreSQL/Supabase e configurações de storage, mantendo segredos fora do código-fonte.
+
+O deploy final foi documentado considerando a indisponibilidade do GitInteli/GitLab institucional no momento da publicação. Por isso, a equipe adotou o fluxo via Vercel CLI, com deploy independente do frontend e da API. A documentação auxiliar de deploy registra os comandos, variáveis de ambiente e cuidados com a URL base da API.
+
+Os contratos entre frontend, backend e banco foram preservados durante os ajustes finais. O frontend continua usando o endpoint transacional `POST /api/familias/nucleo` para cadastro completo, além dos endpoints documentados para pessoas, responsáveis, moradias, famílias, pets e fotos. O backend mantém respostas JSON e códigos HTTP compatíveis com a documentação da WebAPI, e o schema do banco continua sustentando vínculos familiares, histórico de ocupação, soft delete e armazenamento de fotos.
+
+### 3.8.9. Síntese de maturidade final
+
+Ao final da sprint 5, o GeoRisco alcançou uma versão funcional de MVP com foco em cadastro em campo, consulta operacional, mapa, fotos, vínculos familiares e funcionamento offline parcial. A aplicação atende aos principais requisitos de confiabilidade e manutenibilidade ao combinar transações no backend, validações no frontend, contratos documentados, testes automatizados e persistência local para falhas de rede.
+
+As principais limitações remanescentes são a ausência de autenticação/autorização, ausência de circuit breaker e timeout configurável, dependência de sincronização posterior para cadastros offline e existência de funcionalidades planejadas ainda não implementadas, como mapa de calor e alerta automático de recadastro. Essas pendências não impedem a validação do MVP, mas devem ser tratadas antes de uso institucional com dados reais e múltiplos perfis de usuário.
+
+Assim, a sprint final não apenas entregou novas funcionalidades visíveis, mas também reduziu riscos operacionais importantes: perda de cadastro em campo, inconsistência transacional, confusão entre inativação e deleção, erros silenciosos de formulário e divergência entre frontend e WebAPI.
 
 ## 3.9. Matriz de Rastreabilidade (RTM) (sprints 3 a 5)
 
