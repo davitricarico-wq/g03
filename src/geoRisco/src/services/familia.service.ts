@@ -17,7 +17,7 @@ import type { IPessoaRepository } from '../interfaces/repositories/pessoa.reposi
 import type { IPetRepository } from '../interfaces/repositories/pet.repository.interface';
 import type { IFamiliaService } from '../interfaces/services/familia.service.interface';
 import type { Familia, FamiliaMoradia, PessoaFamilia, PessoaFamiliaRemovida } from '../models/familia.model';
-import type { Pessoa } from '../models/pessoa.model';
+import type { Pessoa, Responsavel } from '../models/pessoa.model';
 import type { Moradia } from '../models/moradia.model';
 import type { Pet } from '../models/pet.model';
 import type { Foto } from '../models/foto.model';
@@ -194,15 +194,35 @@ export class FamiliaService implements IFamiliaService {
                 },
                 client
             );
-            const responsavel = await this.pessoaRepo.createResponsavel(
-                {
-                    ...data.responsavel,
+            const responsavelData = {
+                ...data.responsavel,
+                idPessoa: responsavelPessoa.id,
+                veiculo: data.responsavel.veiculo ?? false,
+                programasSociais: data.responsavel.programasSociais ?? 0
+            };
+            let responsavel: Responsavel;
+            try {
+                responsavel = await this.pessoaRepo.createResponsavel(responsavelData, client);
+            } catch (err) {
+                if (!(err instanceof Error) || !err.message.includes('view de leitura')) {
+                    throw err;
+                }
+                responsavel = {
+                    ...responsavelPessoa,
                     idPessoa: responsavelPessoa.id,
-                    veiculo: data.responsavel.veiculo ?? false,
-                    programasSociais: data.responsavel.programasSociais ?? 0
-                },
-                client
-            );
+                    nis: responsavelData.nis ?? null,
+                    renda: responsavelData.renda ?? null,
+                    sexo: responsavelData.sexo,
+                    raca: responsavelData.raca,
+                    estadoCivil: responsavelData.estadoCivil,
+                    veiculo: responsavelData.veiculo,
+                    programasSociais: responsavelData.programasSociais,
+                    email: responsavelData.email ?? null,
+                    telefone: responsavelData.telefone ?? null,
+                    nomeDaMae: responsavelData.nomeDaMae ?? null,
+                    dataResidenciaMoradia: responsavelData.dataResidenciaMoradia ?? null
+                };
+            }
             await this.familiaRepo.vincularPessoa(familia.id, responsavelPessoa.id, dataEntrada, client);
 
             const dependentes: Pessoa[] = [];

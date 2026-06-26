@@ -338,9 +338,10 @@ export default function Cadastro() {
             return;
         }
         setGpsSolicitadoAutomaticamente(true);
-        void pegarGPS();
+        void pegarGPS({ silencioso: true });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [gpsSolicitadoAutomaticamente, modoEdicao, modoEdicaoPessoa, moradiaId, adicionarApenasFamilia, modoMoradia]);
+
     const feedbackLocal = useMemo<Record<string, CampoFeedback>>(() => {
         const feedback: Record<string, CampoFeedback> = {};
         const cpfs = new Map<string, string[]>();
@@ -717,7 +718,9 @@ export default function Cadastro() {
                 toast.error('Esta família já possui responsável.');
                 return;
             }
-            const responsavelDetalhe = await obterResponsavel(pessoa.id).catch(() => undefined);
+            const responsavelDetalhe = detalhePessoa.parentesco === RESPONSAVEL
+                ? await obterResponsavel(pessoa.id).catch(() => undefined)
+                : undefined;
             const novo = moradorFromPessoa(
                 responsavelDetalhe ?? detalhePessoa,
                 prioridadesPessoa.map((prioridade) => prioridade.id),
@@ -888,8 +891,11 @@ export default function Cadastro() {
         for (const p of pets) {
             if (!p.nome.trim()) campos.push(`${p.key}:petNome`);
             if (!p.tipo) campos.push(`${p.key}:petTipo`);
+            if (!p.porte.trim()) campos.push(`${p.key}:petPorte`);
+            if (!p.raca.trim()) campos.push(`${p.key}:petRaca`);
+            if (!p.cor.trim()) campos.push(`${p.key}:petCor`);
         }
-        return { campos, msg: campos.length ? 'Preencha nome e tipo dos animais adicionados.' : null };
+        return { campos, msg: campos.length ? 'Preencha nome, tipo, porte, raça e cor dos animais adicionados.' : null };
     }
 
     function avancarDe(de: Aba, para: Aba) {
@@ -942,7 +948,7 @@ export default function Cadastro() {
         }
     }
 
-    async function pegarGPS() {
+    async function pegarGPS(opcoes: { silencioso?: boolean } = {}) {
         setCapturando(true);
         try {
             const c = await capturarGPS();
@@ -951,9 +957,10 @@ export default function Cadastro() {
             limparInvalido('longitude');
             setGpsSignal((s) => s + 1);
             void preencherEnderecoPorCoordenadas(c.latitude, c.longitude);
-            toast.success(`Localização capturada (±${c.accuracy ?? '?'}m).`);
+            if (!opcoes.silencioso) toast.success(`Localização capturada (±${c.accuracy ?? '?'}m).`);
         } catch (error) {
             const mensagem = error instanceof Error ? error.message : 'Não foi possível capturar a localização atual.';
+            if (opcoes.silencioso && mensagem.toLowerCase().includes('permiss')) return;
             setErro(mensagem);
             toast.error(mensagem);
         } finally {
@@ -1708,9 +1715,14 @@ export default function Cadastro() {
                                                     <TextField
                                                         label="CPF"
                                                         value={m.cpf}
-                                                        onChange={(v) => updateMorador(index, { cpf: maskCPF(v) })}
+                                                        onChange={(v) => {
+                                                            updateMorador(index, { cpf: maskCPF(v) });
+                                                            limparInvalido(`${m.key}:cpf`);
+                                                        }}
                                                         inputMode="numeric"
                                                         maxLength={14}
+                                                        error={invalido(`${m.key}:cpf`)}
+                                                        feedback={feedbackCampo(`${m.key}:cpf`)}
                                                         placeholder="000.000.000-00"
                                                     />
 
@@ -1865,8 +1877,13 @@ export default function Cadastro() {
                                                     <TextField
                                                         label="E-mail"
                                                         value={m.email}
-                                                        onChange={(v) => updateMorador(index, { email: v })}
+                                                        onChange={(v) => {
+                                                            updateMorador(index, { email: v });
+                                                            limparInvalido(`${m.key}:email`);
+                                                        }}
                                                         inputMode="email"
+                                                        error={invalido(`${m.key}:email`)}
+                                                        feedback={feedbackCampo(`${m.key}:email`)}
                                                         placeholder="Ex.: nome@email.com"
                                                     />
 
@@ -1942,14 +1959,24 @@ export default function Cadastro() {
                                         <div className="collapsible-card-body">
                                             <Row>
                                                 <TextField label="Nome do animal" value={p.nome} onChange={(v) => { updatePet(index, { nome: v }); limparInvalido(`${p.key}:petNome`); }} required error={invalido(`${p.key}:petNome`)} placeholder="Ex.: Thor" />
-                                                <TextField label="Porte" value={p.porte} onChange={(v) => updatePet(index, { porte: v })} placeholder="Ex.: Médio" />
+                                                <TextField label="Porte" value={p.porte} onChange={(v) => { updatePet(index, { porte: v }); limparInvalido(`${p.key}:petPorte`); }} required error={invalido(`${p.key}:petPorte`)} placeholder="Ex.: Médio" />
                                             </Row>
                                             <Row>
                                                 <SelectField label="Tipo" value={p.tipo} onChange={(v) => { updatePet(index, { tipo: v }); limparInvalido(`${p.key}:petTipo`); }} options={TIPOS_PET} required error={invalido(`${p.key}:petTipo`)} />
-                                                <TextField label="Cor do animal" value={p.cor} onChange={(v) => updatePet(index, { cor: v })} placeholder="Ex.: Caramelo" />
+                                                <TextField label="Cor do animal" value={p.cor} onChange={(v) => { updatePet(index, { cor: v }); limparInvalido(`${p.key}:petCor`); }} required error={invalido(`${p.key}:petCor`)} placeholder="Ex.: Caramelo" />
                                             </Row>
                                             <Row>
-                                                <TextField label="Raça" value={p.raca} onChange={(v) => updatePet(index, { raca: v })} placeholder="Ex.: Sem raça definida" />
+                                                <TextField
+                                                    label="Raça"
+                                                    value={p.raca}
+                                                    onChange={(v) => {
+                                                        updatePet(index, { raca: v });
+                                                        limparInvalido(`${p.key}:petRaca`);
+                                                    }}
+                                                    required
+                                                    error={invalido(`${p.key}:petRaca`)}
+                                                    placeholder="Ex.: Sem raça definida"
+                                                />
                                                 <SelectField label="Status" value={p.status} onChange={(v) => updatePet(index, { status: v })} options={STATUS_PET} />
                                             </Row>
                                             <TextAreaField label="Observações sobre o animal" value={p.observacao} onChange={(v) => updatePet(index, { observacao: v })} placeholder="Ex.: Animal dócil, fica no quintal" />
