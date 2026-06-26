@@ -549,6 +549,103 @@ a {
     background: rgba(255, 255, 255, 0.14);
 }
 
+.home-offline {
+    margin-top: 16px;
+    padding: 14px;
+    border: 1px solid #dfe6ef;
+    border-radius: 14px;
+    background: var(--branco);
+    box-shadow: 0 8px 22px rgba(12, 74, 110, 0.08);
+}
+
+.home-offline-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.home-offline-icon {
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    background: #eaf2fb;
+    color: var(--azul);
+    flex: 0 0 auto;
+}
+
+.home-offline-head div {
+    display: grid;
+    gap: 2px;
+    min-width: 0;
+}
+
+.home-offline-head strong {
+    color: var(--hover);
+    font-size: 1rem;
+    line-height: 1.2;
+}
+
+.home-offline-head span {
+    color: var(--cinza-escuro);
+    font-size: 0.8rem;
+    line-height: 1.3;
+}
+
+.offline-map-prep {
+    display: grid;
+    gap: 8px;
+}
+
+.offline-map-action {
+    width: 100%;
+    min-height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 11px 14px;
+    border-radius: 10px;
+    background: var(--hover);
+    color: var(--branco);
+    box-shadow: none;
+    transition: background 0.2s ease, transform 0.12s ease, opacity 0.2s ease;
+}
+
+.offline-map-action.ready {
+    background: #0a7d2c;
+}
+
+.offline-map-action:disabled {
+    cursor: not-allowed;
+    opacity: 0.58;
+}
+
+.offline-map-action:active:not(:disabled) {
+    transform: scale(0.98);
+}
+
+.offline-map-action .ic {
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+}
+
+.offline-map-action .lbl {
+    font-size: 0.84rem;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.offline-map-hint {
+    margin: 0;
+    color: var(--cinza-escuro);
+    font-size: 0.76rem;
+    line-height: 1.35;
+}
+
 /* ===== Busca ===== */
 .search-row {
     display: flex;
@@ -3033,6 +3130,18 @@ html.anim-off *::after {
         justify-self: end;
         width: 28px;
         height: 28px;
+    }
+
+    .home-offline {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(240px, 320px);
+        align-items: center;
+        gap: 16px;
+        padding: 16px;
+    }
+
+    .home-offline-head {
+        margin-bottom: 0;
     }
 
     .familia-card-top {

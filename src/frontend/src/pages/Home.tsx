@@ -40,9 +40,16 @@ export default function Home() {
                 ))}
             </div>
 
-            <div className="home-anim">
+            <section className="home-offline">
+                <div className="home-offline-head">
+                    <span className="home-offline-icon"><Icon name="map" size={20} /></span>
+                    <div>
+                        <strong>Uso em campo</strong>
+                        <span>Prepare o mapa para cadastrar sem internet.</span>
+                    </div>
+                </div>
                 <OfflineMapButton />
-            </div>
+            </section>
         </div>
     );
 }

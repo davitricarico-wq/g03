@@ -35,7 +35,7 @@ export default function OfflineMapButton() {
         <div className="offline-map-prep">
             <button
                 type="button"
-                className={`anim-toggle${info ? ' on' : ''}`}
+                className={`offline-map-action${info ? ' ready' : ''}`}
                 onClick={baixar}
                 disabled={!online || baixando}
             >
