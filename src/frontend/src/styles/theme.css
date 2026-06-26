@@ -1440,6 +1440,59 @@ a {
     background: var(--azul);
 }
 
+.pwa-install,
+.pwa-update {
+    position: fixed;
+    left: 50%;
+    bottom: calc(var(--nav-height) + 54px);
+    transform: translateX(-50%);
+    z-index: 58;
+    width: min(92vw, 460px);
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    background: var(--branco);
+    color: var(--hover);
+    border: 1px solid #dfe4ec;
+    box-shadow: 0 8px 24px rgba(10, 61, 98, 0.16);
+    font-size: 0.84rem;
+    font-weight: 700;
+}
+
+.pwa-update {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    bottom: calc(var(--nav-height) + 98px);
+}
+
+.pwa-install span,
+.pwa-update span {
+    min-width: 0;
+}
+
+.pwa-install button,
+.pwa-update button {
+    min-height: 32px;
+    border-radius: var(--radius-sm);
+    background: var(--hover);
+    color: var(--branco);
+    padding: 7px 12px;
+    font-size: 0.78rem;
+    font-weight: 800;
+}
+
+.pwa-install .pwa-install-dismiss {
+    width: 32px;
+    padding: 0;
+    display: grid;
+    place-items: center;
+    background: transparent;
+    color: var(--cinza-escuro);
+    border: 1px solid #dfe4ec;
+}
+
 @keyframes toast-in {
     from {
         transform: translateY(16px);
@@ -2585,6 +2638,152 @@ a {
     opacity: 0.6;
 }
 
+.pessoa-card-top {
+    align-items: flex-start;
+}
+
+.pessoa-card-main {
+    flex: 1;
+    min-width: 0;
+}
+
+.pessoa-card-actions {
+    display: grid;
+    /* Divide o container em 2 linhas: a primeira com 1 fração (1/3) e a segunda com 2 frações (2/3) */
+    grid-template-rows: 1fr 2fr; 
+    gap: 8px;
+    min-width: 252px;
+    margin-left: 10px;
+}
+
+.card-actions-top {
+    display: flex;
+    justify-content: flex-end; /* Mantém a tag de status alinhada à direita */
+    align-items: flex-start;
+}
+
+.card-actions-bottom {
+    display: grid;
+    /* Divide a linha de baixo em 2 colunas iguais */
+    grid-template-columns: 1fr 1fr; 
+    gap: 8px;
+}
+
+.action-column {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Garante que os botões tenham o mesmo tamanho e preencham todo o espaço vertical/horizontal da coluna */
+.action-column .card-action-btn {
+    flex: 1;
+    width: 100%;
+}
+
+.pessoa-action-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(118px, 1fr));
+    gap: 8px;
+    width: 100%;
+}
+
+.pessoa-action-row .card-action-btn:only-child {
+    grid-column: 1 / -1;
+}
+
+.busca-card-actions {
+    align-self: flex-start;
+    min-width: 252px;
+    margin-left: 10px;
+}
+
+.busca-card-actions .card-actions-bottom {
+    width: 100%;
+}
+
+.busca-card-actions-two .card-actions-bottom {
+    grid-template-columns: repeat(2, minmax(118px, 1fr));
+}
+
+.card-action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 36px;
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #dce4ee;
+    border-radius: 8px;
+    background: #f8fafc;
+    color: var(--cinza-escuro);
+    font-size: 0.78rem;
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+    transition: background 0.16s ease, border-color 0.16s ease, color 0.16s ease, transform 0.12s ease;
+}
+
+.card-action-btn svg {
+    flex-shrink: 0;
+}
+
+.card-action-btn.secondary:hover,
+.card-action-btn.secondary.active {
+    border-color: var(--azul);
+    background: #eef6ff;
+    color: var(--azul);
+}
+
+.card-action-btn.success {
+    border-color: #b8e2c8;
+    background: #e3f5ea;
+    color: #1c7f48;
+}
+
+.card-action-btn.success:hover {
+    background: #d4efdf;
+    border-color: #8fd2aa;
+}
+
+.card-action-btn.warning {
+    border-color: #f5d1a6;
+    background: #fff3e3;
+    color: #9a5a00;
+}
+
+.card-action-btn.warning:hover {
+    background: #ffe7c5;
+    border-color: #edae62;
+}
+
+.card-action-btn.danger {
+    border-color: #f1b6b6;
+    background: #fde6e6;
+    color: #b92d24;
+}
+
+.card-action-btn.danger:hover {
+    background: #ffd9d9;
+    border-color: #e68c8c;
+}
+
+.card-action-btn.neutral {
+    border-color: #d6dde7;
+    background: #eef1f6;
+    color: #64748b;
+}
+
+.card-action-btn:active:not(:disabled) {
+    transform: scale(0.98);
+}
+
+.card-action-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.68;
+}
+
 .tag-resp {
     background: var(--azul);
     color: #fff;
@@ -2953,5 +3152,46 @@ html.anim-off *::after {
     .map-mode-toggle {
         top: 32px;
         right: 32px;
+    }
+}
+
+@media (min-width: 561px) {
+    .pessoa-card-actions {
+        max-width: 272px;
+    }
+
+    .pessoa-card-actions .card-action-btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 560px) {
+    .busca-card-actions {
+        width: 100%;
+        min-width: 0;
+        margin-left: 0;
+    }
+
+    .busca-card-actions .card-actions-bottom {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .pessoa-card-actions {
+        width: 100%;
+        min-width: 0;
+        max-width: none;
+        margin-left: 0;
+    }
+
+    .pessoa-card-actions .status-badge {
+        margin-right: auto;
+    }
+
+    .pessoa-action-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .pessoa-action-row .card-action-btn {
+        width: auto;
     }
 }

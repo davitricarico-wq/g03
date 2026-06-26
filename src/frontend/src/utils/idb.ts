@@ -3,7 +3,7 @@
 // estruturados e, principalmente, Blobs/Files das fotos sem serialização.
 
 const DB_NOME = 'georisco-offline';
-const DB_VERSAO = 1;
+const DB_VERSAO = 2;
 const STORE = 'outbox';
 
 function abrir(): Promise<IDBDatabase> {
@@ -15,7 +15,19 @@ function abrir(): Promise<IDBDatabase> {
                 db.createObjectStore(STORE, { keyPath: 'id' });
             }
         };
-        req.onsuccess = () => resolve(req.result);
+        req.onsuccess = () => {
+            const db = req.result;
+            if (db.objectStoreNames.contains(STORE)) {
+                resolve(db);
+                return;
+            }
+
+            db.close();
+            const reset = indexedDB.deleteDatabase(DB_NOME);
+            reset.onsuccess = () => abrir().then(resolve).catch(reject);
+            reset.onerror = () => reject(reset.error);
+            reset.onblocked = () => reject(new Error('IndexedDB bloqueado ao recriar a fila offline.'));
+        };
         req.onerror = () => reject(req.error);
     });
 }

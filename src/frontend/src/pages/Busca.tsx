@@ -679,12 +679,41 @@ export default function Busca() {
                                 </div>
                                 <Tags familia={f} prioridades={prioridades} />
                             </div>
-                            <div className="card-actions">
-                                <button className="btn-editar" onClick={() => abrirDetalhes(f)}>
-                                    {aberto === f.id ? 'Ocultar' : 'Detalhes'}
-                                </button>
-	                                <button className="btn-editar" onClick={() => navigate(`/cadastro?familiaId=${f.id}`)}><Icon name="edit" size={15} /> Editar</button>
-                                <button className="btn-trash" aria-label="Remover" onClick={() => excluir(f)}><Icon name="trash" size={17} /></button>
+                            <div className="busca-card-actions">
+                                <div className="card-actions-bottom">
+                                    <div className="action-column">
+                                        <button
+                                            type="button"
+                                            className={`card-action-btn secondary${aberto === f.id ? ' active' : ''}`}
+                                            aria-expanded={aberto === f.id}
+                                            title={aberto === f.id ? 'Ocultar detalhes' : 'Ver detalhes'}
+                                            onClick={() => abrirDetalhes(f)}
+                                        >
+                                            <Icon name={aberto === f.id ? 'eye-off' : 'eye'} size={16} />
+                                            <span>{aberto === f.id ? 'Ocultar' : 'Detalhes'}</span>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="card-action-btn secondary"
+                                            title="Editar cadastro"
+                                            onClick={() => navigate(`/cadastro?familiaId=${f.id}`)}
+                                        >
+                                            <Icon name="edit" size={16} />
+                                            <span>Editar</span>
+                                        </button>
+                                    </div>
+                                    <div className="action-column">
+                                        <button
+                                            type="button"
+                                            className="card-action-btn danger"
+                                            title="Deletar família"
+                                            onClick={() => excluir(f)}
+                                        >
+                                            <Icon name="trash" size={16} />
+                                            <span>Deletar</span>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -864,11 +893,28 @@ export default function Busca() {
                                             <span>{moradia.status}</span>
                                         </div>
                                     </div>
-                                    <div className="card-actions">
-                                        <button className="btn-editar" onClick={() => void abrirDetalhesMoradia(moradia)}>
-                                            {moradiaAberta === moradia.id ? 'Ocultar' : 'Detalhes'}
-                                        </button>
-                                        <button className="btn-editar" onClick={() => navigate(`/cadastro?moradiaId=${moradia.id}`)}>Usar no cadastro</button>
+                                    <div className="busca-card-actions busca-card-actions-two">
+                                        <div className="card-actions-bottom">
+                                            <button
+                                                type="button"
+                                                className={`card-action-btn secondary${moradiaAberta === moradia.id ? ' active' : ''}`}
+                                                aria-expanded={moradiaAberta === moradia.id}
+                                                title={moradiaAberta === moradia.id ? 'Ocultar detalhes' : 'Ver detalhes'}
+                                                onClick={() => void abrirDetalhesMoradia(moradia)}
+                                            >
+                                                <Icon name={moradiaAberta === moradia.id ? 'eye-off' : 'eye'} size={16} />
+                                                <span>{moradiaAberta === moradia.id ? 'Ocultar' : 'Detalhes'}</span>
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className="card-action-btn secondary"
+                                                title="Usar moradia no cadastro"
+                                                onClick={() => navigate(`/cadastro?moradiaId=${moradia.id}`)}
+                                            >
+                                                <Icon name="edit" size={16} />
+                                                <span>Usar no cadastro</span>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
 
