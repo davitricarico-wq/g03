@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
     atualizarMoradia,
@@ -6,6 +6,7 @@ import {
     atualizarPet,
     atualizarPrioridadesPessoa,
     atualizarResponsavel,
+    buscarFamilias,
     buscarPessoas,
     cadastrarNucleoFamiliar,
     cadastrarPetFamilia,
@@ -238,8 +239,10 @@ export default function Cadastro() {
     const [moradiasDisponiveis, setMoradiasDisponiveis] = useState<MoradiaComLocalizacao[]>([]);
     const [buscaPessoa, setBuscaPessoa] = useState('');
     const [pessoasEncontradas, setPessoasEncontradas] = useState<PessoaBuscaResultado[]>([]);
+    const [pessoasOcultasPorMoradia, setPessoasOcultasPorMoradia] = useState(0);
     const [buscandoPessoa, setBuscandoPessoa] = useState(false);
     const [mostrarBuscaPessoaExistente, setMostrarBuscaPessoaExistente] = useState(false);
+    const pessoasComMoradiaAtivaCache = useRef<Set<number> | null>(null);
 
     const temResponsavel = useMemo(() => moradores.some((m) => m.parentesco === RESPONSAVEL), [moradores]);
     const abasVisiveis = useMemo(
@@ -361,11 +364,14 @@ export default function Cadastro() {
             }
 
             if (morador.dataDeNascimento) {
-                const data = dataBRValida(morador.dataDeNascimento)
-                    ? new Date(`${dataBRParaISO(morador.dataDeNascimento)}T00:00:00`)
-                    : null;
-                if (!data || Number.isNaN(data.getTime()) || data > hoje) {
-                    feedback[`${morador.key}:data`] = { type: 'error', message: 'Data de nascimento inválida.' };
+                const key = `${morador.key}:data`;
+                if (!dataBRValida(morador.dataDeNascimento)) {
+                    feedback[key] = { type: 'error', message: 'Use uma data válida no formato DD/MM/AAAA.' };
+                } else {
+                    const data = new Date(`${dataBRParaISO(morador.dataDeNascimento)}T00:00:00`);
+                    if (data > hoje) {
+                        feedback[key] = { type: 'error', message: 'A data de nascimento não pode ser depois da data atual.' };
+                    }
                 }
             }
 
@@ -680,6 +686,22 @@ export default function Cadastro() {
         }
     }
 
+    async function idsPessoasComMoradiaAtiva(): Promise<Set<number>> {
+        if (pessoasComMoradiaAtivaCache.current) return pessoasComMoradiaAtivaCache.current;
+
+        const ids = new Set<number>();
+        const familias = await buscarFamilias();
+        const detalhes = await Promise.allSettled(familias.map((familia) => detalharFamilia(familia.id)));
+        detalhes.forEach((resultado) => {
+            if (resultado.status !== 'fulfilled') return;
+            const detalhe = resultado.value;
+            if (detalhe.moradias.length === 0) return;
+            detalhe.pessoas.forEach((pessoa) => ids.add(pessoa.id));
+        });
+        pessoasComMoradiaAtivaCache.current = ids;
+        return ids;
+    }
+
     async function pesquisarPessoaExistente(termoBusca = buscaPessoa) {
         const termo = termoBusca.trim();
         setBuscandoPessoa(true);
@@ -693,14 +715,14 @@ export default function Cadastro() {
                     cpf: ehCpf ? apenasDigitos : undefined
                 })
                 : await listarPessoas();
-            setPessoasEncontradas(
-                pessoas
-                    .filter((p) => {
-                        const responsavelAtivo = p.responsavel && p.status === 'Ativo';
-                        return !responsavelAtivo && !moradores.some((m) => m.id === p.id);
-                    })
-                    .slice(0, termo ? 5 : 3)
-            );
+            const idsComMoradia = await idsPessoasComMoradiaAtiva();
+            const elegiveis = pessoas.filter((p) => {
+                const responsavelAtivo = p.responsavel && p.status === 'Ativo';
+                return !responsavelAtivo && !moradores.some((m) => m.id === p.id);
+            });
+            const disponiveis = elegiveis.filter((p) => !idsComMoradia.has(p.id));
+            setPessoasOcultasPorMoradia(elegiveis.length - disponiveis.length);
+            setPessoasEncontradas(disponiveis.slice(0, termo ? 5 : 3));
         } catch (e) {
             toast.error(e instanceof Error ? e.message : 'Erro ao buscar pessoas.');
         } finally {
@@ -710,6 +732,12 @@ export default function Cadastro() {
 
     async function adicionarPessoaExistente(pessoa: PessoaBuscaResultado) {
         try {
+            if ((await idsPessoasComMoradiaAtiva()).has(pessoa.id)) {
+                toast.error('Esta pessoa já está vinculada a uma família com moradia ativa. Use uma pessoa sem moradia vinculada.');
+                setPessoasEncontradas((prev) => prev.filter((p) => p.id !== pessoa.id));
+                setPessoasOcultasPorMoradia((total) => total + 1);
+                return;
+            }
             const [detalhePessoa, prioridadesPessoa] = await Promise.all([
                 obterPessoa(pessoa.id),
                 listarPrioridadesPessoa(pessoa.id).catch(() => [])
@@ -1633,6 +1661,12 @@ export default function Cadastro() {
                                                 <p className="state-msg existing-person-state">Nenhuma pessoa disponível encontrada.</p>
                                             )}
 
+                                            {!buscandoPessoa && pessoasOcultasPorMoradia > 0 && (
+                                                <p className="state-msg existing-person-state">
+                                                    {pessoasOcultasPorMoradia} pessoa(s) nao aparecem porque ja estao vinculadas a uma moradia ativa.
+                                                </p>
+                                            )}
+
                                             {!buscandoPessoa && pessoasEncontradas.map((pessoa) => (
                                                 <div key={pessoa.id} className="existing-person-item">
                                                     <span>
@@ -1737,6 +1771,7 @@ export default function Cadastro() {
                                                         maxLength={10}
                                                         required
                                                         error={invalido(`${m.key}:data`)}
+                                                        feedback={feedbackCampo(`${m.key}:data`)}
                                                         placeholder="DD/MM/AAAA"
                                                     />
                                                 </Row>
@@ -1859,7 +1894,7 @@ export default function Cadastro() {
                                                     <TextField
                                                         label="NIS"
                                                         value={m.nis}
-                                                        onChange={(v) => updateMorador(index, { nis: v })}
+                                                        onChange={(v) => updateMorador(index, { nis: v.replace(/\D/g, '') })}
                                                         inputMode="numeric"
                                                         placeholder="Ex.: 12345678901"
                                                     />
