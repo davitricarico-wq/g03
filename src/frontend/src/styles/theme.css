@@ -2280,38 +2280,62 @@ a {
     line-height: 1.4;
 }
 
-.loc-picker-controls {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    z-index: 900;
-    display: flex;
-    flex-direction: column;
+.loc-picker-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr));
     gap: 8px;
-    pointer-events: auto;
+    margin-bottom: 10px;
 }
 
-.loc-map-btn {
-    min-height: 34px;
-    padding: 8px 12px;
+.loc-action-btn {
+    min-height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 14px;
     border-radius: var(--radius-sm);
-    border: 1px solid #cbd7e8;
-    background: rgba(255, 255, 255, 0.96);
-    color: var(--hover);
-    font-size: 0.78rem;
+    border: 1.5px solid var(--azul);
+    background: var(--branco);
+    color: var(--azul);
+    font-size: 0.84rem;
     font-weight: 800;
-    box-shadow: 0 4px 12px rgba(24, 44, 76, 0.16);
+    line-height: 1.15;
+    box-shadow: 0 4px 12px rgba(10, 61, 98, 0.10);
 }
 
-.loc-map-btn.locked {
-    border-color: #ffd8b8;
-    background: #fff8f2;
-    color: #9a5a14;
+.loc-action-btn svg {
+    flex: 0 0 auto;
 }
 
-.loc-map-btn:hover,
-.loc-map-btn:focus-visible {
+.loc-action-btn:hover:not(:disabled),
+.loc-action-btn:focus-visible:not(:disabled) {
     filter: brightness(0.97);
+    transform: translateY(-1px);
+}
+
+.loc-action-btn:disabled {
+    opacity: 0.72;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.loc-action-primary {
+    background: var(--hover);
+    border-color: var(--hover);
+    color: var(--branco);
+}
+
+.loc-action-btn.is-locked {
+    border-color: var(--laranja);
+    color: var(--laranja);
+    background: #fff8f2;
+}
+
+.loc-action-btn.is-unlocked {
+    border-color: var(--cinza);
+    color: var(--cinza-escuro);
+    background: #f7f9fc;
 }
 
 .picker-pin {

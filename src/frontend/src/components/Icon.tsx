@@ -11,6 +11,7 @@ type IconName =
     | 'flame'
     | 'history'
     | 'home'
+    | 'lock'
     | 'map'
     | 'map-pin'
     | 'paw'
@@ -18,7 +19,9 @@ type IconName =
     | 'person'
     | 'search'
     | 'sparkle'
+    | 'target'
     | 'trash'
+    | 'unlock'
     | 'x-circle';
 
 const paths: Record<IconName, string[]> = {
@@ -32,6 +35,7 @@ const paths: Record<IconName, string[]> = {
     flame: ['M12 22c4 0 7-3 7-7 0-3-2-5-4-7 0 3-2 4-3 4-2 0-3-2-2-5-3 2-5 5-5 8 0 4 3 7 7 7Z'],
     history: ['M3 12a9 9 0 1 0 3-6.7', 'M3 4v5h5', 'M12 7v5l3 2'],
     home: ['M3 11 12 3l9 8', 'M5 10v10h14V10', 'M9 20v-6h6v6'],
+    lock: ['M6 10V8a6 6 0 0 1 12 0v2', 'M5 10h14v11H5V10Z'],
     map: ['M9 18 3 21V6l6-3 6 3 6-3v15l-6 3-6-3Z', 'M9 3v15', 'M15 6v15'],
     'map-pin': ['M12 22s7-6 7-13a7 7 0 0 0-14 0c0 7 7 13 7 13Z', 'M12 12a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z'],
     paw: ['M8 11c-1 0-2-1-2-2s1-2 2-2 2 1 2 2-1 2-2 2Z', 'M16 11c-1 0-2-1-2-2s1-2 2-2 2 1 2 2-1 2-2 2Z', 'M10 16c0-2 1-4 2-4s2 2 2 4c2 0 4 1 4 3 0 2-2 3-6 3s-6-1-6-3c0-2 2-3 4-3Z'],
@@ -39,7 +43,9 @@ const paths: Record<IconName, string[]> = {
     person: ['M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z', 'M4 21a8 8 0 0 1 16 0'],
     search: ['M11 19a8 8 0 1 1 0-16 8 8 0 0 1 0 16Z', 'M21 21l-4.3-4.3'],
     sparkle: ['M12 3l1.7 5.3L19 10l-5.3 1.7L12 17l-1.7-5.3L5 10l5.3-1.7L12 3Z', 'M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8L19 15Z'],
+    target: ['M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Z', 'M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z', 'M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z'],
     trash: ['M4 7h16', 'M10 11v6', 'M14 11v6', 'M6 7l1 14h10l1-14', 'M9 7V4h6v3'],
+    unlock: ['M7 10V8a5 5 0 0 1 9.6-2', 'M5 10h14v11H5V10Z'],
     'x-circle': ['M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Z', 'M8 8l8 8', 'M16 8l-8 8']
 };
 

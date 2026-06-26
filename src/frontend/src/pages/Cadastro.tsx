@@ -31,7 +31,7 @@ import {
 import { toast } from '../components/feedback.tsx';
 import { aoMudarConectividade, estaOnline } from '../utils/connectivity.ts';
 import { enfileirarCadastro } from '../utils/outbox.ts';
-import { buscarCep, buscarEnderecoPorCoordenadas, capturarGPS, cpfValido, emailValido, maskCEP, maskCPF, maskTelefone } from '../utils/forms.ts';
+import { buscarCep, buscarEnderecoPorCoordenadas, capturarGPS, cpfValido, dataBRParaISO, dataBRValida, emailValido, isoParaDataBR, maskCEP, maskCPF, maskDataBR, maskTelefone } from '../utils/forms.ts';
 import { CheckboxField, Row, SelectField, TextAreaField, TextField } from '../components/FormFields.tsx';
 import LocationPicker from '../components/LocationPicker.tsx';
 import PhotoPicker, { type FotoLocal } from '../components/PhotoPicker.tsx';
@@ -175,7 +175,7 @@ function pessoaBase(m: MoradorForm): CreatePessoaPayload {
         nome: m.nome.trim(),
         nomeSocial: limpar(m.nomeSocial),
         cpf: m.cpf.trim() ? m.cpf.replace(/\D/g, '') : null,
-        dataDeNascimento: m.dataDeNascimento,
+        dataDeNascimento: dataBRParaISO(m.dataDeNascimento),
         parentesco: m.parentesco,
         situacaoOcupacional: m.situacaoOcupacional,
         escolaridade: m.escolaridade,
@@ -189,7 +189,7 @@ function pessoaBase(m: MoradorForm): CreatePessoaPayload {
         email: limpar(m.email),
         telefone: m.telefone.trim() ? m.telefone.replace(/\D/g, '') : null,
         nomeDaMae: limpar(m.nomeDaMae),
-        dataResidenciaMoradia: limpar(m.dataResidenciaMoradia),
+        dataResidenciaMoradia: m.dataResidenciaMoradia ? dataBRParaISO(m.dataResidenciaMoradia) : null,
         veiculo: m.veiculo,
         programasSociais: Math.max(0, Number.parseInt(m.programasSociais || '0', 10) || 0)
     };
@@ -360,8 +360,10 @@ export default function Cadastro() {
             }
 
             if (morador.dataDeNascimento) {
-                const data = new Date(`${morador.dataDeNascimento}T00:00:00`);
-                if (Number.isNaN(data.getTime()) || data > hoje) {
+                const data = dataBRValida(morador.dataDeNascimento)
+                    ? new Date(`${dataBRParaISO(morador.dataDeNascimento)}T00:00:00`)
+                    : null;
+                if (!data || Number.isNaN(data.getTime()) || data > hoje) {
                     feedback[`${morador.key}:data`] = { type: 'error', message: 'Data de nascimento inválida.' };
                 }
             }
@@ -569,7 +571,7 @@ export default function Cadastro() {
             nome: pessoa.nome,
             nomeSocial: pessoa.nomeSocial ?? '',
             cpf: pessoa.cpf ?? '',
-            dataDeNascimento: pessoa.dataDeNascimento ? String(pessoa.dataDeNascimento).slice(0, 10) : '',
+            dataDeNascimento: isoParaDataBR(pessoa.dataDeNascimento ? String(pessoa.dataDeNascimento) : ''),
             parentesco: pessoa.parentesco ?? '',
             situacaoOcupacional: pessoa.situacaoOcupacional ?? '',
             escolaridade: pessoa.escolaridade ?? '',
@@ -583,7 +585,7 @@ export default function Cadastro() {
             email: dadosPessoa.email ?? '',
             telefone: dadosPessoa.telefone ?? '',
             nomeDaMae: dadosPessoa.nomeDaMae ?? '',
-            dataResidenciaMoradia: dadosPessoa.dataResidenciaMoradia ? String(dadosPessoa.dataResidenciaMoradia).slice(0, 10) : '',
+            dataResidenciaMoradia: isoParaDataBR(dadosPessoa.dataResidenciaMoradia ? String(dadosPessoa.dataResidenciaMoradia) : ''),
             veiculo: Boolean(dadosPessoa.veiculo),
             programasSociais: String(dadosPessoa.programasSociais ?? 0),
             prioridadeIds
@@ -1255,7 +1257,7 @@ export default function Cadastro() {
                 email: limpar(r.email),
                 telefone: r.telefone.trim() ? r.telefone.replace(/\D/g, '') : null,
                 nomeDaMae: limpar(r.nomeDaMae),
-                dataResidenciaMoradia: limpar(r.dataResidenciaMoradia),
+                dataResidenciaMoradia: r.dataResidenciaMoradia ? dataBRParaISO(r.dataResidenciaMoradia) : null,
                 veiculo: r.veiculo,
                 programasSociais: Math.max(0, Number.parseInt(r.programasSociais || '0', 10) || 0)
             },
@@ -1525,33 +1527,12 @@ export default function Cadastro() {
                                     </span>
                                 </div>
 
-                                <button
-                                    type="button"
-                                    onClick={pegarGPS}
-                                    disabled={capturando}
-                                    style={{
-                                        display: 'inline-flex',
-                                        alignItems: 'center',
-                                        gap: 8,
-                                        margin: '0 0 12px',
-                                        padding: '9px 16px',
-                                        borderRadius: 999,
-                                        border: 'none',
-                                        background: '#0a3d62',
-                                        color: '#fff',
-                                        fontWeight: 700,
-                                        fontSize: 13,
-                                        cursor: capturando ? 'default' : 'pointer',
-                                        opacity: capturando ? 0.7 : 1
-                                    }}
-                                >
-                                    {capturando ? 'Capturando localização…' : '📍 Usar minha localização (GPS)'}
-                                </button>
-
                                 <LocationPicker
                                     latitude={loc.latitude}
                                     longitude={loc.longitude}
                                     focusSignal={gpsSignal}
+                                    gpsLoading={capturando}
+                                    onUseGps={pegarGPS}
                                     onChange={setCoord}
                                 />
 
@@ -1737,13 +1718,14 @@ export default function Cadastro() {
                                                         label="Data de nascimento"
                                                         value={m.dataDeNascimento}
                                                         onChange={(v) => {
-                                                            updateMorador(index, { dataDeNascimento: v });
+                                                            updateMorador(index, { dataDeNascimento: maskDataBR(v) });
                                                             limparInvalido(`${m.key}:data`);
                                                         }}
-                                                        type="date"
+                                                        inputMode="numeric"
+                                                        maxLength={10}
                                                         required
                                                         error={invalido(`${m.key}:data`)}
-                                                        placeholder="AAAA-MM-DD"
+                                                        placeholder="DD/MM/AAAA"
                                                     />
                                                 </Row>
 

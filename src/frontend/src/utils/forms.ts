@@ -25,6 +25,39 @@ export function maskTelefone(value: string): string {
     return d.replace(/(\d{2})(\d)/, '($1) $2').replace(/(\d{5})(\d)/, '$1-$2');
 }
 
+export function maskDataBR(value: string): string {
+    return value
+        .replace(/\D/g, '')
+        .slice(0, 8)
+        .replace(/(\d{2})(\d)/, '$1/$2')
+        .replace(/(\d{2})\/(\d{2})(\d)/, '$1/$2/$3');
+}
+
+export function isoParaDataBR(value: string | null | undefined): string {
+    const match = String(value ?? '').match(/^(\d{4})-(\d{2})-(\d{2})/);
+    return match ? `${match[3]}/${match[2]}/${match[1]}` : '';
+}
+
+export function dataBRParaISO(value: string): string {
+    const digits = value.replace(/\D/g, '');
+    if (digits.length !== 8) return value;
+    return `${digits.slice(4, 8)}-${digits.slice(2, 4)}-${digits.slice(0, 2)}`;
+}
+
+export function dataBRValida(value: string): boolean {
+    const digits = value.replace(/\D/g, '');
+    if (digits.length !== 8) return false;
+
+    const dia = Number(digits.slice(0, 2));
+    const mes = Number(digits.slice(2, 4));
+    const ano = Number(digits.slice(4, 8));
+    const data = new Date(ano, mes - 1, dia);
+
+    return data.getFullYear() === ano
+        && data.getMonth() === mes - 1
+        && data.getDate() === dia;
+}
+
 export function cpfValido(value: string): boolean {
     const cpf = value.replace(/\D/g, '');
     if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;

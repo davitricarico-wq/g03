@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MapContainer, Marker, Popup, TileLayer, useMap, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
+import Icon from './Icon.tsx';
 import { registrarCoordenadaGPS } from '../utils/forms.ts';
 import { TILE_URL } from '../utils/offlineMap.ts';
 
@@ -82,61 +83,6 @@ function MapInteractionLock({ locked }: { locked: boolean }) {
     return null;
 }
 
-function MapControls({
-    currentPos,
-    locked,
-    onLocate,
-    onToggleLock
-}: {
-    currentPos: [number, number] | null;
-    locked: boolean;
-    onLocate: () => void;
-    onToggleLock: () => void;
-}) {
-    const map = useMap();
-    const controlsRef = useRef<HTMLDivElement | null>(null);
-
-    useEffect(() => {
-        if (!controlsRef.current) return;
-        L.DomEvent.disableClickPropagation(controlsRef.current);
-        L.DomEvent.disableScrollPropagation(controlsRef.current);
-    }, []);
-
-    function centralizarNaLocalizacao() {
-        if (currentPos) {
-            map.setView(currentPos, Math.max(map.getZoom(), 16), { animate: true });
-        }
-        onLocate();
-    }
-
-    return (
-        <div className="loc-picker-controls" ref={controlsRef}>
-            <button
-                type="button"
-                className="loc-map-btn"
-                onMouseDown={(e) => e.stopPropagation()}
-                onClick={(e) => {
-                    e.stopPropagation();
-                    centralizarNaLocalizacao();
-                }}
-            >
-                Minha localização
-            </button>
-            <button
-                type="button"
-                className={`loc-map-btn ${locked ? 'locked' : ''}`}
-                onMouseDown={(e) => e.stopPropagation()}
-                onClick={(e) => {
-                    e.stopPropagation();
-                    onToggleLock();
-                }}
-            >
-                {locked ? 'Destravar mapa' : 'Travar mapa'}
-            </button>
-        </div>
-    );
-}
-
 function ClickCapture({ locked, onPick }: { locked: boolean; onPick: (lat: number, lng: number) => void }) {
     useMapEvents({
         click(e) {
@@ -151,10 +97,12 @@ interface LocationPickerProps {
     latitude: string;
     longitude: string;
     focusSignal?: number;
+    gpsLoading?: boolean;
+    onUseGps?: () => void;
     onChange: (lat: number, lng: number) => void;
 }
 
-export default function LocationPicker({ latitude, longitude, focusSignal = 0, onChange }: LocationPickerProps) {
+export default function LocationPicker({ latitude, longitude, focusSignal = 0, gpsLoading = false, onUseGps, onChange }: LocationPickerProps) {
     const [currentPos, setCurrentPos] = useState<[number, number] | null>(null);
     const [mapLocked, setMapLocked] = useState(true);
     const [currentFocusSignal, setCurrentFocusSignal] = useState(0);
@@ -196,18 +144,44 @@ export default function LocationPicker({ latitude, longitude, focusSignal = 0, o
         );
     }
 
+    function centralizarNaLocalizacao() {
+        if (currentPos) {
+            setCurrentFocusSignal((signal) => signal + 1);
+        }
+        localizarUsuario();
+    }
+
     return (
         <div className="loc-picker">
+            <div className="loc-picker-actions">
+                {onUseGps && (
+                    <button
+                        type="button"
+                        className="loc-action-btn loc-action-primary"
+                        disabled={gpsLoading}
+                        onClick={onUseGps}
+                    >
+                        <Icon name="map-pin" size={17} />
+                        <span>{gpsLoading ? 'Capturando localização...' : 'Usar minha localização (GPS)'}</span>
+                    </button>
+                )}
+                <button type="button" className="loc-action-btn" onClick={centralizarNaLocalizacao}>
+                    <Icon name="target" size={17} />
+                    <span>Ver minha localização</span>
+                </button>
+                <button
+                    type="button"
+                    className={`loc-action-btn ${mapLocked ? 'is-locked' : 'is-unlocked'}`}
+                    onClick={() => setMapLocked((locked) => !locked)}
+                >
+                    <Icon name={mapLocked ? 'unlock' : 'lock'} size={17} />
+                    <span>{mapLocked ? 'Destravar mapa' : 'Travar mapa'}</span>
+                </button>
+            </div>
             <MapContainer center={center} zoom={temPos || currentPos ? 16 : 13} className="loc-picker-map" zoomControl scrollWheelZoom={!mapLocked} dragging={!mapLocked}>
                 <TileLayer url={TILE} attribution="&copy; OpenStreetMap" />
                 <ClickCapture locked={mapLocked} onPick={onChange} />
                 <MapInteractionLock locked={mapLocked} />
-                <MapControls
-                    currentPos={currentPos}
-                    locked={mapLocked}
-                    onLocate={localizarUsuario}
-                    onToggleLock={() => setMapLocked((locked) => !locked)}
-                />
                 <Recenter pos={pos} currentPos={currentPos} focusSignal={focusSignal} currentFocusSignal={currentFocusSignal} />
                 {currentPos && (
                     <Marker position={currentPos} icon={currentLocationIcon} zIndexOffset={1000}>
