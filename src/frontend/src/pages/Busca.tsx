@@ -524,20 +524,20 @@ export default function Busca() {
         }
     }
 
-    async function excluir(f: FamiliaBuscaResultado) {
+    async function inativar(f: FamiliaBuscaResultado) {
         const ok = await confirmDialog({
-            title: 'Excluir família',
-            message: `Tem certeza que deseja excluir o cadastro de "${f.responsavel?.nome ?? 'Sem responsável'}"? Esta ação não pode ser desfeita.`,
-            okLabel: 'Excluir',
+            title: 'Inativar família',
+            message: `Tem certeza que deseja inativar o cadastro de "${f.responsavel?.nome ?? 'Sem responsável'}"? A família sairá das listas ativas e os vínculos atuais serão encerrados, sem apagar o histórico.`,
+            okLabel: 'Inativar',
             danger: true
         });
         if (!ok) return;
         try {
             await removerFamilia(f.id);
             setResultados((prev) => prev.filter((x) => x.id !== f.id));
-            toast.success('Cadastro excluído com sucesso.');
+            toast.success('Cadastro inativado com sucesso.');
         } catch (e) {
-            toast.error(e instanceof Error ? e.message : 'Erro ao excluir cadastro.');
+            toast.error(e instanceof Error ? e.message : 'Erro ao inativar cadastro.');
         }
     }
 
@@ -706,11 +706,11 @@ export default function Busca() {
                                         <button
                                             type="button"
                                             className="card-action-btn danger"
-                                            title="Deletar família"
-                                            onClick={() => excluir(f)}
+                                            title="Inativar família"
+                                            onClick={() => inativar(f)}
                                         >
-                                            <Icon name="trash" size={16} />
-                                            <span>Deletar</span>
+                                            <Icon name="user-x" size={16} />
+                                            <span>Inativar</span>
                                         </button>
                                     </div>
                                 </div>
