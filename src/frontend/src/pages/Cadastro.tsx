@@ -144,6 +144,18 @@ function limpar(valor: string): string | null {
     return t === '' ? null : t;
 }
 
+function parseDecimalBrasileiro(valor: string): number | null {
+    const texto = valor.trim();
+    if (!texto) return null;
+
+    const normalizado = texto
+        .replace(/[^\d,.+-]/g, '')
+        .replace(/\.(?=\d{3}(?:\D|$))/g, '')
+        .replace(',', '.');
+    const numero = Number(normalizado);
+    return Number.isFinite(numero) ? numero : null;
+}
+
 // Distingue falha de REDE (offline / sem internet de fato) de erro de regra de
 // negócio do servidor. fetch() lança TypeError quando a rede falha; assim, mesmo
 // com navigator.onLine === true (que pode mentir), conseguimos cair na fila local.
@@ -170,7 +182,7 @@ function pessoaBase(m: MoradorForm): CreatePessoaPayload {
         cronico: m.cronico,
         medicacao: m.medicacao,
         nis: limpar(m.nis),
-        renda: m.renda.trim() ? Number(m.renda) : null,
+        renda: parseDecimalBrasileiro(m.renda),
         sexo: limpar(m.sexo),
         raca: limpar(m.raca),
         estadoCivil: limpar(m.estadoCivil),
@@ -862,13 +874,9 @@ export default function Cadastro() {
                 // (checagem em andamento) não devem travar o envio.
                 if (feedback && feedback.type === 'error') campos.push(chave);
             }
-            // sexo/raça/estado civil só são coletados para o responsável (ver bloco
-            // `ehResponsavel` no formulário), então só são exigidos dele.
-            if (m.parentesco === RESPONSAVEL) {
-                if (!m.sexo) campos.push(`${m.key}:sexo`);
-                if (!m.raca) campos.push(`${m.key}:raca`);
-                if (!m.estadoCivil) campos.push(`${m.key}:estadoCivil`);
-            }
+            if (!m.sexo) campos.push(`${m.key}:sexo`);
+            if (!m.raca) campos.push(`${m.key}:raca`);
+            if (!m.estadoCivil) campos.push(`${m.key}:estadoCivil`);
         }
         return { campos, msg: campos.length ? 'Revise os campos destacados antes de continuar.' : null };
     }
@@ -1240,7 +1248,7 @@ export default function Cadastro() {
                 ...pessoaBase(r),
                 parentesco: RESPONSAVEL,
                 nis: limpar(r.nis),
-                renda: r.renda.trim() ? Number(r.renda) : null,
+                renda: parseDecimalBrasileiro(r.renda),
                 sexo: r.sexo,
                 raca: r.raca,
                 estadoCivil: r.estadoCivil,
@@ -1843,74 +1851,67 @@ export default function Cadastro() {
                                                     </div>
                                                 </div>
 
-                                                {ehResponsavel && (
-                                                    <div style={{ marginTop: 8, paddingTop: 12 }}>
-                                                        {/* <p className="field-group-title" style={{ color: 'var(--laranja)', marginTop: 0 }}>
-                                                            Dados exclusivos do responsável
-                                                        </p> */}
+                                                <p className="field-group-title">Dados complementares</p>
+                                                <Row>
+                                                    <TextField
+                                                        label="Nome da mãe"
+                                                        value={m.nomeDaMae}
+                                                        onChange={(v) => updateMorador(index, { nomeDaMae: v })}
+                                                        placeholder="Ex.: Ana Santos"
+                                                    />
+                                                </Row>
 
-                                                        <Row>
-                                                            <TextField
-                                                                label="Nome da mãe"
-                                                                value={m.nomeDaMae}
-                                                                onChange={(v) => updateMorador(index, { nomeDaMae: v })}
-                                                                placeholder="Ex.: Ana Santos"
-                                                            />
-                                                        </Row>
+                                                <Row>
+                                                    <TextField
+                                                        label="NIS"
+                                                        value={m.nis}
+                                                        onChange={(v) => updateMorador(index, { nis: v })}
+                                                        inputMode="numeric"
+                                                        placeholder="Ex.: 12345678901"
+                                                    />
 
-                                                        <Row>
-                                                            <TextField
-                                                                label="NIS"
-                                                                value={m.nis}
-                                                                onChange={(v) => updateMorador(index, { nis: v })}
-                                                                inputMode="numeric"
-                                                                placeholder="Ex.: 12345678901"
-                                                            />
+                                                    <TextField
+                                                        label="Renda mensal (R$)"
+                                                        value={m.renda}
+                                                        onChange={(v) => updateMorador(index, { renda: v })}
+                                                        inputMode="decimal"
+                                                        placeholder="Ex.: 1500,00"
+                                                    />
+                                                </Row>
 
-                                                            <TextField
-                                                                label="Renda mensal (R$)"
-                                                                value={m.renda}
-                                                                onChange={(v) => updateMorador(index, { renda: v })}
-                                                                inputMode="decimal"
-                                                                placeholder="Ex.: 1500,00"
-                                                            />
-                                                        </Row>
+                                                <Row>
+                                                    <TextField
+                                                        label="E-mail"
+                                                        value={m.email}
+                                                        onChange={(v) => updateMorador(index, { email: v })}
+                                                        inputMode="email"
+                                                        placeholder="Ex.: nome@email.com"
+                                                    />
 
-                                                        <Row>
-                                                            <TextField
-                                                                label="E-mail"
-                                                                value={m.email}
-                                                                onChange={(v) => updateMorador(index, { email: v })}
-                                                                inputMode="email"
-                                                                placeholder="Ex.: nome@email.com"
-                                                            />
+                                                    <TextField
+                                                        label="Telefone"
+                                                        value={m.telefone}
+                                                        onChange={(v) => updateMorador(index, { telefone: maskTelefone(v) })}
+                                                        inputMode="tel"
+                                                        placeholder="(11) 99999-9999"
+                                                    />
+                                                </Row>
 
-                                                            <TextField
-                                                                label="Telefone"
-                                                                value={m.telefone}
-                                                                onChange={(v) => updateMorador(index, { telefone: maskTelefone(v) })}
-                                                                inputMode="tel"
-                                                                placeholder="(11) 99999-9999"
-                                                            />
-                                                        </Row>
+                                                <Row>
+                                                    <CheckboxField
+                                                        label="Possui veículo"
+                                                        checked={m.veiculo}
+                                                        onChange={(v) => updateMorador(index, { veiculo: v })}
+                                                    />
 
-                                                        <Row>
-                                                            <CheckboxField
-                                                                label="Possui veículo"
-                                                                checked={m.veiculo}
-                                                                onChange={(v) => updateMorador(index, { veiculo: v })}
-                                                            />
-
-                                                            <TextField
-                                                                label="Programas sociais"
-                                                                value={m.programasSociais}
-                                                                onChange={(v) => updateMorador(index, { programasSociais: v.replace(/\D/g, '') })}
-                                                                inputMode="numeric"
-                                                                placeholder="Ex.: 1"
-                                                            />
-                                                        </Row>
-                                                    </div>
-                                                )}
+                                                    <TextField
+                                                        label="Programas sociais"
+                                                        value={m.programasSociais}
+                                                        onChange={(v) => updateMorador(index, { programasSociais: v.replace(/\D/g, '') })}
+                                                        inputMode="numeric"
+                                                        placeholder="Ex.: 1"
+                                                    />
+                                                </Row>
                                             </div>
                                         )
                                     }

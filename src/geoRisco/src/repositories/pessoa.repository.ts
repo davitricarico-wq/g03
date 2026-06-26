@@ -36,6 +36,14 @@ type PessoaApiRow = {
     telefone: string | null;
     nome_da_mae: string | null;
     data_residencia_moradia: Date | string | null;
+    nomeSocial?: string | null;
+    dataDeNascimento?: Date | string;
+    situacaoOcupacional?: Pessoa['situacaoOcupacional'];
+    deletedAt?: Date | string | null;
+    estadoCivil?: Responsavel['estadoCivil'] | null;
+    programasSociais?: number;
+    nomeDaMae?: string | null;
+    dataResidenciaMoradia?: Date | string | null;
 };
 
 const pessoaSelect = `
@@ -74,32 +82,33 @@ function mapPessoaApiRow(row: PessoaApiRow): Pessoa {
     return {
         id: row.id,
         nome: row.nome,
-        nomeSocial: row.apelido,
+        nomeSocial: row.apelido ?? row.nomeSocial ?? null,
         cpf: row.cpf,
-        dataDeNascimento: row.data_de_nascimento as Date,
+        dataDeNascimento: (row.data_de_nascimento ?? row.dataDeNascimento) as Date,
         parentesco: row.parentesco,
-        situacaoOcupacional: row.situacao_ocupacional,
+        situacaoOcupacional: row.situacao_ocupacional ?? row.situacaoOcupacional,
         escolaridade: row.escolaridade,
         cronico: row.cronico,
         medicacao: row.medicacao,
         status: row.status,
-        deletedAt: row.deleted_at as Date | null,
+        deletedAt: (row.deleted_at ?? row.deletedAt ?? null) as Date | null,
         nis: row.nis,
         renda: row.renda === null ? null : Number(row.renda),
         sexo: row.sexo,
         raca: row.raca,
-        estadoCivil: row.estado_civil,
+        estadoCivil: row.estado_civil ?? row.estadoCivil ?? null,
         veiculo: row.veiculo,
-        programasSociais: row.programas_sociais,
+        programasSociais: row.programas_sociais ?? row.programasSociais ?? 0,
         email: row.email,
         telefone: row.telefone,
-        nomeDaMae: row.nome_da_mae,
-        dataResidenciaMoradia: row.data_residencia_moradia as Date | null
+        nomeDaMae: row.nome_da_mae ?? row.nomeDaMae ?? null,
+        dataResidenciaMoradia: (row.data_residencia_moradia ?? row.dataResidenciaMoradia ?? null) as Date | null
     };
 }
 
 function mapResponsavelApiRow(pessoa: PessoaApiRow): Responsavel | null {
-    if (!pessoa.sexo || !pessoa.raca || !pessoa.estado_civil) {
+    const estadoCivil = pessoa.estado_civil ?? pessoa.estadoCivil;
+    if (!pessoa.sexo || !pessoa.raca || !estadoCivil) {
         return null;
     }
     return {
@@ -109,13 +118,13 @@ function mapResponsavelApiRow(pessoa: PessoaApiRow): Responsavel | null {
         renda: pessoa.renda === null ? null : Number(pessoa.renda),
         sexo: pessoa.sexo,
         raca: pessoa.raca,
-        estadoCivil: pessoa.estado_civil,
+        estadoCivil,
         veiculo: pessoa.veiculo,
-        programasSociais: pessoa.programas_sociais,
+        programasSociais: pessoa.programas_sociais ?? pessoa.programasSociais ?? 0,
         email: pessoa.email,
         telefone: pessoa.telefone,
-        nomeDaMae: pessoa.nome_da_mae,
-        dataResidenciaMoradia: pessoa.data_residencia_moradia as Date | null
+        nomeDaMae: pessoa.nome_da_mae ?? pessoa.nomeDaMae ?? null,
+        dataResidenciaMoradia: (pessoa.data_residencia_moradia ?? pessoa.dataResidenciaMoradia ?? null) as Date | null
     };
 }
 
@@ -457,7 +466,7 @@ export class PessoaRepository implements IPessoaRepository {
             const res = await db.query<PessoaApiRow>(`
                 SELECT ${responsavelSelect}
                 FROM vw_pessoa_ativa p
-                WHERE p.parentesco::text IN ('Responsável', 'RESPONSAVEL')
+                WHERE UPPER(p.parentesco::text) LIKE 'RESPONS%'
                 ORDER BY p.nome
             `);
             return res.rows
@@ -478,7 +487,7 @@ export class PessoaRepository implements IPessoaRepository {
                 SELECT ${responsavelSelect}
                 FROM pessoa p
                 WHERE p.id = $1
-                  AND p.parentesco::text IN ('Responsável', 'RESPONSAVEL')
+                  AND UPPER(p.parentesco::text) LIKE 'RESPONS%'
                 `,
                 [idPessoa]
             );
@@ -495,7 +504,7 @@ export class PessoaRepository implements IPessoaRepository {
     private async getAllResponsaveisViaSupabase(ids?: number[]): Promise<Responsavel[]> {
         const pessoas = await this.getPessoasViaSupabase('ativas');
         return pessoas
-            .filter((pessoa) => pessoa.parentesco === 'Responsável')
+            .filter((pessoa) => pessoa.parentesco.toLocaleUpperCase('pt-BR').startsWith('RESPONS'))
             .filter((pessoa) => !ids?.length || ids.includes(pessoa.id))
             .map((pessoa) => mapResponsavelApiRow({
                 id: pessoa.id,
