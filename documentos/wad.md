@@ -6,6 +6,7 @@
 
 
 ## Nome do Grupo
+## Froggy Tech
 
 #### Nomes dos integrantes do grupo
 
@@ -506,7 +507,7 @@ Matriz de cobertura que demonstra quais RN (Regras de Negócio) e endpoints impl
 #### Status de Implementação por RF
 | RF | Status | Observação |
 |---|---|---|
-| RF001 | ✅ Implementado | Endpoints de pessoas, responsáveis e famílias ativos; grupos prioritários pendentes |
+| RF001 | ✅ Implementado | Endpoints de pessoas, responsáveis e famílias ativos; grupos prioritários (vulnerabilidade) via módulo `prioridade` (`/api/prioridades`, `/api/pessoas/{id}/prioridades`) |
 | RF002 | ✅ Implementado | Moradia e fotos via Supabase Storage |
 | RF003 | ⚠️ Parcial | Coordenadas persistidas; UI de mini-mapa de confirmação planejada para o frontend |
 | RF004 | ⚠️ Parcial | Dados retornados pelo endpoint; renderização de marcadores no mapa depende do frontend |
@@ -534,6 +535,9 @@ Matriz de cobertura que demonstra quais RN (Regras de Negócio) e endpoints impl
 | RF001 | RN01, RN02, RN03, RN04 | `/api/responsaveis` | GET |
 | RF001 | RN01, RN02, RN03, RN04 | `/api/responsaveis/{id}` | GET |
 | RF001 | RN01, RN02, RN03, RN04 | `/api/familias` | POST |
+| RF001 | RN04 | `/api/prioridades` | GET |
+| RF001 | RN04 | `/api/pessoas/{id}/prioridades` | GET |
+| RF001 | RN04 | `/api/pessoas/{id}/prioridades` | PUT |
 | RF002 | RN05, RN07, RN08 | `/api/moradias` | POST |
 | RF002 | RN05, RN07, RN08 | `/api/moradias/{id}/fotos` | POST |
 | RF002 | RN05, RN07, RN08 | `/api/moradias/{id}/fotos` | GET |
@@ -560,6 +564,7 @@ Matriz de cobertura que demonstra quais RN (Regras de Negócio) e endpoints impl
 | RF012 | RN09, RN10 | `/api/moradias/{id}` | PUT |
 | RF013 | — | `/api/familias/nucleo` | POST |
 | RF014 | RN01, RN06 | `/api/familias` | GET |
+| RF014 | RN01, RN06 | `/api/familias/busca` | GET |
 | RF014 | RN01, RN06 | `/api/familias/{id}` | GET |
 | RF014 | RN01, RN06 | `/api/familias` | POST |
 | RF014 | RN01, RN06 | `/api/familias/{id}` | DELETE |
@@ -643,57 +648,19 @@ O diagrama de classe arquitetural detalha a organização interna da aplicação
 
 O fluxo principal do sistema segue a ordem: `server.ts` inicializa a aplicação, `app.ts` configura o Express e registra as rotas, as rotas encaminham as requisições para os controllers, os controllers normalizam e validam os dados antes de chamar os services, os services executam as regras de negócio e orquestram os repositories, e os repositories realizam as operações de persistência no PostgreSQL. Elementos como `Infrastructure`, `Validations`, `Errors`, `Storage`, `Views`, `Public` e `Tests` aparecem no diagrama como apoios transversais à aplicação.
 
-<div align="center">
-    <p>Figura 7: Diagrama de Classe Arquitetural - Ampliado</p>
-    <img src="outros/diagramas_arquitetura/diagramaArquitetura-Ampliado.png" alt="Diagrama de Classe Arquitetural - Ampliado" width="720" height="394">
-    <p>Feito pela própria equipe (2026)</p>
-</div>
+Esta visão (recorte ampliado) apresenta a visão macro e completa da arquitetura do backend. Ela ilustra o fluxo de ponta a ponta, demonstrando como todas as camadas do sistema se interconectam. O fluxo começa na inicialização da aplicação, passa pela recepção das requisições HTTP, segue pela validação de dados, orquestração das regras de negócio e, finalmente, chega à persistência dos dados no banco. Essa visão é fundamental para entender a separação de responsabilidades (Separation of Concerns) e a modularidade da aplicação.
 
-Esta imagem apresenta a visão macro e completa da arquitetura do backend. Ela ilustra o fluxo de ponta a ponta, demonstrando como todas as camadas do sistema se interconectam. O fluxo começa na inicialização da aplicação, passa pela recepção das requisições HTTP, segue pela validação de dados, orquestração das regras de negócio e, finalmente, chega à persistência dos dados no banco. Essa visão é fundamental para entender a separação de responsabilidades (Separation of Concerns) e a modularidade da aplicação.
+O recorte de **Bootstrap e Express** foca na porta de entrada da aplicação. A camada de Bootstrap (geralmente arquivos como server.ts e app.ts) é responsável por configurar o servidor, aplicar os middlewares essenciais (como tratamento de JSON e CORS) e levantar o serviço. Em conjunto, a camada do Express (Rotas e Controllers) atua interceptando as requisições HTTP recebidas do cliente (frontend), extraindo os parâmetros e o corpo da requisição, e repassando o fluxo para as camadas internas de processamento, sem carregar lógica de negócio.
 
-<div align="center">
-    <p>Figura 8: Diagrama de Classe Arquitetural - Bootstrap e Express</p>
-    <img src="outros/diagramas_arquitetura/diagramaArquitetura-Btstrp&Expr.png" alt="Diagrama de Classe Arquitetural - Bootstrap e Express" width="720" height="431">
-    <p>Feito pela própria equipe (2026)</p>
-</div>
-
-Este recorte foca na porta de entrada da aplicação. A camada de Bootstrap (geralmente arquivos como server.ts e app.ts) é responsável por configurar o servidor, aplicar os middlewares essenciais (como tratamento de JSON e CORS) e levantar o serviço. Em conjunto, a camada do Express (Rotas e Controllers) atua interceptando as requisições HTTP recebidas do cliente (frontend), extraindo os parâmetros e o corpo da requisição, e repassando o fluxo para as camadas internas de processamento, sem carregar lógica de negócio.
-
-<div align="center">
-    <p>Figura 9: Diagrama de Classe Arquitetural - Bootstrap e Express</p>
-    <img src="outros/diagramas_arquitetura/diagramaArquitetura-Btstrp&Expr.png" alt="Diagrama de Classe Arquitetural - Bootstrap e Express" width="720" height="431">
-    <p>Feito pela própria equipe (2026)</p>
-</div>
-
-Este diagrama destaca a camada de Modelos (Models), que representa as entidades fundamentais do domínio da aplicação (como Pessoa, Moradia, Família, etc.). No contexto do projeto, os models atuam definindo os tipos, interfaces e a estrutura dos dados (contratos de dados) que circulam pelo sistema. Eles garantem que todas as outras camadas saibam exatamente qual é o formato correto dos objetos com os quais estão lidando, garantindo a consistência das informações.
-
-<div align="center">
-    <p>Figura 10: Diagrama de Classe Arquitetural - Models</p>
-    <img src="outros/diagramas_arquitetura/diagramaArquitetura-Models.png" alt="Diagrama de Classe Arquitetural - Models" width="720" height="356">
-    <p>Feito pela própria equipe (2026)</p>
-</div>
-
-Este diagrama destaca a camada de Modelos (Models), que representa as entidades fundamentais do domínio da aplicação (como Pessoa, Moradia, Família, etc.). No contexto do projeto, os models atuam definindo os tipos, interfaces e a estrutura dos dados (contratos de dados) que circulam pelo sistema. Eles garantem que todas as outras camadas saibam exatamente qual é o formato correto dos objetos com os quais estão lidando, garantindo a consistência das informações.
-
-<div align="center">
-    <p>Figura 11: Diagrama de Classe Arquitetural - Validations</p>
-    <img src="outros/diagramas_arquitetura/diagramaArquitetura-Validations.png" alt="Diagrama de Classe Arquitetural - Validations" width="720" height="394">
-    <p>Feito pela própria equipe (2026)</p>
-</div>
+O recorte de **Models** destaca a camada de Modelos (Models), que representa as entidades fundamentais do domínio da aplicação (como Pessoa, Moradia, Família, etc.). No contexto do projeto, os models atuam definindo os tipos, interfaces e a estrutura dos dados (contratos de dados) que circulam pelo sistema. Eles garantem que todas as outras camadas saibam exatamente qual é o formato correto dos objetos com os quais estão lidando, garantindo a consistência das informações.
 
 A seção de Validations (Validações) e DTOs (Data Transfer Objects) é a barreira de segurança e consistência dos dados. Antes que a requisição chegue ao núcleo da aplicação (os Services), esta camada verifica se as informações enviadas pelo usuário seguem as regras esperadas (por exemplo, se campos obrigatórios foram preenchidos, se o CPF tem o formato correto, etc.). Se os dados forem inválidos, a requisição é barrada aqui e um erro claro é retornado, poupando processamento e evitando inconsistências no banco de dados.
 
-<div align="center">
-    <p>Figura 12: Diagrama de Classe Arquitetural - Repositories e Service</p>
-    <img src="outros/diagramas_arquitetura/diagramaArquitetura-Repo&Serv.png" alt="Diagrama de Classe Arquitetural - Repositories e Service" width="720" height="175">
-    <p>Feito pela própria equipe (2026)</p>
-</div>
+O recorte de **Repositories e Service** exibe o coração da aplicação, onde a lógica e o armazenamento operam em conjunto. A camada de Services é responsável por centralizar as regras de negócio: ela orquestra validações complexas, regras de vinculação (ex: atrelar uma pessoa a uma moradia) e transações. Para buscar ou salvar essas informações, os Services não acessam o banco diretamente; eles delegam essa tarefa para os Repositories. A camada de Repositórios abstrai a comunicação direta com o banco de dados (PostgreSQL/Supabase), contendo as queries e isolando a infraestrutura de dados da lógica central.
 
-Este recorte exibe o coração da aplicação, onde a lógica e o armazenamento operam em conjunto. A camada de Services é responsável por centralizar as regras de negócio: ela orquestra validações complexas, regras de vinculação (ex: atrelar uma pessoa a uma moradia) e transações. Para buscar ou salvar essas informações, os Services não acessam o banco diretamente; eles delegam essa tarefa para os Repositories. A camada de Repositórios abstrai a comunicação direta com o banco de dados (PostgreSQL/Supabase), contendo as queries e isolando a infraestrutura de dados da lógica central.
+Documento disponível do diagrama para navegação e aprofundamento do entendimento: [diagramaArquitetura.md](outros/diagramaArquitetura.md)
 
-Documento disponível do diagrama para navegação e aprofundamento do entendimento: [diagramaArquitetura.md](diagramaArquitetura.md)
-
-> **Versão em Mermaid (fonte da verdade: código).** Os diagramas abaixo são renderizados a partir do texto e servem de base fiel para regerar os PNGs acima. Refletem o backend atual (sem `views`/EJS) extraído de `src/geoRisco/src/`.
+> **Versão em Mermaid (fonte da verdade: código).** Os diagramas abaixo são renderizados a partir do texto e refletem o backend atual (sem `views`/EJS), extraído de `src/geoRisco/src/`.
 
 **Arquitetura em camadas — fluxo de uma requisição:**
 
@@ -750,7 +717,7 @@ A tabela abaixo mapeia cada grupo de endpoints ao controller, service e reposito
 | Grupo de Endpoints | Controller | Service | Repository | Arquivo de Rotas |
 |---|---|---|---|---|
 | `/api/pessoas` e `/api/pessoas/:id` | `PessoaController` | `PessoaService` | `PessoaRepository` | `pessoa.routes.ts` |
-| `/api/responsaveis` e `/api/responsaveis/:id` | `ResponsavelController` | `ResponsavelService` | `ResponsavelRepository` | `responsavel.routes.ts` |
+| `/api/responsaveis` e `/api/responsaveis/:id` | `PessoaController` | `PessoaService` | `PessoaRepository` | `pessoa.routes.ts` (módulo `pessoa` — não há módulo `responsavel` próprio após a migration `09`) |
 | `/api/familias` e `/api/familias/:id/*` | `FamiliaController` | `FamiliaService` | `FamiliaRepository` | `familia.routes.ts` |
 | `/api/moradias` e `/api/moradias/:id/*` | `MoradiaController` | `MoradiaService` | `MoradiaRepository` | `moradia.routes.ts` |
 | `/api/pets` e `/api/pets/:id/*` | `PetController` | `PetService` | `PetRepository` | `pet.routes.ts` |
@@ -775,7 +742,7 @@ O diagrama de casos de uso é uma ilustração visual que representa as funciona
 
 
 <div align="center">
-    <p>Figura 13: Diagrama de Casos de Uso</p>
+    <p>Figura 7: Diagrama de Casos de Uso</p>
     <img src="outros/diagrama_de_casos_de_uso.png" alt="Diagrama de Casos de Uso" width="720" height="349">
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -790,7 +757,7 @@ Link do diagrama (realizado por meio do site draw.io): https://drive.google.com/
 
 
 <div align="center">
-    <p>Figura 14: Diagrama de Classes de Domínio</p>
+    <p>Figura 8: Diagrama de Classes de Domínio</p>
     <img src="outros/diagrama-classes-dominio.drawio.png" alt="Diagrama de Classes de Domínio" width="720" height="499">
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -853,10 +820,8 @@ sequenceDiagram
         DB-->>Repository: id_familia
         Repository->>DB: INSERT familia_moradia<br/>{id_familia, id_moradia, data_entrada=hoje,<br/>data_saida=NULL, status='Regular'}
         DB-->>Repository: OK
-        Repository->>DB: INSERT pessoa do responsável<br/>{parentesco='Responsável', status='Ativo'}
+        Repository->>DB: INSERT pessoa do responsável<br/>{parentesco='Responsável', cpf, nis, renda, sexo, raca, estado_civil, status='Ativo'}
         DB-->>Repository: id_pessoa_responsavel
-        Repository->>DB: INSERT responsavel<br/>{id_pessoa, cpf, renda, NIS, sexo, raca, estado_civil}
-        DB-->>Repository: OK
         Repository->>DB: INSERT pessoa_familia<br/>{id_pessoa_responsavel, id_familia, data_entrada=hoje}
         DB-->>Repository: OK
 
@@ -912,7 +877,7 @@ sequenceDiagram
 ```
 
 
-Este fluxo descreve a jornada de cadastro conduzida pelo **Agente de Campo (A01)** a partir do aplicativo mobile. O processo é estruturado em cinco sessões sequenciais: Moradia, Localização, Chefe de Família, Composição Familiar e Pets. Cada uma liberada somente após a confirmação da anterior, garantindo a integridade referencial dos dados antes do envio. Ao submeter o formulário completo, o Frontend dispara uma sequência ordenada de requisições `POST` que cria os registros em cascata (`LOCALIZACAO → MORADIA → PESSOA → RESPONSAVEL → PET → FORMULARIO`), enquanto o Service aplica as regras de negócio RN01 (classificação de risco) e RN04 (restrição de fotos). O **caminho de exceção** de duplicidade de cadastro, que oferece ao agente as opções de busca, atualização ou cancelamento.
+Este fluxo descreve a jornada de cadastro conduzida pelo **Agente de Campo (A01)** a partir do aplicativo mobile. O processo é estruturado em cinco sessões sequenciais: Moradia, Localização, Chefe de Família, Composição Familiar e Pets. Cada uma liberada somente após a confirmação da anterior, garantindo a integridade referencial dos dados antes do envio. Ao submeter o formulário completo, o Frontend dispara uma única requisição transacional `POST /api/familias/nucleo` que cria os registros em cascata (`LOCALIZACAO → MORADIA → FAMILIA → FAMILIA_MORADIA → PESSOA → PESSOA_FAMILIA → PET → FOTO`), enquanto o Service aplica as regras de negócio RN01 (responsável obrigatório) e RN07 (foto sem pessoas). Vale notar que, após a migration `09`, o responsável deixou de ter tabela própria: ele é inserido como uma `pessoa` com `parentesco='Responsável'` e os campos sociais/financeiros (CPF, NIS, renda etc.) já preenchidos. O **caminho de exceção** de duplicidade de cadastro, que oferece ao agente as opções de busca, atualização ou cancelamento.
 
 ### FL02 — Visualização de moradias em mapa georreferenciado
 
@@ -998,7 +963,7 @@ sequenceDiagram
     end
 ```
 
-Este fluxo detalha a consulta integrada executada pelo **Gestor Operacional (A02/A03)** ao pesquisar ou selecionar uma ficha. O Frontend solicita uma listagem resumida de moradias e, após a seleção de um registro, carrega os dados completos da moradia, localização, ocupação ativa, família, responsável, moradores, gestantes, grupos prioritários, pets e fotos. A consulta utiliza o `historico_ocupacao` para identificar a família atualmente vinculada à moradia, considerando apenas ocupações com `data_saida` nula. Caso não exista ocupação ativa, o sistema retorna a ficha do imóvel sem moradores ativos. Quando há ocupação ativa, o Service calcula a prioridade de evacuação (RN01) e avalia a flag de Risco Crítico (RN05).
+Este fluxo detalha a consulta integrada executada pelo **Gestor Operacional (A02/A03)** ao pesquisar ou selecionar uma ficha. O Frontend solicita uma listagem resumida de moradias e, após a seleção de um registro, carrega os dados completos da moradia, localização, ocupação ativa, família, responsável, moradores, gestantes, grupos prioritários, pets e fotos. A consulta utiliza a tabela associativa `familia_moradia` para identificar a família atualmente vinculada à moradia, considerando apenas ocupações com `data_saida` nula. Caso não exista ocupação ativa, o sistema retorna a ficha do imóvel sem moradores ativos. Quando há ocupação ativa, o Service calcula a prioridade de evacuação (RN01) e avalia a flag de Risco Crítico (RN05).
 ---
 
 ### FL04 — Filtros avançados de moradias e assistidos (Backlog)
@@ -1033,7 +998,7 @@ sequenceDiagram
     end
 ```
 
-Este fluxo representa o uso de filtros avançados pelo **Gestor Operacional (A02/A03)** na tela de gerenciamento de dados. O usuário pode combinar critérios como status da moradia, condição de ocupação, grupos prioritários, vulnerabilidades, destino em caso de evacuação e situação de recadastro. O Frontend envia os filtros ao Controller, que delega ao Service a validação dos parâmetros e a montagem da consulta. O Repository cruza as tabelas `moradia`, `localizacao`, `historico_ocupacao`, `familia`, `pessoa`, `pessoa_grupo_prioritario` e `grupo_prioritario`, retornando uma lista filtrada. Quando não há resultados, o painel exibe uma mensagem orientativa. Quando há registros, o gestor pode exportar a listagem em formato CSV ou PDF.
+Este fluxo representa o uso de filtros avançados pelo **Gestor Operacional (A02/A03)** na tela de gerenciamento de dados. O usuário pode combinar critérios como status da moradia, condição de ocupação, grupos prioritários, vulnerabilidades, destino em caso de evacuação e situação de recadastro. O Frontend envia os filtros ao Controller, que delega ao Service a validação dos parâmetros e a montagem da consulta. O Repository cruza as tabelas `moradia`, `localizacao`, `familia_moradia`, `familia`, `pessoa`, `pessoa_grupo_prioritario` e `grupo_prioritario`, retornando uma lista filtrada. Quando não há resultados, o painel exibe uma mensagem orientativa. Quando há registros, o gestor pode exportar a listagem em formato CSV ou PDF.
 
 ---
 
@@ -1117,7 +1082,7 @@ sequenceDiagram
     end
 ```
 
-Este fluxo descreve a revisão anual de uma família marcada para recadastro, conduzida pelo **Agente de Campo (A01)**. O Frontend carrega o cadastro completo da família, incluindo ocupação ativa, moradia, localização, responsável, moradores, gestantes, pets e fotos. O agente revisa os dados em campo e envia as alterações para o backend, que valida as regras RN01, RN02 e RN07 antes de persistir as atualizações. Caso a família tenha mudado de moradia, o Service encerra o vínculo atual em `historico_ocupacao` com `data_saida` e cria uma nova ocupação ativa. Em modo offline, a alteração é enfileirada no cache local com UUID próprio e sincronizada posteriormente.
+Este fluxo descreve a revisão anual de uma família marcada para recadastro, conduzida pelo **Agente de Campo (A01)**. O Frontend carrega o cadastro completo da família, incluindo ocupação ativa, moradia, localização, responsável, moradores, gestantes, pets e fotos. O agente revisa os dados em campo e envia as alterações para o backend, que valida as regras RN01, RN02 e RN07 antes de persistir as atualizações. Caso a família tenha mudado de moradia, o Service encerra o vínculo atual em `familia_moradia` com `data_saida` e cria uma nova ocupação ativa. Em modo offline, a alteração é enfileirada no cache local com UUID próprio e sincronizada posteriormente.
 
 ---
 
@@ -1253,7 +1218,7 @@ sequenceDiagram
     end
 ```
 
-Este fluxo representa o arquivamento lógico de uma moradia pelo **Gestor Operacional (A03)**. O gestor seleciona uma moradia ativa, informa o motivo do arquivamento e envia a solicitação de alteração de status. O Service verifica se existe uma ocupação ativa vinculada à moradia por meio de `historico_ocupacao`. Se houver família ativa residindo no local, a operação é bloqueada com conflito, pois a US14 exige que toda família ativa possua uma moradia ativa vinculada. Nesse caso, o sistema solicita realocação ou inativação da família antes de concluir o arquivamento. Se não houver ocupação ativa, o status da moradia é atualizado sem exclusão física, preservando a rastreabilidade histórica conforme RN03.
+Este fluxo representa o arquivamento lógico de uma moradia pelo **Gestor Operacional (A03)**. O gestor seleciona uma moradia ativa, informa o motivo do arquivamento e envia a solicitação de alteração de status. O Service verifica se existe uma ocupação ativa vinculada à moradia por meio de `familia_moradia`. Se houver família ativa residindo no local, a operação é bloqueada com conflito, pois a US14 exige que toda família ativa possua uma moradia ativa vinculada. Nesse caso, o sistema solicita realocação ou inativação da família antes de concluir o arquivamento. Se não houver ocupação ativa, o status da moradia é atualizado sem exclusão física, preservando a rastreabilidade histórica conforme RN03.
 
 ---
 
@@ -1305,8 +1270,8 @@ sequenceDiagram
                 PessoaController-->>Frontend: HTTP 200 OK
 
                 Frontend->>PessoaController: POST /api/responsaveis {idPessoa: id_novo, cpf, renda, NIS, sexo, raca, estado_civil}
-                PessoaController->>Service: Criar registro de responsável financeiro/social
-                Service->>Repository: INSERT INTO responsavel (...) VALUES (...)
+                PessoaController->>Service: Promover pessoa a responsável (dados financeiros/sociais)
+                Service->>Repository: UPDATE pessoa SET cpf, renda, nis, sexo, raca, estado_civil ... WHERE id=:id_novo<br/>(responsável é uma pessoa; tabela responsavel removida na migration 09)
                 DB-->>Repository: OK
                 Service-->>PessoaController: OK
                 PessoaController-->>Frontend: HTTP 201 Created
@@ -1333,7 +1298,7 @@ sequenceDiagram
     end
 ```
 
-Este fluxo descreve o arquivamento lógico de um morador falecido realizado pelo **Gestor Operacional (A02)**. O gestor informa a data de falecimento e confirma a operação. O Service verifica se o cidadão é o responsável da família. Caso seja, o sistema exige a escolha de um novo responsável ativo antes de concluir o arquivamento, preservando a integridade definida pela US13. Quando a substituição é resolvida, o cadastro do cidadão é inativado por meio de `status_cadastro=false`, sem deleção física. Após a atualização, o Service reavalia a prioridade da família e a regra de Risco Crítico, garantindo que consultas e relatórios ativos não exibam moradores arquivados.
+Este fluxo descreve o arquivamento lógico de um morador falecido realizado pelo **Gestor Operacional (A02)**. O gestor informa a data de falecimento e confirma a operação. O Service verifica se o cidadão é o responsável da família. Caso seja, o sistema exige a escolha de um novo responsável ativo antes de concluir o arquivamento, preservando a integridade definida pela US13. Quando a substituição é resolvida, o cadastro do cidadão é inativado por meio de `status='Inativo'` e `deleted_at`, sem deleção física. Após a atualização, o Service reavalia a prioridade da família e a regra de Risco Crítico, garantindo que consultas e relatórios ativos não exibam moradores arquivados.
 
 ---
 
@@ -1364,7 +1329,7 @@ sequenceDiagram
     Frontend-->>Gestor: Exibe lista com tags visuais de alerta (Tag de Recadastro) nas moradias vencidas
 ```
 
-Este fluxo documenta a rotina de recadastro obrigatório prevista pela RN02. O calculo de recadastro e feito sob demanda: cada consulta avalia moradias ativas cuja `ultima_atualizacao` tenha ultrapassado 365 dias. A consulta considera moradias com ocupação ativa e família ativa, evitando alertas sobre registros apenas históricos. No painel, o **Gestor Operacional (A02/A03)** consulta os indicadores de recadastro e visualiza o total de cadastros atualizados e desatualizados. Ao clicar no indicador, o Frontend redireciona para a listagem de moradias com o filtro `desatualizado=true`, permitindo organizar as revisitas de campo.
+Este fluxo documenta a rotina de recadastro obrigatório prevista pela RN09. O calculo de recadastro e feito sob demanda: cada consulta avalia moradias ativas cuja data de última modificação (`data_modificacao`/`data_registro`) tenha ultrapassado 365 dias. A consulta considera moradias com ocupação ativa e família ativa, evitando alertas sobre registros apenas históricos. No painel, o **Gestor Operacional (A02/A03)** consulta os indicadores de recadastro e visualiza o total de cadastros atualizados e desatualizados. Ao clicar no indicador, o Frontend redireciona para a listagem de moradias com o filtro `desatualizado=true`, permitindo organizar as revisitas de campo.
 
 ---
 
@@ -1448,12 +1413,41 @@ sequenceDiagram
     end
 ```
 
-Este fluxo consolida as validações derivadas das US13 e US14. Ele não representa uma tela isolada, mas uma regra transversal chamada por operações de cadastro, atualização, arquivamento e realocação. Sempre que uma família ativa é alterada, o Service verifica se existe responsável ativo vinculado e se há uma ocupação ativa em moradia válida. Se a família ficar sem responsável, a operação é bloqueada e o usuário deve definir um novo responsável. Se a família ficar sem moradia ativa, o sistema exige a criação de uma nova ocupação ou a inativação da família. Essa validação impede inconsistências cadastrais e preserva a coerência entre `familia`, `responsavel`, `moradia` e `historico_ocupacao`.
+Este fluxo consolida as validações derivadas das US13 e US14. Ele não representa uma tela isolada, mas uma regra transversal chamada por operações de cadastro, atualização, arquivamento e realocação. Sempre que uma família ativa é alterada, o Service verifica se existe responsável ativo vinculado e se há uma ocupação ativa em moradia válida. Se a família ficar sem responsável, a operação é bloqueada e o usuário deve definir um novo responsável. Se a família ficar sem moradia ativa, o sistema exige a criação de uma nova ocupação ou a inativação da família. Essa validação impede inconsistências cadastrais e preserva a coerência entre `familia`, `pessoa` (responsável, identificado por `parentesco='Responsável'`), `moradia` e `familia_moradia`.
 
 
 ### 3.2.5. Diagrama de Atividades ou Estados
 
-*Ao menos um fluxo relevante em UML ou BPMN. Use a notação da ferramenta escolhida de forma consistente (sem misturar convenções).*
+O diagrama de estados a seguir representa o ciclo de vida de uma **Moradia** no GeoRisco, que é o artefato com transições de estado mais relevantes do domínio. Ele consolida dois eixos definidos nos requisitos: a *situação* da moradia, marcada manualmente pelo agente ou gestor (RF015 — Ativa, Em Risco, Interditada e Demolida, sem inferência automática de risco, conforme RN08), e o *arquivamento lógico* por *soft delete* (RF009 — arquivar e desarquivar, preservando o registro no histórico em vez de apagá-lo, conforme RN06). A notação utilizada é a de diagrama de estados da UML, expressa em Mermaid, mantendo consistência com os demais diagramas deste documento.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Ativa: Cadastro da moradia (RF002)
+
+    Ativa --> EmRisco: Marcar Em Risco (RF015)
+    EmRisco --> Ativa: Reavaliar como Ativa
+    Ativa --> Interditada: Marcar Interditada (RF015)
+    EmRisco --> Interditada: Marcar Interditada (RF015)
+    Interditada --> Ativa: Reavaliar como Ativa
+    Interditada --> Demolida: Marcar Demolida (RF015)
+
+    Ativa --> Arquivada: Arquivar (RF009 · soft delete)
+    EmRisco --> Arquivada: Arquivar (RF009)
+    Interditada --> Arquivada: Arquivar (RF009)
+    Demolida --> Arquivada: Arquivar (RF009)
+    Arquivada --> Ativa: Desarquivar (RF009)
+    Arquivada --> [*]
+
+    note right of Arquivada
+        Arquivamento lógico (deleted_at):
+        a moradia sai da busca e do mapa ativo,
+        fica visível só no Histórico Inativo, e
+        os moradores vinculados passam a exibir
+        o indicador cadastro incompleto.
+    end note
+```
+
+A leitura do diagrama evidencia que a situação da moradia é um estado editável e reversível (uma moradia marcada como Interditada ou Em Risco pode voltar a ser Ativa após reavaliação em campo), ao passo que o arquivamento é uma transição transversal, aplicável a partir de qualquer situação, que retira a moradia das operações ativas sem destruir o registro. Esse comportamento sustenta a integridade histórica exigida pela RN06 e o requisito de arquivamento/desarquivamento descrito no RF009.
 
 ### 3.2.6. Diagrama de Implantação
 
@@ -1521,7 +1515,7 @@ Vale ressaltar que todas as informações presentes nos wireframes são apenas p
 ### **1. Página Inicial**
 
 <div align="center">
-    <p>Figura 15: Wireframe Tela Inicial</p>
+    <p>Figura 9: Wireframe Tela Inicial</p>
     <img src="outros/paginaInicial.png" alt="Wireframe Tela Inicial" width="360" height="522">
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -1547,7 +1541,7 @@ Para concluir o cadastro, um botão "Concluir Cadastro" deve ser exibido assim q
 ---
 
 <div align="center">
-    <p>Figura 16: Wireframe Tela Cadastro - Moradias</p>
+    <p>Figura 10: Wireframe Tela Cadastro - Moradias</p>
     <img src="outros/cadastro1.png" alt="Wireframe Tela Cadastro - Moradias" width="360" height="558">
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -1563,7 +1557,7 @@ Neste wireframe, por conter uma tela bastante preenchida com informações perti
 ---
 
 <div align="center">
-    <p>Figura 17: Wireframe Tela Cadastro - Responsável</p>
+    <p>Figura 11: Wireframe Tela Cadastro - Responsável</p>
     <img src="outros/cadastro2.png" alt="Wireframe Tela Cadastro - Responsável" width="360" height="553">
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -1577,7 +1571,7 @@ Neste wireframe, por conter uma tela bastante preenchida com informações perti
 ---
 
 <div align="center">
-    <p>Figura 18: Wireframe Tela Cadastro - Moradores</p>
+    <p>Figura 12: Wireframe Tela Cadastro - Moradores</p>
     <img src="outros/cadastro3.png" alt="Wireframe Tela Cadastro - Moradores" width="360" height="555">
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -1591,7 +1585,7 @@ Além disso, vale ressaltar que na imagem está representado apenas o preenchime
 ---
 
 <div align="center">
-    <p>Figura 19: Wireframe Tela Cadastro - Pets</p>
+    <p>Figura 13: Wireframe Tela Cadastro - Pets</p>
     <img src="outros/cadastro4.png" alt="Wireframe Tela Cadastro - Pets" width="360" height="556">
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -1605,7 +1599,7 @@ Para o cadastro de Pets, será possível incluir algumas informações essenciai
 ### **3. Página de Mapa**
 
 <div align="center">
-    <p>Figura 20: Wireframe Tela Mapa</p>
+    <p>Figura 14: Wireframe Tela Mapa</p>
     <img src="outros/mapa.png" alt="Wireframe Tela Mapa" width="360" height="515">
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -1615,7 +1609,7 @@ Esta seção permite a interação com um mapa georreferenciado e refinar a exib
 ### **4. Página de Busca**
 
 <div align="center">
-    <p>Figura 21: Wireframe Tela Busca</p>
+    <p>Figura 15: Wireframe Tela Busca</p>
     <img src="outros/consulta1.png" alt="Wireframe Tela Busca" width="360" height="557">
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -1625,7 +1619,7 @@ Esta seção permite a localização rápida de registros no sistema através de
 Os dados encontrados são apresentados na área de "Resultados" em formato de lista contínua com cartões (cards). Cada cartão é estruturado para exibir uma imagem ou foto de referência à esquerda, acompanhada de linhas detalhadas de informações textuais à direita. Além disso, a tela preserva a barra retrátil de navegação na área inferior, garantindo que o usuário possa expandi-la para alternar agilmente entre os demais módulos do sistema.
 
 <div align="center">
-    <p>Figura 22: Wireframe Tela Resultado da Busca</p>
+    <p>Figura 16: Wireframe Tela Resultado da Busca</p>
     <img src="outros/consulta2.png" alt="Wireframe Tela Resultado da Busca" width="360" height="554">
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -1638,7 +1632,7 @@ Esta seção apresenta o detalhamento de um registro específico, acessado após
 Esta seção apresenta o guia de estilos utilizado no desenvolvimento da aplicação web. Aqui estão definidos os padrões visuais e componentes de interface adotados, como cores, tipografia, botões, ícones e demais elementos gráficos. O objetivo é garantir consistência visual, padronização e melhor experiência de uso durante o desenvolvimento e evolução da solução.
 
 <div align="center">
-    <p>Figura 23: Guia de estilos</p>
+    <p>Figura 17: Guia de estilos</p>
     <img src="outros/guia_de_estilos.png" alt="Guia de estilos" width="600" height="714">
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -1648,13 +1642,13 @@ Esta seção apresenta o guia de estilos utilizado no desenvolvimento da aplica�
 A paleta de cores pensada para a prototipação foi inspirada na logo oficial da própria Defesa Civil de Santo André e do CREDEC-SA (Centro de Resiliência às Emergências de Defesa Civil de Santo André). Logos: 
 
 <div align="center">
-    <p>Figura 24: Logo da Defesa Civil de Santo André</p>
+    <p>Figura 18: Logo da Defesa Civil de Santo André</p>
     <img src="outros/logoSantoAndre.png" alt="Logo da Defesa Civil de Santo André" width="220" height="178">
     <p>Feito pela própria equipe (2026)</p>
 </div>
 
 <div align="center">
-    <p>Figura 25: Logo do CREDEC-SA</p>
+    <p>Figura 19: Logo do CREDEC-SA</p>
     <img src="outros/logoCREDEC.png" alt="Logo do CREDEC-SA" width="180" height="180">
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -1732,7 +1726,7 @@ Na parte inferior, uma barra de navegação fixa exibe os três atalhos principa
 ---
 
 <div align="center">
-    <p>Figura 26: Mockup da Tela Inicial </p>
+    <p>Figura 20: Mockup da Tela Inicial </p>
     <img src="outros/inicial v2.png" alt="Mockup da Tela Inicial" width="360" height="512">
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -1753,7 +1747,7 @@ A barra de navegação inferior mantém o padrão da aplicação com os atalhos
 **Cadastro**, **Mapa** (ativo) e **Busca**.
 
  <div align="center">
-    <p>Figura 27: Mockup Tela de Mapa </p>
+    <p>Figura 21: Mockup Tela de Mapa </p>
     <img src="outros/mapa v2.png" alt="Mockup Tela de Mapa" width="360" height="512">
     <p>Feito pela própria equipe (2026)</p>
 </div> 
@@ -1779,7 +1773,7 @@ A barra de navegação inferior mantém o padrão com **Cadastro**, **Mapa** (at
 e **Busca**.
 
  <div align="center">
-    <p>Figura 28: Mockup Tela de Busca </p>
+    <p>Figura 22: Mockup Tela de Busca </p>
     <img src="outros/busca v2.png" alt="Mockup Tela de Busca" width="360" height="512">
     <p>Feito pela própria equipe (2026)</p>
 </div> 
@@ -1793,7 +1787,7 @@ Além disso, os protótipos apresentam funcionalidades em comum, sendo elas: a b
 ---
 
 <div align="center">
-    <p>Figura 29: Mockup da Seção 1 de Cadastro </p>
+    <p>Figura 23: Mockup da Seção 1 de Cadastro </p>
     <img src="outros/formularioMoradia.png" alt="Mockup da Seção 1 de Cadastro" width="360" height="553">
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -1809,7 +1803,7 @@ Este protótipo já apresenta exemplos de informações a serem adicionadas nos 
 ---
 
 <div align="center">
-    <p>Figura 30: Mockup da Seção 2 de Cadastro </p>
+    <p>Figura 24: Mockup da Seção 2 de Cadastro </p>
     <img src="outros/formularioResponsavel.png" alt="Mockup da Seção 2 de Cadastro" width="360" height="553">
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -1823,7 +1817,7 @@ Este protótipo já apresenta exemplos de informações a serem adicionadas nos 
 ---
 
 <div align="center">
-    <p>Figura 31: Mockup da Seção 3 de Cadastro </p>
+    <p>Figura 25: Mockup da Seção 3 de Cadastro </p>
     <img src="outros/formularioMoradores.png" alt="Mockup da Seção 3 de Cadastro" width="360" height="553">
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -1839,7 +1833,7 @@ Este protótipo já apresenta exemplos de informações a serem adicionadas nos 
 ---
 
 <div align="center">
-    <p>Figura 32: Mockup da Seção 4 de Cadastro </p>
+    <p>Figura 26: Mockup da Seção 4 de Cadastro </p>
     <img src="outros/formularioPets.png" alt="Mockup da Seção 4 de Cadastro" width="360" height="553">
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -1867,13 +1861,7 @@ Este protótipo já apresenta exemplos de informações a serem adicionadas nos 
 
 O **Modelo Entidade-Relacionamento (MER)** é uma abordagem conceitual que representa a estrutura de dados de um sistema através da identificação de entidades (objetos do mundo real), seus atributos e os relacionamentos entre elas. Para este projeto, adotamos a **notação Chen**, que utiliza retângulos para entidades, losangos para relacionamentos, elipses para atributos e triângulos para especializações, oferecendo clareza visual e conformidade com padrões acadêmicos e profissionais.
 
-<div align="center">
-    <p>Figura 33: Modelo Entidade-Relacionamento</p>
-    <img src="outros/MER.png" alt="Modelo Entidade-Relacionamento" width="720" height="491">
-    <p>Feito pela própria equipe (2026)</p>
-</div>
-
-> **Versão em Mermaid (fonte da verdade: schema real em `src/geoRisco/src/`).** Base fiel para regerar o PNG. Cardinalidades conferidas contra os repositories e migrations.
+> **Versão em Mermaid (fonte da verdade: schema real em `src/geoRisco/src/`).** Cardinalidades conferidas contra os repositories e migrations.
 
 ```mermaid
 erDiagram
@@ -1932,13 +1920,7 @@ O modelo lógico traduz o modelo conceitual para a estrutura de um banco de dado
 
 Abaixo é apresentado o esquema visual do banco de dados, ilustrando as tabelas físicas, os seus atributos e os relacionamentos implementados.
 
-<div align="center">
-    <p>Figura 34: Diagrama Entidade-Relacionamento Lógico</p>
-    <img src="outros/DER.png" alt="Diagrama Entidade-Relacionamento Lógico" width="720" height="461">
-    <p>Feito pela própria equipe (2026)</p>
-</div>
-
-> **Versão em Mermaid (modelo físico — colunas e tipos extraídos dos models e das queries dos repositories).** Base fiel para regerar o PNG.
+> **Versão em Mermaid (modelo físico — colunas e tipos extraídos dos models e das queries dos repositories).**
 
 ```mermaid
 erDiagram
@@ -2771,7 +2753,7 @@ Dentre as dificuldades, encontramos problemas diversos considerando o prazo de e
 ### 4.1.5 Demonstrações visuais
 
 <div align="center">
-    <p>Figura 35: Arquitetura de Pastas e Classes</p>
+    <p>Figura 27: Arquitetura de Pastas e Classes</p>
     <img src="outros/arquitetura-pastas.png" alt="Arquitetura de Pastas e Classes" width="360" height="713">
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -2938,7 +2920,36 @@ O middleware de autenticação **ainda não foi implementado**. Os status `401` 
 
 ## 4.3. Versão final da aplicação web
 
-*Descreva e ilustre aqui o desenvolvimento da versão final do sistema web, com foco em refatorações, correções finais e na camada de autenticação/autorização entregue. Utilize prints de tela para ilustrar. Indique obrigatoriamente: (a) o que foi refinado ou adicionado desde a sprint 4, (b) pendências remanescentes, (c) dificuldades técnicas enfrentadas.*
+Na sprint final, a versão definitiva do GeoRisco foi estabilizada como uma aplicação web operacional para cadastro, consulta e visualização georreferenciada de famílias, moradias, moradores, responsáveis, pets e fotos. O foco técnico esteve na consolidação do fluxo ponta a ponta entre frontend, backend, banco de dados e armazenamento de imagens, com ênfase em resiliência operacional para uso em campo, consistência transacional, tratamento padronizado de erros e execução em produção. As decisões de arquitetura, autenticação, autorização e resiliência que sustentam esta versão estão detalhadas na seção 3.8 e são aqui retomadas sob a ótica do que foi efetivamente entregue.
+
+### 4.3.1. O que foi refinado ou adicionado desde a sprint 4
+
+Desde a sprint 4, o desenvolvimento concentrou-se em estabilização e refinamento, e não na adição de grandes módulos novos. No frontend, foi consolidada a SPA em React, TypeScript e Vite, com navegação por React Router e visualização geográfica baseada em Leaflet, estabilizando as telas de Home, Cadastro, Busca, Pessoas e Mapa. Entre os refinamentos realizados, destacam-se:
+
+- aprimoramento do fluxo de cadastro de núcleo familiar, com validações mais claras para responsável, moradores, moradia, pets, fotos e localização;
+- ajustes de usabilidade no feedback visual de campos inválidos e na personalização das mensagens de erro (datas inválidas ou futuras, restrição do NIS a dígitos, obrigatoriedade de raça no cadastro de pets e tratamento de morador já vinculado a outra moradia);
+- adoção, na interface, da linguagem de inativação/arquivamento em vez de deleção física, alinhando o vocabulário ao escopo de *soft delete*;
+- consolidação do suporte offline na Home, com agrupamento do download do mapa e do estado de preparação para campo, ilustrado na tela inicial (ver `outros/inicial v2.png`);
+- limitação da navegação do mapa ao território brasileiro, com foco operacional em Santo André, e preservação das imagens selecionadas em cadastros offline para envio posterior (ver `outros/mapa v2.png`);
+- estabilização da busca integrada de famílias, moradias e pessoas (ver `outros/busca v2.png`).
+
+No backend, mantido em Express com TypeScript e organizado em camadas (`controllers`, `services`, `repositories`, `dtos`, `models`, `validations`, `errors`, `db` e `storage`), a estabilização concentrou-se na preservação dos contratos de API e na consistência entre validações, serviços e respostas HTTP. O endpoint transacional `POST /api/familias/nucleo` foi consolidado como contrato principal do cadastro completo, com operações compostas protegidas por transações (`BEGIN`, `COMMIT`, `ROLLBACK`) — atendendo ao RNF002 de confiabilidade — enquanto o tratamento de exceções foi padronizado por meio da classe `HttpError` e dos *handlers* de controller. Essas refatorações reduziram o acoplamento entre rotas, regras de negócio e persistência, atendendo especialmente ao RNF008 de manutenibilidade. A suíte de testes foi estabilizada com Jest e Supertest no backend e com Vitest e `fake-indexeddb` para a fila offline do frontend, conforme detalhado na seção 5.
+
+Quanto à **camada de autenticação e autorização**, registra-se de forma transparente que ela **não foi implementada** nesta versão. Conforme documentado na seção 3.8, a aplicação opera em ambiente controlado de validação acadêmica com dados fictícios, sem fluxo de login, sessão, token ou controle de acesso por perfil (RBAC). A segurança da entrega concentra-se na separação entre cliente e servidor, no uso de variáveis de ambiente, na não exposição de credenciais no frontend e em URLs assinadas para acesso às imagens. Uma camada formal de autenticação permanece como evolução futura, necessária antes de qualquer uso com dados reais.
+
+### 4.3.2. Pendências remanescentes
+
+Ao final do desenvolvimento, permanecem as seguintes pendências, que não impedem a validação do MVP, mas devem ser tratadas antes de um uso institucional com dados reais e múltiplos perfis:
+
+- ausência de autenticação e autorização por perfil (login, sessão/token e RBAC);
+- ausência de mecanismos avançados de resiliência de rede, como *circuit breaker*, *timeout* configurável por requisição e *backoff* exponencial completo;
+- dependência de sincronização posterior para os cadastros realizados offline, sem garantia de idempotência por identificador único de operação;
+- funcionalidades planejadas ainda não entregues, como o mapa de calor e o alerta automático de recadastro;
+- pontos de usabilidade levantados nos testes SUS (percepção de complexidade e de inconsistência), cujos planos de ação estão descritos na seção 8.2.
+
+### 4.3.3. Dificuldades técnicas enfrentadas
+
+As principais dificuldades técnicas concentraram-se em três frentes. A primeira foi a **consistência transacional do cadastro completo**: garantir que uma falha no meio da criação de pessoa, responsável, família, moradia, vínculo, pet e foto não deixasse registros parciais exigiu a adoção de transações explícitas no endpoint `POST /api/familias/nucleo`, com reversão por `ROLLBACK`. A segunda foi o **funcionamento offline-first**, que demandou o uso de IndexedDB como fila local (*outbox*) para preservar tanto o payload quanto as imagens dos cadastros iniciados sem conexão, além de uma estratégia de *retry* controlado que diferencia falhas transitórias de rede de erros persistentes de regra de negócio, evitando laços infinitos de sincronização. A terceira foi o **deploy em produção**: diante da indisponibilidade do GitLab institucional no momento da publicação, optou-se pelo fluxo via Vercel CLI, com deploy independente do frontend e da API e injeção da URL base por meio de `VITE_API_BASE_URL`, cuidando para que a SPA hospedada na Vercel consumisse a WebAPI correta sem alteração de código-fonte. O passo a passo completo encontra-se em [`documentos/outros/tutorial-deploy.md`](outros/tutorial-deploy.md).
 
 # <a name="c5"></a>5. Testes
 
@@ -3033,7 +3044,7 @@ O Jest gera o relatório de cobertura a partir da configuração `src/geoRisco/j
 A evidência visual da execução do comando `npm test -- --coverage`, ou `npm.cmd test -- --coverage` é apresentada abaixo:
 
 <div align="center">
-    <p>Figura 36: Evidência da cobertura dos testes unitários de Service</p>
+    <p>Figura 28: Evidência da cobertura dos testes unitários de Service</p>
     <img src="outros/porcentagemTesteService.png" alt="Evidência da cobertura dos testes unitários de Service" width="720" height="359">
     <p>Feito pela própria equipe (2026)</p>
 </div>
@@ -3413,21 +3424,21 @@ O GeoRisco Santo André está inserido no setor de GovTech, que corresponde a um
 
 O setor surge da convergência entre a aceleração digital da sociedade e a defasagem histórica dos sistemas públicos, que ainda operam em grande parte com processos analógicos, fragmentados e pouco escaláveis (REF.9). À medida que governos enfrentam demandas crescentes por eficiência, transparência e sustentabilidade, o GovTech se consolida como resposta estrutural, oferecendo ferramentas que automatizam processos, reduzem custos operacionais e reconstroem a confiança pública.
 
-No Brasil, o contexto é especialmente favorável. O setor público é o maior comprador de produtos e serviços do país, respondendo por cerca de 12% do PIB brasileiro (REF.4), o que cria uma demanda estrutural contínua por soluções tecnológicas. Do ponto de vista regulatório, dois marcos legais moldam diretamente o segmento de GovTech voltado à gestão de riscos: a Lei nº 12.608/2012, que institui a Política Nacional de Proteção e Defesa Civil e exige cadastros atualizados de populações vulneráveis, e a LGPD (Lei nº 13.709/2018), que impõe requisitos de rastreabilidade e proteção de dados sensíveis coletados em campo (REF.10).
+No Brasil, o contexto é especialmente favorável. O setor público é o maior comprador de produtos e serviços do país, respondendo por cerca de 12% do PIB brasileiro (REF.20), o que cria uma demanda estrutural contínua por soluções tecnológicas. Do ponto de vista regulatório, dois marcos legais moldam diretamente o segmento de GovTech voltado à gestão de riscos: a Lei nº 12.608/2012, que institui a Política Nacional de Proteção e Defesa Civil e exige cadastros atualizados de populações vulneráveis (REF.4), e a LGPD (Lei nº 13.709/2018), que impõe requisitos de rastreabilidade e proteção de dados sensíveis coletados em campo (REF.14).
 
 É nesse cenário que soluções como o GeoRisco encontram espaço: endereçando lacunas operacionais reais em municípios que carecem de sistemas digitais integrados para gestão de risco.
 
-Fontes (seção 9): (REF.4, REF.9, REF.10).
+Fontes (seção 9): (REF.4, REF.9, REF.14, REF.20).
 
 ### 6.2.2 Tamanho e Crescimento de Mercado
 
 O mercado relacionado ao GeoRisco Santo André está inserido no segmento de softwares de gestão de emergências, segurança pública e gerenciamento de crises, que apresenta forte expansão impulsionada pela digitalização dos serviços públicos, aumento da frequência de eventos climáticos extremos e necessidade de respostas mais rápidas e integradas.
 
-O mercado global de **Emergency Management Software (software de gestão de emergências)** foi estimado entre US$ 420 milhões e US$ 450 milhões em 2025/2026, com projeções de alcançar aproximadamente US$ 1,1 bilhão até 2035, representando uma taxa média de crescimento anual (CAGR) de 11,3% (REF.6). Esse crescimento é impulsionado pela adoção de soluções baseadas em nuvem, integração de dados geoespaciais e uso de inteligência artificial para monitoramento e resposta a desastres.
+O mercado global de **Emergency Management Software (software de gestão de emergências)** foi estimado entre US$ 420 milhões e US$ 450 milhões em 2025/2026, com projeções de alcançar aproximadamente US$ 1,1 bilhão até 2035, representando uma taxa média de crescimento anual (CAGR) de 11,3% (REF.7). Esse crescimento é impulsionado pela adoção de soluções baseadas em nuvem, integração de dados geoespaciais e uso de inteligência artificial para monitoramento e resposta a desastres.
 
-Em uma visão mais ampla, o mercado global de **software para segurança pública**, que engloba plataformas de gestão de incidentes, monitoramento em tempo real e coordenação de emergências, movimentou cerca de US$ 11,48 bilhões em 2025 e possui previsão de atingir US$ 24,23 bilhões até 2034, com crescimento anual médio de 9,2% (REF.7).
+Em uma visão mais ampla, o mercado global de **software para segurança pública**, que engloba plataformas de gestão de incidentes, monitoramento em tempo real e coordenação de emergências, movimentou cerca de US$ 11,48 bilhões em 2025 e possui previsão de atingir US$ 24,23 bilhões até 2034, com crescimento anual médio de 9,2% (REF.8).
 
-Além disso, o mercado de softwares de gestão de emergências está diretamente relacionado à continuidade operacional e resposta a eventos críticos, foi avaliado em US$ 143,97 bilhões em 2025 e deverá alcançar US$ 310,12 bilhões em 2034, mantendo CAGR de 8,9% (REF.8).
+Além disso, o mercado de softwares de gestão de emergências está diretamente relacionado à continuidade operacional e resposta a eventos críticos, foi avaliado em US$ 143,97 bilhões em 2025 e deverá alcançar US$ 310,12 bilhões em 2034, mantendo CAGR de 8,9% (REF.6).
 
 No contexto nacional, o Brasil conta com 1.295 municípios monitorados pelo CEMADEN em situação de risco geológico e hidrológico, dos quais a maioria carece de sistemas digitais de cadastro e georreferenciamento adequados. Segundo dados da Confederação Nacional de Municípios (CNM), mais de 60% dos municípios brasileiros que registraram decretações de situação de emergência entre 2013 e 2023 não dispõem de plataformas integradas de gestão de risco, operando com registros físicos ou planilhas descentralizadas. Esse cenário configura uma demanda reprimida expressiva no mercado nacional, particularmente em municípios de porte médio como Santo André, onde a digitalização da Defesa Civil representa tanto uma exigência regulatória quanto uma necessidade operacional imediata.
 
@@ -3439,15 +3450,15 @@ Fontes (seção 9): (REF.6, REF.7, REF.8).
 Três eixos de tendências convergem para ampliar a relevância e a adoção do GeoRisco Santo André nos próximos anos.
 
 **Tendências Tecnológicas**
-A consolidação das plataformas de Government as a Service (GaaS) e a adoção crescente de infraestrutura em nuvem pelo setor público brasileiro criam condições favoráveis para soluções SaaS B2G de baixo custo de implantação (REF.11). O avanço das APIs de geolocalização, como Google Maps Platform e OpenStreetMap, e a popularização de bibliotecas de mapas interativos (Leaflet, Mapbox) reduzem significativamente a barreira técnica para desenvolvimento de sistemas georreferenciados. Paralelamente, o crescimento do uso de dispositivos móveis por servidores públicos em campo impulsiona a demanda por aplicações mobile-first, exatamente o modelo adotado pelo GeoRisco. Essas condições tecnológicas tornam viável a implantação do GeoRisco sem infraestrutura própria de TI pelo município, com acesso imediato via navegador e dados centralizados em nuvem.
+A consolidação das plataformas de Government as a Service (GaaS) e a adoção crescente de infraestrutura em nuvem pelo setor público brasileiro criam condições favoráveis para soluções SaaS B2G de baixo custo de implantação (REF.21). O avanço das APIs de geolocalização, como Google Maps Platform e OpenStreetMap, e a popularização de bibliotecas de mapas interativos (Leaflet, Mapbox) reduzem significativamente a barreira técnica para desenvolvimento de sistemas georreferenciados. Paralelamente, o crescimento do uso de dispositivos móveis por servidores públicos em campo impulsiona a demanda por aplicações mobile-first, exatamente o modelo adotado pelo GeoRisco. Essas condições tecnológicas tornam viável a implantação do GeoRisco sem infraestrutura própria de TI pelo município, com acesso imediato via navegador e dados centralizados em nuvem.
 
 **Tendências Comportamentais**
-A digitalização acelerada dos processos públicos pós-pandemia gerou maior receptividade de gestores municipais a ferramentas digitais integradas (REF.12). Há também uma mudança de postura institucional: municípios deixam de reagir a desastres e passam a investir em prevenção e mapeamento contínuo de risco, o que aumenta a demanda por cadastros georreferenciados permanentes, e não apenas emergenciais. Essa inversão de modelo — do reativo para o preventivo — é exatamente o cenário para o qual o GeoRisco foi projetado: permitir que a Defesa Civil mantenha bases cadastrais atualizadas continuamente, e não apenas durante crises.
+A digitalização acelerada dos processos públicos pós-pandemia gerou maior receptividade de gestores municipais a ferramentas digitais integradas (REF.22). Há também uma mudança de postura institucional: municípios deixam de reagir a desastres e passam a investir em prevenção e mapeamento contínuo de risco, o que aumenta a demanda por cadastros georreferenciados permanentes, e não apenas emergenciais. Essa inversão de modelo — do reativo para o preventivo — é exatamente o cenário para o qual o GeoRisco foi projetado: permitir que a Defesa Civil mantenha bases cadastrais atualizadas continuamente, e não apenas durante crises.
 
 **Tendências Mercadológicas**
-O mercado GovTech brasileiro está em expansão. Segundo o relatório GovTech Brasil 2023, elaborado pela Abstartups em parceria com o Sebrae, o ecossistema conta com mais de 800 startups ativas no setor público (REF.9). O volume de contratações públicas de tecnologia cresce em função da Lei nº 14.133/2021 (Nova Lei de Licitações), que simplifica processos para soluções inovadoras (REF.13). Além disso, o CEMADEN monitora atualmente 1.295 municípios brasileiros em situação de risco, configurando um mercado endereçável expressivo para replicação da solução além de Santo André. Para o GeoRisco, esse contexto representa uma janela de expansão: uma solução validada em Santo André pode ser adotada por outros municípios monitorados pelo CEMADEN com necessidades operacionais equivalentes, aproveitando o arcabouço da Nova Lei de Licitações para simplificar a contratação.
+O mercado GovTech brasileiro está em expansão. Segundo o Mapeamento de Govtechs da Abstartups, o ecossistema brasileiro de tecnologia para o setor público segue em crescimento, reunindo centenas de govtechs voltadas à administração pública (REF.9). O volume de contratações públicas de tecnologia cresce em função da Lei nº 14.133/2021 (Nova Lei de Licitações), que simplifica processos para soluções inovadoras (REF.10). Além disso, o CEMADEN monitora atualmente 1.295 municípios brasileiros em situação de risco (REF.11), configurando um mercado endereçável expressivo para replicação da solução além de Santo André. Para o GeoRisco, esse contexto representa uma janela de expansão: uma solução validada em Santo André pode ser adotada por outros municípios monitorados pelo CEMADEN com necessidades operacionais equivalentes, aproveitando o arcabouço da Nova Lei de Licitações para simplificar a contratação.
 
-Fontes (seção 9): (REF.9, REF.10, REF.11, REF.12, REF.13).
+Fontes (seção 9): (REF.9, REF.10, REF.11, REF.12, REF.13, REF.21, REF.22).
 A segmentação de mercado da aplicação foi definida a partir do setor público de proteção e defesa civil, com foco em instituições responsáveis pela prevenção, preparação, resposta e recuperação em situações de risco e desastre. O segmento prioritário é composto pela Defesa Civil de Santo André, especialmente pelos agentes de campo e gestores operacionais que atuam no cadastramento, monitoramento e atendimento de famílias residentes em áreas suscetíveis a deslizamentos, enchentes e outros eventos adversos associados a desastres geo-hidrológicos.
 
 Também foi identificado como segmento relevante o conjunto de prefeituras e coordenadorias municipais de Defesa Civil que enfrentam desafios semelhantes, principalmente em municípios com áreas de risco, ocupações vulneráveis e necessidade de atualização constante de dados territoriais e sociodemográficos. Nesses contextos, a aplicação pode ser utilizada como ferramenta de apoio à digitalização de cadastros, ao georreferenciamento de moradias e à priorização de atendimentos em situações emergenciais.
@@ -3456,7 +3467,7 @@ Além disso, a solução pode atender secretarias municipais que atuam de forma 
 
 Dessa forma, concluiu-se que a aplicação está direcionada principalmente ao mercado institucional govtech, com foco em gestão pública de riscos, resiliência urbana e proteção de populações vulneráveis. Seu potencial de uso concentra-se em órgãos públicos municipais que necessitam substituir processos manuais e descentralizados por uma solução digital, integrada e adaptada ao trabalho em campo.
 
-Fontes (seção 9): (REF.14, REF.15, REF.16, REF.17, REF.18).
+Fontes (seção 9): (REF.11, REF.15, REF.16, REF.17, REF.18).
 
 ### 6.3.2. Perfil do Público-Alvo
 
@@ -3639,7 +3650,7 @@ Outro ponto forte foi a entrega de recursos voltados à visualização territori
 
 O objetivo de registrar localização georreferenciada foi atingido. As coordenadas das moradias são representadas no mapa por pins, o que permite a visualização territorial dos registros. Além disso, os pins são movíveis manualmente, através do arraste. Assim que um pin é movido de um local para outro, as coordenadas também acompanham automaticamente.
 
-Por fim, a aplicação também atende ao objetivo de manter os cadastros atualizados por meio de avisos de recadastro, sinalizando registros com mais de um ano e apoiando a rotina de revisão das informações.
+Quanto ao objetivo de manter os cadastros atualizados, a base já preserva as datas de registro e modificação necessárias para identificar fichas vencidas; o alerta automático de recadastro (sinalização de registros com mais de um ano), entretanto, não foi entregue nesta versão e permanece como trabalho futuro, conforme registrado na seção 4.3.2.
 
 Por outro lado, os testes de usabilidade (SUS) realizados também evidenciaram pontos a melhorar de forma geral, como a percepção de complexidade em determinados fluxos e momentos de inconsistência no comportamento do sistema, aspectos detalhados na seção 8.2.1 juntamente com os respectivos planos de ação. Em conjunto, essas entregas demonstram que o GeoRisco Santo André cumpriu a proposta central da seção 2: oferecer uma ferramenta digital integrada, mais ágil e mais confiável para apoiar agentes de campo e gestores operacionais na proteção de populações vulneráveis em áreas de risco.
 
@@ -3683,8 +3694,7 @@ Dessa forma, as melhorias propostas funcionam como continuidade natural do proje
 
 4. BRASIL. Lei nº 12.608, de 10 de abril de 2012. Institui a Política Nacional de Proteção e Defesa Civil (PNPDEC). *Diário Oficial da União*, Brasília, DF, 11 abr. 2012.
 
-5. PEDROSO, Luiz Guilherme Lourenço Becker. [Título do trabalho]. 2017. Trabalho de Conclusão de Curso (Graduação) – Universidade de São Paulo, São Paulo, 2017. Disponível em: https://bdta.abcd.usp.br/directbitstream/05356078-01cb-4989-856d-4cf4dcb8b4cc/LuizGuilhermeLourencoBeckerPedroso%20TCCPRO17.pdf
-. Acesso em: 30 abr. 2026.
+5. PEDROSO, Luiz Guilherme Lourenço Becker. Análise estratégica de uma ONG pró-empreendedorismo. 2017. Trabalho de Conclusão de Curso (Graduação) – Universidade de São Paulo, São Paulo, 2017. Disponível em: https://bdta.abcd.usp.br/directbitstream/05356078-01cb-4989-856d-4cf4dcb8b4cc/LuizGuilhermeLourencoBeckerPedroso%20TCCPRO17.pdf. Acesso em: 30 abr. 2026.
 
 6. FORTUNE BUSINESS INSIGHTS. Crisis Management Software Market Size, Share & Industry Analysis. Pune, 2026. Disponível em: https://www.fortunebusinessinsights.com/pt/crisis-management-software-market-110370. Acesso em: 2 jun. 2026.
 
@@ -3692,7 +3702,7 @@ Dessa forma, as melhorias propostas funcionam como continuidade natural do proje
 
 8. VERIFIED MARKET REPORTS. Public Safety Software Market Size, Share, Trends and Forecast. 2026. Disponível em: https://www.verifiedmarketreports.com/product/public-safety-software-market/. Acesso em: 2 jun. 2026.
 
-9. ABSTARTUPS; SEBRAE. GovTech Brasil 2023: mapeamento do ecossistema de tecnologia para o setor público. São Paulo: Abstartups, 2023. Disponível em: https://abstartups.com.br/govtech-brasil. Acesso em: 09 jun. 2026.
+9. ASSOCIAÇÃO BRASILEIRA DE STARTUPS (ABSTARTUPS). Mapeamento de Govtechs: panorama do ecossistema de tecnologia para o setor público brasileiro. São Paulo: Abstartups, 2024. Disponível em: https://abstartups.com.br/wp-content/uploads/2025/06/Mapeamento-Govtechs.pdf. Acesso em: 26 jun. 2026.
 
 10. BRASIL. Lei nº 14.133, de 1º de abril de 2021. Lei de Licitações e Contratos Administrativos. Diário Oficial da União, Brasília, DF, 1 abr. 2021. Disponível em: https://www.planalto.gov.br/ccivil_03/_ato2019-2022/2021/lei/l14133.htm. Acesso em: 09 jun. 2026.
 
@@ -3702,7 +3712,7 @@ Dessa forma, as melhorias propostas funcionam como continuidade natural do proje
 
 13. OPENSTREETMAP FOUNDATION. OpenStreetMap. 2024. Disponível em: https://www.openstreetmap.org. Acesso em: 09 jun. 2026.
 
-14. CENTRO NACIONAL DE MONITORAMENTO E ALERTAS DE DESASTRES NATURAIS (CEMADEN). Cemaden expande rede de monitoramento e passa a monitorar 1.295 municípios. São José dos Campos, 2026. Disponível em: <https://www.gov.br/cemaden/pt-br/assuntos/noticias-cemaden/cemaden-expande-rede-de-monitoramento-e-passa-a-monitorar-1-295-municipios>. Acesso em: 9 jun. 2026.
+14. BRASIL. Lei nº 13.709, de 14 de agosto de 2018. Lei Geral de Proteção de Dados Pessoais (LGPD). *Diário Oficial da União*, Brasília, DF, 15 ago. 2018. Disponível em: <https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709compilado.htm>. Acesso em: 26 jun. 2026.
 
 15. BRASIL. Secretaria de Comunicação Social da Presidência da República (SECOM). Mais 162 cidades brasileiras são incluídas na rede de alertas do Cemaden. Brasília, 2026. Disponível em: <https://www.gov.br/secom/pt-br/acompanhe-a-secom/noticias/2026/05/mais-162-cidades-brasileiras-sao-incluidas-na-rede-de-alertas-do-cemaden/>. Acesso em: 9 jun. 2026.
 
@@ -3710,6 +3720,12 @@ Dessa forma, as melhorias propostas funcionam como continuidade natural do proje
 
 17. INSTITUTO BRASILEIRO DE GEOGRAFIA E ESTATÍSTICA (IBGE). Estudo inédito mostra moradores sujeitos a enchentes e deslizamentos. Rio de Janeiro, 2018. Disponível em: <https://agenciadenoticias.ibge.gov.br/agencia-noticias/2012-agencia-de-noticias/noticias/21566-estudo-inedito-mostra-moradores-sujeitos-a-enchentes-e-deslizamentos>. Acesso em: 9 jun. 2026.
 
-18. INSTITUTO DE PESQUISAS TECNOLÓGICAS (IPT). Mapeamento e gerenciamento de áreas de risco de deslizamento e solapamento de margem no município de Santo André-SP. São Paulo, 27 mar. 2023. Disponível em: <https://ipt.br/2023/03/27/mapeamento-e-gerenciamento-de-areas-de-risco-de-deslizamento-e-solapamento-de-margem-no-municipio-de-santo-andre-sp/>. Acesso em: 9 jun. 2026.
+18. CONSÓRCIO INTERMUNICIPAL GRANDE ABC. IPT apresenta mapeamento final de áreas de risco à Assembleia de Prefeitos: mapeamento e gerenciamento de áreas de risco de deslizamento e solapamento de margem na região, incluindo o município de Santo André-SP. Santo André, 2014. Disponível em: <https://consorcioabc.sp.gov.br/noticia/1801/ipt-apresenta-mapeamento-final-de-areas-de-risco-a-assembleia-de-prefeitos/>. Acesso em: 26 jun. 2026.
 
 19. INSTITUTO BRASILEIRO DE GEOGRAFIA E ESTATÍSTICA (IBGE). População em áreas de risco no Brasil. Rio de Janeiro: IBGE, 2018. Disponível em: https://www.ibge.gov.br/geociencias/informacoes-ambientais/estudos-ambientais/21538-populacao-em-areas-de-risco-no-brasil.html. Acesso em: 12 jun. 2026.
+
+20. BRASIL. Ministério da Gestão e da Inovação em Serviços Públicos. O que a Gestão faz por você? Moderniza as compras públicas com eficiência, tecnologia, transparência e economia. Brasília, 2024. Disponível em: <https://www.gov.br/gestao/pt-br/assuntos/noticias/2024/junho/o-que-a-gestao-faz-por-voce-moderniza-as-compras-publicas-com-eficiencia-tecnologia-transparencia-e-economia>. Acesso em: 26 jun. 2026.
+
+21. BRASIL. Ministério da Gestão e da Inovação em Serviços Públicos. Computação em Nuvem no Governo Federal. Brasília, [s.d.]. Disponível em: <https://www.gov.br/governodigital/pt-br/estrategias-e-governanca-digital/estrategias-e-politicas-digitais/computacao-em-nuvem/computacao-em-nuvem-no-governo-federal/>. Acesso em: 26 jun. 2026.
+
+22. BRASIL. Ministério da Economia. Governo ultrapassa 250 serviços transformados em digitais durante a pandemia. Brasília, 2020. Disponível em: <https://www.gov.br/governodigital/pt-br/noticias/governo-ultrapassa-250-servicos-transformados-em-digitais-durante-a-pandemia>. Acesso em: 26 jun. 2026.
