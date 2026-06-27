@@ -6,7 +6,6 @@ export interface GrupoPrioritario {
     id: number;
     condicao: string;
     tipo: TipoPrioridade;
-    dataPrevistaParto: Date | null;
 }
 
 export interface PessoaGrupoPrioritario {

@@ -126,7 +126,7 @@ describe('MoradiaService - Suíte Completa', () => {
             moradiaRepoMock.create.mockResolvedValue({ id: 20 });
             moradiaRepoMock.getById.mockResolvedValue(null);
 
-            await expect(service.cadastrar(dtoValido)).rejects.toThrow('Moradia criada, mas não encontrada na view de leitura');
+            await expect(service.cadastrar(dtoValido)).rejects.toThrow('Moradia criada, mas não encontrada na consulta de leitura');
             expect(mockClient.query).toHaveBeenCalledWith('ROLLBACK');
         });
     });

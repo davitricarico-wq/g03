@@ -1,298 +1,392 @@
-# Inteli - Instituto de Tecnologia e Liderança 
+# Inteli - Instituto de Tecnologia e Liderança
 
 <p align="center">
-<img src="assets/inteli.png">
+  <img src="assets/inteli.png" alt="Inteli - Instituto de Tecnologia e Liderança" width="300"/>
 </p>
 
-# Observação: 
+# GeoRisco Santo André
 
-O documento README.md do projeto ainda aguarda as últimas finalizações da sprint 5 para conclusão definitiva do documento.
+**Grupo 03 - Froggy Tech**
 
-# Integrantes: 
 
-- Ali Mustapha Abdallah
-- Arthur Davi da Silva Rodrigues
-- Davi Viana Tricarico
-- Eduardo Totti Thomé
-- Enzo Kojian Guilhen 
-- Gabriel Andreott Salles Pereira
-- Julio Quevedo da Silva
-- Lucas Bianchezzi Oliveira
+## Integrantes
 
-# Professores:
+- [Ali Mustapha Abdallah](https://www.linkedin.com/in/ali-abdallah007/)
+- [Arthur Davi da Silva Rodrigues](https://www.linkedin.com/in/arthur-davi-da-silva-rodrigues/)
+- [Davi Viana Tricarico](https://www.linkedin.com/in/davi-tricarico-248b1a3b1/)
+- [Eduardo Totti Thomé](https://www.linkedin.com/in/eduardototti/)
+- [Enzo Kojian Guilhen](https://www.linkedin.com/in/enzo-kojian-guilhen-60690a3b0/)
+- [Gabriel Andreott Salles Pereira](https://www.linkedin.com/in/gabriel-andreott-84037a330)
+- [Julio Quevedo da Silva](https://www.linkedin.com/in/julioquevdo/?locale=en)
+- [Lucas Bianchezzi Oliveira](https://www.linkedin.com/in/lucasb-oliveira/?locale=en)
 
-## Orientadora: 
-- Camila Naves Arantes
+## Professores
 
-## Instrutores: 
-- Crishna Irion 
-- Bruna Mayer Costa
-- Henrique Mohallem Paiva
-- Fábio Cássio de Souza
-- Claudio Fernando André
-- Andréa Zotovici
+### Orientadora
+- [Camila Naves Arantes](https://www.linkedin.com/in/camilanarantes/)
 
-# Descrição
+### Instrutores
+- [Crishna Irion](https://www.linkedin.com/in/crishna-irion-phd-7b5aa311)
+- [Bruna Mayer Costa](https://www.linkedin.com/in/bruna-mayer/)
+- [Henrique Mohallem Paiva](https://br.linkedin.com/in/henrique-mohallem-paiva-6854b460)
+- [Fábio Cássio de Souza](https://www.linkedin.com/in/fabiocassiosouza/)
+- [Claudio Fernando André](https://www.linkedin.com/in/profclaudioandre/)
+- [Andréa Zotovici](https://www.linkedin.com/in/zotovici/)
 
-O **GeoRisco Santo André** é uma aplicação web para apoiar a Defesa Civil de Santo André na gestão de populações em áreas de risco. O projeto centraliza cadastros de pessoas, famílias, moradias, pets e fotos, com dados georreferenciados, histórico de vínculos e endpoints REST para consulta e manutenção das informações.
+---
 
-O objetivo do MVP, conforme o TAPI e o WAD do projeto, é viabilizar o mapeamento socioestrutural georreferenciado em campo, reduzindo a fragmentação de dados e apoiando a identificação de prioridades em ações de prevenção, evacuação e acolhimento emergencial.
+## Descrição
 
-> Link para demonstração: !!!!!!!!!!!!(sprint 5)!!!!!!!!!!!!!!
+O **GeoRisco Santo André** é uma aplicação web desenvolvida pelo Grupo 03 do Inteli em parceria com a Coordenadoria de Defesa Civil e o CREDEC de Santo André. O sistema apoia agentes de campo e gestores na gestão de populações em situação de vulnerabilidade em áreas de risco geológico, hidrológico e estrutural do município.
 
-## Funcionalidades Principais
+A plataforma centraliza o cadastro de pessoas, famílias, moradias, animais de estimação e registros fotográficos, todos com dados georreferenciados (latitude e longitude). Isso permite o mapeamento espacial das ocorrências por meio de uma interface de mapa interativa, possibilitando visualizar a distribuição geográfica das famílias cadastradas e suas respectivas situações de risco.
 
-- Cadastro e listagem de pessoas por interface EJS;
-- API REST para pessoas, responsáveis, famílias, moradias, pets e fotos;
-- Validação de regras de negócio para campos obrigatórios, enums e consistência dos cadastros;
-- Cadastro de responsáveis familiares com dados socioeconômicos e de contato;
-- Cadastro de moradias com localização, latitude, longitude, endereço, tipo de construção, uso do imóvel e situação de ocupação;
-- Criação transacional de núcleo familiar com localização, moradia, responsável, dependentes, pets e fotos;
-- Gestão de vínculos e histórico entre famílias, pessoas e moradias;
-- Cadastro e manutenção de pets vinculados a famílias;
-- Registro de fotos vinculadas a moradias ou pets;
-- Geração de URLs assinadas de upload e acesso para fotos usando Supabase Storage;
-- Documentação de apoio em `documentos/wad.md` e `documentos/endpoints.md`.
+O objetivo principal é substituir processos manuais e fragmentados — planilhas, papel e registros isolados — por uma plataforma digital integrada. Com ela, agentes de campo podem registrar e atualizar informações diretamente no navegador durante visitas a campo, enquanto coordenadores acompanham o histórico de vínculos entre famílias, moradores e moradias ao longo do tempo.
+
+A arquitetura segue o padrão em camadas: o frontend em React consome uma API REST construída em Node.js/TypeScript com Express, que se conecta a um banco PostgreSQL gerenciado pelo Supabase. O armazenamento de fotos utiliza o Supabase Storage com URLs assinadas, garantindo acesso controlado às imagens. As regras de negócio estão centralizadas nos serviços do backend, com repositórios e interfaces bem definidos para facilitar a manutenção e a cobertura de testes.
+
+Entre as funcionalidades entregues estão: criação transacional de núcleo familiar completo (responsável, dependentes, moradia, pets e fotos); busca de famílias e pessoas por nome, CPF ou bairro; histórico de vínculos entre famílias e moradias; sistema de priorização de atendimento por grupos vulneráveis; e registro fotográfico com upload direto para o Supabase Storage. O sistema opera corretamente sem dados iniciais e pode ser configurado em qualquer ambiente com Node.js 20+ e um projeto Supabase ativo.
+
+---
+
+## Link de Demonstração
+
+Assista ao vídeo demonstrativo do sistema em execução e seu funcionamento.
+
+> [Clique aqui para assitir ao vídeo demonstrativo](https://youtu.be/l4f8AKR2cXg)
+
+---
 
 ## Tecnologias Utilizadas
 
-- **Linguagem:** TypeScript
-- **Runtime:** Node.js
-- **Framework web:** Express 5
-- **Views:** EJS
-- **Banco de dados:** PostgreSQL
-- **BaaS/Storage:** Supabase e Supabase Storage
-- **Cliente SQL:** `pg`
-- **Cliente Supabase:** `@supabase/supabase-js`
-- **Variáveis de ambiente:** `dotenv`
-- **Testes:** Jest, ts-jest e Supertest
-- **Build/dev:** TypeScript, TSX e ts-node
-- **Gerenciador de pacotes:** npm
+| Camada | Tecnologia |
+| --- | --- |
+| Frontend | React 19, TypeScript, Vite, React Router, Leaflet |
+| Backend | Node.js 20+, TypeScript, Express 5 |
+| Banco de dados | PostgreSQL (Supabase) |
+| Storage | Supabase Storage (URLs assinadas) |
+| ORM / cliente SQL | `pg`, `@supabase/supabase-js` |
+| Testes | Jest, ts-jest, Supertest |
+| Build / Dev | tsx, TypeScript compiler |
+| Variáveis de ambiente | dotenv |
+| Gerenciador de pacotes | npm |
+
+---
 
 ## Pré-requisitos
 
-Antes de executar o projeto localmente, instale:
+Antes de executar o projeto, instale:
 
-- VSCode
-- Git
-- Node.js 20 ou superior. O repositório não define `engines`; o ambiente local analisado usa Node.js `v24.13.1`.
-- npm. O ambiente local analisado usa npm `11.15.0`.
-- PostgreSQL ou um projeto Supabase com acesso ao banco.
-- Cliente `psql`, caso você vá aplicar manualmente a migração SQL do Supabase.
-- Supabase CLI, opcional, caso prefira subir uma stack Supabase local a partir de `supabase/config.toml`.
+- [Git](https://git-scm.com/)
+- [Node.js 20 ou superior](https://nodejs.org/) (testado com v24.13.1)
+- npm 9+ (incluído com o Node.js; testado com 11.15.0)
+- Um projeto [Supabase](https://supabase.com/) ativo com acesso ao banco PostgreSQL e ao Storage
+- `psql` — cliente de linha de comando do PostgreSQL (necessário para aplicar as migrations manualmente)
 
-Também será necessário configurar variáveis de ambiente no backend:
+> **Windows:** em alguns ambientes, o PowerShell bloqueia scripts npm por política de execução. Caso ocorra, substitua `npm` por `npm.cmd` nos comandos abaixo.
 
-```env
-PORT=3000
-DATABASE_URL=postgresql://USUARIO:SENHA@HOST:PORTA/BANCO
+---
 
-# Necessárias para endpoints de upload/acesso assinado de fotos
-SUPABASE_URL=[INSERIR URL DO PROJETO SUPABASE]
-SUPABASE_SERVICE_ROLE_KEY=[INSERIR SERVICE ROLE KEY]
-SUPABASE_STORAGE_BUCKET=georisco-fotos
+## Configuração para Desenvolvimento e Execução do Código
 
-# Opcional: habilita teste de integração com banco
-RUN_DB_TESTS=false
-```
-
-> Nunca exponha `SUPABASE_SERVICE_ROLE_KEY` em frontend, repositório público ou logs.
-
-## Instalação e Execução
-
-Clone o repositório:
+### 1. Clonar o repositório
 
 ```bash
 git clone https://git.inteli.edu.br/graduacao/2026-1b/t25/g03.git
 cd g03
 ```
 
-Entre na aplicação Node.js:
+---
+
+### 2. Configurar variáveis de ambiente do backend
+
+Crie o arquivo `.env` dentro de `src/geoRisco/`:
 
 ```bash
-cd src/geoRisco
+# No Linux/macOS:
+cp src/geoRisco/.env.example src/geoRisco/.env   # se existir exemplo
+# ou crie manualmente:
+touch src/geoRisco/.env
 ```
-
-Instale as dependências:
 
 ```bash
-npm install
+# No Windows (PowerShell):
+New-Item -Path src\geoRisco\.env -ItemType File
 ```
 
-Crie o arquivo `.env` em `src/geoRisco` e preencha as variáveis listadas na seção de pré-requisitos.
+Preencha o arquivo `.env` com os valores do seu projeto Supabase:
 
-Prepare o banco de dados. O schema principal versionado do projeto está em `supabase/migrations/20260530012620_remote_schema.sql`. A partir da raiz do repositório, aplique-o com:
+```env
+# Porta em que o servidor Express irá escutar
+PORT=3000
+
+# String de conexão do banco PostgreSQL (encontrada em Supabase → Settings → Database → Connection string → URI)
+DATABASE_URL=postgresql://USUARIO:SENHA@HOST:PORTA/BANCO
+
+# URL pública do projeto Supabase (encontrada em Supabase → Settings → API → Project URL)
+SUPABASE_URL=https://SEU-PROJETO.supabase.co
+
+# Service Role Key do Supabase — NUNCA exponha em frontend ou repositório público
+# (encontrada em Supabase → Settings → API → service_role)
+SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+# Nome do bucket de armazenamento de fotos (crie em Supabase → Storage)
+SUPABASE_STORAGE_BUCKET=georisco-fotos
+
+# Habilita testes de integração com banco real (padrão: false)
+RUN_DB_TESTS=false
+```
+
+> O frontend não exige arquivo `.env`. Ele roda via Vite e faz proxy automático de `/api` para `http://localhost:3000`.
+
+---
+
+### 3. Criar o bucket no Supabase Storage
+
+No painel do Supabase, acesse **Storage → New bucket** e crie um bucket com o nome `georisco-fotos` (ou o valor definido em `SUPABASE_STORAGE_BUCKET`). Deixe-o como **privado**.
+
+---
+
+### 4. Aplicar as migrations do banco
+
+As migrations estão em `supabase/migrations/`. Aplique-as em ordem com `psql`:
 
 ```bash
-psql "$DATABASE_URL" -f supabase/migrations/20260530012620_remote_schema.sql
+# Linux/macOS — substitua $DATABASE_URL pela string completa se não tiver a variável exportada
+psql "$DATABASE_URL" -f supabase/migrations/20260612044010_remote_schema.sql
+psql "$DATABASE_URL" -f supabase/migrations/20260612051000_enforce_moradia_unica_familia.sql
 ```
-
-No PowerShell, o comando equivalente é:
 
 ```powershell
-psql $env:DATABASE_URL -f .\supabase\migrations\20260530012620_remote_schema.sql
+# Windows (PowerShell)
+psql $env:DATABASE_URL -f supabase\migrations\20260612044010_remote_schema.sql
+psql $env:DATABASE_URL -f supabase\migrations\20260612051000_enforce_moradia_unica_familia.sql
 ```
 
-Volte para a pasta da aplicação, se necessário:
+Alternativamente, use o script de migrate incremental do backend (aplica os arquivos em `src/geoRisco/src/db/migrations/`):
 
 ```bash
 cd src/geoRisco
+npm install
+npm run migrate
 ```
 
-Execute em modo desenvolvimento:
+> Se o schema já estava aplicado no projeto Supabase de produção, este passo pode ser pulado.
+
+---
+
+### 5. Instalar dependências e iniciar o backend
 
 ```bash
+cd src/geoRisco
+npm install
 npm run dev
 ```
 
-A aplicação ficará disponível em:
+O servidor ficará disponível em: `http://localhost:3000`
 
-```txt
-http://localhost:3000
-```
-
-Para gerar build de produção:
+Confirme que está rodando:
 
 ```bash
-npm run build
+curl http://localhost:3000/
+# Resposta esperada: {"status":"ok","service":"GeoRisco API"}
 ```
 
-Para executar o build:
+---
+
+### 6. Instalar dependências e iniciar o frontend
+
+Em outro terminal, a partir da raiz do repositório:
 
 ```bash
-npm start
+cd src/frontend
+npm install
+npm run dev
 ```
 
-Para rodar os testes:
+A interface ficará disponível em: `http://localhost:5173`
 
-```bash
-npm test
-```
+> O Vite faz proxy automático de todas as requisições `/api/*` para `http://localhost:3000`, portanto **backend e frontend devem estar rodando simultaneamente**.
 
-Para habilitar o teste de persistência com banco, defina `RUN_DB_TESTS=true` e mantenha `DATABASE_URL` configurada antes de executar `npm test`.
+---
 
-> Em algumas instalações do Windows, `npm` pode ser bloqueado pela política de execução do PowerShell. Nesse caso, use `npm.cmd install`, `npm.cmd run dev` e `npm.cmd test`.
+### 7. Scripts disponíveis
 
-### Scripts Disponíveis
+#### Backend (`src/geoRisco/`)
 
 | Script | Descrição |
 | --- | --- |
-| `npm run dev` | Inicia o servidor com TSX em modo watch. |
-| `npm run build` | Compila TypeScript para `dist/`. |
-| `npm start` | Executa `dist/server.js`. |
-| `npm run migrate` | Executa os arquivos SQL em `src/db/migrations` usando `DATABASE_URL`. |
-| `npm test` | Compila o projeto e roda Jest. |
-| `npm run test:watch` | Executa os testes em modo watch. |
+| `npm run dev` | Inicia o servidor em modo watch com tsx |
+| `npm run build` | Compila TypeScript para `dist/` |
+| `npm start` | Executa o build compilado (`dist/server.js`) |
+| `npm run migrate` | Aplica as migrations SQL incrementais em `src/db/migrations/` |
+| `npm test` | Executa a suite de testes unitários com Jest |
+| `npm run test:watch` | Testes unitários em modo watch |
+| `npm run test:coverage` | Testes unitários com relatório de cobertura |
+| `npm run test:integration` | Testes de integração com banco real (exige `RUN_DB_TESTS=true` e `.env` configurado) |
+| `npm run test:coverage:integration` | Integração com cobertura |
 
-## Uso
+#### Frontend (`src/frontend/`)
 
-Depois de iniciar o servidor, acesse:
+| Script | Descrição |
+| --- | --- |
+| `npm run dev` | Inicia o servidor de desenvolvimento Vite (porta 5173) |
+| `npm run build` | Gera build de produção em `dist/` |
+| `npm run preview` | Serve o build de produção localmente |
 
-- `GET /` redireciona para o formulário de cadastro de pessoa.
-- `GET /pessoas/novo` abre o formulário de cadastro.
-- `POST /pessoas/` cria uma pessoa a partir do formulário.
-- `GET /pessoas` renderiza a lista de pessoas.
-- `GET /pessoas.json` retorna a lista de pessoas em JSON.
+---
 
-Principais grupos da API:
+### 8. Executar a suite de testes
 
-- `/api/pessoas`
-- `/api/responsaveis`
-- `/api/familias`
-- `/api/moradias`
-- `/api/pets`
-- `/api/fotos`
-
-Exemplo de requisição:
-
-```bash
-curl http://localhost:3000/api/pessoas
-```
-
-A documentação detalhada de endpoints está em `documentos/endpoints.md`.
-
-> Observação: o TAPI informa que autenticação de usuários não faz parte do escopo acadêmico inicial, e o código atual não possui middleware de login/autorização.
-
-## Estrutura de Pastas
-
-```txt
-g03/
-├── assets/                         # Imagens e materiais visuais gerais
-├── documentos/                     # WAD, documentação e técnica de endpoints
-|   │── outros/                     # Imagens no WAD
-│   │── wad.md                    
-│   │── endpoints.md
-|   └── webapi-docs.html
-|   
-├── src/
-│   └── geoRisco/                   # Aplicação Node.js/TypeScript
-│       ├── documents/              # Evidências e assets de apoio
-│       ├── src/
-│       │   ├── controllers/        # Controllers HTTP
-│       │   ├── db/                 # Conexão e migrações SQL auxiliares
-│       │   ├── dtos/               # Tipos de entrada/saída
-│       │   ├── errors/             # Erros HTTP
-│       │   ├── interfaces/         # Contratos de repositories/services
-│       │   ├── models/             # Modelos e enums de domínio
-│       │   ├── public/             # CSS estático
-│       │   ├── repositories/       # Acesso ao PostgreSQL
-│       │   ├── routes/             # Definição das rotas
-│       │   ├── services/           # Regras de negócio
-│       │   ├── storage/            # Cliente Supabase Storage
-│       │   ├── tests/              # Testes de integração
-│       │   ├── validations/        # Validações de payload
-│       │   ├── views/              # Templates EJS
-│       │   ├── app.ts              # Configuração Express
-│       │   └── server.ts           # Bootstrap HTTP
-│       ├── jest.config.js
-│       ├── package.json
-│       └── tsconfig.json
-├── supabase/
-│   ├── config.toml                 # Configuração Supabase local
-│   └── migrations/                 # Schema versionado do banco Supabase
-├── .gitattributes
-├── .gitignore 
-└── README.md
-```
-
-## Como Contribuir
-
-1. Faça um fork do repositório.
-2. Crie uma branch para sua alteração:
-
-```bash
-git checkout -b feature/minha-melhoria
-```
-
-3. Instale dependências e valide o projeto localmente:
+#### Testes unitários (não exigem banco)
 
 ```bash
 cd src/geoRisco
-npm install
 npm test
 ```
 
-4. Faça commits pequenos e descritivos:
+Os testes unitários cobrem os serviços de negócio (`pessoa`, `família`, `moradia`, `pet`, `foto`, `foto-storage`) e não dependem de conexão com banco de dados.
+
+#### Testes de integração (exigem banco Supabase configurado)
 
 ```bash
-git add .
-git commit -m "feat: descreve a melhoria implementada"
+cd src/geoRisco
+
+# Linux/macOS: exporte as variáveis antes
+export DATABASE_URL="postgresql://usuario:senha@host:porta/banco"
+export SUPABASE_URL="https://seu-projeto.supabase.co"
+export SUPABASE_SERVICE_ROLE_KEY="sua-service-role-key"
+export RUN_DB_TESTS=true
+
+# Windows (PowerShell)
+$env:DATABASE_URL = "postgresql://usuario:senha@host:porta/banco"
+$env:SUPABASE_URL = "https://seu-projeto.supabase.co"
+$env:SUPABASE_SERVICE_ROLE_KEY = "sua-service-role-key"
+$env:RUN_DB_TESTS = "true"
+
+npm run test:integration
 ```
 
-5. Envie sua branch:
+> Os testes de integração executam dentro de transações que são revertidas com `ROLLBACK` ao final — nenhum dado persiste no banco após os testes.
+
+---
+
+### 9. Validar os fluxos de ponta a ponta
+
+Com backend (`localhost:3000`) e frontend (`localhost:5173`) rodando, acesse `http://localhost:5173` e percorra os seguintes fluxos:
+
+| Fluxo | Caminho na interface |
+| --- | --- |
+| Cadastrar núcleo familiar completo | Home → botão "Novo cadastro" |
+| Buscar família por nome ou bairro | Menu "Busca" |
+| Visualizar moradias no mapa | Menu "Mapa" |
+| Listar e filtrar pessoas | Menu "Pessoas" |
+| Consultar histórico de vínculos | Menu "Histórico" |
+
+Para validar a API REST diretamente:
 
 ```bash
-git push origin feature/minha-melhoria
+# Listar pessoas
+curl http://localhost:3000/api/pessoas
+
+# Listar famílias
+curl http://localhost:3000/api/familias
+
+# Listar moradias
+curl http://localhost:3000/api/moradias
+
+# Listar prioridades
+curl http://localhost:3000/api/prioridades
 ```
 
-6. Abra um Pull Request explicando o problema resolvido, a solução adotada e os testes executados.
+> A aplicação opera corretamente sem dados iniciais — todos os endpoints retornam listas vazias em um banco recém-configurado.
+
+---
+
+## Estrutura de Pastas
+
+```
+g03/
+├── assets/                          # Imagens e materiais visuais do README
+├── documentos/                      # Documentação técnica e acadêmica
+│   ├── wad.md                       # Web Application Document (WAD)
+│   └── outros/                      # Documentos complementares, imagens e diagramas do WAD
+│       ├── endpoints.md             # Documentação dos endpoints da API
+│       ├── diagramaArquitetura.md   # Diagrama de arquitetura
+│       ├── rtm.md                   # Matriz de rastreabilidade de requisitos
+│       ├── tutorial-deploy.md       # Tutorial de deploy da aplicação
+│       ├── webapi-docs.html         # Documentação HTML da Web API
+│       ├── diagramas_arquitetura/   # Imagens detalhadas do diagrama de arquitetura
+│       ├── diagramas_sequencia/     # Diagramas de sequência
+│       └── *.png, *.jpg             # Diagramas, personas, wireframes e logos do WAD
+├── src/
+│   ├── frontend/                    # Aplicação React + Vite (interface do usuário)
+│   │   ├── public/                  # Arquivos estáticos públicos
+│   │   ├── src/
+│   │   │   ├── components/          # Componentes reutilizáveis
+│   │   │   ├── pages/               # Páginas (Home, Cadastro, Busca, Mapa, Pessoas, Histórico)
+│   │   │   ├── utils/               # Funções utilitárias (forms, export, prioridade, anim)
+│   │   │   ├── styles/              # CSS global e tema
+│   │   │   ├── api.ts               # Funções de acesso à API REST
+│   │   │   ├── types.ts             # Tipos TypeScript compartilhados
+│   │   │   ├── App.tsx              # Componente raiz e roteamento
+│   │   │   └── main.tsx             # Entry point React
+│   │   ├── index.html
+│   │   ├── package.json
+│   │   └── vite.config.ts           # Configuração Vite (proxy /api → localhost:3000)
+│   └── geoRisco/                    # API REST Node.js + TypeScript
+│       └── src/
+│           ├── controllers/         # Handlers HTTP (pessoa, família, moradia, pet, foto, prioridade)
+│           ├── db/                  # Conexão PostgreSQL e migrations incrementais
+│           ├── dtos/                # Tipos de entrada e saída dos endpoints
+│           ├── errors/              # Classes de erro HTTP
+│           ├── interfaces/          # Contratos de repositórios e serviços
+│           ├── models/              # Modelos e enums de domínio
+│           ├── repositories/        # Acesso ao banco de dados (pg)
+│           ├── routes/              # Definição das rotas Express
+│           ├── services/            # Regras de negócio
+│           ├── storage/             # Cliente Supabase Storage
+│           ├── tests/               # Testes unitários e de integração (Jest)
+│           ├── validations/         # Validações de payload de entrada
+│           ├── app.ts               # Configuração Express e registro de rotas
+│           └── server.ts            # Bootstrap HTTP
+│       ├── jest.config.js           # Configuração Jest (testes unitários)
+│       ├── jest.integration.config.js # Configuração Jest (integração)
+│       ├── package.json
+│       └── tsconfig.json
+├── supabase/
+│   ├── config.toml                  # Configuração Supabase CLI (local)
+│   └── migrations/                  # Schema versionado do banco
+├── coverage/                        # Relatórios de cobertura de testes
+├── .gitignore
+├── .gitattributes
+└── README.md
+```
+
+---
 
 ## Histórico de Lançamentos
 
-- 0.1.0 - 12/06/2026
-- 0.2.0 - 26/06/2026
+### 0.1.0 - 30/04/2026
+
+### 0.2.0 - 15/05/2026
+
+### 0.3.0 - 29/05/2026
+
+### 0.4.0 — 12/06/2026
+
+### 1.0.0 — 26/06/2026
+
+
+---
 
 ## Licença
 
-Este projeto declara licença **ISC** no `src/geoRisco/package.json`.
+<p xmlns:cc="http://creativecommons.org/ns#" xmlns:dct="http://purl.org/dc/terms/">
+<a property="dct:title" rel="cc:attributionURL" href="https://git.inteli.edu.br/graduacao/2026-1b/t25/g03">GeoRisco Santo André — Grupo 03</a> by
+<a rel="cc:attributionURL dct:creator" property="cc:attributionName" href="https://www.inteli.edu.br">Inteli — Instituto de Tecnologia e Liderança</a>
+is licensed under
+<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="license noopener noreferrer">Creative Commons Attribution 4.0 International (CC BY 4.0)</a>.
+</p>
 
+Ali Mustapha Abdallah, Arthur Davi da Silva Rodrigues, Davi Viana Tricarico, Eduardo Totti Thomé, Enzo Kojian Guilhen, Gabriel Andreott Salles Pereira, Julio Quevedo da Silva, Lucas Bianchezzi Oliveira.

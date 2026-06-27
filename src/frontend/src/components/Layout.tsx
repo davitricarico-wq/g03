@@ -1,6 +1,9 @@
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { ConfirmHost, ToastHost } from './feedback.tsx';
 import Icon from './Icon.tsx';
+import OfflineIndicator from './OfflineIndicator.tsx';
+import PWAInstallPrompt from './PWAInstallPrompt.tsx';
+import PWAUpdatePrompt from './PWAUpdatePrompt.tsx';
 import { useAnimacoes } from '../utils/anim.ts';
 
 const logo = '/logo-defesa-civil.png';
@@ -9,16 +12,15 @@ const titulos: Record<string, string> = {
     '/cadastro': 'Cadastro',
     '/busca': 'Busca',
     '/pessoas': 'Pessoas',
-    '/mapa': 'Visualização',
-    '/historico': 'Histórico'
+    '/mapa': 'Visualização'
 };
 
 const navItems = [
     { to: '/cadastro', icon: 'clipboard' as const, label: 'Cadastro' },
     { to: '/mapa', icon: 'map' as const, label: 'Mapa' },
+    { to: '/', icon: 'home' as const, label: 'Home', center: true },
     { to: '/busca', icon: 'search' as const, label: 'Busca' },
-    { to: '/pessoas', icon: 'people' as const, label: 'Pessoas' },
-    { to: '/historico', icon: 'history' as const, label: 'Histórico' }
+    { to: '/pessoas', icon: 'people' as const, label: 'Pessoas' }
 ];
 
 export default function Layout() {
@@ -45,9 +47,6 @@ export default function Layout() {
                         >
                             <Icon name={animacoes ? 'sparkle' : 'x-circle'} size={18} />
                         </button>
-                        <button className="header-icon" aria-label="Início" onClick={() => navigate('/')}>
-                            <Icon name="home" size={19} />
-                        </button>
                     </div>
                 </header>
             )}
@@ -58,13 +57,16 @@ export default function Layout() {
 
             <nav className="bottom-nav">
                 {navItems.map((item) => (
-                    <NavLink key={item.to} to={item.to}>
+                    <NavLink key={item.to} to={item.to} className={item.center ? 'bottom-nav-home' : undefined}>
                         <span className="icon"><Icon name={item.icon} size={21} /></span>
                         <span>{item.label}</span>
                     </NavLink>
                 ))}
             </nav>
 
+            <OfflineIndicator />
+            <PWAInstallPrompt />
+            <PWAUpdatePrompt />
             <ToastHost />
             <ConfirmHost />
         </div>

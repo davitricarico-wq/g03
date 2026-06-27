@@ -44,6 +44,10 @@ export class PessoaService implements IPessoaService {
             escopo: filters.escopo ?? 'ativas'
         };
 
+        if (!normalized.nome && !normalized.cpf && !normalized.email && !normalized.telefone) {
+            throw new HttpError(400, 'Informe ao menos um filtro de busca');
+        }
+
         return this.repo.search(normalized);
     }
 
@@ -105,7 +109,7 @@ export class PessoaService implements IPessoaService {
             ...data,
             idPessoa: pessoa.id,
             veiculo: data.veiculo ?? false,
-            programaSocial: data.programaSocial ?? false
+            programasSociais: data.programasSociais ?? 0
         });
     }
 

@@ -1,5 +1,5 @@
 {
-  "name": "ponderada2",
+  "name": "Georisco",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -7,9 +7,12 @@
     "dev": "node node_modules/tsx/dist/cli.cjs watch src/server.ts",
     "build": "node node_modules/typescript/lib/tsc.js",
     "start": "node dist/server.js",
-    "migrate": "node -r ts-node/register src/db/migrate.ts",
-    "test": "node node_modules/jest/bin/jest.js",
-    "test:watch": "node node_modules/jest/bin/jest.js --watch"
+    "migrate": "node node_modules/tsx/dist/cli.cjs src/db/migrate.ts",
+    "test": "node node_modules/jest/bin/jest.js --config jest.config.js",
+    "test:watch": "node node_modules/jest/bin/jest.js --config jest.config.js --watch",
+    "test:integration": "RUN_DB_TESTS=true node node_modules/jest/bin/jest.js --config jest.integration.config.js --runInBand",
+    "test:coverage": "node node_modules/jest/bin/jest.js --config jest.config.js --coverage",
+    "test:coverage:integration": "RUN_DB_TESTS=true node node_modules/jest/bin/jest.js --config jest.integration.config.js --coverage --runInBand"
   },
   "keywords": [],
   "author": "",
@@ -18,12 +21,14 @@
   "dependencies": {
     "@supabase/ssr": "^0.10.3",
     "@supabase/supabase-js": "^2.106.1",
+    "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "pg": "^8.21.0",
     "postgres": "^3.4.9"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/jest": "^30.0.0",
     "@types/node": "^25.9.1",

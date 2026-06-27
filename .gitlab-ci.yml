@@ -1,10 +1,62 @@
-# The Docker image that will be used to build your app
-image: node:lts
-create-pages:
-  pages:
-    # The folder that contains the files to be exposed at the Page URL
-    publish: public
-  rules:
-    # This ensures that only pushes to the default branch will trigger
-    # a pages deploy
-    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+stages:
+  - test
+  - build
+
+image: node:20-bookworm
+
+# backend:integration removido pela coordenacao/admin em 2026-06-22.
+# Motivo: o job subia o servico postgres:14 sem POSTGRES_PASSWORD /
+# POSTGRES_HOST_AUTH_METHOD, entao o banco nunca inicializava; o before_script
+# "until pg_isready -h db -p 5432; do ...; sleep 1; done" ficava em loop infinito
+# ate bater o timeout de 1h, monopolizando o runner compartilhado de toda a
+# instituicao (concorrencia 1). So reintroduzir apos corrigir: definir
+# POSTGRES_PASSWORD no service e colocar teto no loop de espera.
+
+backend:test:
+  stage: test
+  cache:
+    key:
+      files:
+        - src/geoRisco/package-lock.json
+    paths:
+      - src/geoRisco/.npm/
+  script:
+    - cd src/geoRisco
+    - npm ci --cache .npm --prefer-offline --no-audit
+    - npm test
+
+backend:build:
+  stage: build
+  cache:
+    key:
+      files:
+        - src/geoRisco/package-lock.json
+    paths:
+      - src/geoRisco/.npm/
+  script:
+    - cd src/geoRisco
+    - npm ci --cache .npm --prefer-offline --no-audit
+    - npm run build
+  artifacts:
+    when: on_success
+    expire_in: 1 week
+    paths:
+      - src/geoRisco/dist/
+
+frontend:build:
+  stage: build
+  cache:
+    key:
+      files:
+        - src/frontend/package-lock.json
+    paths:
+      - src/frontend/.npm/
+  script:
+    - cd src/frontend
+    - npm ci --cache .npm --prefer-offline --no-audit
+    - npm run build
+  artifacts:
+    when: on_success
+    expire_in: 1 week
+    paths:
+      - src/frontend/dist/

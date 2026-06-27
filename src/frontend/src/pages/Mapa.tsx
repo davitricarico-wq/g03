@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { MapContainer, Marker, Popup, TileLayer, ZoomControl, useMap } from 'react-leaflet';
 import { useNavigate } from 'react-router-dom';
 import L from 'leaflet';
@@ -10,11 +10,30 @@ import type { FamiliaBuscaResultado, MoradiaComLocalizacao, MoradiaDetalhe, Prio
 
 // Santo André - SP
 const CENTRO_PADRAO: [number, number] = [-23.6639, -46.5383];
+const BRASIL_BOUNDS: L.LatLngTuple[] = [
+    [-34.1, -74.0],
+    [6.3, -28.5]
+];
 
-const TILE_CLARO = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+// Host único (sem {s}) para casar com os tiles pré-baixados para uso offline.
+const TILE_CLARO = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 const TILE_ESCURO = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
 
 const iconeRisco = pinIcon(COR_RISCO);
+const iconeSemResponsavel = L.divIcon({
+    className: '',
+    html: `<div class="map-pin map-pin-alert" style="background:${COR_RISCO}"><span>!</span></div>`,
+    iconSize: [28, 28],
+    iconAnchor: [14, 28],
+    popupAnchor: [0, -24]
+});
+const iconeLocalizacaoAtual = L.divIcon({
+    className: '',
+    html: '<div class="map-current-location-pin"><span></span></div>',
+    iconSize: [26, 26],
+    iconAnchor: [13, 13],
+    popupAnchor: [0, -14]
+});
 
 function pinIcon(cor: string): L.DivIcon {
     return L.divIcon({
@@ -71,6 +90,44 @@ function CamadaCalor({ pontos }: { pontos: [number, number, number][] }) {
     return null;
 }
 
+function IniciarNaLocalizacaoAtual({ localizacaoAtual }: { localizacaoAtual: [number, number] | null }) {
+    const map = useMap();
+    const iniciou = useRef(false);
+
+    useEffect(() => {
+        if (!localizacaoAtual || iniciou.current) return;
+        iniciou.current = true;
+        map.setView(localizacaoAtual, Math.max(map.getZoom(), 16), { animate: true });
+    }, [localizacaoAtual, map]);
+
+    return null;
+}
+
+function LimitesBrasil() {
+    const map = useMap();
+
+    useEffect(() => {
+        const bounds = L.latLngBounds(BRASIL_BOUNDS);
+        const aplicarLimites = () => {
+            const minZoom = map.getBoundsZoom(bounds, true);
+            map.setMinZoom(minZoom);
+            if (map.getZoom() < minZoom) {
+                map.setZoom(minZoom);
+            }
+            map.setMaxBounds(bounds);
+            map.panInsideBounds(bounds, { animate: false });
+        };
+
+        aplicarLimites();
+        map.on('resize', aplicarLimites);
+        return () => {
+            map.off('resize', aplicarLimites);
+        };
+    }, [map]);
+
+    return null;
+}
+
 function normalizar(texto: string): string {
     return texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 }
@@ -84,6 +141,14 @@ function familiaTemPrioridade(familia: FamiliaBuscaResultado, prioridade: Priori
     if (chave.includes('gravida') || chave.includes('gestante')) return familia.grupos.gestante;
     if (chave.includes('cronica') || chave.includes('medicacao')) return familia.grupos.doencaCronica;
     return false;
+}
+
+function pessoaEhResponsavelAtivo(pessoa: MoradiaDetalhe['familias'][number]['pessoas'][number]): boolean {
+    return pessoa.parentesco === 'Responsável' && !pessoa.deletedAt && (pessoa.status ?? 'Ativo') === 'Ativo';
+}
+
+function moradiaTemFamiliaSemResponsavel(detalhe?: MoradiaDetalhe): boolean {
+    return Boolean(detalhe?.familias.some((item) => item.pessoas.length > 0 && !item.pessoas.some(pessoaEhResponsavelAtivo)));
 }
 
 export default function Mapa() {
@@ -100,6 +165,7 @@ export default function Mapa() {
     const [painelAberto, setPainelAberto] = useState(true);
     const [modo, setModo] = useState<'pinos' | 'calor'>('pinos');
     const [carregandoDetalhe, setCarregandoDetalhe] = useState<number | null>(null);
+    const [localizacaoAtual, setLocalizacaoAtual] = useState<[number, number] | null>(null);
 
     useEffect(() => {
         Promise.all([listarMoradias(), buscarFamilias(), listarPrioridades()])
@@ -119,6 +185,26 @@ export default function Mapa() {
             })
             .catch((e) => setErro(e instanceof Error ? e.message : 'Erro ao carregar moradias.'))
             .finally(() => setCarregando(false));
+    }, []);
+
+    useEffect(() => {
+        if (!navigator.geolocation) return;
+
+        const watchId = navigator.geolocation.watchPosition(
+            (position) => {
+                setLocalizacaoAtual([position.coords.latitude, position.coords.longitude]);
+            },
+            () => {
+                setLocalizacaoAtual(null);
+            },
+            {
+                enableHighAccuracy: true,
+                maximumAge: 30000,
+                timeout: 10000
+            }
+        );
+
+        return () => navigator.geolocation.clearWatch(watchId);
     }, []);
 
     const comCoordenadas = useMemo(
@@ -164,11 +250,15 @@ export default function Mapa() {
         [filtradas]
     );
 
-    const centro: [number, number] = filtradas.length > 0
+    const centro: [number, number] = localizacaoAtual ?? (filtradas.length > 0
         ? [filtradas[0].localizacao.latitude, filtradas[0].localizacao.longitude]
-        : CENTRO_PADRAO;
+        : CENTRO_PADRAO);
 
     const filtrosAtivos = statusOcultos.size + prioridadesAtivas.size + (bairroFiltro ? 1 : 0);
+    const moradiasVisiveisSemResponsavel = useMemo(
+        () => filtradas.filter((moradia) => moradiaTemFamiliaSemResponsavel(detalhesMoradia[moradia.id])).length,
+        [filtradas, detalhesMoradia]
+    );
 
     function toggleStatus(status: string) {
         setStatusOcultos((prev) => {
@@ -269,6 +359,11 @@ export default function Mapa() {
                 </div>
                 <div className="filtros-resumo">
                     <strong>Moradias visíveis:</strong> {filtradas.length}
+                    {moradiasVisiveisSemResponsavel > 0 && (
+                        <span className="map-responsible-warning">
+                            {moradiasVisiveisSemResponsavel} sem responsável ativo
+                        </span>
+                    )}
                 </div>
             </div>
 
@@ -279,19 +374,39 @@ export default function Mapa() {
 
             {erro && <div className="map-erro card error-msg">{erro}</div>}
 
+            {carregando && (
+                <div className="map-loading" role="status" aria-live="polite">
+                    <span className="map-loading-spinner" aria-hidden="true" />
+                    <strong>Carregando mapa</strong>
+                    <p>Buscando moradias, famílias e filtros...</p>
+                </div>
+            )}
+
             {!carregando && (
-                <MapContainer center={centro} zoom={13} zoomControl={false}>
+                <MapContainer
+                    center={centro}
+                    zoom={localizacaoAtual ? 16 : 13}
+                    minZoom={4}
+                    maxBounds={BRASIL_BOUNDS}
+                    maxBoundsViscosity={1}
+                    zoomControl={false}
+                >
+                    <LimitesBrasil />
+                    <IniciarNaLocalizacaoAtual localizacaoAtual={localizacaoAtual} />
                     <ZoomControl position="bottomleft" />
                     <TileLayer
                         attribution={modo === 'calor' ? '&copy; OpenStreetMap &copy; CARTO' : '&copy; OpenStreetMap'}
                         url={modo === 'calor' ? TILE_ESCURO : TILE_CLARO}
+                        noWrap
                     />
                     {modo === 'calor'
                         ? <CamadaCalor pontos={pontosCalor} />
                         : filtradas.map((m) => {
-                            const ocupada = (detalhesMoradia[m.id]?.familias.length ?? 0) > 0;
+                            const detalhe = detalhesMoradia[m.id];
+                            const ocupada = (detalhe?.familias.length ?? 0) > 0;
+                            const semResponsavel = moradiaTemFamiliaSemResponsavel(detalhe);
                             return (
-                                <Marker key={m.id} position={[m.localizacao.latitude, m.localizacao.longitude]} icon={iconeRisco}>
+                                <Marker key={m.id} position={[m.localizacao.latitude, m.localizacao.longitude]} icon={semResponsavel ? iconeSemResponsavel : iconeRisco}>
                                     <Popup>
                                         <strong>Moradia #{m.id}</strong><br />
                                         {m.localizacao.logradouro ?? 'Endereço n/d'}{m.localizacao.numero ? `, ${m.localizacao.numero}` : ''}<br />
@@ -300,6 +415,11 @@ export default function Mapa() {
                                         <span className={`map-popup-occupancy${ocupada ? ' occupied' : ''}`}>
                                             {ocupada ? 'Ocupada' : 'Sem família ativa'}
                                         </span><br />
+                                        {semResponsavel && (
+                                            <>
+                                                <span className="map-popup-responsible-alert">Família sem responsável ativo</span><br />
+                                            </>
+                                        )}
                                         <em style={{ color: '#5e5e5e' }}>{m.tipoConstrucao}</em>
                                         <button
                                             type="button"
@@ -313,11 +433,18 @@ export default function Mapa() {
                                 </Marker>
                             );
                         })}
+                    {localizacaoAtual && (
+                        <Marker position={localizacaoAtual} icon={iconeLocalizacaoAtual} zIndexOffset={1000}>
+                            <Popup>Sua localização atual</Popup>
+                        </Marker>
+                    )}
                 </MapContainer>
             )}
 
             <div className="map-legend">
                 <div className="legend-row"><span className="legend-dot" style={{ background: COR_RISCO }} />Moradia em área de risco</div>
+                <div className="legend-row"><span className="legend-dot legend-dot-alert">!</span>Moradia com família sem responsável ativo</div>
+                {localizacaoAtual && <div className="legend-row"><span className="legend-dot" style={{ background: '#0ea5e9' }} />Sua localização atual</div>}
             </div>
         </div>
     );

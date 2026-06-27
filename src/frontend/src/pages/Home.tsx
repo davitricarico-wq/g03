@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import Icon from '../components/Icon.tsx';
-import { useAnimacoes } from '../utils/anim.ts';
+import OfflineMapButton from '../components/OfflineMapButton.tsx';
 
 const logo = '/logo-defesa-civil.png';
 
@@ -8,13 +8,11 @@ const cards = [
     { to: '/cadastro', icon: 'clipboard' as const, label: 'Cadastro', desc: 'Família, moradia e pets' },
     { to: '/busca', icon: 'search' as const, label: 'Busca', desc: 'Famílias e moradias' },
     { to: '/pessoas', icon: 'people' as const, label: 'Pessoas', desc: 'Ativos e histórico' },
-    { to: '/mapa', icon: 'map-pin' as const, label: 'Mapa', desc: 'Risco e ocupação' },
-    { to: '/historico', icon: 'history' as const, label: 'Histórico', desc: 'Famílias por moradia' }
+    { to: '/mapa', icon: 'map-pin' as const, label: 'Mapa', desc: 'Risco e ocupação' }
 ];
 
 export default function Home() {
     const navigate = useNavigate();
-    const [animacoes, alternarAnimacoes] = useAnimacoes();
 
     return (
         <div>
@@ -42,16 +40,16 @@ export default function Home() {
                 ))}
             </div>
 
-            <div className="home-anim">
-                <button
-                    className={`anim-toggle${animacoes ? ' on' : ''}`}
-                    aria-pressed={!animacoes}
-                    onClick={alternarAnimacoes}
-                >
-                    <span className="ic"><Icon name={animacoes ? 'sparkle' : 'x-circle'} size={19} /></span>
-                    <span className="lbl">{animacoes ? 'Normal' : 'Modo Leve'}</span>
-                </button>
-            </div>
+            <section className="home-offline">
+                <div className="home-offline-head">
+                    <span className="home-offline-icon"><Icon name="map" size={20} /></span>
+                    <div>
+                        <strong>Uso em campo</strong>
+                        <span>Prepare o mapa para cadastrar sem internet.</span>
+                    </div>
+                </div>
+                <OfflineMapButton />
+            </section>
         </div>
     );
 }
