@@ -2944,7 +2944,7 @@ Ao final do desenvolvimento, permanecem as seguintes pendências, que não imped
 - ausência de autenticação e autorização por perfil (login, sessão/token e RBAC);
 - ausência de mecanismos avançados de resiliência de rede, como *circuit breaker*, *timeout* configurável por requisição e *backoff* exponencial completo;
 - dependência de sincronização posterior para os cadastros realizados offline, sem garantia de idempotência por identificador único de operação;
-- funcionalidades planejadas ainda não entregues, como o mapa de calor e o alerta automático de recadastro;
+- funcionalidades planejadas ainda não entregues, como o alerta automático de recadastro;
 - pontos de usabilidade levantados nos testes SUS (percepção de complexidade e de inconsistência), cujos planos de ação estão descritos na seção 8.2.
 
 ### 4.3.3. Dificuldades técnicas enfrentadas
