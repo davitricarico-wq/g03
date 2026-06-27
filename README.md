@@ -51,7 +51,9 @@ Entre as funcionalidades entregues estão: criação transacional de núcleo fam
 
 ## Link de Demonstração
 
-> [Assista ao vídeo demonstrativo]([INSERIR LINK DO YOUTUBE]) — principais funcionalidades do GeoRisco Santo André (máx. 3 min, sem música de fundo).
+Assista ao vídeo demonstrativo do sistema em execução e seu funcionamento.
+
+> [Clique aqui para assitir ao vídeo demonstrativo](https://youtu.be/l4f8AKR2cXg)
 
 ---
 
