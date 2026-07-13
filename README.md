@@ -382,11 +382,4 @@ g03/
 
 ## Licença
 
-<p xmlns:cc="http://creativecommons.org/ns#" xmlns:dct="http://purl.org/dc/terms/">
-<a property="dct:title" rel="cc:attributionURL" href="https://git.inteli.edu.br/graduacao/2026-1b/t25/g03">GeoRisco Santo André — Grupo 03</a> by
-<a rel="cc:attributionURL dct:creator" property="cc:attributionName" href="https://www.inteli.edu.br">Inteli — Instituto de Tecnologia e Liderança</a>
-is licensed under
-<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="license noopener noreferrer">Creative Commons Attribution 4.0 International (CC BY 4.0)</a>.
-</p>
-
-Ali Mustapha Abdallah, Arthur Davi da Silva Rodrigues, Davi Viana Tricarico, Eduardo Totti Thomé, Enzo Kojian Guilhen, Gabriel Andreott Salles Pereira, Julio Quevedo da Silva, Lucas Bianchezzi Oliveira.
+<a href="https://git.inteli.edu.br/graduacao/2026-1b/t25/g03">Froggy Tech</a> © 2026 by <a href="https://www.inteli.edu.br/">Inteli</a>, Froggy Tech, <a href="https://www.linkedin.com/in/ali-abdallah007/">Ali Mustapha Abdallah</a>, <a href="https://www.linkedin.com/in/arthur-davi-da-silva-rodrigues/">Arthur Davi da Silva Rodrigues</a>, <a href="https://www.linkedin.com/in/davi-tricarico-248b1a3b1/">Davi Viana Tricarico</a>, <a href="https://www.linkedin.com/in/eduardototti/">Eduardo Totti Thomé</a>, <a href="https://www.linkedin.com/in/enzo-kojian-guilhen-60690a3b0/">Enzo Kojian Guilhen</a>, <a href="https://www.linkedin.com/in/gabriel-andreott-84037a330">Gabriel Andreott Salles Pereira</a>, <a href="https://www.linkedin.com/in/julioquevdo/?locale=en">Julio Quevedo da Silva</a>, <a href="https://www.linkedin.com/in/lucasb-oliveira/?locale=en">Lucas Bianchezzi Oliveira</a> is licensed under <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International</a><img src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" alt="" style="max-width: 1em;max-height:1em;margin-left: .2em;"><img src="https://mirrors.creativecommons.org/presskit/icons/by.svg" alt="" style="max-width: 1em;max-height:1em;margin-left: .2em;">
